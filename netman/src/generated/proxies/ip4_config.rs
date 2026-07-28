@@ -6,8 +6,6 @@
 #![allow(
     clippy::too_many_arguments,
     clippy::type_complexity,
-    rustdoc::broken_intra_doc_links,
-    rustdoc::bare_urls,
     rustdoc::invalid_html_tags
 )]
 
@@ -32,7 +30,7 @@ pub trait IP4Config {
 
     /// Addresses property
     ///
-    /// Array of arrays of IPv4 address/prefix/gateway. All 3 elements of each array are in network byte order. Essentially: [(addr, prefix, gateway), (addr, prefix, gateway), ...]. DEPRECATED: use AddressData and Gateway
+    /// Array of arrays of IPv4 address/prefix/gateway. All 3 elements of each array are in network byte order. Essentially: \[(addr, prefix, gateway), (addr, prefix, gateway), ...\]. DEPRECATED: use AddressData and Gateway
     #[zbus(property)]
     fn addresses(&self) -> zbus::Result<Vec<Vec<u32>>>;
 
@@ -84,7 +82,7 @@ pub trait IP4Config {
 
     /// Routes property
     ///
-    /// Arrays of IPv4 route/prefix/next-hop/metric. All 4 elements of each tuple are in network byte order. 'route' and 'next hop' are IPv4 addresses, while prefix and metric are simple unsigned integers. Essentially: [(route, prefix, next-hop, metric), (route, prefix, next-hop, metric), ...]. DEPRECATED: use RouteData
+    /// Arrays of IPv4 route/prefix/next-hop/metric. All 4 elements of each tuple are in network byte order. 'route' and 'next hop' are IPv4 addresses, while prefix and metric are simple unsigned integers. Essentially: \[(route, prefix, next-hop, metric), (route, prefix, next-hop, metric), ...\]. DEPRECATED: use RouteData
     #[zbus(property)]
     fn routes(&self) -> zbus::Result<Vec<Vec<u32>>>;
 

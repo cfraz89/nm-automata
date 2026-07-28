@@ -338,7 +338,32 @@ pub fn rustdoc_text(text: &str) -> String {
             }
         }
         blank = 0;
-        out.push_str(line);
+        out.push_str(&for_rustdoc(line));
+    }
+    out
+}
+
+/// Escape the prose so that rustdoc reads it as prose.
+///
+/// NetworkManager writes things like "'unmanaged' in a [device*] section" and bare issue URLs,
+/// which rustdoc would otherwise take for a broken intra-doc link and an unlinked URL.
+fn for_rustdoc(line: &str) -> String {
+    let mut out = String::with_capacity(line.len());
+    for word in line.split_inclusive(char::is_whitespace) {
+        let trimmed = word.trim_end();
+        if trimmed.starts_with("http://") || trimmed.starts_with("https://") {
+            out.push('<');
+            out.push_str(trimmed);
+            out.push('>');
+            out.push_str(&word[trimmed.len()..]);
+            continue;
+        }
+        for ch in word.chars() {
+            if ch == '[' || ch == ']' {
+                out.push('\\');
+            }
+            out.push(ch);
+        }
     }
     out
 }

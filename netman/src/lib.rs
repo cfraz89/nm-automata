@@ -27,7 +27,8 @@
 //!
 //! # How it is put together
 //!
-//! * [`proxies`] holds one [`zbus::proxy`] trait per D-Bus interface. The four singletons —
+//! * [`proxies`] holds one [`zbus::proxy`](macro@zbus::proxy) trait per D-Bus interface. The
+//!   four singletons —
 //!   [`NetworkManagerProxy`], [`SettingsProxy`], [`AgentManagerProxy`] and
 //!   [`DnsManagerProxy`] — know their own object path, so `new(&connection)` is enough. Every
 //!   other object is found at runtime.

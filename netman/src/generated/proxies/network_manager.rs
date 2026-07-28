@@ -6,8 +6,6 @@
 #![allow(
     clippy::too_many_arguments,
     clippy::type_complexity,
-    rustdoc::broken_intra_doc_links,
-    rustdoc::bare_urls,
     rustdoc::invalid_html_tags
 )]
 
@@ -209,7 +207,7 @@ pub trait NetworkManager {
     ///
     /// # Arguments
     ///
-    /// * `level` - One of [ERR, WARN, INFO, DEBUG, TRACE].
+    /// * `level` - One of \[ERR, WARN, INFO, DEBUG, TRACE\].
     /// * `domains` - For available domains see SetLogging() call.
     fn get_logging(&self) -> zbus::Result<(String, String)>;
 
@@ -237,8 +235,8 @@ pub trait NetworkManager {
     ///
     /// # Arguments
     ///
-    /// * `level` - One of [ERR, WARN, INFO, DEBUG, TRACE, OFF, KEEP]. This level is applied to the domains as specified in the domains argument. Except for the special level "KEEP", all unmentioned domains are disabled entirely. "KEEP" is special and allows not to change the current setting except for the specified domains. E.g. level=KEEP and domains=PLATFORM:DEBUG will only touch the platform domain.
-    /// * `domains` - A combination of logging domains separated by commas (','), or "NONE" to disable logging. Each domain enables logging for operations related to that domain. Available domains are: [PLATFORM, RFKILL, ETHER, WIFI, BT, MB, DHCP4, DHCP6, PPP, WIFI_SCAN, IP4, IP6, AUTOIP4, DNS, VPN, SHARING, SUPPLICANT, AGENTS, SETTINGS, SUSPEND, CORE, DEVICE, OLPC, WIMAX, INFINIBAND, FIREWALL, ADSL, BOND, VLAN, BRIDGE, DBUS_PROPS, TEAM, CONCHECK, DCB, DISPATCH, AUDIT]. In addition to these domains, the following special domains can be used: [NONE, ALL, DEFAULT, DHCP, IP]. You can also specify that some domains should log at a different level from the default by appending a colon (':') and a log level (eg, 'WIFI:DEBUG'). If an empty string is given, the log level is changed but the current set of log domains remains unchanged.
+    /// * `level` - One of \[ERR, WARN, INFO, DEBUG, TRACE, OFF, KEEP\]. This level is applied to the domains as specified in the domains argument. Except for the special level "KEEP", all unmentioned domains are disabled entirely. "KEEP" is special and allows not to change the current setting except for the specified domains. E.g. level=KEEP and domains=PLATFORM:DEBUG will only touch the platform domain.
+    /// * `domains` - A combination of logging domains separated by commas (','), or "NONE" to disable logging. Each domain enables logging for operations related to that domain. Available domains are: \[PLATFORM, RFKILL, ETHER, WIFI, BT, MB, DHCP4, DHCP6, PPP, WIFI_SCAN, IP4, IP6, AUTOIP4, DNS, VPN, SHARING, SUPPLICANT, AGENTS, SETTINGS, SUSPEND, CORE, DEVICE, OLPC, WIMAX, INFINIBAND, FIREWALL, ADSL, BOND, VLAN, BRIDGE, DBUS_PROPS, TEAM, CONCHECK, DCB, DISPATCH, AUDIT\]. In addition to these domains, the following special domains can be used: \[NONE, ALL, DEFAULT, DHCP, IP\]. You can also specify that some domains should log at a different level from the default by appending a colon (':') and a log level (eg, 'WIFI:DEBUG'). If an empty string is given, the log level is changed but the current set of log domains remains unchanged.
     fn set_logging(&self, level: &str, domains: &str) -> zbus::Result<()>;
 
     /// Sleep method

@@ -6,8 +6,6 @@
 #![allow(
     clippy::too_many_arguments,
     clippy::type_complexity,
-    rustdoc::broken_intra_doc_links,
-    rustdoc::bare_urls,
     rustdoc::invalid_html_tags
 )]
 

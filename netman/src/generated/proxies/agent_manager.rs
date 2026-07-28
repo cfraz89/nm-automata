@@ -6,8 +6,6 @@
 #![allow(
     clippy::too_many_arguments,
     clippy::type_complexity,
-    rustdoc::broken_intra_doc_links,
-    rustdoc::bare_urls,
     rustdoc::invalid_html_tags
 )]
 
@@ -28,7 +26,7 @@ pub trait AgentManager {
     ///
     /// # Arguments
     ///
-    /// * `identifier` - Identifies this agent; only one agent in each user session may use the same identifier. Identifier formatting follows the same rules as D-Bus bus names with the exception that the ':' character is not allowed. The valid set of characters is "[A-Z][a-z][0-9]_-." and the identifier is limited in length to 255 characters with a minimum of 3 characters. An example valid identifier is 'org.gnome.nm-applet' (without quotes).
+    /// * `identifier` - Identifies this agent; only one agent in each user session may use the same identifier. Identifier formatting follows the same rules as D-Bus bus names with the exception that the ':' character is not allowed. The valid set of characters is "\[A-Z\]\[a-z\]\[0-9\]_-." and the identifier is limited in length to 255 characters with a minimum of 3 characters. An example valid identifier is 'org.gnome.nm-applet' (without quotes).
     fn register(&self, identifier: &str) -> zbus::Result<()>;
 
     /// RegisterWithCapabilities method

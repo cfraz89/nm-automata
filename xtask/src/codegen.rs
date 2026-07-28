@@ -327,7 +327,6 @@ fn proxy_module(module: &Generated, nm_version: &str) -> String {
          //! {nm_version}. Do not edit.\n\
          \n\
          #![allow(\n    clippy::too_many_arguments,\n    clippy::type_complexity,\n    \
-         rustdoc::broken_intra_doc_links,\n    rustdoc::bare_urls,\n    \
          rustdoc::invalid_html_tags\n)]\n\n\
          #[allow(unused_imports)]\n\
          use crate::generated::types::*;\n\
