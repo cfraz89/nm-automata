@@ -1,0 +1,19 @@
+[workspace]
+members = ["netman", "xtask"]
+resolver = "3"
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.87"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/cfraz89/netman"
+
+[workspace.dependencies]
+zbus = { version = "5.18", default-features = false }
+zbus_xml = "5.2"
+zbus_xmlgen = { version = "5.4.1", default-features = false }
+zbus-lockstep = "0.7"
+bitflags = "2.9"
+serde = { version = "1", features = ["derive"] }
+serde_repr = "0.1"
+anyhow = "1"

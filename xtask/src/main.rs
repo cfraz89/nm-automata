@@ -1,0 +1,116 @@
+//! Automation that keeps `netman` in lockstep with upstream NetworkManager.
+//!
+//! The whole binding is derived from two files that NetworkManager publishes:
+//!
+//! * `introspection/*.xml` — the D-Bus interfaces, with gtk-doc documentation carried in XML
+//!   comments;
+//! * `src/libnm-core-public/nm-dbus-interface.h` — the enumerations and flag sets those
+//!   interfaces exchange as plain integers.
+//!
+//! `fetch` vendors both into `spec/` at a pinned release, and `generate` turns them into
+//! `netman/src/generated/`. Nothing in between is hand-maintained.
+
+mod annotate;
+mod codegen;
+mod fetch;
+mod header;
+mod overrides;
+mod render;
+
+use std::collections::BTreeMap;
+use std::path::{Path, PathBuf};
+
+use anyhow::{Context, Result, bail};
+use clap::{Parser, Subcommand};
+
+#[derive(Parser)]
+#[command(about = "Regenerate netman from the upstream NetworkManager D-Bus spec")]
+struct Cli {
+    #[command(subcommand)]
+    command: Command,
+}
+
+#[derive(Subcommand)]
+enum Command {
+    /// Print the newest upstream NetworkManager stable release tag.
+    LatestVersion,
+    /// Vendor the D-Bus spec of a NetworkManager release into `spec/`.
+    Fetch {
+        /// Release tag to vendor. Defaults to the newest stable release.
+        #[arg(long)]
+        version: Option<String>,
+    },
+    /// Regenerate `netman/src/generated/` from the vendored spec.
+    Generate,
+    /// Vendor a spec and regenerate, in one step.
+    Update {
+        /// Release tag to vendor. Defaults to the newest stable release.
+        #[arg(long)]
+        version: Option<String>,
+    },
+    /// Exit non-zero if the checked-in generated code is stale.
+    Check,
+}
+
+fn main() -> Result<()> {
+    let cli = Cli::parse();
+    let root = workspace_root();
+
+    match cli.command {
+        Command::LatestVersion => println!("{}", fetch::latest_stable_release()?),
+        Command::Fetch { version } => {
+            let version = fetch::vendor_spec(&root, version.as_deref())?;
+            println!("vendored NetworkManager {version} into spec/");
+        }
+        Command::Generate => {
+            let files = codegen::generate(&root)?;
+            write_all(&files)?;
+            println!("regenerated {} file(s)", files.len());
+        }
+        Command::Update { version } => {
+            let version = fetch::vendor_spec(&root, version.as_deref())?;
+            let files = codegen::generate(&root)?;
+            write_all(&files)?;
+            println!(
+                "updated to NetworkManager {version}, regenerated {} file(s)",
+                files.len()
+            );
+        }
+        Command::Check => {
+            let files = codegen::generate(&root)?;
+            let stale: Vec<_> = files
+                .iter()
+                .filter(|(path, want)| std::fs::read_to_string(path).ok().as_ref() != Some(*want))
+                .map(|(path, _)| path.clone())
+                .collect();
+            if !stale.is_empty() {
+                for path in &stale {
+                    eprintln!("stale: {}", path.display());
+                }
+                bail!("generated code is out of date; run `cargo xtask generate`");
+            }
+            println!("generated code is up to date");
+        }
+    }
+
+    Ok(())
+}
+
+/// The workspace directory, i.e. the parent of this crate.
+fn workspace_root() -> PathBuf {
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .expect("xtask lives one level below the workspace root")
+        .to_path_buf()
+}
+
+fn write_all(files: &BTreeMap<PathBuf, String>) -> Result<()> {
+    for (path, contents) in files {
+        if let Some(parent) = path.parent() {
+            std::fs::create_dir_all(parent)
+                .with_context(|| format!("creating {}", parent.display()))?;
+        }
+        std::fs::write(path, contents).with_context(|| format!("writing {}", path.display()))?;
+    }
+    Ok(())
+}

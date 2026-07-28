@@ -1,0 +1,17 @@
+# Type annotations that cannot be read out of the vendored spec.
+#
+# `cargo xtask generate` types a property or argument as one of NetworkManager's enumerations
+# whenever the upstream documentation says so — through a `Returns:` line, an `@argument`
+# entry, or, for single values, a mention in the prose. What is left over goes here.
+#
+# Every entry is checked: the named type must exist in the vendored headers, and the annotated
+# member must exist with a matching D-Bus signature. An entry that no longer applies fails
+# generation, so this file cannot rot silently as NetworkManager changes.
+
+# Documented as "See NMCapability for currently defined capability numbers" — prose, and an
+# array, which generation does not infer from on its own after `VersionInfo` showed why
+# (its elements do not all mean the same thing).
+[[property]]
+interface = "org.freedesktop.NetworkManager"
+name = "Capabilities"
+type = "NMCapability"
