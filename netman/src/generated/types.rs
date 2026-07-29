@@ -1208,9 +1208,6 @@ nm_flags! {
     ///
     /// `NMManagerReloadFlags` in NetworkManager, sent over D-Bus as `u`.
     pub enum ManagerReloadFlags: u32 {
-        /// an alias for numeric zero, no flags set. This reloads everything that is supported and is identical to a SIGHUP.
-        /// `NM_MANAGER_RELOAD_FLAG_NONE`
-        NONE = 0,
         /// reload the NetworkManager.conf configuration from disk. Note that this does not include connections, which can be reloaded via Setting's ReloadConnections().
         /// `NM_MANAGER_RELOAD_FLAG_CONF`
         CONF = 1,
@@ -1220,9 +1217,6 @@ nm_flags! {
         /// means to restart the DNS plugin. This is for example useful when using dnsmasq plugin, which uses additional configuration in /etc/NetworkManager/dnsmasq.d. If you edit those files, you can restart the DNS plugin. This action shortly interrupts name resolution.
         /// `NM_MANAGER_RELOAD_FLAG_DNS_FULL`
         DNS_FULL = 4,
-        /// all flags.
-        /// `NM_MANAGER_RELOAD_FLAG_ALL`
-        ALL = 7,
     }
 }
 
@@ -1233,9 +1227,6 @@ nm_flags! {
     ///
     /// `NMDeviceInterfaceFlags` in NetworkManager, sent over D-Bus as `u`.
     pub enum DeviceInterfaceFlags: u32 {
-        /// an alias for numeric zero, no flags set.
-        /// `NM_DEVICE_INTERFACE_FLAG_NONE`
-        NONE = 0,
         /// the interface is enabled from the administrative point of view. Corresponds to kernel IFF_UP.
         /// `NM_DEVICE_INTERFACE_FLAG_UP`
         UP = 1,
@@ -1395,6 +1386,165 @@ nm_flags! {
     }
 }
 
+nm_enum! {
+    /// `NMSettingConnectionAutoconnectSlaves` in NetworkManager, sent over D-Bus as `i`.
+    pub enum SettingConnectionAutoconnectSlaves: i32 {
+        /// `NM_SETTING_CONNECTION_AUTOCONNECT_SLAVES_DEFAULT`
+        Default = -1,
+        /// `NM_SETTING_CONNECTION_AUTOCONNECT_SLAVES_NO`
+        No = 0,
+        /// `NM_SETTING_CONNECTION_AUTOCONNECT_SLAVES_YES`
+        Yes = 1,
+    }
+}
+
+nm_enum! {
+    /// NMSettingConnectionLldp values indicate whether LLDP should be enabled.
+    ///
+    /// Since: 1.2
+    ///
+    /// `NMSettingConnectionLldp` in NetworkManager, sent over D-Bus as `i`.
+    pub enum SettingConnectionLldp: i32 {
+        /// default value
+        /// `NM_SETTING_CONNECTION_LLDP_DEFAULT`
+        Default = -1,
+        /// disable LLDP
+        /// `NM_SETTING_CONNECTION_LLDP_DISABLE`
+        Disable = 0,
+        /// enable reception of LLDP frames
+        /// `NM_SETTING_CONNECTION_LLDP_ENABLE_RX`
+        EnableRx = 1,
+    }
+}
+
+nm_enum! {
+    /// NMSettingConnectionMdns values indicate whether mDNS should be enabled.
+    ///
+    /// Since: 1.12
+    ///
+    /// `NMSettingConnectionMdns` in NetworkManager, sent over D-Bus as `i`.
+    pub enum SettingConnectionMdns: i32 {
+        /// default value
+        /// `NM_SETTING_CONNECTION_MDNS_DEFAULT`
+        Default = -1,
+        /// disable mDNS
+        /// `NM_SETTING_CONNECTION_MDNS_NO`
+        No = 0,
+        /// support only resolving, do not register hostname
+        /// `NM_SETTING_CONNECTION_MDNS_RESOLVE`
+        Resolve = 1,
+        /// enable mDNS
+        /// `NM_SETTING_CONNECTION_MDNS_YES`
+        Yes = 2,
+    }
+}
+
+nm_enum! {
+    /// NMSettingConnectionLlmnr values indicate whether LLMNR should be enabled.
+    ///
+    /// Since: 1.14
+    ///
+    /// `NMSettingConnectionLlmnr` in NetworkManager, sent over D-Bus as `i`.
+    pub enum SettingConnectionLlmnr: i32 {
+        /// default value
+        /// `NM_SETTING_CONNECTION_LLMNR_DEFAULT`
+        Default = -1,
+        /// disable LLMNR
+        /// `NM_SETTING_CONNECTION_LLMNR_NO`
+        No = 0,
+        /// support only resolving, do not register hostname
+        /// `NM_SETTING_CONNECTION_LLMNR_RESOLVE`
+        Resolve = 1,
+        /// enable LLMNR
+        /// `NM_SETTING_CONNECTION_LLMNR_YES`
+        Yes = 2,
+    }
+}
+
+nm_enum! {
+    /// NMSettingConnectionDnsOverTls values indicate whether DNSOverTls should be enabled.
+    ///
+    /// Since: 1.34
+    ///
+    /// `NMSettingConnectionDnsOverTls` in NetworkManager, sent over D-Bus as `i`.
+    pub enum SettingConnectionDnsOverTls: i32 {
+        /// default value
+        /// `NM_SETTING_CONNECTION_DNS_OVER_TLS_DEFAULT`
+        Default = -1,
+        /// disable DNSOverTls
+        /// `NM_SETTING_CONNECTION_DNS_OVER_TLS_NO`
+        No = 0,
+        /// enable opportunistic mode
+        /// `NM_SETTING_CONNECTION_DNS_OVER_TLS_OPPORTUNISTIC`
+        Opportunistic = 1,
+        /// enable strict mode
+        /// `NM_SETTING_CONNECTION_DNS_OVER_TLS_YES`
+        Yes = 2,
+    }
+}
+
+nm_enum! {
+    /// NMSettingConnectionDnssec values indicate whether DNSSEC should be enabled.
+    ///
+    /// Since: 1.56
+    ///
+    /// `NMSettingConnectionDnssec` in NetworkManager, sent over D-Bus as `i`.
+    pub enum SettingConnectionDnssec: i32 {
+        /// default value
+        /// `NM_SETTING_CONNECTION_DNSSEC_DEFAULT`
+        Default = -1,
+        /// disable DNSSEC
+        /// `NM_SETTING_CONNECTION_DNSSEC_NO`
+        No = 0,
+        /// enable DNSSEC but allow fallback to non-DNSSEC mode
+        /// `NM_SETTING_CONNECTION_DNSSEC_ALLOW_DOWNGRADE`
+        AllowDowngrade = 1,
+        /// force enable DNSSEC
+        /// `NM_SETTING_CONNECTION_DNSSEC_YES`
+        Yes = 2,
+    }
+}
+
+nm_enum! {
+    /// NMSettingConnectionDownOnPoweroff indicates whether the connection will be
+    /// brought down before the system is powered off.
+    ///
+    /// Since: 1.48
+    ///
+    /// `NMSettingConnectionDownOnPoweroff` in NetworkManager, sent over D-Bus as `i`.
+    pub enum SettingConnectionDownOnPoweroff: i32 {
+        /// default value
+        /// `NM_SETTING_CONNECTION_DOWN_ON_POWEROFF_DEFAULT`
+        Default = -1,
+        /// disable down-on-poweroff
+        /// `NM_SETTING_CONNECTION_DOWN_ON_POWEROFF_NO`
+        No = 0,
+        /// enable down-on-poweroff
+        /// `NM_SETTING_CONNECTION_DOWN_ON_POWEROFF_YES`
+        Yes = 1,
+    }
+}
+
+nm_flags! {
+    /// DCB feature flags.
+    ///
+    /// `NMSettingDcbFlags` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingDcbFlags: u32 {
+        /// no flag
+        /// `NM_SETTING_DCB_FLAG_NONE`
+        NONE = 0,
+        /// the feature is enabled
+        /// `NM_SETTING_DCB_FLAG_ENABLE`
+        ENABLE = 1,
+        /// the feature is advertised
+        /// `NM_SETTING_DCB_FLAG_ADVERTISE`
+        ADVERTISE = 2,
+        /// the feature is willing to change based on peer configuration advertisements
+        /// `NM_SETTING_DCB_FLAG_WILLING`
+        WILLING = 4,
+    }
+}
+
 nm_flags! {
     /// IP tunnel flags.
     ///
@@ -1423,6 +1573,284 @@ nm_flags! {
         /// copy fwmark from inner packet
         /// `NM_IP_TUNNEL_FLAG_IP6_USE_ORIG_FWMARK`
         IP6_USE_ORIG_FWMARK = 32,
+    }
+}
+
+nm_enum! {
+    /// NMSettingIP6ConfigPrivacy values indicate if and how IPv6 Privacy
+    /// Extensions are used (RFC4941).
+    ///
+    /// `NMSettingIP6ConfigPrivacy` in NetworkManager, sent over D-Bus as `i`.
+    pub enum SettingIP6ConfigPrivacy: i32 {
+        /// unknown or no value specified
+        /// `NM_SETTING_IP6_CONFIG_PRIVACY_UNKNOWN`
+        Unknown = -1,
+        /// IPv6 Privacy Extensions are disabled
+        /// `NM_SETTING_IP6_CONFIG_PRIVACY_DISABLED`
+        Disabled = 0,
+        /// IPv6 Privacy Extensions are enabled, but public addresses are preferred over temporary addresses
+        /// `NM_SETTING_IP6_CONFIG_PRIVACY_PREFER_PUBLIC_ADDR`
+        PreferPublicAddr = 1,
+        /// IPv6 Privacy Extensions are enabled and temporary addresses are preferred over public addresses
+        /// `NM_SETTING_IP6_CONFIG_PRIVACY_PREFER_TEMP_ADDR`
+        PreferTempAddr = 2,
+    }
+}
+
+nm_enum! {
+    /// NMSettingIP6ConfigAddrGenMode controls how the Interface Identifier for
+    /// RFC4862 Stateless Address Autoconfiguration is created.
+    ///
+    /// Since: 1.2
+    ///
+    /// `NMSettingIP6ConfigAddrGenMode` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingIP6ConfigAddrGenMode: u32 {
+        /// The Interface Identifier is derived from the interface hardware address.
+        /// `NM_SETTING_IP6_CONFIG_ADDR_GEN_MODE_EUI64`
+        EUI64 = 0,
+        /// The Interface Identifier is created by using a cryptographically secure hash of a secret host-specific key along with the connection identification and the network address as specified by RFC7217.
+        /// `NM_SETTING_IP6_CONFIG_ADDR_GEN_MODE_STABLE_PRIVACY`
+        StablePrivacy = 1,
+        /// Fallback to the global default, and if unspecified use "eui64". Since: 1.40.
+        /// `NM_SETTING_IP6_CONFIG_ADDR_GEN_MODE_DEFAULT_OR_EUI64`
+        DefaultOrEUI64 = 2,
+        /// Fallback to the global default, and if unspecified use "stable-privacy". Since: 1.40.
+        /// `NM_SETTING_IP6_CONFIG_ADDR_GEN_MODE_DEFAULT`
+        Default = 3,
+    }
+}
+
+nm_enum! {
+    /// A selector for traffic priority maps; these map Linux SKB priorities
+    /// to 802.1p priorities used in VLANs.
+    ///
+    /// `NMVlanPriorityMap` in NetworkManager, sent over D-Bus as `u`.
+    pub enum VlanPriorityMap: u32 {
+        /// map for incoming data
+        /// `NM_VLAN_INGRESS_MAP`
+        IngressMap = 0,
+        /// map for outgoing data
+        /// `NM_VLAN_EGRESS_MAP`
+        EgressMap = 1,
+    }
+}
+
+nm_flags! {
+    /// NMVlanFlags values control the behavior of the VLAN interface.
+    ///
+    /// `NMVlanFlags` in NetworkManager, sent over D-Bus as `u`.
+    pub enum VlanFlags: u32 {
+        /// indicates that this interface should reorder outgoing packet headers to look more like a non-VLAN Ethernet interface
+        /// `NM_VLAN_FLAG_REORDER_HEADERS`
+        REORDER_HEADERS = 1,
+        /// indicates that this interface should use GVRP to register itself with its switch
+        /// `NM_VLAN_FLAG_GVRP`
+        GVRP = 2,
+        /// indicates that this interface's operating state is tied to the underlying network interface but other details (like routing) are not.
+        /// `NM_VLAN_FLAG_LOOSE_BINDING`
+        LOOSE_BINDING = 4,
+        /// indicates that this interface should use MVRP to register itself with its switch
+        /// `NM_VLAN_FLAG_MVRP`
+        MVRP = 8,
+    }
+}
+
+nm_enum! {
+    /// The NMWepKeyType values specify how any WEP keys present in the setting
+    /// are interpreted.  There are no standards governing how to hash the various WEP
+    /// key/passphrase formats into the actual WEP key.  Unfortunately some WEP keys
+    /// can be interpreted in multiple ways, requiring the setting to specify how to
+    /// interpret the any WEP keys.  For example, the key "732f2d712e4a394a375d366931"
+    /// is both a valid Hexadecimal WEP key and a WEP passphrase.  Further, many
+    /// ASCII keys are also valid WEP passphrases, but since passphrases and ASCII
+    /// keys are hashed differently to determine the actual WEP key the type must be
+    /// specified.
+    ///
+    /// `NMWepKeyType` in NetworkManager, sent over D-Bus as `u`.
+    pub enum WepKeyType: u32 {
+        /// unknown WEP key type
+        /// `NM_WEP_KEY_TYPE_UNKNOWN`
+        Unknown = 0,
+        /// indicates a hexadecimal or ASCII formatted WEP key. Hex keys are either 10 or 26 hexadecimal characters (ie "5f782f2f5f" or "732f2d712e4a394a375d366931"), while ASCII keys are either 5 or 13 ASCII characters (ie "abcde" or "blahblah99$*1").
+        /// `NM_WEP_KEY_TYPE_KEY`
+        Key = 1,
+        /// indicates a WEP passphrase (ex "I bought a duck on my way back from the market 235Q&^%^*%") instead of a hexadecimal or ASCII key.  Passphrases are between 8 and 64 characters inclusive and are hashed the actual WEP key using the MD5 hash algorithm.
+        /// `NM_WEP_KEY_TYPE_PASSPHRASE`
+        Passphrase = 2,
+    }
+}
+
+nm_enum! {
+    /// These flags indicate whether PMF must be enabled.
+    ///
+    /// Since: 1.10
+    ///
+    /// `NMSettingWirelessSecurityPmf` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingWirelessSecurityPmf: u32 {
+        /// use the default value
+        /// `NM_SETTING_WIRELESS_SECURITY_PMF_DEFAULT`
+        Default = 0,
+        /// disable PMF
+        /// `NM_SETTING_WIRELESS_SECURITY_PMF_DISABLE`
+        Disable = 1,
+        /// enable PMF if the supplicant and the AP support it
+        /// `NM_SETTING_WIRELESS_SECURITY_PMF_OPTIONAL`
+        Optional = 2,
+        /// require PMF and fail if not available
+        /// `NM_SETTING_WIRELESS_SECURITY_PMF_REQUIRED`
+        Required = 3,
+    }
+}
+
+nm_flags! {
+    /// Configure the use of WPS by a connection while it activates.
+    ///
+    /// Note: prior to 1.16, this was a GEnum type instead of a GFlags type
+    /// although, with the same numeric values.
+    ///
+    /// Since: 1.10
+    ///
+    /// `NMSettingWirelessSecurityWpsMethod` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingWirelessSecurityWpsMethod: u32 {
+        /// Attempt whichever method AP supports
+        /// `NM_SETTING_WIRELESS_SECURITY_WPS_METHOD_DEFAULT`
+        DEFAULT = 0,
+        /// WPS can not be used.
+        /// `NM_SETTING_WIRELESS_SECURITY_WPS_METHOD_DISABLED`
+        DISABLED = 1,
+        /// Use WPS, any method
+        /// `NM_SETTING_WIRELESS_SECURITY_WPS_METHOD_AUTO`
+        AUTO = 2,
+        /// use WPS push-button method
+        /// `NM_SETTING_WIRELESS_SECURITY_WPS_METHOD_PBC`
+        PBC = 4,
+        /// use PIN method
+        /// `NM_SETTING_WIRELESS_SECURITY_WPS_METHOD_PIN`
+        PIN = 8,
+    }
+}
+
+nm_enum! {
+    /// These flags indicate whether FILS must be enabled.
+    ///
+    /// Since: 1.12
+    /// /
+    /// /* clang-format off
+    ///
+    /// `NMSettingWirelessSecurityFils` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingWirelessSecurityFils: u32 {
+        /// use the default value
+        /// `NM_SETTING_WIRELESS_SECURITY_FILS_DEFAULT`
+        Default = 0,
+        /// disable FILS
+        /// `NM_SETTING_WIRELESS_SECURITY_FILS_DISABLE`
+        Disable = 1,
+        /// enable FILS if the supplicant and the AP support it
+        /// `NM_SETTING_WIRELESS_SECURITY_FILS_OPTIONAL`
+        Optional = 2,
+        /// require FILS and fail if not available
+        /// `NM_SETTING_WIRELESS_SECURITY_FILS_REQUIRED`
+        Required = 3,
+    }
+}
+
+nm_flags! {
+    /// These flags indicate specific behavior related to handling of a secret.  Each
+    /// secret has a corresponding set of these flags which indicate how the secret
+    /// is to be stored and/or requested when it is needed.
+    ///
+    /// `NMSettingSecretFlags` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingSecretFlags: u32 {
+        /// the system is responsible for providing and storing this secret (default)
+        /// `NM_SETTING_SECRET_FLAG_NONE`
+        NONE = 0,
+        /// a user secret agent is responsible for providing and storing this secret; when it is required agents will be asked to retrieve it
+        /// `NM_SETTING_SECRET_FLAG_AGENT_OWNED`
+        AGENT_OWNED = 1,
+        /// this secret should not be saved, but should be requested from the user each time it is needed
+        /// `NM_SETTING_SECRET_FLAG_NOT_SAVED`
+        NOT_SAVED = 2,
+        /// in situations where it cannot be automatically determined that the secret is required (some VPNs and PPP providers don't require all secrets) this flag indicates that the specific secret is not required
+        /// `NM_SETTING_SECRET_FLAG_NOT_REQUIRED`
+        NOT_REQUIRED = 4,
+    }
+}
+
+nm_enum! {
+    /// These flags modify the comparison behavior when comparing two settings or
+    /// two connections.
+    ///
+    /// `NMSettingCompareFlags` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingCompareFlags: u32 {
+        /// match all properties exactly
+        /// `NM_SETTING_COMPARE_FLAG_EXACT`
+        Exact = 0,
+        /// match only important attributes, like SSID, type, security settings, etc.  Does not match, for example, connection ID or UUID.
+        /// `NM_SETTING_COMPARE_FLAG_FUZZY`
+        Fuzzy = 1,
+        /// ignore the connection's ID
+        /// `NM_SETTING_COMPARE_FLAG_IGNORE_ID`
+        IgnoreId = 2,
+        /// ignore all secrets
+        /// `NM_SETTING_COMPARE_FLAG_IGNORE_SECRETS`
+        IgnoreSecrets = 4,
+        /// ignore secrets for which the secret's flags indicate the secret is owned by a user secret agent (ie, the secret's flag includes @NM_SETTING_SECRET_FLAG_AGENT_OWNED)
+        /// `NM_SETTING_COMPARE_FLAG_IGNORE_AGENT_OWNED_SECRETS`
+        IgnoreAgentOwnedSecrets = 8,
+        /// ignore secrets for which the secret's flags indicate the secret should not be saved to persistent storage (ie, the secret's flag includes @NM_SETTING_SECRET_FLAG_NOT_SAVED)
+        /// `NM_SETTING_COMPARE_FLAG_IGNORE_NOT_SAVED_SECRETS`
+        IgnoreNotSavedSecrets = 16,
+        /// if this flag is set, nm_setting_diff() and nm_connection_diff() will also include properties that are set to their default value. See also @NM_SETTING_COMPARE_FLAG_DIFF_RESULT_NO_DEFAULT.
+        /// `NM_SETTING_COMPARE_FLAG_DIFF_RESULT_WITH_DEFAULT`
+        DiffResultWithDefault = 32,
+        /// if this flag is set, nm_setting_diff() and nm_connection_diff() will not include properties that are set to their default value. This is the opposite of @NM_SETTING_COMPARE_FLAG_DIFF_RESULT_WITH_DEFAULT. If both flags are set together, @NM_SETTING_COMPARE_FLAG_DIFF_RESULT_WITH_DEFAULT wins. If both flags are unset, this means to exclude default properties if there is a setting to compare, but include all properties, if the setting 'b' is missing. This is the legacy behaviour of libnm-util, where nm_setting_diff() behaved differently depending on whether the setting 'b' was available. If @NM_SETTING_COMPARE_FLAG_DIFF_RESULT_WITH_DEFAULT is set, nm_setting_diff() will also set the flags @NM_SETTING_DIFF_RESULT_IN_A_DEFAULT and @NM_SETTING_DIFF_RESULT_IN_B_DEFAULT, if the values are default values.
+        /// `NM_SETTING_COMPARE_FLAG_DIFF_RESULT_NO_DEFAULT`
+        DiffResultNoDefault = 64,
+        /// ignore the connection's timestamp
+        /// `NM_SETTING_COMPARE_FLAG_IGNORE_TIMESTAMP`
+        IgnoreTimestamp = 128,
+    }
+}
+
+nm_enum! {
+    /// Controls if and how the MAC address of a device is randomzied.
+    ///
+    /// Since: 1.2
+    ///
+    /// `NMSettingMacRandomization` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingMacRandomization: u32 {
+        /// the default value, which unless overridden by user-controlled defaults configuration, is "never".
+        /// `NM_SETTING_MAC_RANDOMIZATION_DEFAULT`
+        Default = 0,
+        /// the device's MAC address is always used.
+        /// `NM_SETTING_MAC_RANDOMIZATION_NEVER`
+        Never = 1,
+        /// a random MAC address is used.
+        /// `NM_SETTING_MAC_RANDOMIZATION_ALWAYS`
+        Always = 2,
+    }
+}
+
+nm_enum! {
+    /// These values indicate the result of a setting difference operation.
+    ///
+    /// `NMSettingDiffResult` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingDiffResult: u32 {
+        /// unknown result
+        /// `NM_SETTING_DIFF_RESULT_UNKNOWN`
+        Unknown = 0,
+        /// the property is present in setting A
+        /// `NM_SETTING_DIFF_RESULT_IN_A`
+        InA = 1,
+        /// the property is present in setting B
+        /// `NM_SETTING_DIFF_RESULT_IN_B`
+        InB = 2,
+        /// the property is present in setting A but is set to the default value. This flag is only set, if you specify @NM_SETTING_COMPARE_FLAG_DIFF_RESULT_WITH_DEFAULT.
+        /// `NM_SETTING_DIFF_RESULT_IN_A_DEFAULT`
+        InADefault = 4,
+        /// analog to @NM_SETTING_DIFF_RESULT_IN_A_DEFAULT.
+        /// `NM_SETTING_DIFF_RESULT_IN_B_DEFAULT`
+        InBDefault = 8,
     }
 }
 

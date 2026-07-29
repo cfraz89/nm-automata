@@ -22,7 +22,14 @@ const RAW: &str = "https://gitlab.freedesktop.org/NetworkManager/NetworkManager/
 const HEADER_PATHS: &[&str] = &[
     "src/libnm-core-public/nm-dbus-interface.h",
     "src/libnm-core-public/nm-vpn-dbus-interface.h",
+    // Types a connection-profile property is declared as, in the setting that introduces them.
+    "src/libnm-core-public/nm-setting.h",
+    "src/libnm-core-public/nm-setting-connection.h",
+    "src/libnm-core-public/nm-setting-dcb.h",
     "src/libnm-core-public/nm-setting-ip-tunnel.h",
+    "src/libnm-core-public/nm-setting-ip6-config.h",
+    "src/libnm-core-public/nm-setting-vlan.h",
+    "src/libnm-core-public/nm-setting-wireless-security.h",
 ];
 
 #[derive(Deserialize)]

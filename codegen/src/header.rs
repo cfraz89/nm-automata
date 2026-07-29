@@ -125,43 +125,81 @@ fn rust_name(c_name: &str) -> String {
 /// an implicit (auto-incrementing) value is rejected rather than guessed at, so that a future
 /// header using richer expressions fails the build instead of generating wrong constants.
 fn parse_variants(body: &str, docs: &[(String, String)]) -> Result<Vec<Variant>> {
-    let body = strip_comments(body);
+    let skipped = skipped_variants(body);
+    let stripped = strip_comments(body);
     let mut variants: Vec<Variant> = Vec::new();
-    let mut next_implicit = 0i128;
+    // `None` once a skipped variant has made the running count unknowable.
+    let mut next_implicit = Some(0i128);
 
-    for entry in body.split(',') {
+    for entry in stripped.split(',') {
         let entry = entry.trim();
         if entry.is_empty() {
             continue;
         }
 
-        let (c_name, value) = match entry.split_once('=') {
-            Some((name, expr)) => {
-                let expr = expr.trim();
-                let value = parse_value(expr, &variants)
-                    .with_context(|| format!("unsupported value `{expr}` for `{}`", name.trim()))?;
-                (name.trim(), value)
-            }
-            None => (entry, next_implicit),
+        let (name, expr) = match entry.split_once('=') {
+            Some((name, expr)) => (name.trim(), Some(expr.trim())),
+            None => (entry, None),
         };
-
-        if !is_ident(c_name) {
-            bail!("`{c_name}` is not a variant name");
+        if !is_ident(name) {
+            bail!("`{name}` is not a variant name");
         }
-        next_implicit = value + 1;
+
+        // Variants NetworkManager marks `/*< skip >*/` are internal bookkeeping, not API. They
+        // are also the ones whose values are written as expressions over private constants,
+        // so they are dropped before any attempt to evaluate them.
+        if skipped.iter().any(|s| s == name) {
+            next_implicit = None;
+            continue;
+        }
+
+        let value = match expr {
+            Some(expr) => parse_value(expr, &variants)
+                .with_context(|| format!("unsupported value `{expr}` for `{name}`"))?,
+            None => next_implicit.with_context(|| {
+                format!(
+                    "`{name}` takes an implicit value, but a skipped variant before it \
+                         means the count is unknown"
+                )
+            })?,
+        };
+        next_implicit = Some(value + 1);
 
         variants.push(Variant {
             doc: docs
                 .iter()
-                .find(|(name, _)| name == c_name)
+                .find(|(doc_name, _)| doc_name == name)
                 .map(|(_, doc)| doc.clone()),
-            c_name: c_name.to_owned(),
+            c_name: name.to_owned(),
             suffix: String::new(),
             value,
         });
     }
 
     Ok(variants)
+}
+
+/// The variants annotated `/*< skip >*/`, which upstream excludes from its own bindings.
+///
+/// The annotation trails the variant it applies to, on the same line, so the variant is the
+/// first name on that line.
+fn skipped_variants(body: &str) -> Vec<String> {
+    body.lines()
+        .filter(|line| {
+            line.split("/*<")
+                .skip(1)
+                .filter_map(|rest| rest.split("*/").next())
+                .any(|annotation| annotation.contains("skip"))
+        })
+        .filter_map(|line| {
+            let name: String = line
+                .trim_start()
+                .chars()
+                .take_while(|c| c.is_ascii_alphanumeric() || *c == '_')
+                .collect();
+            is_ident(&name).then_some(name)
+        })
+        .collect()
 }
 
 fn parse_value(expr: &str, previous: &[Variant]) -> Option<i128> {
