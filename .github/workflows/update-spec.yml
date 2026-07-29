@@ -25,31 +25,29 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
-          components: rustfmt
+          components: rustfmt, clippy
+      - uses: taiki-e/install-action@just
       - uses: Swatinem/rust-cache@v2
 
       - name: Read the vendored and available versions
         id: versions
         run: |
-          echo "current=$(cat spec/nm-version.txt)" >> "$GITHUB_OUTPUT"
+          echo "current=$(just vendored-version)" >> "$GITHUB_OUTPUT"
           if [ -n "${{ inputs.version }}" ]; then
             echo "latest=${{ inputs.version }}" >> "$GITHUB_OUTPUT"
           else
-            echo "latest=$(cargo run -q -p xtask -- latest-version)" >> "$GITHUB_OUTPUT"
+            echo "latest=$(just latest-version)" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Re-vendor and regenerate
         if: steps.versions.outputs.current != steps.versions.outputs.latest
-        run: cargo xtask update --version "${{ steps.versions.outputs.latest }}"
+        run: just update "${{ steps.versions.outputs.latest }}"
 
       # A generated API that does not compile, or whose types no longer match the signatures
       # NetworkManager publishes, must not become a pull request that looks routine.
       - name: Verify
         if: steps.versions.outputs.current != steps.versions.outputs.latest
-        run: |
-          cargo fmt --all --check
-          cargo clippy --workspace --all-targets -- -D warnings
-          cargo test --workspace
+        run: just ci
 
       - name: Open a pull request
         if: steps.versions.outputs.current != steps.versions.outputs.latest
@@ -59,12 +57,12 @@ jobs:
           commit-message: "Regenerate against NetworkManager ${{ steps.versions.outputs.latest }}"
           title: "Regenerate against NetworkManager ${{ steps.versions.outputs.latest }}"
           body: |
-            `cargo xtask update` run against NetworkManager
+            `just update` run against NetworkManager
             **${{ steps.versions.outputs.latest }}** (was ${{ steps.versions.outputs.current }}).
 
             Everything here is generated. Review the diff under `netman/src/generated/` as the
             API change: it is what upstream added, removed or retyped.
 
-            `cargo fmt`, `cargo clippy` and `cargo test` — including the generated signature
-            checks in `netman/tests/lockstep.rs` — passed before this was opened.
+            `just ci` passed before this was opened — including the generated signature checks
+            in `netman/tests/lockstep.rs`.
           labels: dependencies

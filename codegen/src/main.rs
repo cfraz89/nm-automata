@@ -87,7 +87,7 @@ fn main() -> Result<()> {
                 for path in &stale {
                     eprintln!("stale: {}", path.display());
                 }
-                bail!("generated code is out of date; run `cargo xtask generate`");
+                bail!("generated code is out of date; run `just generate`");
             }
             println!("generated code is up to date");
         }
@@ -100,7 +100,7 @@ fn main() -> Result<()> {
 fn workspace_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
         .parent()
-        .expect("xtask lives one level below the workspace root")
+        .expect("this crate lives one level below the workspace root")
         .to_path_buf()
 }
 

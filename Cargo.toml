@@ -1,5 +1,5 @@
 [workspace]
-members = ["netman", "xtask"]
+members = ["codegen", "netman"]
 resolver = "3"
 
 [workspace.package]

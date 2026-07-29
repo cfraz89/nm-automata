@@ -7,7 +7,6 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
-  RUSTFLAGS: -D warnings
 
 jobs:
   test:
@@ -17,23 +16,17 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
+      - uses: taiki-e/install-action@just
       - uses: Swatinem/rust-cache@v2
 
-      - name: Formatting
-        run: cargo fmt --all --check
-
-      - name: Clippy
-        run: cargo clippy --workspace --all-targets
+      - run: just fmt --check
+      - run: just lint
 
       # The signature checks in netman/tests/lockstep.rs read the vendored spec, so this also
       # asserts that the generated types still match what NetworkManager publishes.
-      - name: Tests
-        run: cargo test --workspace
+      - run: just test
 
-      - name: Documentation
-        run: cargo doc --no-deps -p netman
-        env:
-          RUSTDOCFLAGS: -D warnings
+      - run: just doc
 
   # A change to the generator or to spec/ must be committed together with its output, so that
   # what is published is what the spec produces.
@@ -44,19 +37,15 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt
+      - uses: taiki-e/install-action@just
       - uses: Swatinem/rust-cache@v2
-      - run: cargo xtask check
+      - run: just check
 
   features:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        features:
-          - --no-default-features --features async-io
-          - --no-default-features --features tokio
-          - --no-default-features --features async-io,blocking-api
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
+      - uses: taiki-e/install-action@just
       - uses: Swatinem/rust-cache@v2
-      - run: cargo build -p netman ${{ matrix.features }}
+      - run: just features

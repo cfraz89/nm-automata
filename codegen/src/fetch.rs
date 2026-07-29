@@ -112,7 +112,7 @@ pub fn vendor_spec(root: &Path, version: Option<&str>) -> Result<String> {
 pub fn vendored_version(root: &Path) -> Result<String> {
     let path = root.join("spec/nm-version.txt");
     let version = std::fs::read_to_string(&path)
-        .with_context(|| format!("reading {} — run `cargo xtask fetch` first", path.display()))?;
+        .with_context(|| format!("reading {} — run `just fetch` first", path.display()))?;
     Ok(version.trim().to_owned())
 }
 

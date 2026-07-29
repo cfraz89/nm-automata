@@ -16,7 +16,7 @@ for device in devices {
 }
 ```
 
-`cargo run --example devices` prints every device, its type, state and capabilities.
+`just example` prints every device, its type, state and capabilities.
 
 ## What is generated
 
@@ -54,32 +54,38 @@ traits for turning object paths into proxies), about 250 lines together.
 
 ## Keeping up with upstream
 
+Tasks are [`just`](https://just.systems) recipes; `just --list` shows them all.
+
 ```
-cargo xtask latest-version   # newest stable NetworkManager release
-cargo xtask fetch            # vendor its spec into spec/
-cargo xtask generate         # regenerate netman/src/generated/
-cargo xtask update           # both, in one step
-cargo xtask check            # fail if the checked-in output is stale
+just latest-version   # newest stable NetworkManager release
+just fetch            # vendor its spec into spec/ (just fetch 1.56.1 to pin one)
+just generate         # regenerate netman/src/generated/
+just update           # both, in one step
+just check            # fail if the checked-in output is stale
+just regen            # generate, format, and run everything CI runs
 ```
 
-`.github/workflows/update-spec.yml` runs `update` weekly, verifies the result builds and
-passes its tests, and opens a pull request. The diff under `netman/src/generated/` *is* the
-API change, so a NetworkManager release is reviewed as a normal PR rather than chased by hand.
-`.github/workflows/ci.yml` runs `cargo xtask check` on every push, so the generator and its
-output cannot drift apart.
+`.github/workflows/update-spec.yml` runs `just update` weekly, verifies the result with
+`just ci`, and opens a pull request. The diff under `netman/src/generated/` *is* the API
+change, so a NetworkManager release is reviewed as a normal PR rather than chased by hand.
+`.github/workflows/ci.yml` runs `just check` on every push, so the generator and its output
+cannot drift apart.
 
 ## How generation works
 
 `zbus_xmlgen` writes the proxies, but NetworkManager's introspection XML on its own would only
-produce integers and undocumented methods. `cargo xtask generate` bridges that gap:
+produce integers and undocumented methods. The generator in `codegen/` bridges that gap:
 
-1. `xtask/src/header.rs` reads the C headers: every `typedef enum`, its values, its gtk-doc
+1. `codegen/src/header.rs` reads the C headers: every `typedef enum`, its values, its gtk-doc
    comment, and whether `/*< flags >*/` marks it as a bit set.
-2. `xtask/src/annotate.rs` recovers the type references and documentation from the XML
+2. `codegen/src/annotate.rs` recovers the type references and documentation from the XML
    comments — `Returns: NMDeviceState`, `@managed: (NMDeviceManaged) …`.
-3. `xtask/src/render.rs` writes both back into the XML as Telepathy `tp:` annotations, which
+3. `codegen/src/render.rs` writes both back into the XML as Telepathy `tp:` annotations, which
    `zbus_xmlgen` does understand, and emits the types as `nm_enum!`/`nm_flags!` invocations.
-4. `xtask/src/codegen.rs` runs the generator per interface and assembles the result.
+4. `codegen/src/codegen.rs` runs the generator per interface and assembles the result.
+
+It stays a Rust crate rather than becoming shell recipes because it uses `zbus_xml` and
+`zbus_xmlgen` as libraries; `just` is what invokes it.
 
 The augmented XML is written to `target/netman-augmented/` on every run, so what the generator
 was fed is always inspectable.

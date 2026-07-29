@@ -1,6 +1,6 @@
 # Type annotations that cannot be read out of the vendored spec.
 #
-# `cargo xtask generate` types a property or argument as one of NetworkManager's enumerations
+# `just generate` types a property or argument as one of NetworkManager's enumerations
 # whenever the upstream documentation says so — through a `Returns:` line, an `@argument`
 # entry, or, for single values, a mention in the prose. What is left over goes here.
 #

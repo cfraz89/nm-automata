@@ -1,7 +1,7 @@
 //! Ergonomic NetworkManager bindings for Rust, generated from NetworkManager's own D-Bus
 //! spec.
 //!
-//! Every proxy, enumeration and flag set in this crate is produced by `cargo xtask generate`
+//! Every proxy, enumeration and flag set in this crate is produced by `just generate`
 //! from the introspection XML and `nm-dbus-interface.h` of a pinned NetworkManager release —
 //! see [`NM_VERSION`]. Nothing is transcribed by hand, so the API tracks upstream exactly,
 //! including its documentation.
