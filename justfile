@@ -18,13 +18,33 @@ default:
 fetch version="":
     {{ codegen }} fetch {{ if version == "" { "" } else { "--version " + version } }}
 
+# Rebuild `spec/nm-settings-docs-dbus.xml` by compiling NetworkManager in a container.
+#
+# The types of connection-profile properties are derived from GObject introspection data, which
+# only exists once libnm has been compiled — there is nothing machine-readable in the git tree
+# to read them from. This runs NetworkManager's own generator against a release tag.
+#
+# Slow, and needs podman. It is only ever run when the vendored release changes: the result is
+# committed, so building netman as a dependency needs no container and no C toolchain.
+build-spec version="":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    version="{{ version }}"
+    [ -n "$version" ] || version="$(cat spec/nm-version.txt)"
+    echo "building NetworkManager $version to generate its settings documentation"
+    podman build -t netman-nmspec -f spec/build/Containerfile spec/build/
+    podman run --rm -v "$PWD/spec:/out:Z" netman-nmspec "$version"
+
 # Regenerate `netman/src/generated/` from the vendored spec.
 generate:
     {{ codegen }} generate
 
-# Vendor a spec and regenerate, in one step.
-update version="":
-    {{ codegen }} update {{ if version == "" { "" } else { "--version " + version } }}
+# Vendor a spec and regenerate, in one step. Includes the container build, so it is slow.
+update version="": (fetch version)
+    #!/usr/bin/env bash
+    set -euo pipefail
+    just build-spec "$(cat spec/nm-version.txt)"
+    just generate
 
 # Print the newest upstream NetworkManager stable release tag.
 latest-version:
