@@ -15,3 +15,15 @@
 interface = "org.freedesktop.NetworkManager"
 name = "Capabilities"
 type = "NMCapability"
+
+# Documented only as "The tunneling mode." and "Tunnel flags." — the type is named nowhere,
+# so there is nothing to read out of the spec.
+[[property]]
+interface = "org.freedesktop.NetworkManager.Device.IPTunnel"
+name = "Mode"
+type = "NMIPTunnelMode"
+
+[[property]]
+interface = "org.freedesktop.NetworkManager.Device.IPTunnel"
+name = "Flags"
+type = "NMIPTunnelFlags"

@@ -22,8 +22,6 @@ jobs:
       - run: just fmt --check
       - run: just lint
 
-      # The signature checks in netman/tests/lockstep.rs read the vendored spec, so this also
-      # asserts that the generated types still match what NetworkManager publishes.
       - run: just test
 
       - run: just doc

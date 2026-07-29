@@ -13,11 +13,16 @@ const PROJECT: &str = "NetworkManager%2FNetworkManager";
 const API: &str = "https://gitlab.freedesktop.org/api/v4/projects";
 const RAW: &str = "https://gitlab.freedesktop.org/NetworkManager/NetworkManager/-/raw";
 
-/// Where the enumerations backing the D-Bus API live in the source tree. The VPN interfaces
-/// keep theirs in a header of their own.
+/// Where the enumerations backing the D-Bus API live in the source tree.
+///
+/// Most are in one header, but not all: the VPN interfaces keep theirs separately, and a few
+/// types reach D-Bus from a setting's header — `NMIPTunnelFlags` is `Device.IPTunnel.Flags`.
+/// Only headers that a D-Bus member actually needs belong here; every type they define becomes
+/// a name that generation will accept in NetworkManager's documentation.
 const HEADER_PATHS: &[&str] = &[
     "src/libnm-core-public/nm-dbus-interface.h",
     "src/libnm-core-public/nm-vpn-dbus-interface.h",
+    "src/libnm-core-public/nm-setting-ip-tunnel.h",
 ];
 
 #[derive(Deserialize)]

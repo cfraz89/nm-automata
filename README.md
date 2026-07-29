@@ -20,14 +20,18 @@ for device in devices {
 
 ## What is generated
 
-Everything under `netman/src/generated/` — 53 proxies, 80-odd enumerations and flag sets, and
-their documentation — comes from two things NetworkManager publishes, pinned to the release in
+Everything under `netman/src/generated/` — 53 proxies, 43 enumerations and flag sets, and their
+documentation — comes from two things NetworkManager publishes, pinned to the release in
 `spec/nm-version.txt`:
 
 | Vendored | Gives |
 | --- | --- |
 | `introspection/*.xml` | the interfaces, and the gtk-doc documentation in their comments |
-| `nm-dbus-interface.h`, `nm-vpn-dbus-interface.h` | the enumerations and flag sets sent as integers |
+| `spec/headers/*.h` | the enumerations and flag sets sent as integers |
+
+Three headers, because NetworkManager does not keep them in one place: the bulk in
+`nm-dbus-interface.h`, the VPN types in `nm-vpn-dbus-interface.h`, and `NMIPTunnelFlags` in a
+setting's header. Adding a fourth is one line in `HEADER_PATHS` (`codegen/src/fetch.rs`).
 
 Nothing is transcribed by hand. The only hand-written Rust in the crate is `src/repr.rs`
 (two macros defining how a NetworkManager type is put on the wire) and `src/ext.rs` (three
@@ -101,8 +105,14 @@ Two details worth knowing:
   `SettingsConnectionProxy`, `VpnConnectionProxy`.
 
 `annotations.toml` fills in the few members whose type upstream does not state in a form worth
-inferring from. Entries there are checked against the vendored spec, so one that stops applying
-fails generation instead of rotting.
+inferring from — `Device.IPTunnel.Mode` is documented as "The tunneling mode." and nothing more.
+Entries there are checked against the vendored spec, so one that stops applying fails generation
+instead of rotting.
+
+There are no signature tests against the spec. Everything on both sides of such a check comes
+from the same vendored files and is regenerated together, so it would only ever restate what
+generation just did; `just check` re-runs generation and diffs the result, which is the same
+guard done properly.
 
 ## Features
 

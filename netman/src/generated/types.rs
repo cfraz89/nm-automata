@@ -1395,6 +1395,37 @@ nm_flags! {
     }
 }
 
+nm_flags! {
+    /// IP tunnel flags.
+    ///
+    /// Since: 1.12
+    ///
+    /// `NMIPTunnelFlags` in NetworkManager, sent over D-Bus as `u`.
+    pub enum IPTunnelFlags: u32 {
+        /// no flag
+        /// `NM_IP_TUNNEL_FLAG_NONE`
+        NONE = 0,
+        /// don't add encapsulation limit if one isn't present in inner packet
+        /// `NM_IP_TUNNEL_FLAG_IP6_IGN_ENCAP_LIMIT`
+        IP6_IGN_ENCAP_LIMIT = 1,
+        /// copy the traffic class field from the inner packet
+        /// `NM_IP_TUNNEL_FLAG_IP6_USE_ORIG_TCLASS`
+        IP6_USE_ORIG_TCLASS = 2,
+        /// copy the flowlabel from the inner packet
+        /// `NM_IP_TUNNEL_FLAG_IP6_USE_ORIG_FLOWLABEL`
+        IP6_USE_ORIG_FLOWLABEL = 4,
+        /// used for Mobile IPv6
+        /// `NM_IP_TUNNEL_FLAG_IP6_MIP6_DEV`
+        IP6_MIP6_DEV = 8,
+        /// copy DSCP from the outer packet
+        /// `NM_IP_TUNNEL_FLAG_IP6_RCV_DSCP_COPY`
+        IP6_RCV_DSCP_COPY = 16,
+        /// copy fwmark from inner packet
+        /// `NM_IP_TUNNEL_FLAG_IP6_USE_ORIG_FWMARK`
+        IP6_USE_ORIG_FWMARK = 32,
+    }
+}
+
 nm_enum! {
     /// VPN daemon states
     ///

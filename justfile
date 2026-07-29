@@ -45,7 +45,7 @@ fmt *args:
 lint:
     cargo clippy --workspace --all-targets -- -D warnings
 
-# Includes the generated signature checks in `netman/tests/lockstep.rs`.
+# The doctests double as compile checks on the generated proxies.
 test:
     cargo test --workspace
 

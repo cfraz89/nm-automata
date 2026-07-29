@@ -1,4 +1,4 @@
-//! Automation that keeps `netman` in lockstep with upstream NetworkManager.
+//! Automation that keeps `netman` in step with upstream NetworkManager.
 //!
 //! The whole binding is derived from two files that NetworkManager publishes:
 //!

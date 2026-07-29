@@ -827,7 +827,6 @@ dependencies = [
  "serde_repr",
  "tokio",
  "zbus",
- "zbus-lockstep",
 ]
 
 [[package]]
@@ -1681,16 +1680,6 @@ dependencies = [
  "winnow 1.0.4",
  "zbus_macros",
  "zbus_names",
- "zvariant",
-]
-
-[[package]]
-name = "zbus-lockstep"
-version = "0.7.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9685b228021d41c5adc5ea4a7f1d0082726681222794e4b75b3816ae5c94b4a6"
-dependencies = [
- "zbus_xml",
  "zvariant",
 ]
 

@@ -63,6 +63,5 @@ jobs:
             Everything here is generated. Review the diff under `netman/src/generated/` as the
             API change: it is what upstream added, removed or retyped.
 
-            `just ci` passed before this was opened — including the generated signature checks
-            in `netman/tests/lockstep.rs`.
+            `just ci` passed before this was opened.
           labels: dependencies

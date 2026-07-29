@@ -17,7 +17,6 @@ serde = { workspace = true }
 serde_repr = { workspace = true }
 
 [dev-dependencies]
-zbus-lockstep = { workspace = true }
 zbus = { workspace = true, features = ["async-io"] }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 futures-util = "0.3.33"

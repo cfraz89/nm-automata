@@ -12,7 +12,6 @@ repository = "https://github.com/cfraz89/netman"
 zbus = { version = "5.18", default-features = false }
 zbus_xml = "5.2"
 zbus_xmlgen = { version = "5.4.1", default-features = false }
-zbus-lockstep = "0.7"
 bitflags = "2.9"
 serde = { version = "1", features = ["derive"] }
 serde_repr = "0.1"

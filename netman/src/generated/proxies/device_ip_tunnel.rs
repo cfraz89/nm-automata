@@ -30,7 +30,7 @@ pub trait IPTunnel {
     ///
     /// Tunnel flags.
     #[zbus(property)]
-    fn flags(&self) -> zbus::Result<u32>;
+    fn flags(&self) -> zbus::Result<IPTunnelFlags>;
 
     /// FlowLabel property
     ///
@@ -60,7 +60,7 @@ pub trait IPTunnel {
     ///
     /// The tunneling mode.
     #[zbus(property)]
-    fn mode(&self) -> zbus::Result<u32>;
+    fn mode(&self) -> zbus::Result<IPTunnelMode>;
 
     /// OutputKey property
     ///
