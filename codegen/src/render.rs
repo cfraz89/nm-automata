@@ -6,7 +6,7 @@ use std::fmt::Write as _;
 use zbus_xml::{ArgDirection, Interface, Node};
 
 use crate::annotate::{Docs, rustdoc_text};
-use crate::header::TypeDef;
+use crate::gir::TypeDef;
 
 /// The Telepathy extensions namespace, whose `tp:` elements carry the names and documentation
 /// that plain D-Bus introspection has no room for.
@@ -268,34 +268,17 @@ fn write_type_def(out: &mut String, resolved: &Resolved<'_>) {
         def.rust_name, resolved.signature
     );
     write_docstring(out, def.doc.as_deref(), "    ");
-    for variant in dedup_variants(def) {
+    // The suffix only has to give `zbus_xmlgen` a valid, distinct identifier for the definition
+    // to be usable — the body it generates from this is stripped, and the real type comes from
+    // `types_module` below. Using the same names keeps the two readable side by side.
+    for (variant, name) in def.rust_variants() {
         let _ = writeln!(
             out,
-            r#"    <tp:enumvalue suffix="{}" value="{}"/>"#,
-            variant.suffix, variant.value
+            r#"    <tp:enumvalue suffix="{name}" value="{}"/>"#,
+            variant.value
         );
     }
     let _ = writeln!(out, "  </tp:enum>");
-}
-
-/// The variants that can become distinct Rust items.
-///
-/// NetworkManager marks the end of some flag sets with an alias (`…_CAPABILITY_LAST`); a
-/// repeated value would make the whole definition unusable to `zbus_xmlgen`, so aliases are
-/// dropped in favour of the name they duplicate.
-pub fn dedup_variants(def: &TypeDef) -> Vec<&crate::header::Variant> {
-    let mut seen_values = Vec::new();
-    let mut seen_names = Vec::new();
-    let mut out = Vec::new();
-    for variant in &def.variants {
-        if seen_values.contains(&variant.value) || seen_names.contains(&variant.suffix) {
-            continue;
-        }
-        seen_values.push(variant.value);
-        seen_names.push(variant.suffix.clone());
-        out.push(variant);
-    }
-    out
 }
 
 fn write_interface(
@@ -437,7 +420,7 @@ pub fn types_module(types: &[Resolved<'_>], nm_version: &str) -> String {
 
     for resolved in types {
         let def = resolved.def;
-        let variants = dedup_variants(def);
+        let variants = def.rust_variants();
         let macro_name = if def.is_flags() {
             "nm_flags"
         } else {
@@ -453,15 +436,18 @@ pub fn types_module(types: &[Resolved<'_>], nm_version: &str) -> String {
             "    /// `{}` in NetworkManager, sent over D-Bus as `{}`.",
             def.c_name, resolved.signature
         );
+        // Marked in the introspection data rather than applied as `#[deprecated]`: the wire
+        // still carries these, so a binding that warned on reading one would be unusable.
+        if def.deprecated {
+            let _ = writeln!(out, "    ///");
+            let _ = writeln!(out, "    /// Deprecated by NetworkManager.");
+        }
         let _ = writeln!(out, "    pub enum {}: {} {{", def.rust_name, resolved.repr);
-        for variant in variants {
-            write_doc_lines(&mut out, variant.doc.as_deref(), "        ");
+        for (variant, name) in variants {
+            if write_doc_lines(&mut out, variant.doc.as_deref(), "        ") {
+                let _ = writeln!(out, "        ///");
+            }
             let _ = writeln!(out, "        /// `{}`", variant.c_name);
-            let name = if def.is_flags() {
-                variant.suffix.clone()
-            } else {
-                pascal_case(&variant.suffix)
-            };
             let _ = writeln!(out, "        {name} = {},", variant.value);
         }
         let _ = writeln!(out, "    }}\n}}\n");

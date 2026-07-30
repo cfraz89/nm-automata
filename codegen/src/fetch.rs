@@ -13,25 +13,6 @@ const PROJECT: &str = "NetworkManager%2FNetworkManager";
 const API: &str = "https://gitlab.freedesktop.org/api/v4/projects";
 const RAW: &str = "https://gitlab.freedesktop.org/NetworkManager/NetworkManager/-/raw";
 
-/// Where the enumerations backing the D-Bus API live in the source tree.
-///
-/// Most are in one header, but not all: the VPN interfaces keep theirs separately, and a few
-/// types reach D-Bus from a setting's header — `NMIPTunnelFlags` is `Device.IPTunnel.Flags`.
-/// Only headers that a D-Bus member actually needs belong here; every type they define becomes
-/// a name that generation will accept in NetworkManager's documentation.
-const HEADER_PATHS: &[&str] = &[
-    "src/libnm-core-public/nm-dbus-interface.h",
-    "src/libnm-core-public/nm-vpn-dbus-interface.h",
-    // Types a connection-profile property is declared as, in the setting that introduces them.
-    "src/libnm-core-public/nm-setting.h",
-    "src/libnm-core-public/nm-setting-connection.h",
-    "src/libnm-core-public/nm-setting-dcb.h",
-    "src/libnm-core-public/nm-setting-ip-tunnel.h",
-    "src/libnm-core-public/nm-setting-ip6-config.h",
-    "src/libnm-core-public/nm-setting-vlan.h",
-    "src/libnm-core-public/nm-setting-wireless-security.h",
-];
-
 #[derive(Deserialize)]
 struct Tag {
     name: String,
@@ -64,7 +45,10 @@ pub fn latest_stable_release() -> Result<String> {
     }
 }
 
-/// Download the introspection XML and the D-Bus interface header of `version` into `spec/`.
+/// Download the D-Bus introspection XML of `version` into `spec/`.
+///
+/// The generated inputs — the introspection data and the settings documentation — are not
+/// fetched: they do not exist in the git tree and are built by `just build-spec`.
 ///
 /// Returns the version that was vendored.
 pub fn vendor_spec(root: &Path, version: Option<&str>) -> Result<String> {
@@ -101,18 +85,6 @@ pub fn vendor_spec(root: &Path, version: Option<&str>) -> Result<String> {
     }
     if count == 0 {
         bail!("no introspection XML found at tag {version}");
-    }
-
-    let headers = spec.join("headers");
-    if headers.exists() {
-        std::fs::remove_dir_all(&headers)?;
-    }
-    std::fs::create_dir_all(&headers)?;
-    for path in HEADER_PATHS {
-        let name = path.rsplit('/').next().expect("a path has a last segment");
-        let body = get_text(&format!("{RAW}/{version}/{path}"))
-            .with_context(|| format!("downloading {path}"))?;
-        std::fs::write(headers.join(name), body)?;
     }
 
     std::fs::write(spec.join("nm-version.txt"), format!("{version}\n"))?;

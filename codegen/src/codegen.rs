@@ -18,7 +18,7 @@ use zbus_xml::Node;
 
 use crate::annotate::{self, Docs};
 use crate::fetch;
-use crate::header::{self, TypeDef};
+use crate::gir::{self, TypeDef};
 use crate::overrides;
 use crate::render::{self, Resolved};
 
@@ -29,10 +29,14 @@ pub fn generate(root: &Path) -> Result<BTreeMap<PathBuf, String>> {
     let nm_version = fetch::vendored_version(root)?;
     let spec = root.join("spec");
 
-    let mut defs = Vec::new();
-    for (name, source) in read_dir(&spec.join("headers"), "h")? {
-        defs.extend(header::parse(&source).with_context(|| format!("parsing {name}"))?);
-    }
+    let gir_path = spec.join("NM-1.0.gir");
+    let gir_source = std::fs::read_to_string(&gir_path).with_context(|| {
+        format!(
+            "reading {} — run `just build-spec` first",
+            gir_path.display()
+        )
+    })?;
+    let defs = gir::parse(&gir_source)?;
     let known: HashSet<String> = defs.iter().map(|d| d.c_name.clone()).collect();
 
     let annotations = overrides::load(root)?;
@@ -161,9 +165,9 @@ fn read_dir(dir: &Path, extension: &str) -> Result<Vec<(String, String)>> {
     Ok(out)
 }
 
-/// Decide, for every type in the header, which integer it travels as.
+/// Decide, for every type, which integer it travels as.
 ///
-/// The header says nothing about wire types, so the answer comes from the sites that use each
+/// The introspection data says nothing about wire types, so the answer comes from the sites that use each
 /// type. Where those disagree the most common one wins and the odd site keeps a plain integer;
 /// where a type is never referenced it falls back to `u`, which is what NetworkManager uses
 /// everywhere it does say.
@@ -449,11 +453,11 @@ fn check_name_clashes(types: &[Resolved<'_>], modules: &[Generated]) -> Result<(
         }
         // The enumeration macro adds an `Other` variant for values from newer daemons.
         if !resolved.def.is_flags()
-            && let Some(variant) = resolved
+            && let Some((variant, _)) = resolved
                 .def
-                .variants
-                .iter()
-                .find(|v| render::pascal_case(&v.suffix) == "Other")
+                .rust_variants()
+                .into_iter()
+                .find(|(_, name)| name == "Other")
         {
             bail!(
                 "`{}` has a variant named `{}` that collides with the generated `Other`",

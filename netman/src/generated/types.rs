@@ -7,312 +7,30 @@
 
 use crate::repr::{nm_enum, nm_flags};
 
-nm_enum! {
-    /// The numeric values represent the bit index of the capability. These capabilities
-    /// can be queried in the "VersionInfo" D-Bus property.
-    ///
-    /// Since: 1.42
-    ///
-    /// `NMVersionInfoCapability` in NetworkManager, sent over D-Bus as `u`.
-    pub enum VersionInfoCapability: u32 {
-        /// Contains the fix to a bug that caused that routes in table other than main were not removed on reapply nor on connection down. <https://issues.redhat.com/browse/RHEL-66262> <https://issues.redhat.com/browse/RHEL-67324>
-        /// `NM_VERSION_INFO_CAPABILITY_SYNC_ROUTE_WITH_TABLE`
-        SyncRouteWithTable = 0,
-        /// Indicates that NetworkManager supports configuring per-device IPv4 sysctl forwarding setting. Since: 1.54.
-        /// `NM_VERSION_INFO_CAPABILITY_IP4_FORWARDING`
-        IP4Forwarding = 1,
-        /// NetworkManager supports the "sriov.preserve-on-down" property. Since: 1.54
-        /// `NM_VERSION_INFO_CAPABILITY_SRIOV_PRESERVE_ON_DOWN`
-        SriovPreserveOnDown = 2,
-    }
-}
-
-nm_enum! {
-    /// NMCapability names the numbers in the Capabilities property.
-    /// Capabilities are positive numbers. They are part of stable API
-    /// and a certain capability number is guaranteed not to change.
-    ///
-    /// The range 0x7000 - 0x7FFF of capabilities is guaranteed not to be
-    /// used by upstream NetworkManager. It could thus be used for downstream
-    /// extensions.
-    ///
-    /// Since: 1.6
-    ///
-    /// `NMCapability` in NetworkManager, sent over D-Bus as `u`.
-    pub enum Capability: u32 {
-        /// Teams can be managed. This means the team device plugin is loaded.
-        /// `NM_CAPABILITY_TEAM`
-        Team = 1,
-        /// OpenVSwitch can be managed. This means the OVS device plugin is loaded. Since: 1.24.
-        /// `NM_CAPABILITY_OVS`
-        Ovs = 2,
-    }
-}
-
-nm_enum! {
-    /// NMState values indicate the current overall networking state.
-    ///
-    /// `NMState` in NetworkManager, sent over D-Bus as `u`.
-    pub enum State: u32 {
-        /// Networking state is unknown. This indicates a daemon error that makes it unable to reasonably assess the state. In such event the applications are expected to assume Internet connectivity might be present and not disable controls that require network access. The graphical shells may hide the network accessibility indicator altogether since no meaningful status indication can be provided.
-        /// `NM_STATE_UNKNOWN`
-        Unknown = 0,
-        /// Deprecated: 1.56: Use NM_STATE_DISABLED instead.
-        /// `NM_STATE_ASLEEP`
-        Asleep = 10,
-        /// There is no active network connection. The graphical shell should indicate  no network connectivity and the applications should not attempt to access the network.
-        /// `NM_STATE_DISCONNECTED`
-        Disconnected = 20,
-        /// Network connections are being cleaned up. The applications should tear down their network sessions.
-        /// `NM_STATE_DISCONNECTING`
-        Disconnecting = 30,
-        /// A network connection is being started The graphical shell should indicate the network is being connected while the applications should still make no attempts to connect the network.
-        /// `NM_STATE_CONNECTING`
-        Connecting = 40,
-        /// There is only local IPv4 and/or IPv6 connectivity, but no default route to access the Internet. The graphical shell should indicate no network connectivity.
-        /// `NM_STATE_CONNECTED_LOCAL`
-        ConnectedLocal = 50,
-        /// There is only site-wide IPv4 and/or IPv6 connectivity. This means a default route is available, but the Internet connectivity check (see "Connectivity" property) did not succeed. The graphical shell should indicate limited network connectivity.
-        /// `NM_STATE_CONNECTED_SITE`
-        ConnectedSite = 60,
-        /// There is global IPv4 and/or IPv6 Internet connectivity This means the Internet connectivity check succeeded, the graphical shell should indicate full network connectivity.
-        /// `NM_STATE_CONNECTED_GLOBAL`
-        ConnectedGlobal = 70,
-    }
-}
-
-nm_enum! {
-    /// `NMConnectivityState` in NetworkManager, sent over D-Bus as `u`.
-    pub enum ConnectivityState: u32 {
-        /// Network connectivity is unknown. This means the connectivity checks are disabled (e.g. on server installations) or has not run yet. The graphical shell should assume the Internet connection might be available and not present a captive portal window.
-        /// `NM_CONNECTIVITY_UNKNOWN`
-        Unknown = 0,
-        /// The host is not connected to any network. There's no active connection that contains a default route to the internet and thus it makes no sense to even attempt a connectivity check. The graphical shell should use this state to indicate the network connection is unavailable.
-        /// `NM_CONNECTIVITY_NONE`
-        None = 1,
-        /// The Internet connection is hijacked by a captive portal gateway. The graphical shell may open a sandboxed web browser window (because the captive portals typically attempt a man-in-the-middle attacks against the https connections) for the purpose of authenticating to a gateway and retrigger the connectivity check with CheckConnectivity() when the browser window is dismissed.
-        /// `NM_CONNECTIVITY_PORTAL`
-        Portal = 2,
-        /// The host is connected to a network, does not appear to be able to reach the full Internet, but a captive portal has not been detected.
-        /// `NM_CONNECTIVITY_LIMITED`
-        Limited = 3,
-        /// The host is connected to a network, and appears to be able to reach the full Internet.
-        /// `NM_CONNECTIVITY_FULL`
-        Full = 4,
-    }
-}
-
-nm_enum! {
-    /// NMDeviceType values indicate the type of hardware represented by a
-    /// device object.
-    ///
-    /// `NMDeviceType` in NetworkManager, sent over D-Bus as `u`.
-    pub enum DeviceType: u32 {
-        /// unknown device
-        /// `NM_DEVICE_TYPE_UNKNOWN`
-        Unknown = 0,
-        /// a wired ethernet device
-        /// `NM_DEVICE_TYPE_ETHERNET`
-        Ethernet = 1,
-        /// an 802.11 Wi-Fi device
-        /// `NM_DEVICE_TYPE_WIFI`
-        Wifi = 2,
-        /// not used
-        /// `NM_DEVICE_TYPE_UNUSED1`
-        UNUSED1 = 3,
-        /// not used
-        /// `NM_DEVICE_TYPE_UNUSED2`
-        UNUSED2 = 4,
-        /// a Bluetooth device supporting PAN or DUN access protocols
-        /// `NM_DEVICE_TYPE_BT`
-        Bt = 5,
-        /// an OLPC XO mesh networking device
-        /// `NM_DEVICE_TYPE_OLPC_MESH`
-        OlpcMesh = 6,
-        /// an 802.16e Mobile WiMAX broadband device
-        /// `NM_DEVICE_TYPE_WIMAX`
-        Wimax = 7,
-        /// a modem supporting analog telephone, CDMA/EVDO, GSM/UMTS, or LTE network access protocols
-        /// `NM_DEVICE_TYPE_MODEM`
-        Modem = 8,
-        /// an IP-over-InfiniBand device
-        /// `NM_DEVICE_TYPE_INFINIBAND`
-        Infiniband = 9,
-        /// a bond controller interface
-        /// `NM_DEVICE_TYPE_BOND`
-        Bond = 10,
-        /// an 802.1Q VLAN interface
-        /// `NM_DEVICE_TYPE_VLAN`
-        Vlan = 11,
-        /// ADSL modem
-        /// `NM_DEVICE_TYPE_ADSL`
-        Adsl = 12,
-        /// a bridge controller interface
-        /// `NM_DEVICE_TYPE_BRIDGE`
-        Bridge = 13,
-        /// generic support for unrecognized device types
-        /// `NM_DEVICE_TYPE_GENERIC`
-        Generic = 14,
-        /// a team controller interface
-        /// `NM_DEVICE_TYPE_TEAM`
-        Team = 15,
-        /// a TUN or TAP interface
-        /// `NM_DEVICE_TYPE_TUN`
-        Tun = 16,
-        /// a IP tunnel interface
-        /// `NM_DEVICE_TYPE_IP_TUNNEL`
-        IpTunnel = 17,
-        /// a MACVLAN interface
-        /// `NM_DEVICE_TYPE_MACVLAN`
-        Macvlan = 18,
-        /// a VXLAN interface
-        /// `NM_DEVICE_TYPE_VXLAN`
-        Vxlan = 19,
-        /// a VETH interface
-        /// `NM_DEVICE_TYPE_VETH`
-        Veth = 20,
-        /// a MACsec interface
-        /// `NM_DEVICE_TYPE_MACSEC`
-        Macsec = 21,
-        /// a dummy interface
-        /// `NM_DEVICE_TYPE_DUMMY`
-        Dummy = 22,
-        /// a PPP interface
-        /// `NM_DEVICE_TYPE_PPP`
-        Ppp = 23,
-        /// a Open vSwitch interface
-        /// `NM_DEVICE_TYPE_OVS_INTERFACE`
-        OvsInterface = 24,
-        /// a Open vSwitch port
-        /// `NM_DEVICE_TYPE_OVS_PORT`
-        OvsPort = 25,
-        /// a Open vSwitch bridge
-        /// `NM_DEVICE_TYPE_OVS_BRIDGE`
-        OvsBridge = 26,
-        /// a IEEE 802.15.4 (WPAN) MAC Layer Device
-        /// `NM_DEVICE_TYPE_WPAN`
-        Wpan = 27,
-        /// 6LoWPAN interface
-        /// `NM_DEVICE_TYPE_6LOWPAN`
-        Type6LOWPAN = 28,
-        /// a WireGuard interface
-        /// `NM_DEVICE_TYPE_WIREGUARD`
-        Wireguard = 29,
-        /// an 802.11 Wi-Fi P2P device. Since: 1.16.
-        /// `NM_DEVICE_TYPE_WIFI_P2P`
-        WifiP2P = 30,
-        /// A VRF (Virtual Routing and Forwarding) interface. Since: 1.24.
-        /// `NM_DEVICE_TYPE_VRF`
-        Vrf = 31,
-        /// a loopback interface. Since: 1.42.
-        /// `NM_DEVICE_TYPE_LOOPBACK`
-        Loopback = 32,
-        /// A HSR/PRP device. Since: 1.46.
-        /// `NM_DEVICE_TYPE_HSR`
-        Hsr = 33,
-        /// A IPVLAN device. Since: 1.52.
-        /// `NM_DEVICE_TYPE_IPVLAN`
-        Ipvlan = 34,
-        /// A GENEVE device. Since: 1.58.
-        /// `NM_DEVICE_TYPE_GENEVE`
-        Geneve = 35,
-    }
-}
-
-nm_flags! {
-    /// General device capability flags.
-    ///
-    /// `NMDeviceCapabilities` in NetworkManager, sent over D-Bus as `u`.
-    pub enum DeviceCapabilities: u32 {
-        /// device has no special capabilities
-        /// `NM_DEVICE_CAP_NONE`
-        NONE = 0,
-        /// NetworkManager supports this device
-        /// `NM_DEVICE_CAP_NM_SUPPORTED`
-        NM_SUPPORTED = 1,
-        /// this device can indicate carrier status
-        /// `NM_DEVICE_CAP_CARRIER_DETECT`
-        CARRIER_DETECT = 2,
-        /// this device is a software device
-        /// `NM_DEVICE_CAP_IS_SOFTWARE`
-        IS_SOFTWARE = 4,
-        /// this device supports single-root I/O virtualization
-        /// `NM_DEVICE_CAP_SRIOV`
-        SRIOV = 8,
-    }
-}
-
-nm_flags! {
-    /// 802.11 specific device encryption and authentication capabilities.
-    ///
-    /// `NMDeviceWifiCapabilities` in NetworkManager, sent over D-Bus as `u`.
-    pub enum DeviceWifiCapabilities: u32 {
-        /// device has no encryption/authentication capabilities
-        /// `NM_WIFI_DEVICE_CAP_NONE`
-        NONE = 0,
-        /// device supports 40/64-bit WEP encryption
-        /// `NM_WIFI_DEVICE_CAP_CIPHER_WEP40`
-        CIPHER_WEP40 = 1,
-        /// device supports 104/128-bit WEP encryption
-        /// `NM_WIFI_DEVICE_CAP_CIPHER_WEP104`
-        CIPHER_WEP104 = 2,
-        /// device supports TKIP encryption
-        /// `NM_WIFI_DEVICE_CAP_CIPHER_TKIP`
-        CIPHER_TKIP = 4,
-        /// device supports AES/CCMP encryption
-        /// `NM_WIFI_DEVICE_CAP_CIPHER_CCMP`
-        CIPHER_CCMP = 8,
-        /// device supports WPA1 authentication
-        /// `NM_WIFI_DEVICE_CAP_WPA`
-        WPA = 16,
-        /// device supports WPA2/RSN authentication
-        /// `NM_WIFI_DEVICE_CAP_RSN`
-        RSN = 32,
-        /// device supports Access Point mode
-        /// `NM_WIFI_DEVICE_CAP_AP`
-        AP = 64,
-        /// device supports Ad-Hoc mode
-        /// `NM_WIFI_DEVICE_CAP_ADHOC`
-        ADHOC = 128,
-        /// device reports frequency capabilities
-        /// `NM_WIFI_DEVICE_CAP_FREQ_VALID`
-        FREQ_VALID = 256,
-        /// device supports 2.4GHz frequencies
-        /// `NM_WIFI_DEVICE_CAP_FREQ_2GHZ`
-        FREQ_2GHZ = 512,
-        /// device supports 5GHz frequencies
-        /// `NM_WIFI_DEVICE_CAP_FREQ_5GHZ`
-        FREQ_5GHZ = 1024,
-        /// device supports 6GHz frequencies. Since: 1.46.
-        /// `NM_WIFI_DEVICE_CAP_FREQ_6GHZ`
-        FREQ_6GHZ = 2048,
-        /// device supports acting as a mesh point. Since: 1.20.
-        /// `NM_WIFI_DEVICE_CAP_MESH`
-        MESH = 4096,
-        /// device supports WPA2/RSN in an IBSS network. Since: 1.22.
-        /// `NM_WIFI_DEVICE_CAP_IBSS_RSN`
-        IBSS_RSN = 8192,
-    }
-}
-
 nm_flags! {
     /// 802.11 access point flags.
     ///
     /// `NM80211ApFlags` in NetworkManager, sent over D-Bus as `u`.
     pub enum NM80211ApFlags: u32 {
         /// access point has no special capabilities
+        ///
         /// `NM_802_11_AP_FLAGS_NONE`
         NONE = 0,
-        /// access point requires authentication and encryption (usually means WEP)
+        /// access point requires authentication and
+        /// encryption (usually means WEP)
+        ///
         /// `NM_802_11_AP_FLAGS_PRIVACY`
         PRIVACY = 1,
         /// access point supports some WPS method
+        ///
         /// `NM_802_11_AP_FLAGS_WPS`
         WPS = 2,
         /// access point supports push-button WPS
+        ///
         /// `NM_802_11_AP_FLAGS_WPS_PBC`
         WPS_PBC = 4,
         /// access point supports PIN-based WPS
+        ///
         /// `NM_802_11_AP_FLAGS_WPS_PIN`
         WPS_PIN = 8,
     }
@@ -326,48 +44,74 @@ nm_flags! {
     /// `NM80211ApSecurityFlags` in NetworkManager, sent over D-Bus as `u`.
     pub enum NM80211ApSecurityFlags: u32 {
         /// the access point has no special security requirements
+        ///
         /// `NM_802_11_AP_SEC_NONE`
         NONE = 0,
-        /// 40/64-bit WEP is supported for pairwise/unicast encryption
+        /// 40/64-bit WEP is supported for
+        /// pairwise/unicast encryption
+        ///
         /// `NM_802_11_AP_SEC_PAIR_WEP40`
         PAIR_WEP40 = 1,
-        /// 104/128-bit WEP is supported for pairwise/unicast encryption
+        /// 104/128-bit WEP is supported for
+        /// pairwise/unicast encryption
+        ///
         /// `NM_802_11_AP_SEC_PAIR_WEP104`
         PAIR_WEP104 = 2,
         /// TKIP is supported for pairwise/unicast encryption
+        ///
         /// `NM_802_11_AP_SEC_PAIR_TKIP`
         PAIR_TKIP = 4,
         /// AES/CCMP is supported for pairwise/unicast encryption
+        ///
         /// `NM_802_11_AP_SEC_PAIR_CCMP`
         PAIR_CCMP = 8,
-        /// 40/64-bit WEP is supported for group/broadcast encryption
+        /// 40/64-bit WEP is supported for group/broadcast
+        /// encryption
+        ///
         /// `NM_802_11_AP_SEC_GROUP_WEP40`
         GROUP_WEP40 = 16,
-        /// 104/128-bit WEP is supported for group/broadcast encryption
+        /// 104/128-bit WEP is supported for
+        /// group/broadcast encryption
+        ///
         /// `NM_802_11_AP_SEC_GROUP_WEP104`
         GROUP_WEP104 = 32,
         /// TKIP is supported for group/broadcast encryption
+        ///
         /// `NM_802_11_AP_SEC_GROUP_TKIP`
         GROUP_TKIP = 64,
-        /// AES/CCMP is supported for group/broadcast encryption
+        /// AES/CCMP is supported for group/broadcast
+        /// encryption
+        ///
         /// `NM_802_11_AP_SEC_GROUP_CCMP`
         GROUP_CCMP = 128,
-        /// WPA/RSN Pre-Shared Key encryption is supported
+        /// WPA/RSN Pre-Shared Key encryption is
+        /// supported
+        ///
         /// `NM_802_11_AP_SEC_KEY_MGMT_PSK`
         KEY_MGMT_PSK = 256,
-        /// 802.1x authentication and key management is supported
+        /// 802.1x authentication and key management
+        /// is supported
+        ///
         /// `NM_802_11_AP_SEC_KEY_MGMT_802_1X`
         KEY_MGMT_802_1X = 512,
-        /// WPA/RSN Simultaneous Authentication of Equals is supported
+        /// WPA/RSN Simultaneous Authentication of Equals is
+        /// supported
+        ///
         /// `NM_802_11_AP_SEC_KEY_MGMT_SAE`
         KEY_MGMT_SAE = 1024,
-        /// WPA/RSN Opportunistic Wireless Encryption is supported
+        /// WPA/RSN Opportunistic Wireless Encryption is
+        /// supported
+        ///
         /// `NM_802_11_AP_SEC_KEY_MGMT_OWE`
         KEY_MGMT_OWE = 2048,
-        /// WPA/RSN Opportunistic Wireless Encryption transition mode is supported. Since: 1.26.
+        /// WPA/RSN Opportunistic Wireless Encryption
+        /// transition mode is supported. Since: 1.26.
+        ///
         /// `NM_802_11_AP_SEC_KEY_MGMT_OWE_TM`
         KEY_MGMT_OWE_TM = 4096,
-        /// WPA3 Enterprise Suite-B 192 bit mode is supported. Since: 1.30.
+        /// WPA3 Enterprise Suite-B 192 bit mode
+        /// is supported. Since: 1.30.
+        ///
         /// `NM_802_11_AP_SEC_KEY_MGMT_EAP_SUITE_B_192`
         KEY_MGMT_EAP_SUITE_B_192 = 8192,
     }
@@ -379,416 +123,80 @@ nm_enum! {
     /// `NM80211Mode` in NetworkManager, sent over D-Bus as `u`.
     pub enum NM80211Mode: u32 {
         /// the device or access point mode is unknown
+        ///
         /// `NM_802_11_MODE_UNKNOWN`
         Unknown = 0,
-        /// for both devices and access point objects, indicates the object is part of an Ad-Hoc 802.11 network without a central coordinating access point.
+        /// for both devices and access point objects, indicates
+        ///   the object is part of an Ad-Hoc 802.11 network without a central
+        ///   coordinating access point.
+        ///
         /// `NM_802_11_MODE_ADHOC`
         Adhoc = 1,
-        /// the device or access point is in infrastructure mode. For devices, this indicates the device is an 802.11 client/station.  For access point objects, this indicates the object is an access point that provides connectivity to clients.
+        /// the device or access point is in infrastructure mode.
+        ///   For devices, this indicates the device is an 802.11 client/station.  For
+        ///   access point objects, this indicates the object is an access point that
+        ///   provides connectivity to clients.
+        ///
         /// `NM_802_11_MODE_INFRA`
         Infra = 2,
-        /// the device is an access point/hotspot.  Not valid for access point objects; used only for hotspot mode on the local machine.
+        /// the device is an access point/hotspot.  Not valid for
+        ///   access point objects; used only for hotspot mode on the local machine.
+        ///
         /// `NM_802_11_MODE_AP`
         Ap = 3,
         /// the device is a 802.11s mesh point. Since: 1.20.
+        ///
         /// `NM_802_11_MODE_MESH`
         Mesh = 4,
     }
 }
 
 nm_flags! {
-    /// NMBluetoothCapabilities values indicate the usable capabilities of a
-    /// Bluetooth device.
+    /// Flags describing the current activation state.
     ///
-    /// `NMBluetoothCapabilities` in NetworkManager, sent over D-Bus as `u`.
-    pub enum BluetoothCapabilities: u32 {
-        /// device has no usable capabilities
-        /// `NM_BT_CAPABILITY_NONE`
+    /// `NMActivationStateFlags` in NetworkManager, sent over D-Bus as `u`.
+    pub enum ActivationStateFlags: u32 {
+        /// an alias for numeric zero, no flags set.
+        ///
+        /// `NM_ACTIVATION_STATE_FLAG_NONE`
         NONE = 0,
-        /// device provides Dial-Up Networking capability
-        /// `NM_BT_CAPABILITY_DUN`
-        DUN = 1,
-        /// device provides Network Access Point capability
-        /// `NM_BT_CAPABILITY_NAP`
-        NAP = 2,
-    }
-}
-
-nm_flags! {
-    /// NMDeviceModemCapabilities values indicate the generic radio access
-    /// technology families a modem device supports.  For more information on the
-    /// specific access technologies the device supports use the ModemManager D-Bus
-    /// API.
-    ///
-    /// `NMDeviceModemCapabilities` in NetworkManager, sent over D-Bus as `u`.
-    pub enum DeviceModemCapabilities: u32 {
-        /// modem has no usable capabilities
-        /// `NM_DEVICE_MODEM_CAPABILITY_NONE`
-        NONE = 0,
-        /// modem uses the analog wired telephone network and is not a wireless/cellular device
-        /// `NM_DEVICE_MODEM_CAPABILITY_POTS`
-        POTS = 1,
-        /// modem supports at least one of CDMA 1xRTT, EVDO revision 0, EVDO revision A, or EVDO revision B
-        /// `NM_DEVICE_MODEM_CAPABILITY_CDMA_EVDO`
-        CDMA_EVDO = 2,
-        /// modem supports at least one of GSM, GPRS, EDGE, UMTS, HSDPA, HSUPA, or HSPA+ packet switched data capability
-        /// `NM_DEVICE_MODEM_CAPABILITY_GSM_UMTS`
-        GSM_UMTS = 4,
-        /// modem has LTE data capability
-        /// `NM_DEVICE_MODEM_CAPABILITY_LTE`
-        LTE = 8,
-        /// modem has 5GNR data capability. Since: 1.36.
-        /// `NM_DEVICE_MODEM_CAPABILITY_5GNR`
-        CAPABILITY_5GNR = 64,
-    }
-}
-
-nm_enum! {
-    /// WiMAX network type.
-    ///
-    /// `NMWimaxNspNetworkType` in NetworkManager, sent over D-Bus as `u`.
-    pub enum WimaxNspNetworkType: u32 {
-        /// unknown network type
-        /// `NM_WIMAX_NSP_NETWORK_TYPE_UNKNOWN`
-        Unknown = 0,
-        /// home network
-        /// `NM_WIMAX_NSP_NETWORK_TYPE_HOME`
-        Home = 1,
-        /// partner network
-        /// `NM_WIMAX_NSP_NETWORK_TYPE_PARTNER`
-        Partner = 2,
-        /// roaming partner network
-        /// `NM_WIMAX_NSP_NETWORK_TYPE_ROAMING_PARTNER`
-        RoamingPartner = 3,
-    }
-}
-
-nm_enum! {
-    /// `NMDeviceState` in NetworkManager, sent over D-Bus as `u`.
-    pub enum DeviceState: u32 {
-        /// the device's state is unknown
-        /// `NM_DEVICE_STATE_UNKNOWN`
-        Unknown = 0,
-        /// the device is recognized, but not managed by NetworkManager
-        /// `NM_DEVICE_STATE_UNMANAGED`
-        Unmanaged = 10,
-        /// the device is managed by NetworkManager, but is not available for use.  Reasons may include the wireless switched off, missing firmware, no ethernet carrier, missing supplicant or modem manager, etc.
-        /// `NM_DEVICE_STATE_UNAVAILABLE`
-        Unavailable = 20,
-        /// the device can be activated, but is currently idle and not connected to a network.
-        /// `NM_DEVICE_STATE_DISCONNECTED`
-        Disconnected = 30,
-        /// the device is preparing the connection to the network.  This may include operations like changing the MAC address, setting physical link properties, and anything else required to connect to the requested network.
-        /// `NM_DEVICE_STATE_PREPARE`
-        Prepare = 40,
-        /// the device is connecting to the requested network. This may include operations like associating with the Wi-Fi AP, dialing the modem, connecting to the remote Bluetooth device, etc.
-        /// `NM_DEVICE_STATE_CONFIG`
-        Config = 50,
-        /// the device requires more information to continue connecting to the requested network.  This includes secrets like WiFi passphrases, login passwords, PIN codes, etc.
-        /// `NM_DEVICE_STATE_NEED_AUTH`
-        NeedAuth = 60,
-        /// the device is requesting IPv4 and/or IPv6 addresses and routing information from the network.
-        /// `NM_DEVICE_STATE_IP_CONFIG`
-        IpConfig = 70,
-        /// the device is checking whether further action is required for the requested network connection.  This may include checking whether only local network access is available, whether a captive portal is blocking access to the Internet, etc.
-        /// `NM_DEVICE_STATE_IP_CHECK`
-        IpCheck = 80,
-        /// the device is waiting for a secondary connection (like a VPN) which must activated before the device can be activated
-        /// `NM_DEVICE_STATE_SECONDARIES`
-        Secondaries = 90,
-        /// the device has a network connection, either local or global.
-        /// `NM_DEVICE_STATE_ACTIVATED`
-        Activated = 100,
-        /// a disconnection from the current network connection was requested, and the device is cleaning up resources used for that connection.  The network connection may still be valid.
-        /// `NM_DEVICE_STATE_DEACTIVATING`
-        Deactivating = 110,
-        /// the device failed to connect to the requested network and is cleaning up the connection request
-        /// `NM_DEVICE_STATE_FAILED`
-        Failed = 120,
-    }
-}
-
-nm_enum! {
-    /// Device state change reason codes
-    ///
-    /// `NMDeviceStateReason` in NetworkManager, sent over D-Bus as `u`.
-    pub enum DeviceStateReason: u32 {
-        /// No reason given
-        /// `NM_DEVICE_STATE_REASON_NONE`
-        None = 0,
-        /// Unknown error
-        /// `NM_DEVICE_STATE_REASON_UNKNOWN`
-        Unknown = 1,
-        /// Device is now managed
-        /// `NM_DEVICE_STATE_REASON_NOW_MANAGED`
-        NowManaged = 2,
-        /// Device is now unmanaged
-        /// `NM_DEVICE_STATE_REASON_NOW_UNMANAGED`
-        NowUnmanaged = 3,
-        /// The device could not be readied for configuration
-        /// `NM_DEVICE_STATE_REASON_CONFIG_FAILED`
-        ConfigFailed = 4,
-        /// IP configuration could not be reserved (no available address, timeout, etc)
-        /// `NM_DEVICE_STATE_REASON_IP_CONFIG_UNAVAILABLE`
-        IpConfigUnavailable = 5,
-        /// The IP config is no longer valid
-        /// `NM_DEVICE_STATE_REASON_IP_CONFIG_EXPIRED`
-        IpConfigExpired = 6,
-        /// Secrets were required, but not provided
-        /// `NM_DEVICE_STATE_REASON_NO_SECRETS`
-        NoSecrets = 7,
-        /// 802.1x supplicant disconnected
-        /// `NM_DEVICE_STATE_REASON_SUPPLICANT_DISCONNECT`
-        SupplicantDisconnect = 8,
-        /// 802.1x supplicant configuration failed
-        /// `NM_DEVICE_STATE_REASON_SUPPLICANT_CONFIG_FAILED`
-        SupplicantConfigFailed = 9,
-        /// 802.1x supplicant failed
-        /// `NM_DEVICE_STATE_REASON_SUPPLICANT_FAILED`
-        SupplicantFailed = 10,
-        /// 802.1x supplicant took too long to authenticate
-        /// `NM_DEVICE_STATE_REASON_SUPPLICANT_TIMEOUT`
-        SupplicantTimeout = 11,
-        /// PPP service failed to start
-        /// `NM_DEVICE_STATE_REASON_PPP_START_FAILED`
-        PppStartFailed = 12,
-        /// PPP service disconnected
-        /// `NM_DEVICE_STATE_REASON_PPP_DISCONNECT`
-        PppDisconnect = 13,
-        /// PPP failed
-        /// `NM_DEVICE_STATE_REASON_PPP_FAILED`
-        PppFailed = 14,
-        /// DHCP client failed to start
-        /// `NM_DEVICE_STATE_REASON_DHCP_START_FAILED`
-        DhcpStartFailed = 15,
-        /// DHCP client error
-        /// `NM_DEVICE_STATE_REASON_DHCP_ERROR`
-        DhcpError = 16,
-        /// DHCP client failed
-        /// `NM_DEVICE_STATE_REASON_DHCP_FAILED`
-        DhcpFailed = 17,
-        /// Shared connection service failed to start
-        /// `NM_DEVICE_STATE_REASON_SHARED_START_FAILED`
-        SharedStartFailed = 18,
-        /// Shared connection service failed
-        /// `NM_DEVICE_STATE_REASON_SHARED_FAILED`
-        SharedFailed = 19,
-        /// AutoIP service failed to start
-        /// `NM_DEVICE_STATE_REASON_AUTOIP_START_FAILED`
-        AutoipStartFailed = 20,
-        /// AutoIP service error
-        /// `NM_DEVICE_STATE_REASON_AUTOIP_ERROR`
-        AutoipError = 21,
-        /// AutoIP service failed
-        /// `NM_DEVICE_STATE_REASON_AUTOIP_FAILED`
-        AutoipFailed = 22,
-        /// The line is busy
-        /// `NM_DEVICE_STATE_REASON_MODEM_BUSY`
-        ModemBusy = 23,
-        /// No dial tone
-        /// `NM_DEVICE_STATE_REASON_MODEM_NO_DIAL_TONE`
-        ModemNoDialTone = 24,
-        /// No carrier could be established
-        /// `NM_DEVICE_STATE_REASON_MODEM_NO_CARRIER`
-        ModemNoCarrier = 25,
-        /// The dialing request timed out
-        /// `NM_DEVICE_STATE_REASON_MODEM_DIAL_TIMEOUT`
-        ModemDialTimeout = 26,
-        /// The dialing attempt failed
-        /// `NM_DEVICE_STATE_REASON_MODEM_DIAL_FAILED`
-        ModemDialFailed = 27,
-        /// Modem initialization failed
-        /// `NM_DEVICE_STATE_REASON_MODEM_INIT_FAILED`
-        ModemInitFailed = 28,
-        /// Failed to select the specified APN
-        /// `NM_DEVICE_STATE_REASON_GSM_APN_FAILED`
-        GsmApnFailed = 29,
-        /// Not searching for networks
-        /// `NM_DEVICE_STATE_REASON_GSM_REGISTRATION_NOT_SEARCHING`
-        GsmRegistrationNotSearching = 30,
-        /// Network registration denied
-        /// `NM_DEVICE_STATE_REASON_GSM_REGISTRATION_DENIED`
-        GsmRegistrationDenied = 31,
-        /// Network registration timed out
-        /// `NM_DEVICE_STATE_REASON_GSM_REGISTRATION_TIMEOUT`
-        GsmRegistrationTimeout = 32,
-        /// Failed to register with the requested network
-        /// `NM_DEVICE_STATE_REASON_GSM_REGISTRATION_FAILED`
-        GsmRegistrationFailed = 33,
-        /// PIN check failed
-        /// `NM_DEVICE_STATE_REASON_GSM_PIN_CHECK_FAILED`
-        GsmPinCheckFailed = 34,
-        /// Necessary firmware for the device may be missing
-        /// `NM_DEVICE_STATE_REASON_FIRMWARE_MISSING`
-        FirmwareMissing = 35,
-        /// The device was removed
-        /// `NM_DEVICE_STATE_REASON_REMOVED`
-        Removed = 36,
-        /// NetworkManager went to sleep
-        /// `NM_DEVICE_STATE_REASON_SLEEPING`
-        Sleeping = 37,
-        /// The device's active connection disappeared
-        /// `NM_DEVICE_STATE_REASON_CONNECTION_REMOVED`
-        ConnectionRemoved = 38,
-        /// Device disconnected by user or client
-        /// `NM_DEVICE_STATE_REASON_USER_REQUESTED`
-        UserRequested = 39,
-        /// Carrier/link changed
-        /// `NM_DEVICE_STATE_REASON_CARRIER`
-        Carrier = 40,
-        /// The device's existing connection was assumed
-        /// `NM_DEVICE_STATE_REASON_CONNECTION_ASSUMED`
-        ConnectionAssumed = 41,
-        /// The supplicant is now available
-        /// `NM_DEVICE_STATE_REASON_SUPPLICANT_AVAILABLE`
-        SupplicantAvailable = 42,
-        /// The modem could not be found
-        /// `NM_DEVICE_STATE_REASON_MODEM_NOT_FOUND`
-        ModemNotFound = 43,
-        /// The Bluetooth connection failed or timed out
-        /// `NM_DEVICE_STATE_REASON_BT_FAILED`
-        BtFailed = 44,
-        /// GSM Modem's SIM Card not inserted
-        /// `NM_DEVICE_STATE_REASON_GSM_SIM_NOT_INSERTED`
-        GsmSimNotInserted = 45,
-        /// GSM Modem's SIM Pin required
-        /// `NM_DEVICE_STATE_REASON_GSM_SIM_PIN_REQUIRED`
-        GsmSimPinRequired = 46,
-        /// GSM Modem's SIM Puk required
-        /// `NM_DEVICE_STATE_REASON_GSM_SIM_PUK_REQUIRED`
-        GsmSimPukRequired = 47,
-        /// GSM Modem's SIM wrong
-        /// `NM_DEVICE_STATE_REASON_GSM_SIM_WRONG`
-        GsmSimWrong = 48,
-        /// InfiniBand device does not support connected mode
-        /// `NM_DEVICE_STATE_REASON_INFINIBAND_MODE`
-        InfinibandMode = 49,
-        /// A dependency of the connection failed
-        /// `NM_DEVICE_STATE_REASON_DEPENDENCY_FAILED`
-        DependencyFailed = 50,
-        /// Problem with the RFC 2684 Ethernet over ADSL bridge
-        /// `NM_DEVICE_STATE_REASON_BR2684_FAILED`
-        BR2684Failed = 51,
-        /// ModemManager not running
-        /// `NM_DEVICE_STATE_REASON_MODEM_MANAGER_UNAVAILABLE`
-        ModemManagerUnavailable = 52,
-        /// The Wi-Fi network could not be found
-        /// `NM_DEVICE_STATE_REASON_SSID_NOT_FOUND`
-        SsidNotFound = 53,
-        /// A secondary connection of the base connection failed
-        /// `NM_DEVICE_STATE_REASON_SECONDARY_CONNECTION_FAILED`
-        SecondaryConnectionFailed = 54,
-        /// DCB or FCoE setup failed
-        /// `NM_DEVICE_STATE_REASON_DCB_FCOE_FAILED`
-        DcbFcoeFailed = 55,
-        /// teamd control failed
-        /// `NM_DEVICE_STATE_REASON_TEAMD_CONTROL_FAILED`
-        TeamdControlFailed = 56,
-        /// Modem failed or no longer available
-        /// `NM_DEVICE_STATE_REASON_MODEM_FAILED`
-        ModemFailed = 57,
-        /// Modem now ready and available
-        /// `NM_DEVICE_STATE_REASON_MODEM_AVAILABLE`
-        ModemAvailable = 58,
-        /// SIM PIN was incorrect
-        /// `NM_DEVICE_STATE_REASON_SIM_PIN_INCORRECT`
-        SimPinIncorrect = 59,
-        /// New connection activation was enqueued
-        /// `NM_DEVICE_STATE_REASON_NEW_ACTIVATION`
-        NewActivation = 60,
-        /// the device's parent changed
-        /// `NM_DEVICE_STATE_REASON_PARENT_CHANGED`
-        ParentChanged = 61,
-        /// the device parent's management changed
-        /// `NM_DEVICE_STATE_REASON_PARENT_MANAGED_CHANGED`
-        ParentManagedChanged = 62,
-        /// problem communicating with Open vSwitch database
-        /// `NM_DEVICE_STATE_REASON_OVSDB_FAILED`
-        OvsdbFailed = 63,
-        /// a duplicate IP address was detected
-        /// `NM_DEVICE_STATE_REASON_IP_ADDRESS_DUPLICATE`
-        IpAddressDuplicate = 64,
-        /// The selected IP method is not supported
-        /// `NM_DEVICE_STATE_REASON_IP_METHOD_UNSUPPORTED`
-        IpMethodUnsupported = 65,
-        /// configuration of SR-IOV parameters failed
-        /// `NM_DEVICE_STATE_REASON_SRIOV_CONFIGURATION_FAILED`
-        SriovConfigurationFailed = 66,
-        /// The Wi-Fi P2P peer could not be found
-        /// `NM_DEVICE_STATE_REASON_PEER_NOT_FOUND`
-        PeerNotFound = 67,
-        /// The device handler dispatcher returned an error. Since: 1.46
-        /// `NM_DEVICE_STATE_REASON_DEVICE_HANDLER_FAILED`
-        DeviceHandlerFailed = 68,
-        /// The device is unmanaged because the device type is unmanaged by default. Since: 1.48
-        /// `NM_DEVICE_STATE_REASON_UNMANAGED_BY_DEFAULT`
-        UnmanagedByDefault = 69,
-        /// The device is unmanaged because it is an external device and is unconfigured (down or without addresses). Since: 1.48
-        /// `NM_DEVICE_STATE_REASON_UNMANAGED_EXTERNAL_DOWN`
-        UnmanagedExternalDown = 70,
-        /// The device is unmanaged because the link is not initialized by udev. Since: 1.48
-        /// `NM_DEVICE_STATE_REASON_UNMANAGED_LINK_NOT_INIT`
-        UnmanagedLinkNotInit = 71,
-        /// The device is unmanaged because NetworkManager is quitting. Since: 1.48
-        /// `NM_DEVICE_STATE_REASON_UNMANAGED_QUITTING`
-        UnmanagedQuitting = 72,
-        /// Since: 1.48. Deprecated: 1.56: Use NM_DEVICE_STATE_REASON_UNMANAGED_MANAGER_DISABLED instead.
-        /// `NM_DEVICE_STATE_REASON_UNMANAGED_SLEEPING`
-        UnmanagedSleeping = 73,
-        /// The device is unmanaged by user decision in NetworkManager.conf ('unmanaged' in a \[device*\] section). Since: 1.48
-        /// `NM_DEVICE_STATE_REASON_UNMANAGED_USER_CONF`
-        UnmanagedUserConf = 74,
-        /// The device is unmanaged by explicit user decision (e.g. 'nmcli device set $DEV managed no'). Since: 1.48
-        /// `NM_DEVICE_STATE_REASON_UNMANAGED_USER_EXPLICIT`
-        UnmanagedUserExplicit = 75,
-        /// The device is unmanaged by user decision via settings plugin ('unmanaged-devices' for keyfile or 'NM_CONTROLLED=no' for ifcfg-rh). Since: 1.48
-        /// `NM_DEVICE_STATE_REASON_UNMANAGED_USER_SETTINGS`
-        UnmanagedUserSettings = 76,
-        /// The device is unmanaged via udev rule. Since: 1.48
-        /// `NM_DEVICE_STATE_REASON_UNMANAGED_USER_UDEV`
-        UnmanagedUserUdev = 77,
-        /// NetworkManager was disabled (networking off). Since: 1.56
-        /// `NM_DEVICE_STATE_REASON_NETWORKING_OFF`
-        NetworkingOff = 78,
-        /// The modem's operator code wasn't available, and auto-configuration was requested. Since: 1.56
-        /// `NM_DEVICE_STATE_REASON_MODEM_NO_OPERATOR_CODE`
-        ModemNoOperatorCode = 79,
-    }
-}
-
-nm_enum! {
-    /// `NMMetered` in NetworkManager, sent over D-Bus as `u`.
-    pub enum Metered: u32 {
-        /// `NM_METERED_UNKNOWN`
-        Unknown = 0,
-        /// `NM_METERED_YES`
-        Yes = 1,
-        /// `NM_METERED_NO`
-        No = 2,
-        /// `NM_METERED_GUESS_YES`
-        GuessYes = 3,
-        /// `NM_METERED_GUESS_NO`
-        GuessNo = 4,
-    }
-}
-
-nm_enum! {
-    /// Since: 1.14
-    ///
-    /// `NMConnectionMultiConnect` in NetworkManager, sent over D-Bus as `u`.
-    pub enum ConnectionMultiConnect: u32 {
-        /// indicates that the per-connection setting is unspecified. In this case, it will fallback to the default value, which is NM_CONNECTION_MULTI_CONNECT_SINGLE.
-        /// `NM_CONNECTION_MULTI_CONNECT_DEFAULT`
-        Default = 0,
-        /// the connection profile can only be active once at each moment. Activating a profile that is already active, will first deactivate it.
-        /// `NM_CONNECTION_MULTI_CONNECT_SINGLE`
-        Single = 1,
-        /// the profile can be manually activated multiple times on different devices. However, regarding autoconnect, the profile will autoconnect only if it is currently not connected otherwise.
-        /// `NM_CONNECTION_MULTI_CONNECT_MANUAL_MULTIPLE`
-        ManualMultiple = 2,
-        /// the profile can autoactivate and be manually activated multiple times together.
-        /// `NM_CONNECTION_MULTI_CONNECT_MULTIPLE`
-        Multiple = 3,
+        /// the device is a controller.
+        ///
+        /// `NM_ACTIVATION_STATE_FLAG_IS_CONTROLLER`
+        IS_CONTROLLER = 1,
+        /// the device is a port.
+        ///
+        /// `NM_ACTIVATION_STATE_FLAG_IS_PORT`
+        IS_PORT = 2,
+        /// layer2 is activated and ready.
+        ///
+        /// `NM_ACTIVATION_STATE_FLAG_LAYER2_READY`
+        LAYER2_READY = 4,
+        /// IPv4 setting is completed.
+        ///
+        /// `NM_ACTIVATION_STATE_FLAG_IP4_READY`
+        IP4_READY = 8,
+        /// IPv6 setting is completed.
+        ///
+        /// `NM_ACTIVATION_STATE_FLAG_IP6_READY`
+        IP6_READY = 16,
+        /// The controller has any port devices attached.
+        ///   This only makes sense if the device is a controller.
+        ///
+        /// `NM_ACTIVATION_STATE_FLAG_CONTROLLER_HAS_PORTS`
+        CONTROLLER_HAS_PORTS = 32,
+        /// the lifetime
+        ///   of the activation is bound to the visibility of the connection profile,
+        ///   which in turn depends on "connection.permissions" and whether a session
+        ///   for the user exists. Since: 1.16.
+        ///
+        /// `NM_ACTIVATION_STATE_FLAG_LIFETIME_BOUND_TO_PROFILE_VISIBILITY`
+        LIFETIME_BOUND_TO_PROFILE_VISIBILITY = 64,
+        /// the active connection was generated to
+        ///  represent an external configuration of a networking device. Since: 1.26.
+        ///
+        /// `NM_ACTIVATION_STATE_FLAG_EXTERNAL`
+        EXTERNAL = 128,
     }
 }
 
@@ -800,448 +208,313 @@ nm_enum! {
     /// `NMActiveConnectionState` in NetworkManager, sent over D-Bus as `u`.
     pub enum ActiveConnectionState: u32 {
         /// the state of the connection is unknown
+        ///
         /// `NM_ACTIVE_CONNECTION_STATE_UNKNOWN`
         Unknown = 0,
         /// a network connection is being prepared
+        ///
         /// `NM_ACTIVE_CONNECTION_STATE_ACTIVATING`
         Activating = 1,
         /// there is a connection to the network
+        ///
         /// `NM_ACTIVE_CONNECTION_STATE_ACTIVATED`
         Activated = 2,
-        /// the network connection is being torn down and cleaned up
+        /// the network connection is being
+        ///   torn down and cleaned up
+        ///
         /// `NM_ACTIVE_CONNECTION_STATE_DEACTIVATING`
         Deactivating = 3,
-        /// the network connection is disconnected and will be removed
+        /// the network connection is disconnected
+        ///   and will be removed
+        ///
         /// `NM_ACTIVE_CONNECTION_STATE_DEACTIVATED`
         Deactivated = 4,
     }
 }
 
 nm_enum! {
+    /// Active connection state reasons.
+    ///
     /// `NMActiveConnectionStateReason` in NetworkManager, sent over D-Bus as `u`.
     pub enum ActiveConnectionStateReason: u32 {
+        /// The reason for the active connection
+        ///   state change is unknown.
+        ///
         /// `NM_ACTIVE_CONNECTION_STATE_REASON_UNKNOWN`
         Unknown = 0,
+        /// No reason was given for the active
+        ///   connection state change.
+        ///
         /// `NM_ACTIVE_CONNECTION_STATE_REASON_NONE`
         None = 1,
+        /// The active connection changed
+        ///   state because the user disconnected it.
+        ///
         /// `NM_ACTIVE_CONNECTION_STATE_REASON_USER_DISCONNECTED`
         UserDisconnected = 2,
+        /// The active connection
+        ///   changed state because the device it was using was disconnected.
+        ///
         /// `NM_ACTIVE_CONNECTION_STATE_REASON_DEVICE_DISCONNECTED`
         DeviceDisconnected = 3,
+        /// The service providing the
+        ///   VPN connection was stopped.
+        ///
         /// `NM_ACTIVE_CONNECTION_STATE_REASON_SERVICE_STOPPED`
         ServiceStopped = 4,
+        /// The IP config of the active
+        ///   connection was invalid.
+        ///
         /// `NM_ACTIVE_CONNECTION_STATE_REASON_IP_CONFIG_INVALID`
         IpConfigInvalid = 5,
+        /// The connection attempt to
+        ///   the VPN service timed out.
+        ///
         /// `NM_ACTIVE_CONNECTION_STATE_REASON_CONNECT_TIMEOUT`
         ConnectTimeout = 6,
+        /// A timeout occurred
+        ///   while starting the service providing the VPN connection.
+        ///
         /// `NM_ACTIVE_CONNECTION_STATE_REASON_SERVICE_START_TIMEOUT`
         ServiceStartTimeout = 7,
+        /// Starting the service
+        ///   providing the VPN connection failed.
+        ///
         /// `NM_ACTIVE_CONNECTION_STATE_REASON_SERVICE_START_FAILED`
         ServiceStartFailed = 8,
+        /// Necessary secrets for the
+        ///   connection were not provided.
+        ///
         /// `NM_ACTIVE_CONNECTION_STATE_REASON_NO_SECRETS`
         NoSecrets = 9,
+        /// Authentication to the
+        ///   server failed.
+        ///
         /// `NM_ACTIVE_CONNECTION_STATE_REASON_LOGIN_FAILED`
         LoginFailed = 10,
+        /// The connection was
+        ///   deleted from settings.
+        ///
         /// `NM_ACTIVE_CONNECTION_STATE_REASON_CONNECTION_REMOVED`
         ConnectionRemoved = 11,
+        /// Master connection of this
+        ///   connection failed to activate.
+        ///
         /// `NM_ACTIVE_CONNECTION_STATE_REASON_DEPENDENCY_FAILED`
         DependencyFailed = 12,
+        /// Could not create the
+        ///   software device link.
+        ///
         /// `NM_ACTIVE_CONNECTION_STATE_REASON_DEVICE_REALIZE_FAILED`
         DeviceRealizeFailed = 13,
+        /// The device this connection
+        ///   depended on disappeared.
+        ///
         /// `NM_ACTIVE_CONNECTION_STATE_REASON_DEVICE_REMOVED`
         DeviceRemoved = 14,
     }
 }
 
-nm_flags! {
-    /// NMSecretAgentGetSecretsFlags values modify the behavior of a GetSecrets request.
+nm_enum! {
+    /// Errors returned from the secret-agent manager.
     ///
-    /// `NMSecretAgentGetSecretsFlags` in NetworkManager, sent over D-Bus as `u`.
-    pub enum SecretAgentGetSecretsFlags: u32 {
-        /// no special behavior; by default no user interaction is allowed and requests for secrets are fulfilled from persistent storage, or if no secrets are available an error is returned.
-        /// `NM_SECRET_AGENT_GET_SECRETS_FLAG_NONE`
-        NONE = 0,
-        /// allows the request to interact with the user, possibly prompting via UI for secrets if any are required, or if none are found in persistent storage.
-        /// `NM_SECRET_AGENT_GET_SECRETS_FLAG_ALLOW_INTERACTION`
-        ALLOW_INTERACTION = 1,
-        /// explicitly prompt for new secrets from the user.  This flag signals that NetworkManager thinks any existing secrets are invalid or wrong.  This flag implies that interaction is allowed.
-        /// `NM_SECRET_AGENT_GET_SECRETS_FLAG_REQUEST_NEW`
-        REQUEST_NEW = 2,
-        /// set if the request was initiated by user-requested action via the D-Bus interface, as opposed to automatically initiated by NetworkManager in response to (for example) scan results or carrier changes.
-        /// `NM_SECRET_AGENT_GET_SECRETS_FLAG_USER_REQUESTED`
-        USER_REQUESTED = 4,
-        /// indicates that WPS enrollment is active with PBC method. The agent may suggest that the user pushes a button on the router instead of supplying a PSK.
-        /// `NM_SECRET_AGENT_GET_SECRETS_FLAG_WPS_PBC_ACTIVE`
-        WPS_PBC_ACTIVE = 8,
-        /// Internal flag, not part of the D-Bus API.
-        /// `NM_SECRET_AGENT_GET_SECRETS_FLAG_ONLY_SYSTEM`
-        ONLY_SYSTEM = 2147483648,
-        /// Internal flag, not part of the D-Bus API.
-        /// `NM_SECRET_AGENT_GET_SECRETS_FLAG_NO_ERRORS`
-        NO_ERRORS = 1073741824,
+    /// These errors may be returned from operations that could cause secrets to be
+    /// requested (such as nm_client_activate_connection()), and correspond to D-Bus
+    /// errors in the "org.freedesktop.NetworkManager.AgentManager" namespace.
+    ///
+    /// `NMAgentManagerError` in NetworkManager, sent over D-Bus as `u`.
+    pub enum AgentManagerError: u32 {
+        /// unknown or unspecified error
+        ///
+        /// `NM_AGENT_MANAGER_ERROR_FAILED`
+        Failed = 0,
+        /// The caller does not have permission
+        ///   to register a secret agent, or is trying to register the same secret agent
+        ///   twice.
+        ///
+        /// `NM_AGENT_MANAGER_ERROR_PERMISSION_DENIED`
+        PermissionDenied = 1,
+        /// The identifier is not a valid
+        ///   secret agent identifier.
+        ///
+        /// `NM_AGENT_MANAGER_ERROR_INVALID_IDENTIFIER`
+        InvalidIdentifier = 2,
+        /// The caller tried to unregister an agent
+        ///   that was not registered.
+        ///
+        /// `NM_AGENT_MANAGER_ERROR_NOT_REGISTERED`
+        NotRegistered = 3,
+        /// No secret agent returned secrets for this
+        ///   request
+        ///
+        /// `NM_AGENT_MANAGER_ERROR_NO_SECRETS`
+        NoSecrets = 4,
+        /// The user canceled the secrets request.
+        ///
+        /// `NM_AGENT_MANAGER_ERROR_USER_CANCELED`
+        UserCanceled = 5,
     }
 }
 
 nm_flags! {
-    /// NMSecretAgentCapabilities indicate various capabilities of the agent.
+    /// NMBluetoothCapabilities values indicate the usable capabilities of a
+    /// Bluetooth device.
     ///
-    /// `NMSecretAgentCapabilities` in NetworkManager, sent over D-Bus as `u`.
-    pub enum SecretAgentCapabilities: u32 {
-        /// the agent supports no special capabilities
-        /// `NM_SECRET_AGENT_CAPABILITY_NONE`
+    /// `NMBluetoothCapabilities` in NetworkManager, sent over D-Bus as `u`.
+    pub enum BluetoothCapabilities: u32 {
+        /// device has no usable capabilities
+        ///
+        /// `NM_BT_CAPABILITY_NONE`
         NONE = 0,
-        /// the agent supports passing hints to VPN plugin authentication dialogs.
-        /// `NM_SECRET_AGENT_CAPABILITY_VPN_HINTS`
-        VPN_HINTS = 1,
+        /// device provides Dial-Up Networking capability
+        ///
+        /// `NM_BT_CAPABILITY_DUN`
+        DUN = 1,
+        /// device provides Network Access Point capability
+        ///
+        /// `NM_BT_CAPABILITY_NAP`
+        NAP = 2,
     }
 }
 
 nm_enum! {
-    /// The tunneling mode.
+    /// NMCapability names the numbers in the Capabilities property.
+    /// Capabilities are positive numbers. They are part of stable API
+    /// and a certain capability number is guaranteed not to change.
     ///
-    /// Since: 1.2
+    /// The range 0x7000 - 0x7FFF of capabilities is guaranteed not to be
+    /// used by upstream NetworkManager. It could thus be used for downstream
+    /// extensions.
     ///
-    /// `NMIPTunnelMode` in NetworkManager, sent over D-Bus as `u`.
-    pub enum IPTunnelMode: u32 {
-        /// Unknown/unset tunnel mode
-        /// `NM_IP_TUNNEL_MODE_UNKNOWN`
-        Unknown = 0,
-        /// IP in IP tunnel
-        /// `NM_IP_TUNNEL_MODE_IPIP`
-        Ipip = 1,
-        /// GRE tunnel
-        /// `NM_IP_TUNNEL_MODE_GRE`
-        Gre = 2,
-        /// SIT tunnel
-        /// `NM_IP_TUNNEL_MODE_SIT`
-        Sit = 3,
-        /// ISATAP tunnel
-        /// `NM_IP_TUNNEL_MODE_ISATAP`
-        Isatap = 4,
-        /// VTI tunnel
-        /// `NM_IP_TUNNEL_MODE_VTI`
-        Vti = 5,
-        /// IPv6 in IPv6 tunnel
-        /// `NM_IP_TUNNEL_MODE_IP6IP6`
-        IP6IP6 = 6,
-        /// IPv4 in IPv6 tunnel
-        /// `NM_IP_TUNNEL_MODE_IPIP6`
-        IPIP6 = 7,
-        /// IPv6 GRE tunnel
-        /// `NM_IP_TUNNEL_MODE_IP6GRE`
-        IP6GRE = 8,
-        /// IPv6 VTI tunnel
-        /// `NM_IP_TUNNEL_MODE_VTI6`
-        VTI6 = 9,
-        /// GRETAP tunnel
-        /// `NM_IP_TUNNEL_MODE_GRETAP`
-        Gretap = 10,
-        /// IPv6 GRETAP tunnel
-        /// `NM_IP_TUNNEL_MODE_IP6GRETAP`
-        IP6GRETAP = 11,
+    /// `NMCapability` in NetworkManager, sent over D-Bus as `u`.
+    pub enum Capability: u32 {
+        /// Teams can be managed. This means the team device plugin
+        ///   is loaded.
+        ///
+        /// `NM_CAPABILITY_TEAM`
+        Team = 1,
+        /// OpenVSwitch can be managed. This means the OVS device plugin
+        ///   is loaded. Since: 1.24.
+        ///
+        /// `NM_CAPABILITY_OVS`
+        Ovs = 2,
     }
 }
 
 nm_flags! {
     /// The flags for CheckpointCreate call
     ///
-    /// Since: 1.12: Public since 1.4, g-ir since 1.12.
-    ///
     /// `NMCheckpointCreateFlags` in NetworkManager, sent over D-Bus as `u`.
     pub enum CheckpointCreateFlags: u32 {
         /// no flags
+        ///
         /// `NM_CHECKPOINT_CREATE_FLAG_NONE`
         NONE = 0,
-        /// when creating a new checkpoint, destroy all existing ones.
+        /// when creating
+        ///   a new checkpoint, destroy all existing ones.
+        ///
         /// `NM_CHECKPOINT_CREATE_FLAG_DESTROY_ALL`
         DESTROY_ALL = 1,
-        /// upon rollback, delete any new connection added after the checkpoint. Since: 1.6.
+        /// upon rollback,
+        ///   delete any new connection added after the checkpoint. Since: 1.6.
+        ///
         /// `NM_CHECKPOINT_CREATE_FLAG_DELETE_NEW_CONNECTIONS`
         DELETE_NEW_CONNECTIONS = 2,
-        /// upon rollback, disconnect any new device appeared after the checkpoint. Since: 1.6.
+        /// upon rollback,
+        ///   disconnect any new device appeared after the checkpoint. Since: 1.6.
+        ///
         /// `NM_CHECKPOINT_CREATE_FLAG_DISCONNECT_NEW_DEVICES`
         DISCONNECT_NEW_DEVICES = 4,
-        /// by default, creating a checkpoint fails if there are already existing checkpoints that reference the same devices. With this flag, creation of such checkpoints is allowed, however, if an older checkpoint that references overlapping devices gets rolled back, it will automatically destroy this checkpoint during rollback. This allows one to create several overlapping checkpoints in parallel, and rollback to them at will. With the special case that rolling back to an older checkpoint will invalidate all overlapping younger checkpoints. This opts-in that the checkpoint can be automatically destroyed by the rollback of an older checkpoint. Since: 1.12.
+        /// by default, creating
+        ///   a checkpoint fails if there are already existing checkpoints that
+        ///   reference the same devices. With this flag, creation of such
+        ///   checkpoints is allowed, however, if an older checkpoint
+        ///   that references overlapping devices gets rolled back, it will
+        ///   automatically destroy this checkpoint during rollback. This
+        ///   allows one to create several overlapping checkpoints in parallel,
+        ///   and rollback to them at will. With the special case that
+        ///   rolling back to an older checkpoint will invalidate all
+        ///   overlapping younger checkpoints. This opts-in that the
+        ///   checkpoint can be automatically destroyed by the rollback
+        ///   of an older checkpoint. Since: 1.12.
+        ///
         /// `NM_CHECKPOINT_CREATE_FLAG_ALLOW_OVERLAPPING`
         ALLOW_OVERLAPPING = 8,
-        /// during rollback, by default externally added ports attached to bridge devices are preserved. With this flag, the rollback detaches all external ports. This only has an effect for bridge ports. Before 1.38, this was the default behavior. Since: 1.38.
+        /// during rollback,
+        ///   by default externally added ports attached to bridge devices are preserved.
+        ///   With this flag, the rollback detaches all external ports.
+        ///   This only has an effect for bridge ports. Before 1.38, this was the default
+        ///   behavior. Since: 1.38.
+        ///
         /// `NM_CHECKPOINT_CREATE_FLAG_NO_PRESERVE_EXTERNAL_PORTS`
         NO_PRESERVE_EXTERNAL_PORTS = 16,
-        /// during rollback, by default changes to global DNS via D-BUS interface are preserved. With this flag, the rollback reverts the global DNS changes made via D-Bus interface. Global DNS defined in \[global-dns\] section of NetworkManager.conf is not impacted by this flag. Since: 1.48.
+        /// during rollback,
+        ///   by default changes to global DNS via D-BUS interface are preserved.
+        ///   With this flag, the rollback reverts the global DNS changes made via D-Bus
+        ///   interface. Global DNS defined in \[global-dns\] section of
+        ///   NetworkManager.conf is not impacted by this flag. Since: 1.48.
+        ///
         /// `NM_CHECKPOINT_CREATE_FLAG_TRACK_INTERNAL_GLOBAL_DNS`
         TRACK_INTERNAL_GLOBAL_DNS = 32,
     }
 }
 
 nm_enum! {
-    /// The result of a checkpoint Rollback() operation for a specific device.
+    /// Describes errors that may result from operations involving a NMClient.
     ///
-    /// Since: 1.4
+    /// D-Bus operations may also return errors from other domains, including
+    /// NMManagerError, NMSettingsError, NMAgentManagerError, and NMConnectionError.
     ///
-    /// `NMRollbackResult` in NetworkManager, sent over D-Bus as `u`.
-    pub enum RollbackResult: u32 {
-        /// the rollback succeeded.
-        /// `NM_ROLLBACK_RESULT_OK`
-        Ok = 0,
-        /// the device no longer exists.
-        /// `NM_ROLLBACK_RESULT_ERR_NO_DEVICE`
-        ErrNoDevice = 1,
-        /// the device is now unmanaged.
-        /// `NM_ROLLBACK_RESULT_ERR_DEVICE_UNMANAGED`
-        ErrDeviceUnmanaged = 2,
-        /// other errors during rollback.
-        /// `NM_ROLLBACK_RESULT_ERR_FAILED`
-        ErrFailed = 3,
+    /// `NMClientError` in NetworkManager, sent over D-Bus as `u`.
+    pub enum ClientError: u32 {
+        /// unknown or unclassified error
+        ///
+        /// `NM_CLIENT_ERROR_FAILED`
+        Failed = 0,
+        /// an operation that requires NetworkManager
+        ///   failed because NetworkManager is not running
+        ///
+        /// `NM_CLIENT_ERROR_MANAGER_NOT_RUNNING`
+        ManagerNotRunning = 1,
+        /// NetworkManager claimed that an
+        ///   operation succeeded, but the object that was allegedly created (eg,
+        ///   NMRemoteConnection, NMActiveConnection) was apparently destroyed before
+        ///   NMClient could create a representation of it.
+        ///
+        /// `NM_CLIENT_ERROR_OBJECT_CREATION_FAILED`
+        ObjectCreationFailed = 2,
     }
 }
 
 nm_flags! {
-    /// Flags describing the current activation state.
-    ///
-    /// Since: 1.12
-    ///
-    /// `NMSettingsConnectionFlags` in NetworkManager, sent over D-Bus as `u`.
-    pub enum SettingsConnectionFlags: u32 {
-        /// an alias for numeric zero, no flags set.
-        /// `NM_SETTINGS_CONNECTION_FLAG_NONE`
+    /// `NMClientInstanceFlags` in NetworkManager, sent over D-Bus as `u`.
+    pub enum ClientInstanceFlags: u32 {
+        /// special value to indicate no flags.
+        ///
+        /// `NM_CLIENT_INSTANCE_FLAGS_NONE`
         NONE = 0,
-        /// the connection is not saved to disk. That either means, that the connection is in-memory only and currently is not backed by a file. Or, that the connection is backed by a file, but has modifications in-memory that were not persisted to disk.
-        /// `NM_SETTINGS_CONNECTION_FLAG_UNSAVED`
-        UNSAVED = 1,
-        /// A connection is "nm-generated" if it was generated by NetworkManger. If the connection gets modified or saved by the user, the flag gets cleared. A nm-generated is also unsaved and has no backing file as it is in-memory only.
-        /// `NM_SETTINGS_CONNECTION_FLAG_NM_GENERATED`
-        NM_GENERATED = 2,
-        /// The connection will be deleted when it disconnects. That is for in-memory connections (unsaved), which are currently active but deleted on disconnect. Volatile connections are always unsaved, but they are also no backing file on disk and are entirely in-memory only.
-        /// `NM_SETTINGS_CONNECTION_FLAG_VOLATILE`
-        VOLATILE = 4,
-        /// the profile was generated to represent an external configuration of a networking device. Since: 1.26.
-        /// `NM_SETTINGS_CONNECTION_FLAG_EXTERNAL`
-        EXTERNAL = 8,
-    }
-}
-
-nm_flags! {
-    /// Flags describing the current activation state.
-    ///
-    /// Since: 1.10
-    ///
-    /// `NMActivationStateFlags` in NetworkManager, sent over D-Bus as `u`.
-    pub enum ActivationStateFlags: u32 {
-        /// an alias for numeric zero, no flags set.
-        /// `NM_ACTIVATION_STATE_FLAG_NONE`
-        NONE = 0,
-        /// the device is a controller.
-        /// `NM_ACTIVATION_STATE_FLAG_IS_CONTROLLER`
-        IS_CONTROLLER = 1,
-        /// the device is a port.
-        /// `NM_ACTIVATION_STATE_FLAG_IS_PORT`
-        IS_PORT = 2,
-        /// layer2 is activated and ready.
-        /// `NM_ACTIVATION_STATE_FLAG_LAYER2_READY`
-        LAYER2_READY = 4,
-        /// IPv4 setting is completed.
-        /// `NM_ACTIVATION_STATE_FLAG_IP4_READY`
-        IP4_READY = 8,
-        /// IPv6 setting is completed.
-        /// `NM_ACTIVATION_STATE_FLAG_IP6_READY`
-        IP6_READY = 16,
-        /// The controller has any port devices attached. This only makes sense if the device is a controller.
-        /// `NM_ACTIVATION_STATE_FLAG_CONTROLLER_HAS_PORTS`
-        CONTROLLER_HAS_PORTS = 32,
-        /// the lifetime of the activation is bound to the visibility of the connection profile, which in turn depends on "connection.permissions" and whether a session for the user exists. Since: 1.16.
-        /// `NM_ACTIVATION_STATE_FLAG_LIFETIME_BOUND_TO_PROFILE_VISIBILITY`
-        LIFETIME_BOUND_TO_PROFILE_VISIBILITY = 64,
-        /// the active connection was generated to represent an external configuration of a networking device. Since: 1.26.
-        /// `NM_ACTIVATION_STATE_FLAG_EXTERNAL`
-        EXTERNAL = 128,
-    }
-}
-
-nm_flags! {
-    /// Numeric flags for the "flags" argument of AddConnection2() D-Bus API.
-    ///
-    /// Since: 1.20
-    ///
-    /// `NMSettingsAddConnection2Flags` in NetworkManager, sent over D-Bus as `u`.
-    pub enum SettingsAddConnection2Flags: u32 {
-        /// an alias for numeric zero, no flags set.
-        /// `NM_SETTINGS_ADD_CONNECTION2_FLAG_NONE`
-        NONE = 0,
-        /// to persist the connection to disk.
-        /// `NM_SETTINGS_ADD_CONNECTION2_FLAG_TO_DISK`
-        TO_DISK = 1,
-        /// to make the connection in-memory only.
-        /// `NM_SETTINGS_ADD_CONNECTION2_FLAG_IN_MEMORY`
-        IN_MEMORY = 2,
-        /// usually, when the connection has autoconnect enabled and gets added, it becomes eligible to autoconnect right away. Setting this flag, disables autoconnect until the connection is manually activated.
-        /// `NM_SETTINGS_ADD_CONNECTION2_FLAG_BLOCK_AUTOCONNECT`
-        BLOCK_AUTOCONNECT = 32,
-    }
-}
-
-nm_flags! {
-    /// Since: 1.12
-    ///
-    /// `NMSettingsUpdate2Flags` in NetworkManager, sent over D-Bus as `u`.
-    pub enum SettingsUpdate2Flags: u32 {
-        /// an alias for numeric zero, no flags set.
-        /// `NM_SETTINGS_UPDATE2_FLAG_NONE`
-        NONE = 0,
-        /// to persist the connection to disk.
-        /// `NM_SETTINGS_UPDATE2_FLAG_TO_DISK`
-        TO_DISK = 1,
-        /// makes the profile in-memory. Note that such profiles are stored in keyfile format under /run. If the file is already in-memory, the file in /run is updated in-place. Otherwise, the previous storage for the profile is left unchanged on disk, and the in-memory copy shadows it. Note that the original filename of the previous persistent storage (if any) is remembered. That means, when later persisting the profile again to disk, the file on disk will be overwritten again. Likewise, when finally deleting the profile, both the storage from /run and persistent storage are deleted (or if the persistent storage does not allow deletion, and nmmeta file is written to mark the UUID as deleted).
-        /// `NM_SETTINGS_UPDATE2_FLAG_IN_MEMORY`
-        IN_MEMORY = 2,
-        /// this is almost the same as NM_SETTINGS_UPDATE2_FLAG_IN_MEMORY, with one difference: when later deleting the profile, the original profile will not be deleted. Instead a nmmeta file is written to /run to indicate that the profile is gone. Note that if such a nmmeta tombstone file exists and hides a file in persistent storage, then when re-adding the profile with the same UUID, then the original storage is taken over again.
-        /// `NM_SETTINGS_UPDATE2_FLAG_IN_MEMORY_DETACHED`
-        IN_MEMORY_DETACHED = 4,
-        /// this is like NM_SETTINGS_UPDATE2_FLAG_IN_MEMORY, but if the connection has a corresponding file on persistent storage, the file will be deleted right away. If the profile is later again persisted to disk, a new, unused filename will be chosen.
-        /// `NM_SETTINGS_UPDATE2_FLAG_IN_MEMORY_ONLY`
-        IN_MEMORY_ONLY = 8,
-        /// This can be specified with either NM_SETTINGS_UPDATE2_FLAG_IN_MEMORY, NM_SETTINGS_UPDATE2_FLAG_IN_MEMORY_DETACHED or NM_SETTINGS_UPDATE2_FLAG_IN_MEMORY_ONLY. After making the connection in-memory only, the connection is marked as volatile. That means, if the connection is currently not active it will be deleted right away. Otherwise, it is marked to for deletion once the connection deactivates. A volatile connection cannot autoactivate again (because it's about to be deleted), but a manual activation will clear the volatile flag.
-        /// `NM_SETTINGS_UPDATE2_FLAG_VOLATILE`
-        VOLATILE = 16,
-        /// usually, when the connection has autoconnect enabled and is modified, it becomes eligible to autoconnect right away. Setting this flag, disables autoconnect until the connection is manually activated.
-        /// `NM_SETTINGS_UPDATE2_FLAG_BLOCK_AUTOCONNECT`
-        BLOCK_AUTOCONNECT = 32,
-        /// when a profile gets modified that is currently active, then these changes don't take effect for the active device unless the profile gets reactivated or the configuration reapplied. There are two exceptions: by default "connection.zone" and "connection.metered" properties take effect immediately. Specify this flag to prevent these properties to take effect, so that the change is restricted to modify the profile. Since: 1.20.
-        /// `NM_SETTINGS_UPDATE2_FLAG_NO_REAPPLY`
-        NO_REAPPLY = 64,
-    }
-}
-
-nm_flags! {
-    /// Flags for the Reapply() D-Bus call of a device and
-    /// nm_device_reapply_async().
-    ///
-    /// Since: 1.42
-    ///
-    /// `NMDeviceReapplyFlags` in NetworkManager, sent over D-Bus as `u`.
-    pub enum DeviceReapplyFlags: u32 {
-        /// no flag set.
-        /// `NM_DEVICE_REAPPLY_FLAGS_NONE`
-        NONE = 0,
-        /// during reapply, preserve external IP addresses and routes.
-        /// `NM_DEVICE_REAPPLY_FLAGS_PRESERVE_EXTERNAL_IP`
-        PRESERVE_EXTERNAL_IP = 1,
-    }
-}
-
-nm_enum! {
-    /// Values for the SetManaged() D-Bus call of a device and nm_device_set_managed_async().
-    ///
-    /// Since: 1.58
-    ///
-    /// `NMDeviceManaged` in NetworkManager, sent over D-Bus as `u`.
-    pub enum DeviceManaged: u32 {
-        /// the device is not managed.
-        /// `NM_DEVICE_MANAGED_NO`
-        No = 0,
-        /// the device is managed.
-        /// `NM_DEVICE_MANAGED_YES`
-        Yes = 1,
-        /// reset the device managed state to the default value.
-        /// `NM_DEVICE_MANAGED_RESET`
-        Reset = 2,
-    }
-}
-
-nm_flags! {
-    /// Flags for the SetManaged() D-Bus call of a device and nm_device_set_managed_async().
-    ///
-    /// NM_DEVICE_MANAGED_FLAGS_PERMANENT_BY_NAME and NM_DEVICE_MANAGED_FLAGS_PERMANENT_BY_MAC
-    /// are mutually exclusive, and they only make sense together with NM_DEVICE_MANAGED_FLAGS_PERMANENT.
-    /// If none is set, the matching criteria is selected automatically.
-    ///
-    /// Since: 1.58
-    ///
-    /// `NMDeviceManagedFlags` in NetworkManager, sent over D-Bus as `u`.
-    pub enum DeviceManagedFlags: u32 {
-        /// no flag set.
-        /// `NM_DEVICE_MANAGED_FLAGS_NONE`
-        NONE = 0,
-        /// to set the device managed state to the runtime value.
-        /// `NM_DEVICE_MANAGED_FLAGS_RUNTIME`
-        RUNTIME = 1,
-        /// to set the device managed state to the permanent (on disk) value.
-        /// `NM_DEVICE_MANAGED_FLAGS_PERMANENT`
-        PERMANENT = 2,
-        /// to match the device by name, not by MAC address.
-        /// `NM_DEVICE_MANAGED_FLAGS_PERMANENT_BY_NAME`
-        PERMANENT_BY_NAME = 4,
-        /// to match the device by MAC address, not by name.
-        /// `NM_DEVICE_MANAGED_FLAGS_PERMANENT_BY_MAC`
-        PERMANENT_BY_MAC = 8,
-        /// to set the administrative state of the device to up if the managed state is NM_DEVICE_MANAGED_YES, and down if the managed state is NM_DEVICE_MANAGED_NO. If the flag is not set, the administrative state is not changed. The flag is ignored for NM_DEVICE_MANAGED_RESET.
-        /// `NM_DEVICE_MANAGED_FLAGS_SET_ADMIN_STATE`
-        SET_ADMIN_STATE = 16,
-        /// all flags.
-        /// `NM_DEVICE_MANAGED_FLAGS_ALL`
-        ALL = 31,
-    }
-}
-
-nm_enum! {
-    /// An boolean value that can be overridden by a default.
-    ///
-    /// Since: 1.14
-    ///
-    /// `NMTernary` in NetworkManager, sent over D-Bus as `i`.
-    pub enum Ternary: i32 {
-        /// use the globally-configured default value.
-        /// `NM_TERNARY_DEFAULT`
-        Default = -1,
-        /// the option is disabled.
-        /// `NM_TERNARY_FALSE`
-        False = 0,
-        /// the option is enabled.
-        /// `NM_TERNARY_TRUE`
-        True = 1,
-    }
-}
-
-nm_flags! {
-    /// Flags for the manager Reload() call.
-    ///
-    /// Since: 1.22
-    ///
-    /// `NMManagerReloadFlags` in NetworkManager, sent over D-Bus as `u`.
-    pub enum ManagerReloadFlags: u32 {
-        /// reload the NetworkManager.conf configuration from disk. Note that this does not include connections, which can be reloaded via Setting's ReloadConnections().
-        /// `NM_MANAGER_RELOAD_FLAG_CONF`
-        CONF = 1,
-        /// update DNS configuration, which usually involves writing /etc/resolv.conf anew.
-        /// `NM_MANAGER_RELOAD_FLAG_DNS_RC`
-        DNS_RC = 2,
-        /// means to restart the DNS plugin. This is for example useful when using dnsmasq plugin, which uses additional configuration in /etc/NetworkManager/dnsmasq.d. If you edit those files, you can restart the DNS plugin. This action shortly interrupts name resolution.
-        /// `NM_MANAGER_RELOAD_FLAG_DNS_FULL`
-        DNS_FULL = 4,
-    }
-}
-
-nm_flags! {
-    /// Flags for a network interface.
-    ///
-    /// Since: 1.22
-    ///
-    /// `NMDeviceInterfaceFlags` in NetworkManager, sent over D-Bus as `u`.
-    pub enum DeviceInterfaceFlags: u32 {
-        /// the interface is enabled from the administrative point of view. Corresponds to kernel IFF_UP.
-        /// `NM_DEVICE_INTERFACE_FLAG_UP`
-        UP = 1,
-        /// the physical link is up. Corresponds to kernel IFF_LOWER_UP.
-        /// `NM_DEVICE_INTERFACE_FLAG_LOWER_UP`
-        LOWER_UP = 2,
-        /// receive all packets. Corresponds to kernel IFF_PROMISC. Since: 1.32.
-        /// `NM_DEVICE_INTERFACE_FLAG_PROMISC`
-        PROMISC = 4,
-        /// the interface has carrier. In most cases this is equal to the value of @NM_DEVICE_INTERFACE_FLAG_LOWER_UP. However some devices have a non-standard carrier detection mechanism.
-        /// `NM_DEVICE_INTERFACE_FLAG_CARRIER`
-        CARRIER = 65536,
-        /// the flag to indicate device LLDP status. Since: 1.32.
-        /// `NM_DEVICE_INTERFACE_FLAG_LLDP_CLIENT_ENABLED`
-        LLDP_CLIENT_ENABLED = 131072,
+        /// by default, NMClient
+        ///   will fetch the permissions via "GetPermissions" and refetch them when
+        ///   "CheckPermissions" signal gets received. By setting this flag, this behavior
+        ///   can be disabled. You can toggle this flag to enable and disable automatic
+        ///   fetching of the permissions. Watch also nm_client_get_permissions_state()
+        ///   to know whether the permissions are up to date.
+        ///
+        /// `NM_CLIENT_INSTANCE_FLAGS_NO_AUTO_FETCH_PERMISSIONS`
+        NO_AUTO_FETCH_PERMISSIONS = 1,
+        /// as NMClient is an GInitable
+        ///   and GAsyncInitable, nm_client_get_instance_flags() returns this flag
+        ///   once initialization completed with success. This flag cannot be set
+        ///   as NM_CLIENT_INSTANCE_FLAGS property. Since: 1.42.
+        ///
+        /// `NM_CLIENT_INSTANCE_FLAGS_INITIALIZED_GOOD`
+        INITIALIZED_GOOD = 2,
+        /// like @NM_CLIENT_INSTANCE_FLAGS_INITIALIZED_GOOD
+        ///   indicates that the instance completed initialization with failure. In that
+        ///   case the instance is unusable. Since: 1.42.
+        ///
+        /// `NM_CLIENT_INSTANCE_FLAGS_INITIALIZED_BAD`
+        INITIALIZED_BAD = 4,
     }
 }
 
@@ -1252,57 +525,89 @@ nm_enum! {
     /// `NMClientPermission` in NetworkManager, sent over D-Bus as `u`.
     pub enum ClientPermission: u32 {
         /// unknown or no permission
+        ///
         /// `NM_CLIENT_PERMISSION_NONE`
         None = 0,
-        /// controls whether networking can be globally enabled or disabled
+        /// controls whether networking
+        ///  can be globally enabled or disabled
+        ///
         /// `NM_CLIENT_PERMISSION_ENABLE_DISABLE_NETWORK`
         EnableDisableNetwork = 1,
-        /// controls whether Wi-Fi can be globally enabled or disabled
+        /// controls whether Wi-Fi can be
+        ///  globally enabled or disabled
+        ///
         /// `NM_CLIENT_PERMISSION_ENABLE_DISABLE_WIFI`
         EnableDisableWifi = 2,
-        /// controls whether WWAN (3G) can be globally enabled or disabled
+        /// controls whether WWAN (3G) can be
+        ///  globally enabled or disabled
+        ///
         /// `NM_CLIENT_PERMISSION_ENABLE_DISABLE_WWAN`
         EnableDisableWwan = 3,
-        /// controls whether WiMAX can be globally enabled or disabled
+        /// controls whether WiMAX can be
+        ///  globally enabled or disabled
+        ///
         /// `NM_CLIENT_PERMISSION_ENABLE_DISABLE_WIMAX`
         EnableDisableWimax = 4,
-        /// controls whether the client can ask NetworkManager to sleep and wake
+        /// controls whether the client can ask
+        ///  NetworkManager to sleep and wake
+        ///
         /// `NM_CLIENT_PERMISSION_SLEEP_WAKE`
         SleepWake = 5,
-        /// controls whether networking connections can be started, stopped, and changed
+        /// controls whether networking connections
+        ///  can be started, stopped, and changed
+        ///
         /// `NM_CLIENT_PERMISSION_NETWORK_CONTROL`
         NetworkControl = 6,
-        /// controls whether a password protected Wi-Fi hotspot can be created
+        /// controls whether a password
+        ///  protected Wi-Fi hotspot can be created
+        ///
         /// `NM_CLIENT_PERMISSION_WIFI_SHARE_PROTECTED`
         WifiShareProtected = 7,
-        /// controls whether an open Wi-Fi hotspot can be created
+        /// controls whether an open Wi-Fi hotspot
+        ///  can be created
+        ///
         /// `NM_CLIENT_PERMISSION_WIFI_SHARE_OPEN`
         WifiShareOpen = 8,
-        /// controls whether connections that are available to all users can be modified
+        /// controls whether connections
+        ///  that are available to all users can be modified
+        ///
         /// `NM_CLIENT_PERMISSION_SETTINGS_MODIFY_SYSTEM`
         SettingsModifySystem = 9,
-        /// controls whether connections owned by the current user can be modified
+        /// controls whether connections
+        ///  owned by the current user can be modified
+        ///
         /// `NM_CLIENT_PERMISSION_SETTINGS_MODIFY_OWN`
         SettingsModifyOwn = 10,
-        /// controls whether the persistent hostname can be changed
+        /// controls whether the
+        ///  persistent hostname can be changed
+        ///
         /// `NM_CLIENT_PERMISSION_SETTINGS_MODIFY_HOSTNAME`
         SettingsModifyHostname = 11,
-        /// modify persistent global DNS configuration
+        /// modify persistent global
+        ///  DNS configuration
+        ///
         /// `NM_CLIENT_PERMISSION_SETTINGS_MODIFY_GLOBAL_DNS`
         SettingsModifyGlobalDns = 12,
         /// controls access to Reload.
+        ///
         /// `NM_CLIENT_PERMISSION_RELOAD`
         Reload = 13,
         /// permission to create checkpoints.
+        ///
         /// `NM_CLIENT_PERMISSION_CHECKPOINT_ROLLBACK`
         CheckpointRollback = 14,
-        /// controls whether device statistics can be globally enabled or disabled
+        /// controls whether device
+        ///  statistics can be globally enabled or disabled
+        ///
         /// `NM_CLIENT_PERMISSION_ENABLE_DISABLE_STATISTICS`
         EnableDisableStatistics = 15,
-        /// controls whether connectivity check can be enabled or disabled
+        /// controls whether
+        ///  connectivity check can be enabled or disabled
+        ///
         /// `NM_CLIENT_PERMISSION_ENABLE_DISABLE_CONNECTIVITY_CHECK`
         EnableDisableConnectivityCheck = 16,
         /// controls whether wifi scans can be performed
+        ///
         /// `NM_CLIENT_PERMISSION_WIFI_SCAN`
         WifiScan = 17,
     }
@@ -1315,169 +620,1975 @@ nm_enum! {
     /// `NMClientPermissionResult` in NetworkManager, sent over D-Bus as `u`.
     pub enum ClientPermissionResult: u32 {
         /// unknown or no authorization
+        ///
         /// `NM_CLIENT_PERMISSION_RESULT_UNKNOWN`
         Unknown = 0,
         /// the permission is available
+        ///
         /// `NM_CLIENT_PERMISSION_RESULT_YES`
         Yes = 1,
-        /// authorization is necessary before the permission is available
+        /// authorization is necessary before the
+        ///  permission is available
+        ///
         /// `NM_CLIENT_PERMISSION_RESULT_AUTH`
         Auth = 2,
-        /// permission to perform the operation is denied by system policy
+        /// permission to perform the operation is
+        ///  denied by system policy
+        ///
         /// `NM_CLIENT_PERMISSION_RESULT_NO`
         No = 3,
+    }
+}
+
+nm_enum! {
+    /// Describes errors that may result from operations involving a NMConnection
+    /// or its NMSettings.
+    ///
+    /// These errors may be returned directly from NMConnection and NMSetting
+    /// methods, or may be returned from D-Bus operations (eg on NMClient or
+    /// NMDevice), where they correspond to errors in the
+    /// "org.freedesktop.NetworkManager.Settings.Connection" namespace.
+    ///
+    /// `NMConnectionError` in NetworkManager, sent over D-Bus as `u`.
+    pub enum ConnectionError: u32 {
+        /// unknown or unclassified error
+        ///
+        /// `NM_CONNECTION_ERROR_FAILED`
+        Failed = 0,
+        /// the NMConnection object
+        ///   did not contain the specified NMSetting object
+        ///
+        /// `NM_CONNECTION_ERROR_SETTING_NOT_FOUND`
+        SettingNotFound = 1,
+        /// the NMConnection did not contain the
+        ///   requested NMSetting property
+        ///
+        /// `NM_CONNECTION_ERROR_PROPERTY_NOT_FOUND`
+        PropertyNotFound = 2,
+        /// an operation which requires a secret
+        ///   was attempted on a non-secret property
+        ///
+        /// `NM_CONNECTION_ERROR_PROPERTY_NOT_SECRET`
+        PropertyNotSecret = 3,
+        /// the NMConnection object is missing an
+        ///   NMSetting which is required for its configuration. The error message will
+        ///   always be prefixed with "<setting-name>: ", where "<setting-name>" is the
+        ///   name of the setting that is missing.
+        ///
+        /// `NM_CONNECTION_ERROR_MISSING_SETTING`
+        MissingSetting = 4,
+        /// the NMConnection object contains an
+        ///   invalid or inappropriate NMSetting. The error message will always be
+        ///   prefixed with "<setting-name>: ", where "<setting-name>" is the name of the
+        ///   setting that is invalid.
+        ///
+        /// `NM_CONNECTION_ERROR_INVALID_SETTING`
+        InvalidSetting = 5,
+        /// the NMConnection object is invalid
+        ///   because it is missing a required property. The error message will always be
+        ///   prefixed with "<setting-name>.<property-name>: ", where "<setting-name>" is
+        ///   the name of the setting with the missing property, and "<property-name>" is
+        ///   the property that is missing.
+        ///
+        /// `NM_CONNECTION_ERROR_MISSING_PROPERTY`
+        MissingProperty = 6,
+        /// the NMConnection object is invalid
+        ///   because a property has an invalid value. The error message will always be
+        ///   prefixed with "<setting-name>.<property-name>: ", where "<setting-name>" is
+        ///   the name of the setting with the invalid property, and "<property-name>" is
+        ///   the property that is invalid.
+        ///
+        /// `NM_CONNECTION_ERROR_INVALID_PROPERTY`
+        InvalidProperty = 7,
+    }
+}
+
+nm_enum! {
+    /// `NMConnectionMultiConnect` in NetworkManager, sent over D-Bus as `u`.
+    pub enum ConnectionMultiConnect: u32 {
+        /// indicates that the per-connection
+        ///   setting is unspecified. In this case, it will fallback to the default
+        ///   value, which is NM_CONNECTION_MULTI_CONNECT_SINGLE.
+        ///
+        /// `NM_CONNECTION_MULTI_CONNECT_DEFAULT`
+        Default = 0,
+        /// the connection profile can only
+        ///   be active once at each moment. Activating a profile that is already active,
+        ///   will first deactivate it.
+        ///
+        /// `NM_CONNECTION_MULTI_CONNECT_SINGLE`
+        Single = 1,
+        /// the profile can
+        ///   be manually activated multiple times on different devices. However,
+        ///   regarding autoconnect, the profile will autoconnect only if it is
+        ///   currently not connected otherwise.
+        ///
+        /// `NM_CONNECTION_MULTI_CONNECT_MANUAL_MULTIPLE`
+        ManualMultiple = 2,
+        /// the profile can autoactivate
+        ///   and be manually activated multiple times together.
+        ///
+        /// `NM_CONNECTION_MULTI_CONNECT_MULTIPLE`
+        Multiple = 3,
+    }
+}
+
+nm_flags! {
+    /// These flags determine which properties are serialized when calling
+    /// nm_connection_to_dbus().
+    ///
+    /// `NMConnectionSerializationFlags` in NetworkManager, sent over D-Bus as `u`.
+    pub enum ConnectionSerializationFlags: u32 {
+        /// serialize all properties (including secrets)
+        ///
+        /// `NM_CONNECTION_SERIALIZE_ALL`
+        ALL = 0,
+        /// serialize properties that are
+        ///   not secrets. Since 1.32.
+        ///
+        /// `NM_CONNECTION_SERIALIZE_WITH_NON_SECRET`
+        WITH_NON_SECRET = 1,
+        /// serialize all secrets. This flag is
+        ///   ignored if any of @NM_CONNECTION_SERIALIZE_WITH_SECRETS_AGENT_OWNED,
+        ///   @NM_CONNECTION_SERIALIZE_WITH_SECRETS_SYSTEM_OWNED or
+        ///   @NM_CONNECTION_SERIALIZE_WITH_SECRETS_NOT_SAVED is set. Since 1.32.
+        ///
+        /// `NM_CONNECTION_SERIALIZE_WITH_SECRETS`
+        WITH_SECRETS = 2,
+        /// serialize agent-owned
+        ///   secrets. Since: 1.20.
+        ///
+        /// `NM_CONNECTION_SERIALIZE_WITH_SECRETS_AGENT_OWNED`
+        WITH_SECRETS_AGENT_OWNED = 4,
+        /// serialize system-owned
+        ///   secrets. Since: 1.32.
+        ///
+        /// `NM_CONNECTION_SERIALIZE_WITH_SECRETS_SYSTEM_OWNED`
+        WITH_SECRETS_SYSTEM_OWNED = 8,
+        /// serialize secrets that
+        ///   are marked as never saved. Since: 1.32.
+        ///
+        /// `NM_CONNECTION_SERIALIZE_WITH_SECRETS_NOT_SAVED`
+        WITH_SECRETS_NOT_SAVED = 16,
+    }
+}
+
+nm_enum! {
+    /// `NMConnectivityState` in NetworkManager, sent over D-Bus as `u`.
+    pub enum ConnectivityState: u32 {
+        /// Network connectivity is unknown. This means the
+        ///   connectivity checks are disabled (e.g. on server installations) or has
+        ///   not run yet. The graphical shell should assume the Internet connection
+        ///   might be available and not present a captive portal window.
+        ///
+        /// `NM_CONNECTIVITY_UNKNOWN`
+        Unknown = 0,
+        /// The host is not connected to any network. There's
+        ///   no active connection that contains a default route to the internet and
+        ///   thus it makes no sense to even attempt a connectivity check. The graphical
+        ///   shell should use this state to indicate the network connection is unavailable.
+        ///
+        /// `NM_CONNECTIVITY_NONE`
+        None = 1,
+        /// The Internet connection is hijacked by a captive
+        ///   portal gateway. The graphical shell may open a sandboxed web browser window
+        ///   (because the captive portals typically attempt a man-in-the-middle attacks
+        ///   against the https connections) for the purpose of authenticating to a gateway
+        ///   and retrigger the connectivity check with CheckConnectivity() when the
+        ///   browser window is dismissed.
+        ///
+        /// `NM_CONNECTIVITY_PORTAL`
+        Portal = 2,
+        /// The host is connected to a network, does not appear
+        ///   to be able to reach the full Internet, but a captive portal has not been
+        ///   detected.
+        ///
+        /// `NM_CONNECTIVITY_LIMITED`
+        Limited = 3,
+        /// The host is connected to a network, and
+        ///   appears to be able to reach the full Internet.
+        ///
+        /// `NM_CONNECTIVITY_FULL`
+        Full = 4,
+    }
+}
+
+nm_enum! {
+    /// Cryptography-related errors that can be returned from some nm-utils methods,
+    /// and some NMSetting8021x operations.
+    ///
+    /// `NMCryptoError` in NetworkManager, sent over D-Bus as `u`.
+    pub enum CryptoError: u32 {
+        /// generic failure
+        ///
+        /// `NM_CRYPTO_ERROR_FAILED`
+        Failed = 0,
+        /// the certificate or key data provided
+        ///   was invalid
+        ///
+        /// `NM_CRYPTO_ERROR_INVALID_DATA`
+        InvalidData = 1,
+        /// the password was invalid
+        ///
+        /// `NM_CRYPTO_ERROR_INVALID_PASSWORD`
+        InvalidPassword = 2,
+        /// the data uses an unknown cipher
+        ///
+        /// `NM_CRYPTO_ERROR_UNKNOWN_CIPHER`
+        UnknownCipher = 3,
+        /// decryption failed
+        ///
+        /// `NM_CRYPTO_ERROR_DECRYPTION_FAILED`
+        DecryptionFailed = 4,
+        /// encryption failed
+        ///
+        /// `NM_CRYPTO_ERROR_ENCRYPTION_FAILED`
+        EncryptionFailed = 5,
+    }
+}
+
+nm_flags! {
+    /// General device capability flags.
+    ///
+    /// `NMDeviceCapabilities` in NetworkManager, sent over D-Bus as `u`.
+    pub enum DeviceCapabilities: u32 {
+        /// device has no special capabilities
+        ///
+        /// `NM_DEVICE_CAP_NONE`
+        NONE = 0,
+        /// NetworkManager supports this device
+        ///
+        /// `NM_DEVICE_CAP_NM_SUPPORTED`
+        NM_SUPPORTED = 1,
+        /// this device can indicate carrier status
+        ///
+        /// `NM_DEVICE_CAP_CARRIER_DETECT`
+        CARRIER_DETECT = 2,
+        /// this device is a software device
+        ///
+        /// `NM_DEVICE_CAP_IS_SOFTWARE`
+        IS_SOFTWARE = 4,
+        /// this device supports single-root I/O virtualization
+        ///
+        /// `NM_DEVICE_CAP_SRIOV`
+        SRIOV = 8,
+    }
+}
+
+nm_enum! {
+    /// Device-related errors.
+    ///
+    /// These errors may be returned directly from NMDevice methods, or may be
+    /// returned from D-Bus operations (where they correspond to errors in the
+    /// "org.freedesktop.NetworkManager.Device" namespace).
+    ///
+    /// `NMDeviceError` in NetworkManager, sent over D-Bus as `u`.
+    pub enum DeviceError: u32 {
+        /// unknown or unclassified error
+        ///
+        /// `NM_DEVICE_ERROR_FAILED`
+        Failed = 0,
+        /// NetworkManager failed to create the device
+        ///
+        /// `NM_DEVICE_ERROR_CREATION_FAILED`
+        CreationFailed = 1,
+        /// the specified connection is not valid
+        ///
+        /// `NM_DEVICE_ERROR_INVALID_CONNECTION`
+        InvalidConnection = 2,
+        /// the specified connection is not
+        ///   compatible with this device.
+        ///
+        /// `NM_DEVICE_ERROR_INCOMPATIBLE_CONNECTION`
+        IncompatibleConnection = 3,
+        /// the device does not have an active connection
+        ///
+        /// `NM_DEVICE_ERROR_NOT_ACTIVE`
+        NotActive = 4,
+        /// the requested operation is only valid on
+        ///   software devices.
+        ///
+        /// `NM_DEVICE_ERROR_NOT_SOFTWARE`
+        NotSoftware = 5,
+        /// the requested operation is not allowed at
+        ///   this time.
+        ///
+        /// `NM_DEVICE_ERROR_NOT_ALLOWED`
+        NotAllowed = 6,
+        /// the "specific object" in the
+        ///   activation request (eg, the NMAccessPoint or NMWimaxNsp) was not
+        ///   found.
+        ///
+        /// `NM_DEVICE_ERROR_SPECIFIC_OBJECT_NOT_FOUND`
+        SpecificObjectNotFound = 7,
+        /// the version id did not match.
+        ///
+        /// `NM_DEVICE_ERROR_VERSION_ID_MISMATCH`
+        VersionIdMismatch = 8,
+        /// the requested operation could not
+        ///   be completed due to missing dependencies.
+        ///
+        /// `NM_DEVICE_ERROR_MISSING_DEPENDENCIES`
+        MissingDependencies = 9,
+        /// invalid argument. Since: 1.16.
+        ///
+        /// `NM_DEVICE_ERROR_INVALID_ARGUMENT`
+        InvalidArgument = 10,
+    }
+}
+
+nm_flags! {
+    /// Flags for a network interface.
+    ///
+    /// `NMDeviceInterfaceFlags` in NetworkManager, sent over D-Bus as `u`.
+    pub enum DeviceInterfaceFlags: u32 {
+        /// the interface is enabled from the
+        ///   administrative point of view. Corresponds to kernel IFF_UP.
+        ///
+        /// `NM_DEVICE_INTERFACE_FLAG_UP`
+        UP = 1,
+        /// the physical link is up. Corresponds
+        ///   to kernel IFF_LOWER_UP.
+        ///
+        /// `NM_DEVICE_INTERFACE_FLAG_LOWER_UP`
+        LOWER_UP = 2,
+        /// receive all packets. Corresponds to
+        ///   kernel IFF_PROMISC. Since: 1.32.
+        ///
+        /// `NM_DEVICE_INTERFACE_FLAG_PROMISC`
+        PROMISC = 4,
+        /// the interface has carrier. In most
+        ///   cases this is equal to the value of @NM_DEVICE_INTERFACE_FLAG_LOWER_UP.
+        ///   However some devices have a non-standard carrier detection mechanism.
+        ///
+        /// `NM_DEVICE_INTERFACE_FLAG_CARRIER`
+        CARRIER = 65536,
+        /// the flag to indicate device
+        ///   LLDP status. Since: 1.32.
+        ///
+        /// `NM_DEVICE_INTERFACE_FLAG_LLDP_CLIENT_ENABLED`
+        LLDP_CLIENT_ENABLED = 131072,
+    }
+}
+
+nm_enum! {
+    /// Values for the SetManaged() D-Bus call of a device and nm_device_set_managed_async().
+    ///
+    /// `NMDeviceManaged` in NetworkManager, sent over D-Bus as `u`.
+    pub enum DeviceManaged: u32 {
+        /// the device is not managed.
+        ///
+        /// `NM_DEVICE_MANAGED_NO`
+        No = 0,
+        /// the device is managed.
+        ///
+        /// `NM_DEVICE_MANAGED_YES`
+        Yes = 1,
+        /// reset the device managed state to the default value.
+        ///
+        /// `NM_DEVICE_MANAGED_RESET`
+        Reset = 2,
+    }
+}
+
+nm_flags! {
+    /// Flags for the SetManaged() D-Bus call of a device and nm_device_set_managed_async().
+    ///
+    /// NM_DEVICE_MANAGED_FLAGS_PERMANENT_BY_NAME and NM_DEVICE_MANAGED_FLAGS_PERMANENT_BY_MAC
+    /// are mutually exclusive, and they only make sense together with NM_DEVICE_MANAGED_FLAGS_PERMANENT.
+    /// If none is set, the matching criteria is selected automatically.
+    ///
+    /// `NMDeviceManagedFlags` in NetworkManager, sent over D-Bus as `u`.
+    pub enum DeviceManagedFlags: u32 {
+        /// no flag set.
+        ///
+        /// `NM_DEVICE_MANAGED_FLAGS_NONE`
+        NONE = 0,
+        /// to set the device managed state to the runtime value.
+        ///
+        /// `NM_DEVICE_MANAGED_FLAGS_RUNTIME`
+        RUNTIME = 1,
+        /// to set the device managed state to the permanent (on disk) value.
+        ///
+        /// `NM_DEVICE_MANAGED_FLAGS_PERMANENT`
+        PERMANENT = 2,
+        /// to match the device by name, not by MAC address.
+        ///
+        /// `NM_DEVICE_MANAGED_FLAGS_PERMANENT_BY_NAME`
+        PERMANENT_BY_NAME = 4,
+        /// to match the device by MAC address, not by name.
+        ///
+        /// `NM_DEVICE_MANAGED_FLAGS_PERMANENT_BY_MAC`
+        PERMANENT_BY_MAC = 8,
+        /// to set the administrative state of the
+        ///   device to up if the managed state is NM_DEVICE_MANAGED_YES, and down if the managed state
+        ///   is NM_DEVICE_MANAGED_NO. If the flag is not set, the administrative state is not changed.
+        ///   The flag is ignored for NM_DEVICE_MANAGED_RESET.
+        ///
+        /// `NM_DEVICE_MANAGED_FLAGS_SET_ADMIN_STATE`
+        SET_ADMIN_STATE = 16,
+        /// all flags.
+        ///
+        /// `NM_DEVICE_MANAGED_FLAGS_ALL`
+        ALL = 31,
+    }
+}
+
+nm_flags! {
+    /// NMDeviceModemCapabilities values indicate the generic radio access
+    /// technology families a modem device supports.  For more information on the
+    /// specific access technologies the device supports use the ModemManager D-Bus
+    /// API.
+    ///
+    /// `NMDeviceModemCapabilities` in NetworkManager, sent over D-Bus as `u`.
+    pub enum DeviceModemCapabilities: u32 {
+        /// modem has no usable capabilities
+        ///
+        /// `NM_DEVICE_MODEM_CAPABILITY_NONE`
+        NONE = 0,
+        /// modem uses the analog wired telephone
+        /// network and is not a wireless/cellular device
+        ///
+        /// `NM_DEVICE_MODEM_CAPABILITY_POTS`
+        POTS = 1,
+        /// modem supports at least one of CDMA
+        /// 1xRTT, EVDO revision 0, EVDO revision A, or EVDO revision B
+        ///
+        /// `NM_DEVICE_MODEM_CAPABILITY_CDMA_EVDO`
+        CDMA_EVDO = 2,
+        /// modem supports at least one of GSM,
+        /// GPRS, EDGE, UMTS, HSDPA, HSUPA, or HSPA+ packet switched data capability
+        ///
+        /// `NM_DEVICE_MODEM_CAPABILITY_GSM_UMTS`
+        GSM_UMTS = 4,
+        /// modem has LTE data capability
+        ///
+        /// `NM_DEVICE_MODEM_CAPABILITY_LTE`
+        LTE = 8,
+        /// modem has 5GNR data capability. Since: 1.36.
+        ///
+        /// `NM_DEVICE_MODEM_CAPABILITY_5GNR`
+        CAPABILITY_5GNR = 64,
+    }
+}
+
+nm_flags! {
+    /// Flags for the Reapply() D-Bus call of a device and
+    /// nm_device_reapply_async().
+    ///
+    /// `NMDeviceReapplyFlags` in NetworkManager, sent over D-Bus as `u`.
+    pub enum DeviceReapplyFlags: u32 {
+        /// no flag set.
+        ///
+        /// `NM_DEVICE_REAPPLY_FLAGS_NONE`
+        NONE = 0,
+        /// during reapply,
+        ///   preserve external IP addresses and routes.
+        ///
+        /// `NM_DEVICE_REAPPLY_FLAGS_PRESERVE_EXTERNAL_IP`
+        PRESERVE_EXTERNAL_IP = 1,
+    }
+}
+
+nm_enum! {
+    /// `NMDeviceState` in NetworkManager, sent over D-Bus as `u`.
+    pub enum DeviceState: u32 {
+        /// the device's state is unknown
+        ///
+        /// `NM_DEVICE_STATE_UNKNOWN`
+        Unknown = 0,
+        /// the device is recognized, but not managed by
+        ///   NetworkManager
+        ///
+        /// `NM_DEVICE_STATE_UNMANAGED`
+        Unmanaged = 10,
+        /// the device is managed by NetworkManager, but
+        ///   is not available for use.  Reasons may include the wireless switched off,
+        ///   missing firmware, no ethernet carrier, missing supplicant or modem manager,
+        ///   etc.
+        ///
+        /// `NM_DEVICE_STATE_UNAVAILABLE`
+        Unavailable = 20,
+        /// the device can be activated, but is currently
+        ///   idle and not connected to a network.
+        ///
+        /// `NM_DEVICE_STATE_DISCONNECTED`
+        Disconnected = 30,
+        /// the device is preparing the connection to the
+        ///   network.  This may include operations like changing the MAC address,
+        ///   setting physical link properties, and anything else required to connect
+        ///   to the requested network.
+        ///
+        /// `NM_DEVICE_STATE_PREPARE`
+        Prepare = 40,
+        /// the device is connecting to the requested network.
+        ///   This may include operations like associating with the Wi-Fi AP, dialing
+        ///   the modem, connecting to the remote Bluetooth device, etc.
+        ///
+        /// `NM_DEVICE_STATE_CONFIG`
+        Config = 50,
+        /// the device requires more information to continue
+        ///   connecting to the requested network.  This includes secrets like WiFi
+        ///   passphrases, login passwords, PIN codes, etc.
+        ///
+        /// `NM_DEVICE_STATE_NEED_AUTH`
+        NeedAuth = 60,
+        /// the device is requesting IPv4 and/or IPv6
+        ///   addresses and routing information from the network.
+        ///
+        /// `NM_DEVICE_STATE_IP_CONFIG`
+        IpConfig = 70,
+        /// the device is checking whether further action is
+        ///   required for the requested network connection.  This may include checking
+        ///   whether only local network access is available, whether a captive portal
+        ///   is blocking access to the Internet, etc.
+        ///
+        /// `NM_DEVICE_STATE_IP_CHECK`
+        IpCheck = 80,
+        /// the device is waiting for a secondary
+        ///   connection (like a VPN) which must activated before the device can be
+        ///   activated
+        ///
+        /// `NM_DEVICE_STATE_SECONDARIES`
+        Secondaries = 90,
+        /// the device has a network connection, either local
+        ///   or global.
+        ///
+        /// `NM_DEVICE_STATE_ACTIVATED`
+        Activated = 100,
+        /// a disconnection from the current network
+        ///   connection was requested, and the device is cleaning up resources used for
+        ///   that connection.  The network connection may still be valid.
+        ///
+        /// `NM_DEVICE_STATE_DEACTIVATING`
+        Deactivating = 110,
+        /// the device failed to connect to the requested
+        ///   network and is cleaning up the connection request
+        ///
+        /// `NM_DEVICE_STATE_FAILED`
+        Failed = 120,
+    }
+}
+
+nm_enum! {
+    /// Device state change reason codes
+    ///
+    /// `NMDeviceStateReason` in NetworkManager, sent over D-Bus as `u`.
+    pub enum DeviceStateReason: u32 {
+        /// No reason given
+        ///
+        /// `NM_DEVICE_STATE_REASON_NONE`
+        None = 0,
+        /// Unknown error
+        ///
+        /// `NM_DEVICE_STATE_REASON_UNKNOWN`
+        Unknown = 1,
+        /// Device is now managed
+        ///
+        /// `NM_DEVICE_STATE_REASON_NOW_MANAGED`
+        NowManaged = 2,
+        /// Device is now unmanaged
+        ///
+        /// `NM_DEVICE_STATE_REASON_NOW_UNMANAGED`
+        NowUnmanaged = 3,
+        /// The device could not be readied for configuration
+        ///
+        /// `NM_DEVICE_STATE_REASON_CONFIG_FAILED`
+        ConfigFailed = 4,
+        /// IP configuration could not be reserved (no available address, timeout, etc)
+        ///
+        /// `NM_DEVICE_STATE_REASON_IP_CONFIG_UNAVAILABLE`
+        IpConfigUnavailable = 5,
+        /// The IP config is no longer valid
+        ///
+        /// `NM_DEVICE_STATE_REASON_IP_CONFIG_EXPIRED`
+        IpConfigExpired = 6,
+        /// Secrets were required, but not provided
+        ///
+        /// `NM_DEVICE_STATE_REASON_NO_SECRETS`
+        NoSecrets = 7,
+        /// 802.1x supplicant disconnected
+        ///
+        /// `NM_DEVICE_STATE_REASON_SUPPLICANT_DISCONNECT`
+        SupplicantDisconnect = 8,
+        /// 802.1x supplicant configuration failed
+        ///
+        /// `NM_DEVICE_STATE_REASON_SUPPLICANT_CONFIG_FAILED`
+        SupplicantConfigFailed = 9,
+        /// 802.1x supplicant failed
+        ///
+        /// `NM_DEVICE_STATE_REASON_SUPPLICANT_FAILED`
+        SupplicantFailed = 10,
+        /// 802.1x supplicant took too long to authenticate
+        ///
+        /// `NM_DEVICE_STATE_REASON_SUPPLICANT_TIMEOUT`
+        SupplicantTimeout = 11,
+        /// PPP service failed to start
+        ///
+        /// `NM_DEVICE_STATE_REASON_PPP_START_FAILED`
+        PppStartFailed = 12,
+        /// PPP service disconnected
+        ///
+        /// `NM_DEVICE_STATE_REASON_PPP_DISCONNECT`
+        PppDisconnect = 13,
+        /// PPP failed
+        ///
+        /// `NM_DEVICE_STATE_REASON_PPP_FAILED`
+        PppFailed = 14,
+        /// DHCP client failed to start
+        ///
+        /// `NM_DEVICE_STATE_REASON_DHCP_START_FAILED`
+        DhcpStartFailed = 15,
+        /// DHCP client error
+        ///
+        /// `NM_DEVICE_STATE_REASON_DHCP_ERROR`
+        DhcpError = 16,
+        /// DHCP client failed
+        ///
+        /// `NM_DEVICE_STATE_REASON_DHCP_FAILED`
+        DhcpFailed = 17,
+        /// Shared connection service failed to start
+        ///
+        /// `NM_DEVICE_STATE_REASON_SHARED_START_FAILED`
+        SharedStartFailed = 18,
+        /// Shared connection service failed
+        ///
+        /// `NM_DEVICE_STATE_REASON_SHARED_FAILED`
+        SharedFailed = 19,
+        /// AutoIP service failed to start
+        ///
+        /// `NM_DEVICE_STATE_REASON_AUTOIP_START_FAILED`
+        AutoipStartFailed = 20,
+        /// AutoIP service error
+        ///
+        /// `NM_DEVICE_STATE_REASON_AUTOIP_ERROR`
+        AutoipError = 21,
+        /// AutoIP service failed
+        ///
+        /// `NM_DEVICE_STATE_REASON_AUTOIP_FAILED`
+        AutoipFailed = 22,
+        /// The line is busy
+        ///
+        /// `NM_DEVICE_STATE_REASON_MODEM_BUSY`
+        ModemBusy = 23,
+        /// No dial tone
+        ///
+        /// `NM_DEVICE_STATE_REASON_MODEM_NO_DIAL_TONE`
+        ModemNoDialTone = 24,
+        /// No carrier could be established
+        ///
+        /// `NM_DEVICE_STATE_REASON_MODEM_NO_CARRIER`
+        ModemNoCarrier = 25,
+        /// The dialing request timed out
+        ///
+        /// `NM_DEVICE_STATE_REASON_MODEM_DIAL_TIMEOUT`
+        ModemDialTimeout = 26,
+        /// The dialing attempt failed
+        ///
+        /// `NM_DEVICE_STATE_REASON_MODEM_DIAL_FAILED`
+        ModemDialFailed = 27,
+        /// Modem initialization failed
+        ///
+        /// `NM_DEVICE_STATE_REASON_MODEM_INIT_FAILED`
+        ModemInitFailed = 28,
+        /// Failed to select the specified APN
+        ///
+        /// `NM_DEVICE_STATE_REASON_GSM_APN_FAILED`
+        GsmApnFailed = 29,
+        /// Not searching for networks
+        ///
+        /// `NM_DEVICE_STATE_REASON_GSM_REGISTRATION_NOT_SEARCHING`
+        GsmRegistrationNotSearching = 30,
+        /// Network registration denied
+        ///
+        /// `NM_DEVICE_STATE_REASON_GSM_REGISTRATION_DENIED`
+        GsmRegistrationDenied = 31,
+        /// Network registration timed out
+        ///
+        /// `NM_DEVICE_STATE_REASON_GSM_REGISTRATION_TIMEOUT`
+        GsmRegistrationTimeout = 32,
+        /// Failed to register with the requested network
+        ///
+        /// `NM_DEVICE_STATE_REASON_GSM_REGISTRATION_FAILED`
+        GsmRegistrationFailed = 33,
+        /// PIN check failed
+        ///
+        /// `NM_DEVICE_STATE_REASON_GSM_PIN_CHECK_FAILED`
+        GsmPinCheckFailed = 34,
+        /// Necessary firmware for the device may be missing
+        ///
+        /// `NM_DEVICE_STATE_REASON_FIRMWARE_MISSING`
+        FirmwareMissing = 35,
+        /// The device was removed
+        ///
+        /// `NM_DEVICE_STATE_REASON_REMOVED`
+        Removed = 36,
+        /// NetworkManager went to sleep
+        ///
+        /// `NM_DEVICE_STATE_REASON_SLEEPING`
+        Sleeping = 37,
+        /// The device's active connection disappeared
+        ///
+        /// `NM_DEVICE_STATE_REASON_CONNECTION_REMOVED`
+        ConnectionRemoved = 38,
+        /// Device disconnected by user or client
+        ///
+        /// `NM_DEVICE_STATE_REASON_USER_REQUESTED`
+        UserRequested = 39,
+        /// Carrier/link changed
+        ///
+        /// `NM_DEVICE_STATE_REASON_CARRIER`
+        Carrier = 40,
+        /// The device's existing connection was assumed
+        ///
+        /// `NM_DEVICE_STATE_REASON_CONNECTION_ASSUMED`
+        ConnectionAssumed = 41,
+        /// The supplicant is now available
+        ///
+        /// `NM_DEVICE_STATE_REASON_SUPPLICANT_AVAILABLE`
+        SupplicantAvailable = 42,
+        /// The modem could not be found
+        ///
+        /// `NM_DEVICE_STATE_REASON_MODEM_NOT_FOUND`
+        ModemNotFound = 43,
+        /// The Bluetooth connection failed or timed out
+        ///
+        /// `NM_DEVICE_STATE_REASON_BT_FAILED`
+        BtFailed = 44,
+        /// GSM Modem's SIM Card not inserted
+        ///
+        /// `NM_DEVICE_STATE_REASON_GSM_SIM_NOT_INSERTED`
+        GsmSimNotInserted = 45,
+        /// GSM Modem's SIM Pin required
+        ///
+        /// `NM_DEVICE_STATE_REASON_GSM_SIM_PIN_REQUIRED`
+        GsmSimPinRequired = 46,
+        /// GSM Modem's SIM Puk required
+        ///
+        /// `NM_DEVICE_STATE_REASON_GSM_SIM_PUK_REQUIRED`
+        GsmSimPukRequired = 47,
+        /// GSM Modem's SIM wrong
+        ///
+        /// `NM_DEVICE_STATE_REASON_GSM_SIM_WRONG`
+        GsmSimWrong = 48,
+        /// InfiniBand device does not support connected mode
+        ///
+        /// `NM_DEVICE_STATE_REASON_INFINIBAND_MODE`
+        InfinibandMode = 49,
+        /// A dependency of the connection failed
+        ///
+        /// `NM_DEVICE_STATE_REASON_DEPENDENCY_FAILED`
+        DependencyFailed = 50,
+        /// Problem with the RFC 2684 Ethernet over ADSL bridge
+        ///
+        /// `NM_DEVICE_STATE_REASON_BR2684_FAILED`
+        Br2684Failed = 51,
+        /// ModemManager not running
+        ///
+        /// `NM_DEVICE_STATE_REASON_MODEM_MANAGER_UNAVAILABLE`
+        ModemManagerUnavailable = 52,
+        /// The Wi-Fi network could not be found
+        ///
+        /// `NM_DEVICE_STATE_REASON_SSID_NOT_FOUND`
+        SsidNotFound = 53,
+        /// A secondary connection of the base connection failed
+        ///
+        /// `NM_DEVICE_STATE_REASON_SECONDARY_CONNECTION_FAILED`
+        SecondaryConnectionFailed = 54,
+        /// DCB or FCoE setup failed
+        ///
+        /// `NM_DEVICE_STATE_REASON_DCB_FCOE_FAILED`
+        DcbFcoeFailed = 55,
+        /// teamd control failed
+        ///
+        /// `NM_DEVICE_STATE_REASON_TEAMD_CONTROL_FAILED`
+        TeamdControlFailed = 56,
+        /// Modem failed or no longer available
+        ///
+        /// `NM_DEVICE_STATE_REASON_MODEM_FAILED`
+        ModemFailed = 57,
+        /// Modem now ready and available
+        ///
+        /// `NM_DEVICE_STATE_REASON_MODEM_AVAILABLE`
+        ModemAvailable = 58,
+        /// SIM PIN was incorrect
+        ///
+        /// `NM_DEVICE_STATE_REASON_SIM_PIN_INCORRECT`
+        SimPinIncorrect = 59,
+        /// New connection activation was enqueued
+        ///
+        /// `NM_DEVICE_STATE_REASON_NEW_ACTIVATION`
+        NewActivation = 60,
+        /// the device's parent changed
+        ///
+        /// `NM_DEVICE_STATE_REASON_PARENT_CHANGED`
+        ParentChanged = 61,
+        /// the device parent's management changed
+        ///
+        /// `NM_DEVICE_STATE_REASON_PARENT_MANAGED_CHANGED`
+        ParentManagedChanged = 62,
+        /// problem communicating with Open vSwitch database
+        ///
+        /// `NM_DEVICE_STATE_REASON_OVSDB_FAILED`
+        OvsdbFailed = 63,
+        /// a duplicate IP address was detected
+        ///
+        /// `NM_DEVICE_STATE_REASON_IP_ADDRESS_DUPLICATE`
+        IpAddressDuplicate = 64,
+        /// The selected IP method is not supported
+        ///
+        /// `NM_DEVICE_STATE_REASON_IP_METHOD_UNSUPPORTED`
+        IpMethodUnsupported = 65,
+        /// configuration of SR-IOV parameters failed
+        ///
+        /// `NM_DEVICE_STATE_REASON_SRIOV_CONFIGURATION_FAILED`
+        SriovConfigurationFailed = 66,
+        /// The Wi-Fi P2P peer could not be found
+        ///
+        /// `NM_DEVICE_STATE_REASON_PEER_NOT_FOUND`
+        PeerNotFound = 67,
+        /// The device handler dispatcher returned an
+        ///   error. Since: 1.46
+        ///
+        /// `NM_DEVICE_STATE_REASON_DEVICE_HANDLER_FAILED`
+        DeviceHandlerFailed = 68,
+        /// The device is unmanaged because the device type
+        ///   is unmanaged by default. Since: 1.48
+        ///
+        /// `NM_DEVICE_STATE_REASON_UNMANAGED_BY_DEFAULT`
+        UnmanagedByDefault = 69,
+        /// The device is unmanaged because it is an
+        ///   external device and is unconfigured (down or without addresses). Since: 1.48
+        ///
+        /// `NM_DEVICE_STATE_REASON_UNMANAGED_EXTERNAL_DOWN`
+        UnmanagedExternalDown = 70,
+        /// The device is unmanaged because the link is
+        ///   not initialized by udev. Since: 1.48
+        ///
+        /// `NM_DEVICE_STATE_REASON_UNMANAGED_LINK_NOT_INIT`
+        UnmanagedLinkNotInit = 71,
+        /// The device is unmanaged because NetworkManager is
+        ///   quitting. Since: 1.48
+        ///
+        /// `NM_DEVICE_STATE_REASON_UNMANAGED_QUITTING`
+        UnmanagedQuitting = 72,
+        /// Since: 1.48. Deprecated: 1.56: Use
+        ///   NM_DEVICE_STATE_REASON_UNMANAGED_MANAGER_DISABLED instead.
+        ///
+        /// `NM_DEVICE_STATE_REASON_UNMANAGED_SLEEPING`
+        UnmanagedSleeping = 73,
+        /// The device is unmanaged by user decision in
+        ///   NetworkManager.conf ('unmanaged' in a \[device*\] section). Since: 1.48
+        ///
+        /// `NM_DEVICE_STATE_REASON_UNMANAGED_USER_CONF`
+        UnmanagedUserConf = 74,
+        /// The device is unmanaged by explicit user
+        ///   decision (e.g. 'nmcli device set $DEV managed no'). Since: 1.48
+        ///
+        /// `NM_DEVICE_STATE_REASON_UNMANAGED_USER_EXPLICIT`
+        UnmanagedUserExplicit = 75,
+        /// The device is unmanaged by user decision
+        ///   via settings plugin ('unmanaged-devices' for keyfile or 'NM_CONTROLLED=no' for ifcfg-rh).
+        ///   Since: 1.48
+        ///
+        /// `NM_DEVICE_STATE_REASON_UNMANAGED_USER_SETTINGS`
+        UnmanagedUserSettings = 76,
+        /// The device is unmanaged via udev rule. Since: 1.48
+        ///
+        /// `NM_DEVICE_STATE_REASON_UNMANAGED_USER_UDEV`
+        UnmanagedUserUdev = 77,
+        /// NetworkManager was disabled (networking off). Since: 1.56
+        ///
+        /// `NM_DEVICE_STATE_REASON_NETWORKING_OFF`
+        NetworkingOff = 78,
+        /// The modem's operator code wasn't available,
+        ///   and auto-configuration was requested. Since: 1.56
+        ///
+        /// `NM_DEVICE_STATE_REASON_MODEM_NO_OPERATOR_CODE`
+        ModemNoOperatorCode = 79,
+    }
+}
+
+nm_enum! {
+    /// NMDeviceType values indicate the type of hardware represented by a
+    /// device object.
+    ///
+    /// `NMDeviceType` in NetworkManager, sent over D-Bus as `u`.
+    pub enum DeviceType: u32 {
+        /// unknown device
+        ///
+        /// `NM_DEVICE_TYPE_UNKNOWN`
+        Unknown = 0,
+        /// a wired ethernet device
+        ///
+        /// `NM_DEVICE_TYPE_ETHERNET`
+        Ethernet = 1,
+        /// an 802.11 Wi-Fi device
+        ///
+        /// `NM_DEVICE_TYPE_WIFI`
+        Wifi = 2,
+        /// not used
+        ///
+        /// `NM_DEVICE_TYPE_UNUSED1`
+        Unused1 = 3,
+        /// not used
+        ///
+        /// `NM_DEVICE_TYPE_UNUSED2`
+        Unused2 = 4,
+        /// a Bluetooth device supporting PAN or DUN access protocols
+        ///
+        /// `NM_DEVICE_TYPE_BT`
+        Bt = 5,
+        /// an OLPC XO mesh networking device
+        ///
+        /// `NM_DEVICE_TYPE_OLPC_MESH`
+        OlpcMesh = 6,
+        /// an 802.16e Mobile WiMAX broadband device
+        ///
+        /// `NM_DEVICE_TYPE_WIMAX`
+        Wimax = 7,
+        /// a modem supporting analog telephone, CDMA/EVDO,
+        /// GSM/UMTS, or LTE network access protocols
+        ///
+        /// `NM_DEVICE_TYPE_MODEM`
+        Modem = 8,
+        /// an IP-over-InfiniBand device
+        ///
+        /// `NM_DEVICE_TYPE_INFINIBAND`
+        Infiniband = 9,
+        /// a bond controller interface
+        ///
+        /// `NM_DEVICE_TYPE_BOND`
+        Bond = 10,
+        /// an 802.1Q VLAN interface
+        ///
+        /// `NM_DEVICE_TYPE_VLAN`
+        Vlan = 11,
+        /// ADSL modem
+        ///
+        /// `NM_DEVICE_TYPE_ADSL`
+        Adsl = 12,
+        /// a bridge controller interface
+        ///
+        /// `NM_DEVICE_TYPE_BRIDGE`
+        Bridge = 13,
+        /// generic support for unrecognized device types
+        ///
+        /// `NM_DEVICE_TYPE_GENERIC`
+        Generic = 14,
+        /// a team controller interface
+        ///
+        /// `NM_DEVICE_TYPE_TEAM`
+        Team = 15,
+        /// a TUN or TAP interface
+        ///
+        /// `NM_DEVICE_TYPE_TUN`
+        Tun = 16,
+        /// a IP tunnel interface
+        ///
+        /// `NM_DEVICE_TYPE_IP_TUNNEL`
+        IpTunnel = 17,
+        /// a MACVLAN interface
+        ///
+        /// `NM_DEVICE_TYPE_MACVLAN`
+        Macvlan = 18,
+        /// a VXLAN interface
+        ///
+        /// `NM_DEVICE_TYPE_VXLAN`
+        Vxlan = 19,
+        /// a VETH interface
+        ///
+        /// `NM_DEVICE_TYPE_VETH`
+        Veth = 20,
+        /// a MACsec interface
+        ///
+        /// `NM_DEVICE_TYPE_MACSEC`
+        Macsec = 21,
+        /// a dummy interface
+        ///
+        /// `NM_DEVICE_TYPE_DUMMY`
+        Dummy = 22,
+        /// a PPP interface
+        ///
+        /// `NM_DEVICE_TYPE_PPP`
+        Ppp = 23,
+        /// a Open vSwitch interface
+        ///
+        /// `NM_DEVICE_TYPE_OVS_INTERFACE`
+        OvsInterface = 24,
+        /// a Open vSwitch port
+        ///
+        /// `NM_DEVICE_TYPE_OVS_PORT`
+        OvsPort = 25,
+        /// a Open vSwitch bridge
+        ///
+        /// `NM_DEVICE_TYPE_OVS_BRIDGE`
+        OvsBridge = 26,
+        /// a IEEE 802.15.4 (WPAN) MAC Layer Device
+        ///
+        /// `NM_DEVICE_TYPE_WPAN`
+        Wpan = 27,
+        /// 6LoWPAN interface
+        ///
+        /// `NM_DEVICE_TYPE_6LOWPAN`
+        Type6LOWPAN = 28,
+        /// a WireGuard interface
+        ///
+        /// `NM_DEVICE_TYPE_WIREGUARD`
+        Wireguard = 29,
+        /// an 802.11 Wi-Fi P2P device. Since: 1.16.
+        ///
+        /// `NM_DEVICE_TYPE_WIFI_P2P`
+        WifiP2p = 30,
+        /// A VRF (Virtual Routing and Forwarding) interface. Since: 1.24.
+        ///
+        /// `NM_DEVICE_TYPE_VRF`
+        Vrf = 31,
+        /// a loopback interface. Since: 1.42.
+        ///
+        /// `NM_DEVICE_TYPE_LOOPBACK`
+        Loopback = 32,
+        /// A HSR/PRP device. Since: 1.46.
+        ///
+        /// `NM_DEVICE_TYPE_HSR`
+        Hsr = 33,
+        /// A IPVLAN device. Since: 1.52.
+        ///
+        /// `NM_DEVICE_TYPE_IPVLAN`
+        Ipvlan = 34,
+        /// A GENEVE device. Since: 1.58.
+        ///
+        /// `NM_DEVICE_TYPE_GENEVE`
+        Geneve = 35,
+    }
+}
+
+nm_flags! {
+    /// 802.11 specific device encryption and authentication capabilities.
+    ///
+    /// `NMDeviceWifiCapabilities` in NetworkManager, sent over D-Bus as `u`.
+    pub enum DeviceWifiCapabilities: u32 {
+        /// device has no encryption/authentication capabilities
+        ///
+        /// `NM_WIFI_DEVICE_CAP_NONE`
+        NONE = 0,
+        /// device supports 40/64-bit WEP encryption
+        ///
+        /// `NM_WIFI_DEVICE_CAP_CIPHER_WEP40`
+        CIPHER_WEP40 = 1,
+        /// device supports 104/128-bit WEP encryption
+        ///
+        /// `NM_WIFI_DEVICE_CAP_CIPHER_WEP104`
+        CIPHER_WEP104 = 2,
+        /// device supports TKIP encryption
+        ///
+        /// `NM_WIFI_DEVICE_CAP_CIPHER_TKIP`
+        CIPHER_TKIP = 4,
+        /// device supports AES/CCMP encryption
+        ///
+        /// `NM_WIFI_DEVICE_CAP_CIPHER_CCMP`
+        CIPHER_CCMP = 8,
+        /// device supports WPA1 authentication
+        ///
+        /// `NM_WIFI_DEVICE_CAP_WPA`
+        WPA = 16,
+        /// device supports WPA2/RSN authentication
+        ///
+        /// `NM_WIFI_DEVICE_CAP_RSN`
+        RSN = 32,
+        /// device supports Access Point mode
+        ///
+        /// `NM_WIFI_DEVICE_CAP_AP`
+        AP = 64,
+        /// device supports Ad-Hoc mode
+        ///
+        /// `NM_WIFI_DEVICE_CAP_ADHOC`
+        ADHOC = 128,
+        /// device reports frequency capabilities
+        ///
+        /// `NM_WIFI_DEVICE_CAP_FREQ_VALID`
+        FREQ_VALID = 256,
+        /// device supports 2.4GHz frequencies
+        ///
+        /// `NM_WIFI_DEVICE_CAP_FREQ_2GHZ`
+        FREQ_2GHZ = 512,
+        /// device supports 5GHz frequencies
+        ///
+        /// `NM_WIFI_DEVICE_CAP_FREQ_5GHZ`
+        FREQ_5GHZ = 1024,
+        /// device supports 6GHz frequencies. Since: 1.46.
+        ///
+        /// `NM_WIFI_DEVICE_CAP_FREQ_6GHZ`
+        FREQ_6GHZ = 2048,
+        /// device supports acting as a mesh point. Since: 1.20.
+        ///
+        /// `NM_WIFI_DEVICE_CAP_MESH`
+        MESH = 4096,
+        /// device supports WPA2/RSN in an IBSS network. Since: 1.22.
+        ///
+        /// `NM_WIFI_DEVICE_CAP_IBSS_RSN`
+        IBSS_RSN = 8192,
+    }
+}
+
+nm_flags! {
+    /// NMDhcpHostnameFlags describe flags related to the DHCP hostname and
+    /// FQDN.
+    ///
+    /// `NMDhcpHostnameFlags` in NetworkManager, sent over D-Bus as `u`.
+    pub enum DhcpHostnameFlags: u32 {
+        /// no flag set. The default value from
+        ///   Networkmanager global configuration is used. If such value is unset
+        ///   or still zero, the DHCP request will use standard FQDN flags, i.e.
+        ///   NM_DHCP_HOSTNAME_FLAG_FQDN_SERV_UPDATE and
+        ///   NM_DHCP_HOSTNAME_FLAG_FQDN_ENCODED for IPv4 and
+        ///   NM_DHCP_HOSTNAME_FLAG_FQDN_SERV_UPDATE for IPv6.
+        ///
+        /// `NM_DHCP_HOSTNAME_FLAG_NONE`
+        NONE = 0,
+        /// whether the server should
+        ///   do the A RR (FQDN-to-address) DNS updates.
+        ///
+        /// `NM_DHCP_HOSTNAME_FLAG_FQDN_SERV_UPDATE`
+        FQDN_SERV_UPDATE = 1,
+        /// if set, the FQDN is encoded
+        ///   using canonical wire format. Otherwise it uses the deprecated
+        ///   ASCII encoding. This flag is allowed only for DHCPv4.
+        ///
+        /// `NM_DHCP_HOSTNAME_FLAG_FQDN_ENCODED`
+        FQDN_ENCODED = 2,
+        /// when not set, request the
+        ///   server to perform updates (the PTR RR and possibly the A RR
+        ///   based on the NM_DHCP_HOSTNAME_FLAG_FQDN_SERV_UPDATE flag). If
+        ///   this is set, the NM_DHCP_HOSTNAME_FLAG_FQDN_SERV_UPDATE flag
+        ///   should be cleared.
+        ///
+        /// `NM_DHCP_HOSTNAME_FLAG_FQDN_NO_UPDATE`
+        FQDN_NO_UPDATE = 4,
+        /// when set, no FQDN flags are
+        ///   sent in the DHCP FQDN option. When cleared and all other FQDN
+        ///   flags are zero, standard FQDN flags are sent. This flag is
+        ///   incompatible with any other FQDN flag.
+        ///
+        /// `NM_DHCP_HOSTNAME_FLAG_FQDN_CLEAR_FLAGS`
+        FQDN_CLEAR_FLAGS = 8,
+    }
+}
+
+nm_flags! {
+    /// Compare flags for nm_ip_address_cmp_full().
+    ///
+    /// `NMIPAddressCmpFlags` in NetworkManager, sent over D-Bus as `u`.
+    pub enum IPAddressCmpFlags: u32 {
+        /// no flags.
+        ///
+        /// `NM_IP_ADDRESS_CMP_FLAGS_NONE`
+        NONE = 0,
+        /// when comparing two addresses,
+        ///   also consider their attributes. Warning: note that attributes are GVariants
+        ///   and they don't have a total order. In other words, if the address differs only
+        ///   by their attributes, the returned compare order is not total. In that case,
+        ///   the return value merely indicates equality (zero) or inequality.
+        ///
+        /// `NM_IP_ADDRESS_CMP_FLAGS_WITH_ATTRS`
+        WITH_ATTRS = 1,
+    }
+}
+
+nm_flags! {
+    /// `NMIPRoutingRuleAsStringFlags` in NetworkManager, sent over D-Bus as `u`.
+    pub enum IPRoutingRuleAsStringFlags: u32 {
+        /// no flags selected.
+        ///
+        /// `NM_IP_ROUTING_RULE_AS_STRING_FLAGS_NONE`
+        NONE = 0,
+        /// whether to allow parsing
+        ///   IPv4 addresses.
+        ///
+        /// `NM_IP_ROUTING_RULE_AS_STRING_FLAGS_AF_INET`
+        AF_INET = 1,
+        /// whether to allow parsing
+        ///   IPv6 addresses. If both @NM_IP_ROUTING_RULE_AS_STRING_FLAGS_AF_INET and
+        ///   @NM_IP_ROUTING_RULE_AS_STRING_FLAGS_AF_INET6 are unset, it's the same
+        ///   as setting them both.
+        ///
+        /// `NM_IP_ROUTING_RULE_AS_STRING_FLAGS_AF_INET6`
+        AF_INET6 = 2,
+        /// if set, ensure that the
+        ///   rule verfies or fail.
+        ///
+        /// `NM_IP_ROUTING_RULE_AS_STRING_FLAGS_VALIDATE`
+        VALIDATE = 4,
+    }
+}
+
+nm_flags! {
+    /// IP tunnel flags.
+    ///
+    /// `NMIPTunnelFlags` in NetworkManager, sent over D-Bus as `u`.
+    pub enum IPTunnelFlags: u32 {
+        /// no flag
+        ///
+        /// `NM_IP_TUNNEL_FLAG_NONE`
+        NONE = 0,
+        /// don't add encapsulation limit
+        ///     if one isn't present in inner packet
+        ///
+        /// `NM_IP_TUNNEL_FLAG_IP6_IGN_ENCAP_LIMIT`
+        IP6_IGN_ENCAP_LIMIT = 1,
+        /// copy the traffic class field
+        ///     from the inner packet
+        ///
+        /// `NM_IP_TUNNEL_FLAG_IP6_USE_ORIG_TCLASS`
+        IP6_USE_ORIG_TCLASS = 2,
+        /// copy the flowlabel from the
+        ///     inner packet
+        ///
+        /// `NM_IP_TUNNEL_FLAG_IP6_USE_ORIG_FLOWLABEL`
+        IP6_USE_ORIG_FLOWLABEL = 4,
+        /// used for Mobile IPv6
+        ///
+        /// `NM_IP_TUNNEL_FLAG_IP6_MIP6_DEV`
+        IP6_MIP6_DEV = 8,
+        /// copy DSCP from the outer packet
+        ///
+        /// `NM_IP_TUNNEL_FLAG_IP6_RCV_DSCP_COPY`
+        IP6_RCV_DSCP_COPY = 16,
+        /// copy fwmark from inner packet
+        ///
+        /// `NM_IP_TUNNEL_FLAG_IP6_USE_ORIG_FWMARK`
+        IP6_USE_ORIG_FWMARK = 32,
+    }
+}
+
+nm_enum! {
+    /// The tunneling mode.
+    ///
+    /// `NMIPTunnelMode` in NetworkManager, sent over D-Bus as `u`.
+    pub enum IPTunnelMode: u32 {
+        /// Unknown/unset tunnel mode
+        ///
+        /// `NM_IP_TUNNEL_MODE_UNKNOWN`
+        Unknown = 0,
+        /// IP in IP tunnel
+        ///
+        /// `NM_IP_TUNNEL_MODE_IPIP`
+        Ipip = 1,
+        /// GRE tunnel
+        ///
+        /// `NM_IP_TUNNEL_MODE_GRE`
+        Gre = 2,
+        /// SIT tunnel
+        ///
+        /// `NM_IP_TUNNEL_MODE_SIT`
+        Sit = 3,
+        /// ISATAP tunnel
+        ///
+        /// `NM_IP_TUNNEL_MODE_ISATAP`
+        Isatap = 4,
+        /// VTI tunnel
+        ///
+        /// `NM_IP_TUNNEL_MODE_VTI`
+        Vti = 5,
+        /// IPv6 in IPv6 tunnel
+        ///
+        /// `NM_IP_TUNNEL_MODE_IP6IP6`
+        Ip6ip6 = 6,
+        /// IPv4 in IPv6 tunnel
+        ///
+        /// `NM_IP_TUNNEL_MODE_IPIP6`
+        Ipip6 = 7,
+        /// IPv6 GRE tunnel
+        ///
+        /// `NM_IP_TUNNEL_MODE_IP6GRE`
+        Ip6gre = 8,
+        /// IPv6 VTI tunnel
+        ///
+        /// `NM_IP_TUNNEL_MODE_VTI6`
+        Vti6 = 9,
+        /// GRETAP tunnel
+        ///
+        /// `NM_IP_TUNNEL_MODE_GRETAP`
+        Gretap = 10,
+        /// IPv6 GRETAP tunnel
+        ///
+        /// `NM_IP_TUNNEL_MODE_IP6GRETAP`
+        Ip6gretap = 11,
+    }
+}
+
+nm_flags! {
+    /// Flags for customizing nm_keyfile_read() and nm_keyfile_write().
+    ///
+    /// Currently no flags are implemented.
+    ///
+    /// `NMKeyfileHandlerFlags` in NetworkManager, sent over D-Bus as `u`.
+    pub enum KeyfileHandlerFlags: u32 {
+        /// no flags set.
+        ///
+        /// `NM_KEYFILE_HANDLER_FLAGS_NONE`
+        NONE = 0,
+    }
+}
+
+nm_enum! {
+    /// The type of the callback for NMKeyfileReadHandler and NMKeyfileWriteHandler.
+    /// Depending on the type, you can interpret NMKeyfileHandlerData.
+    ///
+    /// `NMKeyfileHandlerType` in NetworkManager, sent over D-Bus as `u`.
+    pub enum KeyfileHandlerType: u32 {
+        /// a warning.
+        ///
+        /// `NM_KEYFILE_HANDLER_TYPE_WARN`
+        Warn = 1,
+        /// for handling certificates while writing
+        ///   a connection to keyfile.
+        ///
+        /// `NM_KEYFILE_HANDLER_TYPE_WRITE_CERT`
+        WriteCert = 2,
+    }
+}
+
+nm_enum! {
+    /// The severity level of NM_KEYFILE_HANDLER_TYPE_WARN events.
+    ///
+    /// `NMKeyfileWarnSeverity` in NetworkManager, sent over D-Bus as `u`.
+    pub enum KeyfileWarnSeverity: u32 {
+        /// debug message
+        ///
+        /// `NM_KEYFILE_WARN_SEVERITY_DEBUG`
+        Debug = 1000,
+        /// info message
+        ///
+        /// `NM_KEYFILE_WARN_SEVERITY_INFO`
+        Info = 2000,
+        /// info message about a missing file
+        ///
+        /// `NM_KEYFILE_WARN_SEVERITY_INFO_MISSING_FILE`
+        InfoMissingFile = 2901,
+        /// a warning message
+        ///
+        /// `NM_KEYFILE_WARN_SEVERITY_WARN`
+        Warn = 3000,
+    }
+}
+
+nm_enum! {
+    /// Errors related to the main "network management" interface of NetworkManager.
+    /// These may be returned from NMClient methods that invoke D-Bus operations on
+    /// the "org.freedesktop.NetworkManager" interface, and correspond to D-Bus
+    /// errors in that namespace.
+    ///
+    /// `NMManagerError` in NetworkManager, sent over D-Bus as `u`.
+    pub enum ManagerError: u32 {
+        /// unknown or unclassified error
+        ///
+        /// `NM_MANAGER_ERROR_FAILED`
+        Failed = 0,
+        /// Permission denied.
+        ///
+        /// `NM_MANAGER_ERROR_PERMISSION_DENIED`
+        PermissionDenied = 1,
+        /// The requested connection is not known.
+        ///
+        /// `NM_MANAGER_ERROR_UNKNOWN_CONNECTION`
+        UnknownConnection = 2,
+        /// The requested device is not known.
+        ///
+        /// `NM_MANAGER_ERROR_UNKNOWN_DEVICE`
+        UnknownDevice = 3,
+        /// The requested connection cannot be
+        ///   activated at this time.
+        ///
+        /// `NM_MANAGER_ERROR_CONNECTION_NOT_AVAILABLE`
+        ConnectionNotAvailable = 4,
+        /// The request could not be completed
+        ///   because a required connection is not active.
+        ///
+        /// `NM_MANAGER_ERROR_CONNECTION_NOT_ACTIVE`
+        ConnectionNotActive = 5,
+        /// The connection to be activated was
+        ///   already active on another device.
+        ///
+        /// `NM_MANAGER_ERROR_CONNECTION_ALREADY_ACTIVE`
+        ConnectionAlreadyActive = 6,
+        /// An activation request failed due to a
+        ///   dependency being unavailable.
+        ///
+        /// `NM_MANAGER_ERROR_DEPENDENCY_FAILED`
+        DependencyFailed = 7,
+        /// The manager is already in the requested
+        ///   sleep/wake state.
+        ///
+        /// `NM_MANAGER_ERROR_ALREADY_ASLEEP_OR_AWAKE`
+        AlreadyAsleepOrAwake = 8,
+        /// The network is already
+        ///   enabled/disabled.
+        ///
+        /// `NM_MANAGER_ERROR_ALREADY_ENABLED_OR_DISABLED`
+        AlreadyEnabledOrDisabled = 9,
+        /// Unknown log level in SetLogging
+        ///
+        /// `NM_MANAGER_ERROR_UNKNOWN_LOG_LEVEL`
+        UnknownLogLevel = 10,
+        /// Unknown log domain in SetLogging
+        ///
+        /// `NM_MANAGER_ERROR_UNKNOWN_LOG_DOMAIN`
+        UnknownLogDomain = 11,
+        /// Invalid arguments for D-Bus request
+        ///
+        /// `NM_MANAGER_ERROR_INVALID_ARGUMENTS`
+        InvalidArguments = 12,
+        /// A plug-in was needed to complete the
+        ///   activation but is not available.
+        ///
+        /// `NM_MANAGER_ERROR_MISSING_PLUGIN`
+        MissingPlugin = 13,
+    }
+}
+
+nm_flags! {
+    /// Flags for the manager Reload() call.
+    ///
+    /// `NMManagerReloadFlags` in NetworkManager, sent over D-Bus as `u`.
+    pub enum ManagerReloadFlags: u32 {
+        /// reload the NetworkManager.conf configuration
+        ///   from disk. Note that this does not include connections, which can be
+        ///   reloaded via Setting's ReloadConnections().
+        ///
+        /// `NM_MANAGER_RELOAD_FLAG_CONF`
+        CONF = 1,
+        /// update DNS configuration, which usually
+        ///   involves writing /etc/resolv.conf anew.
+        ///
+        /// `NM_MANAGER_RELOAD_FLAG_DNS_RC`
+        DNS_RC = 2,
+        /// means to restart the DNS plugin. This
+        ///   is for example useful when using dnsmasq plugin, which uses additional
+        ///   configuration in /etc/NetworkManager/dnsmasq.d. If you edit those files,
+        ///   you can restart the DNS plugin. This action shortly interrupts name
+        ///   resolution.
+        ///
+        /// `NM_MANAGER_RELOAD_FLAG_DNS_FULL`
+        DNS_FULL = 4,
+    }
+}
+
+nm_enum! {
+    /// The NMMetered enum has two different purposes: one is to configure
+    /// "connection.metered" setting of a connection profile in NMSettingConnection, and
+    /// the other is to express the actual metered state of the NMDevice at a given moment.
+    ///
+    /// For the connection profile only NM_METERED_UNKNOWN, NM_METERED_NO
+    /// and NM_METERED_YES are allowed.
+    ///
+    /// The device's metered state at runtime is determined by the profile
+    /// which is currently active. If the profile explicitly specifies NM_METERED_NO
+    /// or NM_METERED_YES, then the device's metered state is as such.
+    /// If the connection profile leaves it undecided at NM_METERED_UNKNOWN (the default),
+    /// then NetworkManager tries to guess the metered state, for example based on the
+    /// device type or on DHCP options (like Android devices exposing a "ANDROID_METERED"
+    /// DHCP vendor option). This then leads to either NM_METERED_GUESS_NO or NM_METERED_GUESS_YES.
+    ///
+    /// Most applications probably should treat the runtime state NM_METERED_GUESS_YES
+    /// like NM_METERED_YES, and all other states as not metered.
+    ///
+    /// Note that the per-device metered states are then combined to a global metered
+    /// state. This is basically the metered state of the device with the best default
+    /// route. However, that generalization of a global metered state may not be correct
+    /// if the default routes for IPv4 and IPv6 are on different devices, or if policy
+    /// routing is configured. In general, the global metered state tries to express whether
+    /// the traffic is likely metered, but since that depends on the traffic itself,
+    /// there is not one answer in all cases. Hence, an application may want to consider
+    /// the per-device's metered states.
+    ///
+    /// `NMMetered` in NetworkManager, sent over D-Bus as `u`.
+    pub enum Metered: u32 {
+        /// The metered status is unknown
+        ///
+        /// `NM_METERED_UNKNOWN`
+        Unknown = 0,
+        /// Metered, the value was explicitly configured
+        ///
+        /// `NM_METERED_YES`
+        Yes = 1,
+        /// Not metered, the value was explicitly configured
+        ///
+        /// `NM_METERED_NO`
+        No = 2,
+        /// Metered, the value was guessed
+        ///
+        /// `NM_METERED_GUESS_YES`
+        GuessYes = 3,
+        /// Not metered, the value was guessed
+        ///
+        /// `NM_METERED_GUESS_NO`
+        GuessNo = 4,
+    }
+}
+
+nm_flags! {
+    /// `NMMptcpFlags` in NetworkManager, sent over D-Bus as `u`.
+    pub enum MptcpFlags: u32 {
+        /// The default, meaning that no MPTCP flags are set.
+        ///
+        /// `NM_MPTCP_FLAGS_NONE`
+        NONE = 0,
+        /// don't configure MPTCP endpoints on the device.
+        ///
+        /// `NM_MPTCP_FLAGS_DISABLED`
+        DISABLED = 1,
+        /// MPTCP is enabled and endpoints will be configured.
+        ///   This flag is implied if any of the other flags indicate that
+        ///   MPTCP is enabled and therefore in most cases unnecessary.
+        ///   Note that if "/proc/sys/net/mptcp/enabled" sysctl is disabled, MPTCP
+        ///   handling is disabled despite this flag. This can be overruled with the
+        ///   "also-without-sysctl" flag.
+        ///   Note that by default interfaces that don't have a default route are
+        ///   excluded from having MPTCP endpoints configured. This can be overruled
+        ///   with the "also-without-default-route" and this affects endpoints
+        ///   per address family.
+        ///
+        /// `NM_MPTCP_FLAGS_ENABLED`
+        ENABLED = 2,
+        /// even if MPTCP handling is enabled
+        ///   via the "enabled" flag, it is ignored unless "/proc/sys/net/mptcp/enabled"
+        ///   is on. With this flag, MPTCP endpoints will be configured regardless
+        ///   of the sysctl setting.
+        ///
+        /// `NM_MPTCP_FLAGS_ALSO_WITHOUT_SYSCTL`
+        ALSO_WITHOUT_SYSCTL = 4,
+        /// even if MPTCP handling is enabled
+        ///   via the "enabled" flag, it is ignored per-address family unless NetworkManager
+        ///   configures a default route. With this flag, NetworkManager will also configure
+        ///   MPTCP endpoints if there is no default route. This takes effect per-address
+        ///   family.
+        ///
+        /// `NM_MPTCP_FLAGS_ALSO_WITHOUT_DEFAULT_ROUTE`
+        ALSO_WITHOUT_DEFAULT_ROUTE = 8,
+        /// Flag for the MPTCP endpoint. The endpoint will be
+        ///   announced/signaled to each peer via an MPTCP ADD_ADDR sub-option.
+        ///
+        /// `NM_MPTCP_FLAGS_SIGNAL`
+        SIGNAL = 16,
+        /// Flag for the MPTCP endpoint. If additional subflow creation
+        ///   is allowed by the MPTCP limits, the MPTCP path manager will try to create an
+        ///   additional subflow using this endpoint as the source address after the MPTCP connection
+        ///   is established.
+        ///
+        /// `NM_MPTCP_FLAGS_SUBFLOW`
+        SUBFLOW = 32,
+        /// Flag for the MPTCP endpoint. If this is a subflow endpoint, the
+        ///   subflows created using this endpoint will have the backup flag set during the connection
+        ///   process. This flag instructs the peer to only send data on a given subflow when all
+        ///   non-backup subflows are unavailable. This does not affect outgoing data,
+        ///   where subflow priority is determined by the backup/non-backup flag received
+        ///   from the peer
+        ///
+        /// `NM_MPTCP_FLAGS_BACKUP`
+        BACKUP = 64,
+        /// Flag for the MPTCP endpoint. If this is a subflow endpoint and additional
+        ///   subflow creation is allowed by the MPTCP limits, the MPTCP path manager will try to create an
+        ///   additional subflow for each known peer address, using this endpoint as the source address.
+        ///   This will occur after the MPTCP connection is established. If the peer did not announce
+        ///   any additional addresses using the MPTCP ADD_ADDR sub-option, this will behave the same
+        ///   as a plain subflow endpoint. When the peer does announce addresses, each received ADD_ADDR
+        ///   sub-option will trigger creation of an additional subflow to generate a full mesh topology.
+        ///
+        /// `NM_MPTCP_FLAGS_FULLMESH`
+        FULLMESH = 128,
+        /// Flag for the MPTCP endpoint. The endpoint will be
+        ///   used to create new subflows from the associated address to additional
+        ///   addresses announced by the other peer. This will be done if allowed by the
+        ///   MPTCP limits, and if the associated address is not already being used by
+        ///   another subflow from the same MPTCP connection. Note that the 'fullmesh'
+        ///   flag takes precedence over the 'laminar' one. Without any of these two
+        ///   flags, the path-manager will create new subflows to additional addresses
+        ///   announced by the other peer by selecting the source address from the
+        ///   routing tables, which is harder to configure if the announced address is
+        ///   not known in advance. Since: 1.56
+        ///
+        /// `NM_MPTCP_FLAGS_LAMINAR`
+        LAMINAR = 256,
     }
 }
 
 nm_flags! {
     /// Flags related to radio interfaces.
     ///
-    /// Since: 1.38
-    ///
     /// `NMRadioFlags` in NetworkManager, sent over D-Bus as `u`.
     pub enum RadioFlags: u32 {
         /// an alias for numeric zero, no flags set.
+        ///
         /// `NM_RADIO_FLAG_NONE`
         NONE = 0,
-        /// A Wireless LAN device or rfkill switch is detected in the system.
+        /// A Wireless LAN device or rfkill switch
+        ///   is detected in the system.
+        ///
         /// `NM_RADIO_FLAG_WLAN_AVAILABLE`
         WLAN_AVAILABLE = 1,
-        /// A Wireless WAN device or rfkill switch is detected in the system.
+        /// A Wireless WAN device or rfkill switch
+        ///   is detected in the system.
+        ///
         /// `NM_RADIO_FLAG_WWAN_AVAILABLE`
         WWAN_AVAILABLE = 2,
     }
 }
 
-nm_flags! {
-    /// Since: 1.40
+nm_enum! {
+    /// The result of a checkpoint Rollback() operation for a specific device.
     ///
-    /// `NMMptcpFlags` in NetworkManager, sent over D-Bus as `u`.
-    pub enum MptcpFlags: u32 {
-        /// The default, meaning that no MPTCP flags are set.
-        /// `NM_MPTCP_FLAGS_NONE`
+    /// `NMRollbackResult` in NetworkManager, sent over D-Bus as `u`.
+    pub enum RollbackResult: u32 {
+        /// the rollback succeeded.
+        ///
+        /// `NM_ROLLBACK_RESULT_OK`
+        Ok = 0,
+        /// the device no longer exists.
+        ///
+        /// `NM_ROLLBACK_RESULT_ERR_NO_DEVICE`
+        ErrNoDevice = 1,
+        /// the device is now unmanaged.
+        ///
+        /// `NM_ROLLBACK_RESULT_ERR_DEVICE_UNMANAGED`
+        ErrDeviceUnmanaged = 2,
+        /// other errors during rollback.
+        ///
+        /// `NM_ROLLBACK_RESULT_ERR_FAILED`
+        ErrFailed = 3,
+    }
+}
+
+nm_flags! {
+    /// NMSecretAgentCapabilities indicate various capabilities of the agent.
+    ///
+    /// `NMSecretAgentCapabilities` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SecretAgentCapabilities: u32 {
+        /// the agent supports no special capabilities
+        ///
+        /// `NM_SECRET_AGENT_CAPABILITY_NONE`
         NONE = 0,
-        /// don't configure MPTCP endpoints on the device.
-        /// `NM_MPTCP_FLAGS_DISABLED`
-        DISABLED = 1,
-        /// MPTCP is enabled and endpoints will be configured. This flag is implied if any of the other flags indicate that MPTCP is enabled and therefore in most cases unnecessary. Note that if "/proc/sys/net/mptcp/enabled" sysctl is disabled, MPTCP handling is disabled despite this flag. This can be overruled with the "also-without-sysctl" flag. Note that by default interfaces that don't have a default route are excluded from having MPTCP endpoints configured. This can be overruled with the "also-without-default-route" and this affects endpoints per address family.
-        /// `NM_MPTCP_FLAGS_ENABLED`
-        ENABLED = 2,
-        /// even if MPTCP handling is enabled via the "enabled" flag, it is ignored unless "/proc/sys/net/mptcp/enabled" is on. With this flag, MPTCP endpoints will be configured regardless of the sysctl setting.
-        /// `NM_MPTCP_FLAGS_ALSO_WITHOUT_SYSCTL`
-        ALSO_WITHOUT_SYSCTL = 4,
-        /// even if MPTCP handling is enabled via the "enabled" flag, it is ignored per-address family unless NetworkManager configures a default route. With this flag, NetworkManager will also configure MPTCP endpoints if there is no default route. This takes effect per-address family.
-        /// `NM_MPTCP_FLAGS_ALSO_WITHOUT_DEFAULT_ROUTE`
-        ALSO_WITHOUT_DEFAULT_ROUTE = 8,
-        /// Flag for the MPTCP endpoint. The endpoint will be announced/signaled to each peer via an MPTCP ADD_ADDR sub-option.
-        /// `NM_MPTCP_FLAGS_SIGNAL`
-        SIGNAL = 16,
-        /// Flag for the MPTCP endpoint. If additional subflow creation is allowed by the MPTCP limits, the MPTCP path manager will try to create an additional subflow using this endpoint as the source address after the MPTCP connection is established.
-        /// `NM_MPTCP_FLAGS_SUBFLOW`
-        SUBFLOW = 32,
-        /// Flag for the MPTCP endpoint. If this is a subflow endpoint, the subflows created using this endpoint will have the backup flag set during the connection process. This flag instructs the peer to only send data on a given subflow when all non-backup subflows are unavailable. This does not affect outgoing data, where subflow priority is determined by the backup/non-backup flag received from the peer
-        /// `NM_MPTCP_FLAGS_BACKUP`
-        BACKUP = 64,
-        /// Flag for the MPTCP endpoint. If this is a subflow endpoint and additional subflow creation is allowed by the MPTCP limits, the MPTCP path manager will try to create an additional subflow for each known peer address, using this endpoint as the source address. This will occur after the MPTCP connection is established. If the peer did not announce any additional addresses using the MPTCP ADD_ADDR sub-option, this will behave the same as a plain subflow endpoint. When the peer does announce addresses, each received ADD_ADDR sub-option will trigger creation of an additional subflow to generate a full mesh topology.
-        /// `NM_MPTCP_FLAGS_FULLMESH`
-        FULLMESH = 128,
-        /// Flag for the MPTCP endpoint. The endpoint will be used to create new subflows from the associated address to additional addresses announced by the other peer. This will be done if allowed by the MPTCP limits, and if the associated address is not already being used by another subflow from the same MPTCP connection. Note that the 'fullmesh' flag takes precedence over the 'laminar' one. Without any of these two flags, the path-manager will create new subflows to additional addresses announced by the other peer by selecting the source address from the routing tables, which is harder to configure if the announced address is not known in advance. Since: 1.56
-        /// `NM_MPTCP_FLAGS_LAMINAR`
-        LAMINAR = 256,
+        /// the agent supports passing hints to
+        /// VPN plugin authentication dialogs.
+        ///
+        /// `NM_SECRET_AGENT_CAPABILITY_VPN_HINTS`
+        VPN_HINTS = 1,
     }
 }
 
 nm_enum! {
+    /// NMSecretAgentError values are passed by secret agents back to NetworkManager
+    /// when they encounter problems retrieving secrets on behalf of NM. They
+    /// correspond to errors in the "org.freedesktop.NetworkManager.SecretManager"
+    /// namespace.
+    ///
+    /// Client APIs such as nm_client_activate_connection() will not see these error
+    /// codes; instead, the secret agent manager will translate them to the
+    /// corresponding NMAgentManagerError codes.
+    ///
+    /// `NMSecretAgentError` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SecretAgentError: u32 {
+        /// unknown or unclassified error
+        ///
+        /// `NM_SECRET_AGENT_ERROR_FAILED`
+        Failed = 0,
+        /// the caller (ie, NetworkManager) is
+        ///   not authorized to make this request
+        ///
+        /// `NM_SECRET_AGENT_ERROR_PERMISSION_DENIED`
+        PermissionDenied = 1,
+        /// the connection for which secrets
+        ///   were requested is invalid
+        ///
+        /// `NM_SECRET_AGENT_ERROR_INVALID_CONNECTION`
+        InvalidConnection = 2,
+        /// the request was canceled by the user
+        ///
+        /// `NM_SECRET_AGENT_ERROR_USER_CANCELED`
+        UserCanceled = 3,
+        /// the agent canceled the request
+        ///   because it was requested to do so by NetworkManager
+        ///
+        /// `NM_SECRET_AGENT_ERROR_AGENT_CANCELED`
+        AgentCanceled = 4,
+        /// the agent cannot find any secrets for this
+        ///   connection
+        ///
+        /// `NM_SECRET_AGENT_ERROR_NO_SECRETS`
+        NoSecrets = 5,
+    }
+}
+
+nm_flags! {
+    /// NMSecretAgentGetSecretsFlags values modify the behavior of a GetSecrets request.
+    ///
+    /// `NMSecretAgentGetSecretsFlags` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SecretAgentGetSecretsFlags: u32 {
+        /// no special behavior; by default no
+        ///   user interaction is allowed and requests for secrets are fulfilled from
+        ///   persistent storage, or if no secrets are available an error is returned.
+        ///
+        /// `NM_SECRET_AGENT_GET_SECRETS_FLAG_NONE`
+        NONE = 0,
+        /// allows the request to
+        ///   interact with the user, possibly prompting via UI for secrets if any are
+        ///   required, or if none are found in persistent storage.
+        ///
+        /// `NM_SECRET_AGENT_GET_SECRETS_FLAG_ALLOW_INTERACTION`
+        ALLOW_INTERACTION = 1,
+        /// explicitly prompt for new
+        ///   secrets from the user.  This flag signals that NetworkManager thinks any
+        ///   existing secrets are invalid or wrong.  This flag implies that interaction
+        ///   is allowed.
+        ///
+        /// `NM_SECRET_AGENT_GET_SECRETS_FLAG_REQUEST_NEW`
+        REQUEST_NEW = 2,
+        /// set if the request was
+        ///   initiated by user-requested action via the D-Bus interface, as opposed to
+        ///   automatically initiated by NetworkManager in response to (for example) scan
+        ///   results or carrier changes.
+        ///
+        /// `NM_SECRET_AGENT_GET_SECRETS_FLAG_USER_REQUESTED`
+        USER_REQUESTED = 4,
+        /// indicates that WPS enrollment
+        ///   is active with PBC method. The agent may suggest that the user pushes a button
+        ///   on the router instead of supplying a PSK.
+        ///
+        /// `NM_SECRET_AGENT_GET_SECRETS_FLAG_WPS_PBC_ACTIVE`
+        WPS_PBC_ACTIVE = 8,
+        /// Internal flag, not part of
+        ///   the D-Bus API.
+        ///
+        /// `NM_SECRET_AGENT_GET_SECRETS_FLAG_ONLY_SYSTEM`
+        ONLY_SYSTEM = 2147483648,
+        /// Internal flag, not part of
+        ///   the D-Bus API.
+        ///
+        /// `NM_SECRET_AGENT_GET_SECRETS_FLAG_NO_ERRORS`
+        NO_ERRORS = 1073741824,
+    }
+}
+
+nm_flags! {
+    /// NMSetting8021xAuthFlags values indicate which authentication settings
+    /// should be used.
+    ///
+    /// Before 1.22, this was wrongly marked as a enum and not as a flags
+    /// type.
+    ///
+    /// `NMSetting8021xAuthFlags` in NetworkManager, sent over D-Bus as `u`.
+    pub enum Setting8021xAuthFlags: u32 {
+        /// No flags
+        ///
+        /// `NM_SETTING_802_1X_AUTH_FLAGS_NONE`
+        NONE = 0,
+        /// Disable TLSv1.0
+        ///
+        /// `NM_SETTING_802_1X_AUTH_FLAGS_TLS_1_0_DISABLE`
+        TLS_1_0_DISABLE = 1,
+        /// Disable TLSv1.1
+        ///
+        /// `NM_SETTING_802_1X_AUTH_FLAGS_TLS_1_1_DISABLE`
+        TLS_1_1_DISABLE = 2,
+        /// Disable TLSv1.2
+        ///
+        /// `NM_SETTING_802_1X_AUTH_FLAGS_TLS_1_2_DISABLE`
+        TLS_1_2_DISABLE = 4,
+        /// Disable TLS time checks. Since 1.42.
+        ///
+        /// `NM_SETTING_802_1X_AUTH_FLAGS_TLS_DISABLE_TIME_CHECKS`
+        TLS_DISABLE_TIME_CHECKS = 8,
+        /// Disable TLSv1.3. Since 1.42.
+        ///
+        /// `NM_SETTING_802_1X_AUTH_FLAGS_TLS_1_3_DISABLE`
+        TLS_1_3_DISABLE = 16,
+        /// Enable TLSv1.0. Since 1.42.
+        ///
+        /// `NM_SETTING_802_1X_AUTH_FLAGS_TLS_1_0_ENABLE`
+        TLS_1_0_ENABLE = 32,
+        /// Enable TLSv1.1. Since 1.42.
+        ///
+        /// `NM_SETTING_802_1X_AUTH_FLAGS_TLS_1_1_ENABLE`
+        TLS_1_1_ENABLE = 64,
+        /// Enable TLSv1.2. Since 1.42.
+        ///
+        /// `NM_SETTING_802_1X_AUTH_FLAGS_TLS_1_2_ENABLE`
+        TLS_1_2_ENABLE = 128,
+        /// Enable TLSv1.3. Since 1.42.
+        ///
+        /// `NM_SETTING_802_1X_AUTH_FLAGS_TLS_1_3_ENABLE`
+        TLS_1_3_ENABLE = 256,
+        /// All supported flags
+        ///
+        /// `NM_SETTING_802_1X_AUTH_FLAGS_ALL`
+        ALL = 511,
+    }
+}
+
+nm_enum! {
+    /// NMSetting8021xCKFormat values indicate the general type of a certificate
+    /// or private key
+    ///
+    /// `NMSetting8021xCKFormat` in NetworkManager, sent over D-Bus as `u`.
+    pub enum Setting8021xCKFormat: u32 {
+        /// unknown file format
+        ///
+        /// `NM_SETTING_802_1X_CK_FORMAT_UNKNOWN`
+        Unknown = 0,
+        /// file contains an X.509 format certificate
+        ///
+        /// `NM_SETTING_802_1X_CK_FORMAT_X509`
+        X509 = 1,
+        /// file contains an old-style OpenSSL PEM
+        /// or DER private key
+        ///
+        /// `NM_SETTING_802_1X_CK_FORMAT_RAW_KEY`
+        RawKey = 2,
+        /// file contains a PKCS#12 certificate
+        /// and private key
+        ///
+        /// `NM_SETTING_802_1X_CK_FORMAT_PKCS12`
+        Pkcs12 = 3,
+    }
+}
+
+nm_enum! {
+    /// NMSetting8021xCKScheme values indicate how a certificate or private key is
+    /// stored in the setting properties, either as a blob of the item's data, or as
+    /// a path to a certificate or private key file on the filesystem
+    ///
+    /// `NMSetting8021xCKScheme` in NetworkManager, sent over D-Bus as `u`.
+    pub enum Setting8021xCKScheme: u32 {
+        /// unknown certificate or private key
+        /// scheme
+        ///
+        /// `NM_SETTING_802_1X_CK_SCHEME_UNKNOWN`
+        Unknown = 0,
+        /// certificate or key is stored as the raw
+        /// item data
+        ///
+        /// `NM_SETTING_802_1X_CK_SCHEME_BLOB`
+        Blob = 1,
+        /// certificate or key is stored as a path
+        /// to a file containing the certificate or key data
+        ///
+        /// `NM_SETTING_802_1X_CK_SCHEME_PATH`
+        Path = 2,
+        /// certificate or key is stored as a
+        /// URI of an object on a PKCS#11 token
+        ///
+        /// `NM_SETTING_802_1X_CK_SCHEME_PKCS11`
+        Pkcs11 = 3,
+    }
+}
+
+nm_enum! {
+    /// These flags modify the comparison behavior when comparing two settings or
+    /// two connections.
+    ///
+    /// `NMSettingCompareFlags` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingCompareFlags: u32 {
+        /// match all properties exactly
+        ///
+        /// `NM_SETTING_COMPARE_FLAG_EXACT`
+        Exact = 0,
+        /// match only important attributes, like SSID,
+        ///   type, security settings, etc.  Does not match, for example, connection ID
+        ///   or UUID.
+        ///
+        /// `NM_SETTING_COMPARE_FLAG_FUZZY`
+        Fuzzy = 1,
+        /// ignore the connection's ID
+        ///
+        /// `NM_SETTING_COMPARE_FLAG_IGNORE_ID`
+        IgnoreId = 2,
+        /// ignore all secrets
+        ///
+        /// `NM_SETTING_COMPARE_FLAG_IGNORE_SECRETS`
+        IgnoreSecrets = 4,
+        /// ignore secrets for which
+        ///   the secret's flags indicate the secret is owned by a user secret agent
+        ///   (ie, the secret's flag includes @NM_SETTING_SECRET_FLAG_AGENT_OWNED)
+        ///
+        /// `NM_SETTING_COMPARE_FLAG_IGNORE_AGENT_OWNED_SECRETS`
+        IgnoreAgentOwnedSecrets = 8,
+        /// ignore secrets for which
+        ///   the secret's flags indicate the secret should not be saved to persistent
+        ///   storage (ie, the secret's flag includes @NM_SETTING_SECRET_FLAG_NOT_SAVED)
+        ///
+        /// `NM_SETTING_COMPARE_FLAG_IGNORE_NOT_SAVED_SECRETS`
+        IgnoreNotSavedSecrets = 16,
+        /// if this flag is set,
+        ///   nm_setting_diff() and nm_connection_diff() will also include properties that
+        ///   are set to their default value. See also @NM_SETTING_COMPARE_FLAG_DIFF_RESULT_NO_DEFAULT.
+        ///
+        /// `NM_SETTING_COMPARE_FLAG_DIFF_RESULT_WITH_DEFAULT`
+        DiffResultWithDefault = 32,
+        /// if this flag is set,
+        ///   nm_setting_diff() and nm_connection_diff() will not include properties that
+        ///   are set to their default value. This is the opposite of
+        ///   @NM_SETTING_COMPARE_FLAG_DIFF_RESULT_WITH_DEFAULT. If both flags are set together,
+        ///   @NM_SETTING_COMPARE_FLAG_DIFF_RESULT_WITH_DEFAULT wins. If both flags are unset,
+        ///   this means to exclude default properties if there is a setting to compare,
+        ///   but include all properties, if the setting 'b' is missing. This is the legacy
+        ///   behaviour of libnm-util, where nm_setting_diff() behaved differently depending
+        ///   on whether the setting 'b' was available. If @NM_SETTING_COMPARE_FLAG_DIFF_RESULT_WITH_DEFAULT
+        ///   is set, nm_setting_diff() will also set the flags @NM_SETTING_DIFF_RESULT_IN_A_DEFAULT
+        ///   and @NM_SETTING_DIFF_RESULT_IN_B_DEFAULT, if the values are default values.
+        ///
+        /// `NM_SETTING_COMPARE_FLAG_DIFF_RESULT_NO_DEFAULT`
+        DiffResultNoDefault = 64,
+        /// ignore the connection's timestamp
+        ///
+        /// `NM_SETTING_COMPARE_FLAG_IGNORE_TIMESTAMP`
+        IgnoreTimestamp = 128,
+    }
+}
+
+nm_enum! {
+    /// NMSettingConnectionAutoconnectSlaves values indicate whether slave connections
+    /// should be activated when controller is activated.
+    ///
     /// `NMSettingConnectionAutoconnectSlaves` in NetworkManager, sent over D-Bus as `i`.
+    ///
+    /// Deprecated by NetworkManager.
     pub enum SettingConnectionAutoconnectSlaves: i32 {
+        /// default value
+        ///
         /// `NM_SETTING_CONNECTION_AUTOCONNECT_SLAVES_DEFAULT`
         Default = -1,
+        /// slaves are not brought up when
+        ///   controller is activated
+        ///
         /// `NM_SETTING_CONNECTION_AUTOCONNECT_SLAVES_NO`
         No = 0,
+        /// slaves are brought up when
+        ///   controller is activated
+        ///
         /// `NM_SETTING_CONNECTION_AUTOCONNECT_SLAVES_YES`
         Yes = 1,
     }
 }
 
 nm_enum! {
-    /// NMSettingConnectionLldp values indicate whether LLDP should be enabled.
-    ///
-    /// Since: 1.2
-    ///
-    /// `NMSettingConnectionLldp` in NetworkManager, sent over D-Bus as `i`.
-    pub enum SettingConnectionLldp: i32 {
-        /// default value
-        /// `NM_SETTING_CONNECTION_LLDP_DEFAULT`
-        Default = -1,
-        /// disable LLDP
-        /// `NM_SETTING_CONNECTION_LLDP_DISABLE`
-        Disable = 0,
-        /// enable reception of LLDP frames
-        /// `NM_SETTING_CONNECTION_LLDP_ENABLE_RX`
-        EnableRx = 1,
-    }
-}
-
-nm_enum! {
-    /// NMSettingConnectionMdns values indicate whether mDNS should be enabled.
-    ///
-    /// Since: 1.12
-    ///
-    /// `NMSettingConnectionMdns` in NetworkManager, sent over D-Bus as `i`.
-    pub enum SettingConnectionMdns: i32 {
-        /// default value
-        /// `NM_SETTING_CONNECTION_MDNS_DEFAULT`
-        Default = -1,
-        /// disable mDNS
-        /// `NM_SETTING_CONNECTION_MDNS_NO`
-        No = 0,
-        /// support only resolving, do not register hostname
-        /// `NM_SETTING_CONNECTION_MDNS_RESOLVE`
-        Resolve = 1,
-        /// enable mDNS
-        /// `NM_SETTING_CONNECTION_MDNS_YES`
-        Yes = 2,
-    }
-}
-
-nm_enum! {
-    /// NMSettingConnectionLlmnr values indicate whether LLMNR should be enabled.
-    ///
-    /// Since: 1.14
-    ///
-    /// `NMSettingConnectionLlmnr` in NetworkManager, sent over D-Bus as `i`.
-    pub enum SettingConnectionLlmnr: i32 {
-        /// default value
-        /// `NM_SETTING_CONNECTION_LLMNR_DEFAULT`
-        Default = -1,
-        /// disable LLMNR
-        /// `NM_SETTING_CONNECTION_LLMNR_NO`
-        No = 0,
-        /// support only resolving, do not register hostname
-        /// `NM_SETTING_CONNECTION_LLMNR_RESOLVE`
-        Resolve = 1,
-        /// enable LLMNR
-        /// `NM_SETTING_CONNECTION_LLMNR_YES`
-        Yes = 2,
-    }
-}
-
-nm_enum! {
     /// NMSettingConnectionDnsOverTls values indicate whether DNSOverTls should be enabled.
-    ///
-    /// Since: 1.34
     ///
     /// `NMSettingConnectionDnsOverTls` in NetworkManager, sent over D-Bus as `i`.
     pub enum SettingConnectionDnsOverTls: i32 {
         /// default value
+        ///
         /// `NM_SETTING_CONNECTION_DNS_OVER_TLS_DEFAULT`
         Default = -1,
         /// disable DNSOverTls
+        ///
         /// `NM_SETTING_CONNECTION_DNS_OVER_TLS_NO`
         No = 0,
         /// enable opportunistic mode
+        ///
         /// `NM_SETTING_CONNECTION_DNS_OVER_TLS_OPPORTUNISTIC`
         Opportunistic = 1,
         /// enable strict mode
+        ///
         /// `NM_SETTING_CONNECTION_DNS_OVER_TLS_YES`
         Yes = 2,
     }
@@ -1486,20 +2597,22 @@ nm_enum! {
 nm_enum! {
     /// NMSettingConnectionDnssec values indicate whether DNSSEC should be enabled.
     ///
-    /// Since: 1.56
-    ///
     /// `NMSettingConnectionDnssec` in NetworkManager, sent over D-Bus as `i`.
     pub enum SettingConnectionDnssec: i32 {
         /// default value
+        ///
         /// `NM_SETTING_CONNECTION_DNSSEC_DEFAULT`
         Default = -1,
         /// disable DNSSEC
+        ///
         /// `NM_SETTING_CONNECTION_DNSSEC_NO`
         No = 0,
         /// enable DNSSEC but allow fallback to non-DNSSEC mode
+        ///
         /// `NM_SETTING_CONNECTION_DNSSEC_ALLOW_DOWNGRADE`
         AllowDowngrade = 1,
         /// force enable DNSSEC
+        ///
         /// `NM_SETTING_CONNECTION_DNSSEC_YES`
         Yes = 2,
     }
@@ -1509,19 +2622,88 @@ nm_enum! {
     /// NMSettingConnectionDownOnPoweroff indicates whether the connection will be
     /// brought down before the system is powered off.
     ///
-    /// Since: 1.48
-    ///
     /// `NMSettingConnectionDownOnPoweroff` in NetworkManager, sent over D-Bus as `i`.
     pub enum SettingConnectionDownOnPoweroff: i32 {
         /// default value
+        ///
         /// `NM_SETTING_CONNECTION_DOWN_ON_POWEROFF_DEFAULT`
         Default = -1,
         /// disable down-on-poweroff
+        ///
         /// `NM_SETTING_CONNECTION_DOWN_ON_POWEROFF_NO`
         No = 0,
         /// enable down-on-poweroff
+        ///
         /// `NM_SETTING_CONNECTION_DOWN_ON_POWEROFF_YES`
         Yes = 1,
+    }
+}
+
+nm_enum! {
+    /// NMSettingConnectionLldp values indicate whether LLDP should be enabled.
+    ///
+    /// `NMSettingConnectionLldp` in NetworkManager, sent over D-Bus as `i`.
+    pub enum SettingConnectionLldp: i32 {
+        /// default value
+        ///
+        /// `NM_SETTING_CONNECTION_LLDP_DEFAULT`
+        Default = -1,
+        /// disable LLDP
+        ///
+        /// `NM_SETTING_CONNECTION_LLDP_DISABLE`
+        Disable = 0,
+        /// enable reception of LLDP frames
+        ///
+        /// `NM_SETTING_CONNECTION_LLDP_ENABLE_RX`
+        EnableRx = 1,
+    }
+}
+
+nm_enum! {
+    /// NMSettingConnectionLlmnr values indicate whether LLMNR should be enabled.
+    ///
+    /// `NMSettingConnectionLlmnr` in NetworkManager, sent over D-Bus as `i`.
+    pub enum SettingConnectionLlmnr: i32 {
+        /// default value
+        ///
+        /// `NM_SETTING_CONNECTION_LLMNR_DEFAULT`
+        Default = -1,
+        /// disable LLMNR
+        ///
+        /// `NM_SETTING_CONNECTION_LLMNR_NO`
+        No = 0,
+        /// support only resolving, do not register hostname
+        ///
+        /// `NM_SETTING_CONNECTION_LLMNR_RESOLVE`
+        Resolve = 1,
+        /// enable LLMNR
+        ///
+        /// `NM_SETTING_CONNECTION_LLMNR_YES`
+        Yes = 2,
+    }
+}
+
+nm_enum! {
+    /// NMSettingConnectionMdns values indicate whether mDNS should be enabled.
+    ///
+    /// `NMSettingConnectionMdns` in NetworkManager, sent over D-Bus as `i`.
+    pub enum SettingConnectionMdns: i32 {
+        /// default value
+        ///
+        /// `NM_SETTING_CONNECTION_MDNS_DEFAULT`
+        Default = -1,
+        /// disable mDNS
+        ///
+        /// `NM_SETTING_CONNECTION_MDNS_NO`
+        No = 0,
+        /// support only resolving, do not register hostname
+        ///
+        /// `NM_SETTING_CONNECTION_MDNS_RESOLVE`
+        Resolve = 1,
+        /// enable mDNS
+        ///
+        /// `NM_SETTING_CONNECTION_MDNS_YES`
+        Yes = 2,
     }
 }
 
@@ -1531,48 +2713,211 @@ nm_flags! {
     /// `NMSettingDcbFlags` in NetworkManager, sent over D-Bus as `u`.
     pub enum SettingDcbFlags: u32 {
         /// no flag
+        ///
         /// `NM_SETTING_DCB_FLAG_NONE`
         NONE = 0,
         /// the feature is enabled
+        ///
         /// `NM_SETTING_DCB_FLAG_ENABLE`
         ENABLE = 1,
         /// the feature is advertised
+        ///
         /// `NM_SETTING_DCB_FLAG_ADVERTISE`
         ADVERTISE = 2,
-        /// the feature is willing to change based on peer configuration advertisements
+        /// the feature is willing to change based on
+        /// peer configuration advertisements
+        ///
         /// `NM_SETTING_DCB_FLAG_WILLING`
         WILLING = 4,
     }
 }
 
+nm_enum! {
+    /// These values indicate the result of a setting difference operation.
+    ///
+    /// `NMSettingDiffResult` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingDiffResult: u32 {
+        /// unknown result
+        ///
+        /// `NM_SETTING_DIFF_RESULT_UNKNOWN`
+        Unknown = 0,
+        /// the property is present in setting A
+        ///
+        /// `NM_SETTING_DIFF_RESULT_IN_A`
+        InA = 1,
+        /// the property is present in setting B
+        ///
+        /// `NM_SETTING_DIFF_RESULT_IN_B`
+        InB = 2,
+        /// the property is present in
+        /// setting A but is set to the default value. This flag is only set,
+        /// if you specify @NM_SETTING_COMPARE_FLAG_DIFF_RESULT_WITH_DEFAULT.
+        ///
+        /// `NM_SETTING_DIFF_RESULT_IN_A_DEFAULT`
+        InADefault = 4,
+        /// analog to @NM_SETTING_DIFF_RESULT_IN_A_DEFAULT.
+        ///
+        /// `NM_SETTING_DIFF_RESULT_IN_B_DEFAULT`
+        InBDefault = 8,
+    }
+}
+
 nm_flags! {
-    /// IP tunnel flags.
+    /// These flags modify the ethtool FEC(Forward Error Correction) mode.
     ///
-    /// Since: 1.12
+    /// `NMSettingEthtoolFecMode` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingEthtoolFecMode: u32 {
+        /// Select default/best FEC mode automatically.
+        ///
+        /// `NM_SETTING_ETHTOOL_FEC_MODE_AUTO`
+        AUTO = 2,
+        /// No FEC mode.
+        ///
+        /// `NM_SETTING_ETHTOOL_FEC_MODE_OFF`
+        OFF = 4,
+        /// Reed-Solomon FEC Mode.
+        ///
+        /// `NM_SETTING_ETHTOOL_FEC_MODE_RS`
+        RS = 8,
+        /// Base-R/Reed-Solomon FEC Mode.
+        ///
+        /// `NM_SETTING_ETHTOOL_FEC_MODE_BASER`
+        BASER = 16,
+        /// Low Latency Reed Solomon FEC Mode.
+        ///
+        /// `NM_SETTING_ETHTOOL_FEC_MODE_LLRS`
+        LLRS = 32,
+    }
+}
+
+nm_enum! {
+    /// NMSettingGeneveDf values indicate how the Don't Fragment (DF) flag should be handled
+    /// in the outer IP header of GENEVE tunnel packets.
     ///
-    /// `NMIPTunnelFlags` in NetworkManager, sent over D-Bus as `u`.
-    pub enum IPTunnelFlags: u32 {
-        /// no flag
-        /// `NM_IP_TUNNEL_FLAG_NONE`
-        NONE = 0,
-        /// don't add encapsulation limit if one isn't present in inner packet
-        /// `NM_IP_TUNNEL_FLAG_IP6_IGN_ENCAP_LIMIT`
-        IP6_IGN_ENCAP_LIMIT = 1,
-        /// copy the traffic class field from the inner packet
-        /// `NM_IP_TUNNEL_FLAG_IP6_USE_ORIG_TCLASS`
-        IP6_USE_ORIG_TCLASS = 2,
-        /// copy the flowlabel from the inner packet
-        /// `NM_IP_TUNNEL_FLAG_IP6_USE_ORIG_FLOWLABEL`
-        IP6_USE_ORIG_FLOWLABEL = 4,
-        /// used for Mobile IPv6
-        /// `NM_IP_TUNNEL_FLAG_IP6_MIP6_DEV`
-        IP6_MIP6_DEV = 8,
-        /// copy DSCP from the outer packet
-        /// `NM_IP_TUNNEL_FLAG_IP6_RCV_DSCP_COPY`
-        IP6_RCV_DSCP_COPY = 16,
-        /// copy fwmark from inner packet
-        /// `NM_IP_TUNNEL_FLAG_IP6_USE_ORIG_FWMARK`
-        IP6_USE_ORIG_FWMARK = 32,
+    /// `NMSettingGeneveDf` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingGeneveDf: u32 {
+        /// Don't set the DF flag, packets may be fragmented.
+        ///
+        /// `NM_SETTING_GENEVE_DF_UNSET`
+        Unset = 0,
+        /// Always set the DF flag, packets will not be fragmented.
+        ///
+        /// `NM_SETTING_GENEVE_DF_SET`
+        Set = 1,
+        /// Inherit the DF flag from the inner IP header.
+        ///
+        /// `NM_SETTING_GENEVE_DF_INHERIT`
+        Inherit = 2,
+    }
+}
+
+nm_enum! {
+    /// NMSettingHsrProtocolVersion values indicate the HSR protocol version.
+    ///
+    /// `NMSettingHsrProtocolVersion` in NetworkManager, sent over D-Bus as `i`.
+    pub enum SettingHsrProtocolVersion: i32 {
+        /// Default version for the protocol
+        ///
+        /// `NM_SETTING_HSR_PROTOCOL_VERSION_DEFAULT`
+        Default = -1,
+        /// HSRv0, IEC 62439-3:2010
+        ///
+        /// `NM_SETTING_HSR_PROTOCOL_VERSION_HSR_2010`
+        Hsr2010 = 0,
+        /// HSRv1, IEC 62439-3:2012
+        ///
+        /// `NM_SETTING_HSR_PROTOCOL_VERSION_HSR_2012`
+        Hsr2012 = 1,
+    }
+}
+
+nm_enum! {
+    /// NMSettingIP4DhcpIpv6OnlyPreferred values specify if the "IPv6-Only Preferred"
+    /// option (RFC 8925) for DHCPv4 is enabled.
+    ///
+    /// `NMSettingIP4DhcpIpv6OnlyPreferred` in NetworkManager, sent over D-Bus as `i`.
+    pub enum SettingIP4DhcpIpv6OnlyPreferred: i32 {
+        /// use the global default value
+        ///
+        /// `NM_SETTING_IP4_DHCP_IPV6_ONLY_PREFERRED_DEFAULT`
+        Default = -1,
+        /// the option is disabled
+        ///
+        /// `NM_SETTING_IP4_DHCP_IPV6_ONLY_PREFERRED_NO`
+        No = 0,
+        /// the option is enabled
+        ///
+        /// `NM_SETTING_IP4_DHCP_IPV6_ONLY_PREFERRED_YES`
+        Yes = 1,
+        /// the option is enabled when
+        ///    the IPv6 method is "auto" and CLAT is enabled. Since: 1.58
+        ///
+        /// `NM_SETTING_IP4_DHCP_IPV6_ONLY_PREFERRED_AUTO`
+        Auto = 2,
+    }
+}
+
+nm_enum! {
+    /// NMSettingIP4LinkLocal values indicate whether IPv4 link-local address protocol should be enabled.
+    ///
+    /// `NMSettingIP4LinkLocal` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingIP4LinkLocal: u32 {
+        /// Allow fallback to a globally configured default. If unspecified,
+        ///   fallback to "auto". Note that if "ipv4.method" is "disabled", this always implies link-local
+        ///   addresses disabled too.
+        ///
+        /// `NM_SETTING_IP4_LL_DEFAULT`
+        Default = 0,
+        /// Special value which enables LL if "ipv4.method" is set to
+        ///   "link-local".
+        ///
+        /// `NM_SETTING_IP4_LL_AUTO`
+        Auto = 1,
+        /// Disable IPv4 link-local protocol.
+        ///
+        /// `NM_SETTING_IP4_LL_DISABLED`
+        Disabled = 2,
+        /// Enable the IPv4 link-local protocol regardless what other protocols
+        ///   such as DHCP or manually assigned IP addresses might be active.
+        ///
+        /// `NM_SETTING_IP4_LL_ENABLED`
+        Enabled = 3,
+        /// Since 1.52. This sets an IPv4 link-local address if no other IPv4
+        ///   address is set, dynamically removing/re-adding it depending on DHCP leases.
+        ///
+        /// `NM_SETTING_IP4_LL_FALLBACK`
+        Fallback = 4,
+    }
+}
+
+nm_enum! {
+    /// NMSettingIP6ConfigAddrGenMode controls how the Interface Identifier for
+    /// RFC4862 Stateless Address Autoconfiguration is created.
+    ///
+    /// `NMSettingIP6ConfigAddrGenMode` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingIP6ConfigAddrGenMode: u32 {
+        /// The Interface Identifier is derived
+        /// from the interface hardware address.
+        ///
+        /// `NM_SETTING_IP6_CONFIG_ADDR_GEN_MODE_EUI64`
+        Eui64 = 0,
+        /// The Interface Identifier
+        /// is created by using a cryptographically secure hash of a secret host-specific
+        /// key along with the connection identification and the network address as
+        /// specified by RFC7217.
+        ///
+        /// `NM_SETTING_IP6_CONFIG_ADDR_GEN_MODE_STABLE_PRIVACY`
+        StablePrivacy = 1,
+        /// Fallback to the global
+        ///   default, and if unspecified use "eui64". Since: 1.40.
+        ///
+        /// `NM_SETTING_IP6_CONFIG_ADDR_GEN_MODE_DEFAULT_OR_EUI64`
+        DefaultOrEui64 = 2,
+        /// Fallback to the global
+        ///   default, and if unspecified use "stable-privacy". Since: 1.40.
+        ///
+        /// `NM_SETTING_IP6_CONFIG_ADDR_GEN_MODE_DEFAULT`
+        Default = 3,
     }
 }
 
@@ -1583,40 +2928,1090 @@ nm_enum! {
     /// `NMSettingIP6ConfigPrivacy` in NetworkManager, sent over D-Bus as `i`.
     pub enum SettingIP6ConfigPrivacy: i32 {
         /// unknown or no value specified
+        ///
         /// `NM_SETTING_IP6_CONFIG_PRIVACY_UNKNOWN`
         Unknown = -1,
         /// IPv6 Privacy Extensions are disabled
+        ///
         /// `NM_SETTING_IP6_CONFIG_PRIVACY_DISABLED`
         Disabled = 0,
-        /// IPv6 Privacy Extensions are enabled, but public addresses are preferred over temporary addresses
+        /// IPv6 Privacy Extensions
+        /// are enabled, but public addresses are preferred over temporary addresses
+        ///
         /// `NM_SETTING_IP6_CONFIG_PRIVACY_PREFER_PUBLIC_ADDR`
         PreferPublicAddr = 1,
-        /// IPv6 Privacy Extensions are enabled and temporary addresses are preferred over public addresses
+        /// IPv6 Privacy Extensions
+        /// are enabled and temporary addresses are preferred over public addresses
+        ///
         /// `NM_SETTING_IP6_CONFIG_PRIVACY_PREFER_TEMP_ADDR`
         PreferTempAddr = 2,
     }
 }
 
 nm_enum! {
-    /// NMSettingIP6ConfigAddrGenMode controls how the Interface Identifier for
-    /// RFC4862 Stateless Address Autoconfiguration is created.
+    /// NMSettingIPConfigForwarding indicates whether to configure sysctl
+    /// interface-specific forwarding. When enabled, the interface will act
+    /// as a router to forward the packet from one interface to another.
     ///
-    /// Since: 1.2
+    /// `NMSettingIPConfigForwarding` in NetworkManager, sent over D-Bus as `i`.
+    pub enum SettingIPConfigForwarding: i32 {
+        /// use the global default value
+        ///
+        /// `NM_SETTING_IP_CONFIG_FORWARDING_DEFAULT`
+        Default = -1,
+        /// disable forwarding
+        ///
+        /// `NM_SETTING_IP_CONFIG_FORWARDING_NO`
+        No = 0,
+        /// enable forwarding
+        ///
+        /// `NM_SETTING_IP_CONFIG_FORWARDING_YES`
+        Yes = 1,
+        /// enable forwarding if any shared
+        ///  connection is active, use kernel default otherwise
+        ///
+        /// `NM_SETTING_IP_CONFIG_FORWARDING_AUTO`
+        Auto = 2,
+    }
+}
+
+nm_enum! {
+    /// NMSettingIPConfigRoutedDns indicates whether routes are added
+    /// automatically for each DNS that is associated with this connection.
     ///
-    /// `NMSettingIP6ConfigAddrGenMode` in NetworkManager, sent over D-Bus as `u`.
-    pub enum SettingIP6ConfigAddrGenMode: u32 {
-        /// The Interface Identifier is derived from the interface hardware address.
-        /// `NM_SETTING_IP6_CONFIG_ADDR_GEN_MODE_EUI64`
-        EUI64 = 0,
-        /// The Interface Identifier is created by using a cryptographically secure hash of a secret host-specific key along with the connection identification and the network address as specified by RFC7217.
-        /// `NM_SETTING_IP6_CONFIG_ADDR_GEN_MODE_STABLE_PRIVACY`
-        StablePrivacy = 1,
-        /// Fallback to the global default, and if unspecified use "eui64". Since: 1.40.
-        /// `NM_SETTING_IP6_CONFIG_ADDR_GEN_MODE_DEFAULT_OR_EUI64`
-        DefaultOrEUI64 = 2,
-        /// Fallback to the global default, and if unspecified use "stable-privacy". Since: 1.40.
-        /// `NM_SETTING_IP6_CONFIG_ADDR_GEN_MODE_DEFAULT`
-        Default = 3,
+    /// `NMSettingIPConfigRoutedDns` in NetworkManager, sent over D-Bus as `i`.
+    pub enum SettingIPConfigRoutedDns: i32 {
+        /// use the global default value
+        ///
+        /// `NM_SETTING_IP_CONFIG_ROUTED_DNS_DEFAULT`
+        Default = -1,
+        /// do not add DNS routes
+        ///
+        /// `NM_SETTING_IP_CONFIG_ROUTED_DNS_NO`
+        No = 0,
+        /// do add DNS routes
+        ///
+        /// `NM_SETTING_IP_CONFIG_ROUTED_DNS_YES`
+        Yes = 1,
+    }
+}
+
+nm_enum! {
+    /// NMSettingIP4ConfigClat values specify if CLAT (Customer-side translator)
+    /// is enabled or not. CLAT is used to implement the client part of 464XLAT
+    /// (RFC 6877), an architecture that provides IPv4 connectivity to hosts on
+    /// IPv6-only networks.
+    ///
+    /// `NMSettingIp4ConfigClat` in NetworkManager, sent over D-Bus as `i`.
+    pub enum SettingIp4ConfigClat: i32 {
+        /// use the global default value
+        ///
+        /// `NM_SETTING_IP4_CONFIG_CLAT_DEFAULT`
+        Default = -1,
+        /// disable CLAT
+        ///
+        /// `NM_SETTING_IP4_CONFIG_CLAT_NO`
+        No = 0,
+        /// enable CLAT only when the IPv4 method
+        ///   is 'auto' and the device doesn't have a native IPv4 gateway.
+        ///
+        /// `NM_SETTING_IP4_CONFIG_CLAT_AUTO`
+        Auto = 1,
+        /// enable CLAT even with IPv4 methods
+        ///   other than 'auto' and even if the device has a native IPv4 gateway.
+        ///
+        /// `NM_SETTING_IP4_CONFIG_CLAT_FORCE`
+        Force = 2,
+    }
+}
+
+nm_enum! {
+    /// `NMSettingIpvlanMode` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingIpvlanMode: u32 {
+        /// unknown/unset mode
+        ///
+        /// `NM_SETTING_IPVLAN_MODE_UNKNOWN`
+        Unknown = 0,
+        /// L2 mode, device receives and responds to ARP.
+        ///
+        /// `NM_SETTING_IPVLAN_MODE_L2`
+        L2 = 1,
+        /// L3 mode, device process only L3 traffic and above.
+        ///
+        /// `NM_SETTING_IPVLAN_MODE_L3`
+        L3 = 2,
+        /// L3S mode, same way as L3 mode but egress and ingress
+        /// lands on netfilter chain.
+        ///
+        /// `NM_SETTING_IPVLAN_MODE_L3S`
+        L3s = 3,
+    }
+}
+
+nm_enum! {
+    /// Controls if and how the MAC address of a device is randomzied.
+    ///
+    /// `NMSettingMacRandomization` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingMacRandomization: u32 {
+        /// the default value, which unless
+        /// overridden by user-controlled defaults configuration, is "never".
+        ///
+        /// `NM_SETTING_MAC_RANDOMIZATION_DEFAULT`
+        Default = 0,
+        /// the device's MAC address is always used.
+        ///
+        /// `NM_SETTING_MAC_RANDOMIZATION_NEVER`
+        Never = 1,
+        /// a random MAC address is used.
+        ///
+        /// `NM_SETTING_MAC_RANDOMIZATION_ALWAYS`
+        Always = 2,
+    }
+}
+
+nm_enum! {
+    /// NMSettingMacsecMode controls how the CAK (Connectivity Association Key) used
+    /// in MKA (MACsec Key Agreement) is obtained.
+    ///
+    /// `NMSettingMacsecMode` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingMacsecMode: u32 {
+        /// The CAK is pre-shared
+        ///
+        /// `NM_SETTING_MACSEC_MODE_PSK`
+        Psk = 0,
+        /// The CAK is the result of participation in EAP
+        ///
+        /// `NM_SETTING_MACSEC_MODE_EAP`
+        Eap = 1,
+    }
+}
+
+nm_enum! {
+    /// These flags control the MACsec offload mode.
+    ///
+    /// `NMSettingMacsecOffload` in NetworkManager, sent over D-Bus as `i`.
+    pub enum SettingMacsecOffload: i32 {
+        /// use the global default; disable if not defined
+        ///
+        /// `NM_SETTING_MACSEC_OFFLOAD_DEFAULT`
+        Default = -1,
+        /// disable offload
+        ///
+        /// `NM_SETTING_MACSEC_OFFLOAD_OFF`
+        Off = 0,
+        /// request offload to the PHY
+        ///
+        /// `NM_SETTING_MACSEC_OFFLOAD_PHY`
+        Phy = 1,
+        /// request offload to the MAC
+        ///
+        /// `NM_SETTING_MACSEC_OFFLOAD_MAC`
+        Mac = 2,
+    }
+}
+
+nm_enum! {
+    /// NMSettingMacsecValidation specifies a validation mode for incoming frames.
+    ///
+    /// `NMSettingMacsecValidation` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingMacsecValidation: u32 {
+        /// All incoming frames are accepted if
+        ///   possible
+        ///
+        /// `NM_SETTING_MACSEC_VALIDATION_DISABLE`
+        Disable = 0,
+        /// Non protected, invalid, or impossible to
+        ///   verify frames are accepted and counted as "invalid"
+        ///
+        /// `NM_SETTING_MACSEC_VALIDATION_CHECK`
+        Check = 1,
+        /// Non protected, invalid, or impossible to
+        ///   verify frames are dropped
+        ///
+        /// `NM_SETTING_MACSEC_VALIDATION_STRICT`
+        Strict = 2,
+    }
+}
+
+nm_enum! {
+    /// `NMSettingMacvlanMode` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingMacvlanMode: u32 {
+        /// unknown/unset mode
+        ///
+        /// `NM_SETTING_MACVLAN_MODE_UNKNOWN`
+        Unknown = 0,
+        /// Virtual Ethernet Port Aggregator mode
+        ///
+        /// `NM_SETTING_MACVLAN_MODE_VEPA`
+        Vepa = 1,
+        /// bridge mode
+        ///
+        /// `NM_SETTING_MACVLAN_MODE_BRIDGE`
+        Bridge = 2,
+        /// private mode
+        ///
+        /// `NM_SETTING_MACVLAN_MODE_PRIVATE`
+        Private = 3,
+        /// passthru mode
+        ///
+        /// `NM_SETTING_MACVLAN_MODE_PASSTHRU`
+        Passthru = 4,
+        /// source mode
+        ///
+        /// `NM_SETTING_MACVLAN_MODE_SOURCE`
+        Source = 5,
+    }
+}
+
+nm_enum! {
+    /// NMSettingOvsDpdkLscInterrupt indicates whether the interface uses interrupts
+    /// or poll mode for Link State Change (LSC) detection on the OVS DPDK interface.
+    ///
+    /// `NMSettingOvsDpdkLscInterrupt` in NetworkManager, sent over D-Bus as `i`.
+    pub enum SettingOvsDpdkLscInterrupt: i32 {
+        /// leave the value set to Open vSwitch default
+        ///
+        /// `NM_SETTING_OVS_DPDK_LSC_INTERRUPT_IGNORE`
+        Ignore = -1,
+        /// interrupt disabled (poll mode)
+        ///
+        /// `NM_SETTING_OVS_DPDK_LSC_INTERRUPT_DISABLED`
+        Disabled = 0,
+        /// interrupt enabled
+        ///
+        /// `NM_SETTING_OVS_DPDK_LSC_INTERRUPT_ENABLED`
+        Enabled = 1,
+    }
+}
+
+nm_enum! {
+    /// The Proxy method.
+    ///
+    /// `NMSettingProxyMethod` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingProxyMethod: u32 {
+        /// No Proxy for the Connection
+        ///
+        /// `NM_SETTING_PROXY_METHOD_NONE`
+        None = 0,
+        /// DHCP obtained Proxy/ Manual override
+        ///
+        /// `NM_SETTING_PROXY_METHOD_AUTO`
+        Auto = 1,
+    }
+}
+
+nm_flags! {
+    /// These flags indicate specific behavior related to handling of a secret.  Each
+    /// secret has a corresponding set of these flags which indicate how the secret
+    /// is to be stored and/or requested when it is needed.
+    ///
+    /// `NMSettingSecretFlags` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingSecretFlags: u32 {
+        /// the system is responsible for providing and
+        /// storing this secret (default)
+        ///
+        /// `NM_SETTING_SECRET_FLAG_NONE`
+        NONE = 0,
+        /// a user secret agent is responsible
+        /// for providing and storing this secret; when it is required agents will be
+        /// asked to retrieve it
+        ///
+        /// `NM_SETTING_SECRET_FLAG_AGENT_OWNED`
+        AGENT_OWNED = 1,
+        /// this secret should not be saved, but
+        /// should be requested from the user each time it is needed
+        ///
+        /// `NM_SETTING_SECRET_FLAG_NOT_SAVED`
+        NOT_SAVED = 2,
+        /// in situations where it cannot be
+        /// automatically determined that the secret is required (some VPNs and PPP
+        /// providers don't require all secrets) this flag indicates that the specific
+        /// secret is not required
+        ///
+        /// `NM_SETTING_SECRET_FLAG_NOT_REQUIRED`
+        NOT_REQUIRED = 4,
+    }
+}
+
+nm_enum! {
+    /// The parity setting of a serial port.
+    ///
+    /// `NMSettingSerialParity` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingSerialParity: u32 {
+        /// No parity bits (default)
+        ///
+        /// `NM_SETTING_SERIAL_PARITY_NONE`
+        None = 0,
+        /// Even parity
+        ///
+        /// `NM_SETTING_SERIAL_PARITY_EVEN`
+        Even = 1,
+        /// Odd parity
+        ///
+        /// `NM_SETTING_SERIAL_PARITY_ODD`
+        Odd = 2,
+    }
+}
+
+nm_enum! {
+    /// NMSettingTunMode values indicate the device type (TUN/TAP)
+    ///
+    /// `NMSettingTunMode` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingTunMode: u32 {
+        /// an unknown device type
+        ///
+        /// `NM_SETTING_TUN_MODE_UNKNOWN`
+        Unknown = 0,
+        /// a TUN device
+        ///
+        /// `NM_SETTING_TUN_MODE_TUN`
+        Tun = 1,
+        /// a TAP device
+        ///
+        /// `NM_SETTING_TUN_MODE_TAP`
+        Tap = 2,
+    }
+}
+
+nm_flags! {
+    /// Options for NMSettingWired:wake-on-lan. Note that not all options
+    /// are supported by all devices.
+    ///
+    /// `NMSettingWiredWakeOnLan` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingWiredWakeOnLan: u32 {
+        /// Wake on PHY activity
+        ///
+        /// `NM_SETTING_WIRED_WAKE_ON_LAN_PHY`
+        PHY = 2,
+        /// Wake on unicast messages
+        ///
+        /// `NM_SETTING_WIRED_WAKE_ON_LAN_UNICAST`
+        UNICAST = 4,
+        /// Wake on multicast messages
+        ///
+        /// `NM_SETTING_WIRED_WAKE_ON_LAN_MULTICAST`
+        MULTICAST = 8,
+        /// Wake on broadcast messages
+        ///
+        /// `NM_SETTING_WIRED_WAKE_ON_LAN_BROADCAST`
+        BROADCAST = 16,
+        /// Wake on ARP
+        ///
+        /// `NM_SETTING_WIRED_WAKE_ON_LAN_ARP`
+        ARP = 32,
+        /// Wake on magic packet
+        ///
+        /// `NM_SETTING_WIRED_WAKE_ON_LAN_MAGIC`
+        MAGIC = 64,
+        /// Use the default value
+        ///
+        /// `NM_SETTING_WIRED_WAKE_ON_LAN_DEFAULT`
+        DEFAULT = 1,
+        /// Don't change configured settings
+        ///
+        /// `NM_SETTING_WIRED_WAKE_ON_LAN_IGNORE`
+        IGNORE = 32768,
+    }
+}
+
+nm_enum! {
+    /// Indicates the wireless channel width.
+    ///
+    /// `NMSettingWirelessChannelWidth` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingWirelessChannelWidth: u32 {
+        /// automatically determine the width
+        ///
+        /// `NM_SETTING_WIRELESS_CHANNEL_WIDTH_AUTO`
+        Auto = 0,
+        /// use a 20MHz channel width
+        ///
+        /// `NM_SETTING_WIRELESS_CHANNEL_WIDTH_20MHZ`
+        Width20MHZ = 20,
+        /// use a 40MHz channel width
+        ///
+        /// `NM_SETTING_WIRELESS_CHANNEL_WIDTH_40MHZ`
+        Width40MHZ = 40,
+        /// use a 80MHz channel width
+        ///
+        /// `NM_SETTING_WIRELESS_CHANNEL_WIDTH_80MHZ`
+        Width80MHZ = 80,
+    }
+}
+
+nm_enum! {
+    /// These flags indicate whether wireless powersave must be enabled.
+    ///
+    /// `NMSettingWirelessPowersave` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingWirelessPowersave: u32 {
+        /// use the default value
+        ///
+        /// `NM_SETTING_WIRELESS_POWERSAVE_DEFAULT`
+        Default = 0,
+        /// don't touch existing setting
+        ///
+        /// `NM_SETTING_WIRELESS_POWERSAVE_IGNORE`
+        Ignore = 1,
+        /// disable powersave
+        ///
+        /// `NM_SETTING_WIRELESS_POWERSAVE_DISABLE`
+        Disable = 2,
+        /// enable powersave
+        ///
+        /// `NM_SETTING_WIRELESS_POWERSAVE_ENABLE`
+        Enable = 3,
+    }
+}
+
+nm_enum! {
+    /// These flags indicate whether FILS must be enabled.
+    ///
+    /// `NMSettingWirelessSecurityFils` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingWirelessSecurityFils: u32 {
+        /// use the default value
+        ///
+        /// `NM_SETTING_WIRELESS_SECURITY_FILS_DEFAULT`
+        Default = 0,
+        /// disable FILS
+        ///
+        /// `NM_SETTING_WIRELESS_SECURITY_FILS_DISABLE`
+        Disable = 1,
+        /// enable FILS if the supplicant and the AP support it
+        ///
+        /// `NM_SETTING_WIRELESS_SECURITY_FILS_OPTIONAL`
+        Optional = 2,
+        /// require FILS and fail if not available
+        ///
+        /// `NM_SETTING_WIRELESS_SECURITY_FILS_REQUIRED`
+        Required = 3,
+    }
+}
+
+nm_enum! {
+    /// These flags indicate whether PMF must be enabled.
+    ///
+    /// `NMSettingWirelessSecurityPmf` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingWirelessSecurityPmf: u32 {
+        /// use the default value
+        ///
+        /// `NM_SETTING_WIRELESS_SECURITY_PMF_DEFAULT`
+        Default = 0,
+        /// disable PMF
+        ///
+        /// `NM_SETTING_WIRELESS_SECURITY_PMF_DISABLE`
+        Disable = 1,
+        /// enable PMF if the supplicant and the AP support it
+        ///
+        /// `NM_SETTING_WIRELESS_SECURITY_PMF_OPTIONAL`
+        Optional = 2,
+        /// require PMF and fail if not available
+        ///
+        /// `NM_SETTING_WIRELESS_SECURITY_PMF_REQUIRED`
+        Required = 3,
+    }
+}
+
+nm_flags! {
+    /// Configure the use of WPS by a connection while it activates.
+    ///
+    /// Note: prior to 1.16, this was a GEnum type instead of a GFlags type
+    /// although, with the same numeric values.
+    ///
+    /// `NMSettingWirelessSecurityWpsMethod` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingWirelessSecurityWpsMethod: u32 {
+        /// Attempt whichever method AP supports
+        ///
+        /// `NM_SETTING_WIRELESS_SECURITY_WPS_METHOD_DEFAULT`
+        DEFAULT = 0,
+        /// WPS can not be used.
+        ///
+        /// `NM_SETTING_WIRELESS_SECURITY_WPS_METHOD_DISABLED`
+        DISABLED = 1,
+        /// Use WPS, any method
+        ///
+        /// `NM_SETTING_WIRELESS_SECURITY_WPS_METHOD_AUTO`
+        AUTO = 2,
+        /// use WPS push-button method
+        ///
+        /// `NM_SETTING_WIRELESS_SECURITY_WPS_METHOD_PBC`
+        PBC = 4,
+        /// use PIN method
+        ///
+        /// `NM_SETTING_WIRELESS_SECURITY_WPS_METHOD_PIN`
+        PIN = 8,
+    }
+}
+
+nm_flags! {
+    /// Options for NMSettingWireless:wake-on-wlan. Note that not all options
+    /// are supported by all devices.
+    ///
+    /// `NMSettingWirelessWakeOnWLan` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingWirelessWakeOnWLan: u32 {
+        /// Wake on any activity
+        ///
+        /// `NM_SETTING_WIRELESS_WAKE_ON_WLAN_ANY`
+        ANY = 2,
+        /// Wake on disconnect
+        ///
+        /// `NM_SETTING_WIRELESS_WAKE_ON_WLAN_DISCONNECT`
+        DISCONNECT = 4,
+        /// Wake on magic packet
+        ///
+        /// `NM_SETTING_WIRELESS_WAKE_ON_WLAN_MAGIC`
+        MAGIC = 8,
+        /// Wake on GTK rekey failure
+        ///
+        /// `NM_SETTING_WIRELESS_WAKE_ON_WLAN_GTK_REKEY_FAILURE`
+        GTK_REKEY_FAILURE = 16,
+        /// Wake on EAP identity request
+        ///
+        /// `NM_SETTING_WIRELESS_WAKE_ON_WLAN_EAP_IDENTITY_REQUEST`
+        EAP_IDENTITY_REQUEST = 32,
+        /// Wake on 4way handshake
+        ///
+        /// `NM_SETTING_WIRELESS_WAKE_ON_WLAN_4WAY_HANDSHAKE`
+        WLAN_4WAY_HANDSHAKE = 64,
+        /// Wake on rfkill release
+        ///
+        /// `NM_SETTING_WIRELESS_WAKE_ON_WLAN_RFKILL_RELEASE`
+        RFKILL_RELEASE = 128,
+        /// `NM_SETTING_WIRELESS_WAKE_ON_WLAN_TCP`
+        TCP = 256,
+        /// Wake on all events. This does not
+        ///   include the exclusive flags @NM_SETTING_WIRELESS_WAKE_ON_WLAN_DEFAULT or
+        ///   @NM_SETTING_WIRELESS_WAKE_ON_WLAN_IGNORE.
+        ///
+        /// `NM_SETTING_WIRELESS_WAKE_ON_WLAN_ALL`
+        ALL = 510,
+        /// Use the default value
+        ///
+        /// `NM_SETTING_WIRELESS_WAKE_ON_WLAN_DEFAULT`
+        DEFAULT = 1,
+        /// Don't change configured settings
+        ///
+        /// `NM_SETTING_WIRELESS_WAKE_ON_WLAN_IGNORE`
+        IGNORE = 32768,
+    }
+}
+
+nm_flags! {
+    /// Numeric flags for the "flags" argument of AddConnection2() D-Bus API.
+    ///
+    /// `NMSettingsAddConnection2Flags` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingsAddConnection2Flags: u32 {
+        /// an alias for numeric zero, no flags set.
+        ///
+        /// `NM_SETTINGS_ADD_CONNECTION2_FLAG_NONE`
+        NONE = 0,
+        /// to persist the connection to disk.
+        ///
+        /// `NM_SETTINGS_ADD_CONNECTION2_FLAG_TO_DISK`
+        TO_DISK = 1,
+        /// to make the connection in-memory only.
+        ///
+        /// `NM_SETTINGS_ADD_CONNECTION2_FLAG_IN_MEMORY`
+        IN_MEMORY = 2,
+        /// usually, when the connection
+        ///   has autoconnect enabled and gets added, it becomes eligible to autoconnect
+        ///   right away. Setting this flag, disables autoconnect until the connection
+        ///   is manually activated.
+        ///
+        /// `NM_SETTINGS_ADD_CONNECTION2_FLAG_BLOCK_AUTOCONNECT`
+        BLOCK_AUTOCONNECT = 32,
+    }
+}
+
+nm_flags! {
+    /// Flags describing the current activation state.
+    ///
+    /// `NMSettingsConnectionFlags` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingsConnectionFlags: u32 {
+        /// an alias for numeric zero, no flags set.
+        ///
+        /// `NM_SETTINGS_CONNECTION_FLAG_NONE`
+        NONE = 0,
+        /// the connection is not saved to disk.
+        ///   That either means, that the connection is in-memory only and currently
+        ///   is not backed by a file. Or, that the connection is backed by a file,
+        ///   but has modifications in-memory that were not persisted to disk.
+        ///
+        /// `NM_SETTINGS_CONNECTION_FLAG_UNSAVED`
+        UNSAVED = 1,
+        /// A connection is "nm-generated" if
+        ///  it was generated by NetworkManger. If the connection gets modified or saved
+        ///  by the user, the flag gets cleared. A nm-generated is also unsaved
+        ///  and has no backing file as it is in-memory only.
+        ///
+        /// `NM_SETTINGS_CONNECTION_FLAG_NM_GENERATED`
+        NM_GENERATED = 2,
+        /// The connection will be deleted
+        ///  when it disconnects. That is for in-memory connections (unsaved), which are
+        ///  currently active but deleted on disconnect. Volatile connections are
+        ///  always unsaved, but they are also no backing file on disk and are entirely
+        ///  in-memory only.
+        ///
+        /// `NM_SETTINGS_CONNECTION_FLAG_VOLATILE`
+        VOLATILE = 4,
+        /// the profile was generated to represent
+        ///  an external configuration of a networking device. Since: 1.26.
+        ///
+        /// `NM_SETTINGS_CONNECTION_FLAG_EXTERNAL`
+        EXTERNAL = 8,
+    }
+}
+
+nm_enum! {
+    /// Errors related to the settings/persistent configuration interface of
+    /// NetworkManager.
+    ///
+    /// These may be returned from NMClient methods that invoke D-Bus operations on
+    /// the "org.freedesktop.NetworkManager.Settings" interface, and correspond to
+    /// D-Bus errors in that namespace.
+    ///
+    /// `NMSettingsError` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingsError: u32 {
+        /// unknown or unclassified error
+        ///
+        /// `NM_SETTINGS_ERROR_FAILED`
+        Failed = 0,
+        /// permission denied
+        ///
+        /// `NM_SETTINGS_ERROR_PERMISSION_DENIED`
+        PermissionDenied = 1,
+        /// the requested operation is not supported by any
+        ///   active settings backend
+        ///
+        /// `NM_SETTINGS_ERROR_NOT_SUPPORTED`
+        NotSupported = 2,
+        /// the connection was invalid
+        ///
+        /// `NM_SETTINGS_ERROR_INVALID_CONNECTION`
+        InvalidConnection = 3,
+        /// attempted to modify a read-only connection
+        ///
+        /// `NM_SETTINGS_ERROR_READ_ONLY_CONNECTION`
+        ReadOnlyConnection = 4,
+        /// a connection with that UUID already exists
+        ///
+        /// `NM_SETTINGS_ERROR_UUID_EXISTS`
+        UuidExists = 5,
+        /// attempted to set an invalid hostname
+        ///
+        /// `NM_SETTINGS_ERROR_INVALID_HOSTNAME`
+        InvalidHostname = 6,
+        /// invalid arguments
+        ///
+        /// `NM_SETTINGS_ERROR_INVALID_ARGUMENTS`
+        InvalidArguments = 7,
+        /// The profile's VersionId mismatched
+        ///   and the update is rejected. See the "version-id" argument to Update2()
+        ///   method. Since 1.44.
+        ///
+        /// `NM_SETTINGS_ERROR_VERSION_ID_MISMATCH`
+        VersionIdMismatch = 8,
+        /// the requested operation is not
+        ///   supported by the settings plugin currently in use for the specified object.
+        ///   Since: 1.44.
+        ///
+        /// `NM_SETTINGS_ERROR_NOT_SUPPORTED_BY_PLUGIN`
+        NotSupportedByPlugin = 9,
+        /// the requested operation failed because it
+        ///   requires a feature that is disabled in this build of NetworkManager.
+        ///   Since: 1.56
+        ///
+        /// `NM_SETTINGS_ERROR_FEATURE_DISABLED`
+        FeatureDisabled = 10,
+        /// the requested operation failed because it
+        ///   requires a feature that is no longer supported. Since: 1.56
+        ///
+        /// `NM_SETTINGS_ERROR_FEATURE_REMOVED`
+        FeatureRemoved = 11,
+    }
+}
+
+nm_flags! {
+    /// `NMSettingsUpdate2Flags` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SettingsUpdate2Flags: u32 {
+        /// an alias for numeric zero, no flags set.
+        ///
+        /// `NM_SETTINGS_UPDATE2_FLAG_NONE`
+        NONE = 0,
+        /// to persist the connection to disk.
+        ///
+        /// `NM_SETTINGS_UPDATE2_FLAG_TO_DISK`
+        TO_DISK = 1,
+        /// makes the profile in-memory.
+        ///   Note that such profiles are stored in keyfile format under /run.
+        ///   If the file is already in-memory, the file in /run is updated in-place.
+        ///   Otherwise, the previous storage for the profile is left unchanged
+        ///   on disk, and the in-memory copy shadows it.
+        ///   Note that the original filename of the previous persistent storage (if any)
+        ///   is remembered. That means, when later persisting the profile again to disk,
+        ///   the file on disk will be overwritten again.
+        ///   Likewise, when finally deleting the profile, both the storage from /run
+        ///   and persistent storage are deleted (or if the persistent storage does not
+        ///   allow deletion, and nmmeta file is written to mark the UUID as deleted).
+        ///
+        /// `NM_SETTINGS_UPDATE2_FLAG_IN_MEMORY`
+        IN_MEMORY = 2,
+        /// this is almost the same
+        ///   as NM_SETTINGS_UPDATE2_FLAG_IN_MEMORY, with one difference: when later deleting
+        ///   the profile, the original profile will not be deleted. Instead a nmmeta
+        ///   file is written to /run to indicate that the profile is gone.
+        ///   Note that if such a nmmeta tombstone file exists and hides a file in persistent
+        ///   storage, then when re-adding the profile with the same UUID, then the original
+        ///   storage is taken over again.
+        ///
+        /// `NM_SETTINGS_UPDATE2_FLAG_IN_MEMORY_DETACHED`
+        IN_MEMORY_DETACHED = 4,
+        /// this is like NM_SETTINGS_UPDATE2_FLAG_IN_MEMORY,
+        ///   but if the connection has a corresponding file on persistent storage, the file
+        ///   will be deleted right away. If the profile is later again persisted to disk,
+        ///   a new, unused filename will be chosen.
+        ///
+        /// `NM_SETTINGS_UPDATE2_FLAG_IN_MEMORY_ONLY`
+        IN_MEMORY_ONLY = 8,
+        /// This can be specified with either
+        ///   NM_SETTINGS_UPDATE2_FLAG_IN_MEMORY, NM_SETTINGS_UPDATE2_FLAG_IN_MEMORY_DETACHED
+        ///   or NM_SETTINGS_UPDATE2_FLAG_IN_MEMORY_ONLY.
+        ///   After making the connection in-memory only, the connection is marked
+        ///   as volatile. That means, if the connection is currently not active
+        ///   it will be deleted right away. Otherwise, it is marked to for deletion
+        ///   once the connection deactivates. A volatile connection cannot autoactivate
+        ///   again (because it's about to be deleted), but a manual activation will
+        ///   clear the volatile flag.
+        ///
+        /// `NM_SETTINGS_UPDATE2_FLAG_VOLATILE`
+        VOLATILE = 16,
+        /// usually, when the connection
+        ///   has autoconnect enabled and is modified, it becomes eligible to autoconnect
+        ///   right away. Setting this flag, disables autoconnect until the connection
+        ///   is manually activated.
+        ///
+        /// `NM_SETTINGS_UPDATE2_FLAG_BLOCK_AUTOCONNECT`
+        BLOCK_AUTOCONNECT = 32,
+        /// when a profile gets modified that is
+        ///   currently active, then these changes don't take effect for the active
+        ///   device unless the profile gets reactivated or the configuration reapplied.
+        ///   There are two exceptions: by default "connection.zone" and "connection.metered"
+        ///   properties take effect immediately. Specify this flag to prevent these
+        ///   properties to take effect, so that the change is restricted to modify
+        ///   the profile. Since: 1.20.
+        ///
+        /// `NM_SETTINGS_UPDATE2_FLAG_NO_REAPPLY`
+        NO_REAPPLY = 64,
+    }
+}
+
+nm_enum! {
+    /// `NMSriovEswitchEncapMode` in NetworkManager, sent over D-Bus as `i`.
+    pub enum SriovEswitchEncapMode: i32 {
+        /// don't modify current encap-mode
+        ///
+        /// `NM_SRIOV_ESWITCH_ENCAP_MODE_PRESERVE`
+        Preserve = -1,
+        /// disable encapsulation mode
+        ///
+        /// `NM_SRIOV_ESWITCH_ENCAP_MODE_NONE`
+        None = 0,
+        /// enable encapsulation mode
+        ///
+        /// `NM_SRIOV_ESWITCH_ENCAP_MODE_BASIC`
+        Basic = 1,
+    }
+}
+
+nm_enum! {
+    /// `NMSriovEswitchInlineMode` in NetworkManager, sent over D-Bus as `i`.
+    pub enum SriovEswitchInlineMode: i32 {
+        /// don't modify current inline-mode
+        ///
+        /// `NM_SRIOV_ESWITCH_INLINE_MODE_PRESERVE`
+        Preserve = -1,
+        /// don't use inline mode
+        ///
+        /// `NM_SRIOV_ESWITCH_INLINE_MODE_NONE`
+        None = 0,
+        /// L2 mode
+        ///
+        /// `NM_SRIOV_ESWITCH_INLINE_MODE_LINK`
+        Link = 1,
+        /// L3 mode
+        ///
+        /// `NM_SRIOV_ESWITCH_INLINE_MODE_NETWORK`
+        Network = 2,
+        /// L4 mode
+        ///
+        /// `NM_SRIOV_ESWITCH_INLINE_MODE_TRANSPORT`
+        Transport = 3,
+    }
+}
+
+nm_enum! {
+    /// `NMSriovEswitchMode` in NetworkManager, sent over D-Bus as `i`.
+    pub enum SriovEswitchMode: i32 {
+        /// don't modify current eswitch mode
+        ///
+        /// `NM_SRIOV_ESWITCH_MODE_PRESERVE`
+        Preserve = -1,
+        /// use legacy SRIOV
+        ///
+        /// `NM_SRIOV_ESWITCH_MODE_LEGACY`
+        Legacy = 0,
+        /// use switchdev mode
+        ///
+        /// `NM_SRIOV_ESWITCH_MODE_SWITCHDEV`
+        Switchdev = 1,
+    }
+}
+
+nm_enum! {
+    /// `NMSriovPreserveOnDown` in NetworkManager, sent over D-Bus as `i`.
+    pub enum SriovPreserveOnDown: i32 {
+        /// use the default value
+        ///
+        /// `NM_SRIOV_PRESERVE_ON_DOWN_DEFAULT`
+        Default = -1,
+        /// reset the SR-IOV parameters when the
+        ///     connection is deactivated
+        ///
+        /// `NM_SRIOV_PRESERVE_ON_DOWN_NO`
+        No = 0,
+        /// preserve the SR-IOV parameters set on
+        /// the device when the connection is deactivated
+        ///
+        /// `NM_SRIOV_PRESERVE_ON_DOWN_YES`
+        Yes = 1,
+    }
+}
+
+nm_enum! {
+    /// NMSriovVFVlanProtocol indicates the VLAN protocol to use.
+    ///
+    /// `NMSriovVFVlanProtocol` in NetworkManager, sent over D-Bus as `u`.
+    pub enum SriovVFVlanProtocol: u32 {
+        /// use 802.1Q
+        ///
+        /// `NM_SRIOV_VF_VLAN_PROTOCOL_802_1Q`
+        Protocol8021Q = 0,
+        /// use 802.1ad
+        ///
+        /// `NM_SRIOV_VF_VLAN_PROTOCOL_802_1AD`
+        Protocol8021AD = 1,
+    }
+}
+
+nm_enum! {
+    /// NMState values indicate the current overall networking state.
+    ///
+    /// `NMState` in NetworkManager, sent over D-Bus as `u`.
+    pub enum State: u32 {
+        /// Networking state is unknown. This indicates a daemon error
+        ///    that makes it unable to reasonably assess the state. In such event the
+        ///    applications are expected to assume Internet connectivity might be present
+        ///    and not disable controls that require network access.
+        ///    The graphical shells may hide the network accessibility indicator altogether
+        ///    since no meaningful status indication can be provided.
+        ///
+        /// `NM_STATE_UNKNOWN`
+        Unknown = 0,
+        /// Deprecated: 1.56: Use NM_STATE_DISABLED instead.
+        ///
+        /// `NM_STATE_ASLEEP`
+        Asleep = 10,
+        /// There is no active network connection.
+        ///    The graphical shell should indicate  no network connectivity and the
+        ///    applications should not attempt to access the network.
+        ///
+        /// `NM_STATE_DISCONNECTED`
+        Disconnected = 20,
+        /// Network connections are being cleaned up.
+        ///    The applications should tear down their network sessions.
+        ///
+        /// `NM_STATE_DISCONNECTING`
+        Disconnecting = 30,
+        /// A network connection is being started
+        ///    The graphical shell should indicate the network is being connected while
+        ///    the applications should still make no attempts to connect the network.
+        ///
+        /// `NM_STATE_CONNECTING`
+        Connecting = 40,
+        /// There is only local IPv4 and/or IPv6 connectivity,
+        ///    but no default route to access the Internet. The graphical shell should
+        ///    indicate no network connectivity.
+        ///
+        /// `NM_STATE_CONNECTED_LOCAL`
+        ConnectedLocal = 50,
+        /// There is only site-wide IPv4 and/or IPv6 connectivity.
+        ///    This means a default route is available, but the Internet connectivity check
+        ///    (see "Connectivity" property) did not succeed. The graphical shell should
+        ///    indicate limited network connectivity.
+        ///
+        /// `NM_STATE_CONNECTED_SITE`
+        ConnectedSite = 60,
+        /// There is global IPv4 and/or IPv6 Internet connectivity
+        ///    This means the Internet connectivity check succeeded, the graphical shell should
+        ///    indicate full network connectivity.
+        ///
+        /// `NM_STATE_CONNECTED_GLOBAL`
+        ConnectedGlobal = 70,
+    }
+}
+
+nm_flags! {
+    /// `NMTeamLinkWatcherArpPingFlags` in NetworkManager, sent over D-Bus as `u`.
+    pub enum TeamLinkWatcherArpPingFlags: u32 {
+        /// the arp_ping link watcher
+        ///    option 'validate_active' is enabled (set to true).
+        ///
+        /// `NM_TEAM_LINK_WATCHER_ARP_PING_FLAG_VALIDATE_ACTIVE`
+        VALIDATE_ACTIVE = 2,
+        /// the arp_ping link watcher
+        ///    option 'validate_inactive' is enabled (set to true).
+        ///
+        /// `NM_TEAM_LINK_WATCHER_ARP_PING_FLAG_VALIDATE_INACTIVE`
+        VALIDATE_INACTIVE = 4,
+        /// the arp_ping link watcher option
+        ///    'send_always' is enabled (set to true).
+        ///
+        /// `NM_TEAM_LINK_WATCHER_ARP_PING_FLAG_SEND_ALWAYS`
+        SEND_ALWAYS = 8,
+    }
+}
+
+nm_enum! {
+    /// An boolean value that can be overridden by a default.
+    ///
+    /// `NMTernary` in NetworkManager, sent over D-Bus as `i`.
+    pub enum Ternary: i32 {
+        /// use the globally-configured default value.
+        ///
+        /// `NM_TERNARY_DEFAULT`
+        Default = -1,
+        /// the option is disabled.
+        ///
+        /// `NM_TERNARY_FALSE`
+        False = 0,
+        /// the option is enabled.
+        ///
+        /// `NM_TERNARY_TRUE`
+        True = 1,
+    }
+}
+
+nm_enum! {
+    /// Describes generic security mechanisms that 802.11 access points may offer.
+    /// Used with nm_utils_security_valid() for checking whether a given access
+    /// point is compatible with a network device.
+    ///
+    /// `NMUtilsSecurityType` in NetworkManager, sent over D-Bus as `u`.
+    pub enum UtilsSecurityType: u32 {
+        /// unknown or invalid security, placeholder and not used
+        ///
+        /// `NMU_SEC_INVALID`
+        Invalid = 0,
+        /// unencrypted and open
+        ///
+        /// `NMU_SEC_NONE`
+        None = 1,
+        /// static WEP keys are used for encryption
+        ///
+        /// `NMU_SEC_STATIC_WEP`
+        StaticWep = 2,
+        /// Cisco LEAP is used for authentication and for generating the
+        /// dynamic WEP keys automatically
+        ///
+        /// `NMU_SEC_LEAP`
+        Leap = 3,
+        /// standard 802.1x is used for authentication and
+        /// generating the dynamic WEP keys automatically
+        ///
+        /// `NMU_SEC_DYNAMIC_WEP`
+        DynamicWep = 4,
+        /// WPA1 is used with Pre-Shared Keys (PSK)
+        ///
+        /// `NMU_SEC_WPA_PSK`
+        WpaPsk = 5,
+        /// WPA1 is used with 802.1x authentication
+        ///
+        /// `NMU_SEC_WPA_ENTERPRISE`
+        WpaEnterprise = 6,
+        /// WPA2/RSN is used with Pre-Shared Keys (PSK)
+        ///
+        /// `NMU_SEC_WPA2_PSK`
+        Wpa2Psk = 7,
+        /// WPA2 is used with 802.1x authentication
+        ///
+        /// `NMU_SEC_WPA2_ENTERPRISE`
+        Wpa2Enterprise = 8,
+        /// is used with WPA3 Enterprise
+        ///
+        /// `NMU_SEC_SAE`
+        Sae = 9,
+        /// is used with Enhanced Open
+        ///
+        /// `NMU_SEC_OWE`
+        Owe = 10,
+        /// is used with WPA3 Enterprise Suite-B 192 bit mode. Since: 1.30.
+        ///
+        /// `NMU_SEC_WPA3_SUITE_B_192`
+        Wpa3SuiteB192 = 11,
+    }
+}
+
+nm_enum! {
+    /// The numeric values represent the bit index of the capability. These capabilities
+    /// can be queried in the "VersionInfo" D-Bus property.
+    ///
+    /// `NMVersionInfoCapability` in NetworkManager, sent over D-Bus as `u`.
+    pub enum VersionInfoCapability: u32 {
+        /// Contains the fix to a bug that
+        ///   caused that routes in table other than main were not removed on reapply nor
+        ///   on connection down.
+        ///   <https://issues.redhat.com/browse/RHEL-66262>
+        ///   <https://issues.redhat.com/browse/RHEL-67324>
+        ///
+        /// `NM_VERSION_INFO_CAPABILITY_SYNC_ROUTE_WITH_TABLE`
+        SyncRouteWithTable = 0,
+        /// Indicates that NetworkManager supports
+        /// configuring per-device IPv4 sysctl forwarding setting. Since: 1.54.
+        ///
+        /// `NM_VERSION_INFO_CAPABILITY_IP4_FORWARDING`
+        Ip4Forwarding = 1,
+        /// NetworkManager supports the
+        ///   "sriov.preserve-on-down" property. Since: 1.54
+        ///
+        /// `NM_VERSION_INFO_CAPABILITY_SRIOV_PRESERVE_ON_DOWN`
+        SriovPreserveOnDown = 2,
+    }
+}
+
+nm_flags! {
+    /// NMVlanFlags values control the behavior of the VLAN interface.
+    ///
+    /// `NMVlanFlags` in NetworkManager, sent over D-Bus as `u`.
+    pub enum VlanFlags: u32 {
+        /// indicates that this interface should reorder
+        ///  outgoing packet headers to look more like a non-VLAN Ethernet interface
+        ///
+        /// `NM_VLAN_FLAG_REORDER_HEADERS`
+        REORDER_HEADERS = 1,
+        /// indicates that this interface should use GVRP to register
+        ///  itself with its switch
+        ///
+        /// `NM_VLAN_FLAG_GVRP`
+        GVRP = 2,
+        /// indicates that this interface's operating
+        ///  state is tied to the underlying network interface but other details
+        ///  (like routing) are not.
+        ///
+        /// `NM_VLAN_FLAG_LOOSE_BINDING`
+        LOOSE_BINDING = 4,
+        /// indicates that this interface should use MVRP to register
+        ///  itself with its switch
+        ///
+        /// `NM_VLAN_FLAG_MVRP`
+        MVRP = 8,
     }
 }
 
@@ -1627,31 +4022,271 @@ nm_enum! {
     /// `NMVlanPriorityMap` in NetworkManager, sent over D-Bus as `u`.
     pub enum VlanPriorityMap: u32 {
         /// map for incoming data
+        ///
         /// `NM_VLAN_INGRESS_MAP`
         IngressMap = 0,
         /// map for outgoing data
+        ///
         /// `NM_VLAN_EGRESS_MAP`
         EgressMap = 1,
     }
 }
 
-nm_flags! {
-    /// NMVlanFlags values control the behavior of the VLAN interface.
+nm_enum! {
+    /// VPN connection states
     ///
-    /// `NMVlanFlags` in NetworkManager, sent over D-Bus as `u`.
-    pub enum VlanFlags: u32 {
-        /// indicates that this interface should reorder outgoing packet headers to look more like a non-VLAN Ethernet interface
-        /// `NM_VLAN_FLAG_REORDER_HEADERS`
-        REORDER_HEADERS = 1,
-        /// indicates that this interface should use GVRP to register itself with its switch
-        /// `NM_VLAN_FLAG_GVRP`
-        GVRP = 2,
-        /// indicates that this interface's operating state is tied to the underlying network interface but other details (like routing) are not.
-        /// `NM_VLAN_FLAG_LOOSE_BINDING`
-        LOOSE_BINDING = 4,
-        /// indicates that this interface should use MVRP to register itself with its switch
-        /// `NM_VLAN_FLAG_MVRP`
-        MVRP = 8,
+    /// `NMVpnConnectionState` in NetworkManager, sent over D-Bus as `u`.
+    pub enum VpnConnectionState: u32 {
+        /// The state of the VPN connection is
+        ///   unknown.
+        ///
+        /// `NM_VPN_CONNECTION_STATE_UNKNOWN`
+        Unknown = 0,
+        /// The VPN connection is preparing to
+        ///   connect.
+        ///
+        /// `NM_VPN_CONNECTION_STATE_PREPARE`
+        Prepare = 1,
+        /// The VPN connection needs authorization
+        ///   credentials.
+        ///
+        /// `NM_VPN_CONNECTION_STATE_NEED_AUTH`
+        NeedAuth = 2,
+        /// The VPN connection is being established.
+        ///
+        /// `NM_VPN_CONNECTION_STATE_CONNECT`
+        Connect = 3,
+        /// The VPN connection is getting an IP
+        ///   address.
+        ///
+        /// `NM_VPN_CONNECTION_STATE_IP_CONFIG_GET`
+        IpConfigGet = 4,
+        /// The VPN connection is active.
+        ///
+        /// `NM_VPN_CONNECTION_STATE_ACTIVATED`
+        Activated = 5,
+        /// The VPN connection failed.
+        ///
+        /// `NM_VPN_CONNECTION_STATE_FAILED`
+        Failed = 6,
+        /// The VPN connection is disconnected.
+        ///
+        /// `NM_VPN_CONNECTION_STATE_DISCONNECTED`
+        Disconnected = 7,
+    }
+}
+
+nm_enum! {
+    /// VPN connection state reasons
+    ///
+    /// `NMVpnConnectionStateReason` in NetworkManager, sent over D-Bus as `u`.
+    pub enum VpnConnectionStateReason: u32 {
+        /// The reason for the VPN connection
+        ///   state change is unknown.
+        ///
+        /// `NM_VPN_CONNECTION_STATE_REASON_UNKNOWN`
+        Unknown = 0,
+        /// No reason was given for the VPN
+        ///   connection state change.
+        ///
+        /// `NM_VPN_CONNECTION_STATE_REASON_NONE`
+        None = 1,
+        /// The VPN connection changed
+        ///   state because the user disconnected it.
+        ///
+        /// `NM_VPN_CONNECTION_STATE_REASON_USER_DISCONNECTED`
+        UserDisconnected = 2,
+        /// The VPN connection
+        ///   changed state because the device it was using was disconnected.
+        ///
+        /// `NM_VPN_CONNECTION_STATE_REASON_DEVICE_DISCONNECTED`
+        DeviceDisconnected = 3,
+        /// The service providing the
+        ///   VPN connection was stopped.
+        ///
+        /// `NM_VPN_CONNECTION_STATE_REASON_SERVICE_STOPPED`
+        ServiceStopped = 4,
+        /// The IP config of the VPN
+        ///   connection was invalid.
+        ///
+        /// `NM_VPN_CONNECTION_STATE_REASON_IP_CONFIG_INVALID`
+        IpConfigInvalid = 5,
+        /// The connection attempt to
+        ///   the VPN service timed out.
+        ///
+        /// `NM_VPN_CONNECTION_STATE_REASON_CONNECT_TIMEOUT`
+        ConnectTimeout = 6,
+        /// A timeout occurred
+        ///   while starting the service providing the VPN connection.
+        ///
+        /// `NM_VPN_CONNECTION_STATE_REASON_SERVICE_START_TIMEOUT`
+        ServiceStartTimeout = 7,
+        /// Starting the service
+        ///   starting the service providing the VPN connection failed.
+        ///
+        /// `NM_VPN_CONNECTION_STATE_REASON_SERVICE_START_FAILED`
+        ServiceStartFailed = 8,
+        /// Necessary secrets for the VPN
+        ///   connection were not provided.
+        ///
+        /// `NM_VPN_CONNECTION_STATE_REASON_NO_SECRETS`
+        NoSecrets = 9,
+        /// Authentication to the VPN
+        ///   server failed.
+        ///
+        /// `NM_VPN_CONNECTION_STATE_REASON_LOGIN_FAILED`
+        LoginFailed = 10,
+        /// The connection was
+        ///   deleted from settings.
+        ///
+        /// `NM_VPN_CONNECTION_STATE_REASON_CONNECTION_REMOVED`
+        ConnectionRemoved = 11,
+    }
+}
+
+nm_flags! {
+    /// Flags that indicate certain capabilities of the plugin to editor programs.
+    ///
+    /// `NMVpnEditorPluginCapability` in NetworkManager, sent over D-Bus as `u`.
+    pub enum VpnEditorPluginCapability: u32 {
+        /// Unknown or no capability.
+        ///
+        /// `NM_VPN_EDITOR_PLUGIN_CAPABILITY_NONE`
+        NONE = 0,
+        /// The plugin can import new connections.
+        ///
+        /// `NM_VPN_EDITOR_PLUGIN_CAPABILITY_IMPORT`
+        IMPORT = 1,
+        /// The plugin can export connections.
+        ///
+        /// `NM_VPN_EDITOR_PLUGIN_CAPABILITY_EXPORT`
+        EXPORT = 2,
+        /// The plugin supports IPv6 addressing.
+        ///
+        /// `NM_VPN_EDITOR_PLUGIN_CAPABILITY_IPV6`
+        IPV6 = 4,
+        /// The GUI editor plugin is not available. Since: 1.52.
+        ///
+        /// `NM_VPN_EDITOR_PLUGIN_CAPABILITY_NO_EDITOR`
+        NO_EDITOR = 8,
+    }
+}
+
+nm_enum! {
+    /// Returned by the VPN service plugin to indicate errors. These codes correspond
+    /// to errors in the "org.freedesktop.NetworkManager.VPN.Error" namespace.
+    ///
+    /// `NMVpnPluginError` in NetworkManager, sent over D-Bus as `u`.
+    pub enum VpnPluginError: u32 {
+        /// unknown or unclassified error
+        ///
+        /// `NM_VPN_PLUGIN_ERROR_FAILED`
+        Failed = 0,
+        /// the plugin is already starting,
+        ///   and another connect request was received
+        ///
+        /// `NM_VPN_PLUGIN_ERROR_STARTING_IN_PROGRESS`
+        StartingInProgress = 1,
+        /// the plugin is already connected, and
+        ///   another connect request was received
+        ///
+        /// `NM_VPN_PLUGIN_ERROR_ALREADY_STARTED`
+        AlreadyStarted = 2,
+        /// the plugin is already stopping,
+        ///   and another stop request was received
+        ///
+        /// `NM_VPN_PLUGIN_ERROR_STOPPING_IN_PROGRESS`
+        StoppingInProgress = 3,
+        /// the plugin is already stopped, and
+        ///   another disconnect request was received
+        ///
+        /// `NM_VPN_PLUGIN_ERROR_ALREADY_STOPPED`
+        AlreadyStopped = 4,
+        /// the operation could not be performed in
+        ///   this state
+        ///
+        /// `NM_VPN_PLUGIN_ERROR_WRONG_STATE`
+        WrongState = 5,
+        /// the operation could not be performed as
+        ///   the request contained malformed arguments, or arguments of unexpected type.
+        ///   Usually means that one of the VPN setting data items or secrets was not of
+        ///   the expected type (ie int, string, bool, etc).
+        ///
+        /// `NM_VPN_PLUGIN_ERROR_BAD_ARGUMENTS`
+        BadArguments = 6,
+        /// a child process failed to launch
+        ///
+        /// `NM_VPN_PLUGIN_ERROR_LAUNCH_FAILED`
+        LaunchFailed = 7,
+        /// the operation could not be performed
+        ///   because the connection was invalid.  Usually means that the connection's
+        ///   VPN setting was missing some required data item or secret.
+        ///
+        /// `NM_VPN_PLUGIN_ERROR_INVALID_CONNECTION`
+        InvalidConnection = 8,
+        /// the operation could not be
+        ///   performed as the plugin does not support interactive operations, such as
+        ///   ConnectInteractive() or NewSecrets()
+        ///
+        /// `NM_VPN_PLUGIN_ERROR_INTERACTIVE_NOT_SUPPORTED`
+        InteractiveNotSupported = 9,
+    }
+}
+
+nm_enum! {
+    /// VPN plugin failure reasons
+    ///
+    /// `NMVpnPluginFailure` in NetworkManager, sent over D-Bus as `u`.
+    pub enum VpnPluginFailure: u32 {
+        /// Login failed.
+        ///
+        /// `NM_VPN_PLUGIN_FAILURE_LOGIN_FAILED`
+        LoginFailed = 0,
+        /// Connect failed.
+        ///
+        /// `NM_VPN_PLUGIN_FAILURE_CONNECT_FAILED`
+        ConnectFailed = 1,
+        /// Invalid IP configuration returned from
+        ///   the VPN plugin.
+        ///
+        /// `NM_VPN_PLUGIN_FAILURE_BAD_IP_CONFIG`
+        BadIpConfig = 2,
+    }
+}
+
+nm_enum! {
+    /// VPN daemon states
+    ///
+    /// `NMVpnServiceState` in NetworkManager, sent over D-Bus as `u`.
+    pub enum VpnServiceState: u32 {
+        /// The state of the VPN plugin is unknown.
+        ///
+        /// `NM_VPN_SERVICE_STATE_UNKNOWN`
+        Unknown = 0,
+        /// The VPN plugin is initialized.
+        ///
+        /// `NM_VPN_SERVICE_STATE_INIT`
+        Init = 1,
+        /// Not used.
+        ///
+        /// `NM_VPN_SERVICE_STATE_SHUTDOWN`
+        Shutdown = 2,
+        /// The plugin is attempting to connect to a VPN server.
+        ///
+        /// `NM_VPN_SERVICE_STATE_STARTING`
+        Starting = 3,
+        /// The plugin has connected to a VPN server.
+        ///
+        /// `NM_VPN_SERVICE_STATE_STARTED`
+        Started = 4,
+        /// The plugin is disconnecting from the VPN server.
+        ///
+        /// `NM_VPN_SERVICE_STATE_STOPPING`
+        Stopping = 5,
+        /// The plugin has disconnected from the VPN server.
+        ///
+        /// `NM_VPN_SERVICE_STATE_STOPPED`
+        Stopped = 6,
     }
 }
 
@@ -1669,295 +4304,70 @@ nm_enum! {
     /// `NMWepKeyType` in NetworkManager, sent over D-Bus as `u`.
     pub enum WepKeyType: u32 {
         /// unknown WEP key type
+        ///
         /// `NM_WEP_KEY_TYPE_UNKNOWN`
         Unknown = 0,
-        /// indicates a hexadecimal or ASCII formatted WEP key. Hex keys are either 10 or 26 hexadecimal characters (ie "5f782f2f5f" or "732f2d712e4a394a375d366931"), while ASCII keys are either 5 or 13 ASCII characters (ie "abcde" or "blahblah99$*1").
+        /// indicates a hexadecimal or ASCII formatted WEP key.
+        /// Hex keys are either 10 or 26 hexadecimal characters (ie "5f782f2f5f" or
+        /// "732f2d712e4a394a375d366931"), while ASCII keys are either 5 or 13 ASCII
+        /// characters (ie "abcde" or "blahblah99$*1").
+        ///
         /// `NM_WEP_KEY_TYPE_KEY`
         Key = 1,
-        /// indicates a WEP passphrase (ex "I bought a duck on my way back from the market 235Q&^%^*%") instead of a hexadecimal or ASCII key.  Passphrases are between 8 and 64 characters inclusive and are hashed the actual WEP key using the MD5 hash algorithm.
+        /// indicates a WEP passphrase (ex "I bought a duck
+        /// on my way back from the market 235Q&^%^*%") instead of a hexadecimal or ASCII
+        /// key.  Passphrases are between 8 and 64 characters inclusive and are hashed
+        /// the actual WEP key using the MD5 hash algorithm.
+        ///
         /// `NM_WEP_KEY_TYPE_PASSPHRASE`
         Passphrase = 2,
     }
 }
 
 nm_enum! {
-    /// These flags indicate whether PMF must be enabled.
+    /// Describes a Wi-Fi radio frequency band.
     ///
-    /// Since: 1.10
-    ///
-    /// `NMSettingWirelessSecurityPmf` in NetworkManager, sent over D-Bus as `u`.
-    pub enum SettingWirelessSecurityPmf: u32 {
-        /// use the default value
-        /// `NM_SETTING_WIRELESS_SECURITY_PMF_DEFAULT`
-        Default = 0,
-        /// disable PMF
-        /// `NM_SETTING_WIRELESS_SECURITY_PMF_DISABLE`
-        Disable = 1,
-        /// enable PMF if the supplicant and the AP support it
-        /// `NM_SETTING_WIRELESS_SECURITY_PMF_OPTIONAL`
-        Optional = 2,
-        /// require PMF and fail if not available
-        /// `NM_SETTING_WIRELESS_SECURITY_PMF_REQUIRED`
-        Required = 3,
-    }
-}
-
-nm_flags! {
-    /// Configure the use of WPS by a connection while it activates.
-    ///
-    /// Note: prior to 1.16, this was a GEnum type instead of a GFlags type
-    /// although, with the same numeric values.
-    ///
-    /// Since: 1.10
-    ///
-    /// `NMSettingWirelessSecurityWpsMethod` in NetworkManager, sent over D-Bus as `u`.
-    pub enum SettingWirelessSecurityWpsMethod: u32 {
-        /// Attempt whichever method AP supports
-        /// `NM_SETTING_WIRELESS_SECURITY_WPS_METHOD_DEFAULT`
-        DEFAULT = 0,
-        /// WPS can not be used.
-        /// `NM_SETTING_WIRELESS_SECURITY_WPS_METHOD_DISABLED`
-        DISABLED = 1,
-        /// Use WPS, any method
-        /// `NM_SETTING_WIRELESS_SECURITY_WPS_METHOD_AUTO`
-        AUTO = 2,
-        /// use WPS push-button method
-        /// `NM_SETTING_WIRELESS_SECURITY_WPS_METHOD_PBC`
-        PBC = 4,
-        /// use PIN method
-        /// `NM_SETTING_WIRELESS_SECURITY_WPS_METHOD_PIN`
-        PIN = 8,
-    }
-}
-
-nm_enum! {
-    /// These flags indicate whether FILS must be enabled.
-    ///
-    /// Since: 1.12
-    /// /
-    /// /* clang-format off
-    ///
-    /// `NMSettingWirelessSecurityFils` in NetworkManager, sent over D-Bus as `u`.
-    pub enum SettingWirelessSecurityFils: u32 {
-        /// use the default value
-        /// `NM_SETTING_WIRELESS_SECURITY_FILS_DEFAULT`
-        Default = 0,
-        /// disable FILS
-        /// `NM_SETTING_WIRELESS_SECURITY_FILS_DISABLE`
-        Disable = 1,
-        /// enable FILS if the supplicant and the AP support it
-        /// `NM_SETTING_WIRELESS_SECURITY_FILS_OPTIONAL`
-        Optional = 2,
-        /// require FILS and fail if not available
-        /// `NM_SETTING_WIRELESS_SECURITY_FILS_REQUIRED`
-        Required = 3,
-    }
-}
-
-nm_flags! {
-    /// These flags indicate specific behavior related to handling of a secret.  Each
-    /// secret has a corresponding set of these flags which indicate how the secret
-    /// is to be stored and/or requested when it is needed.
-    ///
-    /// `NMSettingSecretFlags` in NetworkManager, sent over D-Bus as `u`.
-    pub enum SettingSecretFlags: u32 {
-        /// the system is responsible for providing and storing this secret (default)
-        /// `NM_SETTING_SECRET_FLAG_NONE`
-        NONE = 0,
-        /// a user secret agent is responsible for providing and storing this secret; when it is required agents will be asked to retrieve it
-        /// `NM_SETTING_SECRET_FLAG_AGENT_OWNED`
-        AGENT_OWNED = 1,
-        /// this secret should not be saved, but should be requested from the user each time it is needed
-        /// `NM_SETTING_SECRET_FLAG_NOT_SAVED`
-        NOT_SAVED = 2,
-        /// in situations where it cannot be automatically determined that the secret is required (some VPNs and PPP providers don't require all secrets) this flag indicates that the specific secret is not required
-        /// `NM_SETTING_SECRET_FLAG_NOT_REQUIRED`
-        NOT_REQUIRED = 4,
-    }
-}
-
-nm_enum! {
-    /// These flags modify the comparison behavior when comparing two settings or
-    /// two connections.
-    ///
-    /// `NMSettingCompareFlags` in NetworkManager, sent over D-Bus as `u`.
-    pub enum SettingCompareFlags: u32 {
-        /// match all properties exactly
-        /// `NM_SETTING_COMPARE_FLAG_EXACT`
-        Exact = 0,
-        /// match only important attributes, like SSID, type, security settings, etc.  Does not match, for example, connection ID or UUID.
-        /// `NM_SETTING_COMPARE_FLAG_FUZZY`
-        Fuzzy = 1,
-        /// ignore the connection's ID
-        /// `NM_SETTING_COMPARE_FLAG_IGNORE_ID`
-        IgnoreId = 2,
-        /// ignore all secrets
-        /// `NM_SETTING_COMPARE_FLAG_IGNORE_SECRETS`
-        IgnoreSecrets = 4,
-        /// ignore secrets for which the secret's flags indicate the secret is owned by a user secret agent (ie, the secret's flag includes @NM_SETTING_SECRET_FLAG_AGENT_OWNED)
-        /// `NM_SETTING_COMPARE_FLAG_IGNORE_AGENT_OWNED_SECRETS`
-        IgnoreAgentOwnedSecrets = 8,
-        /// ignore secrets for which the secret's flags indicate the secret should not be saved to persistent storage (ie, the secret's flag includes @NM_SETTING_SECRET_FLAG_NOT_SAVED)
-        /// `NM_SETTING_COMPARE_FLAG_IGNORE_NOT_SAVED_SECRETS`
-        IgnoreNotSavedSecrets = 16,
-        /// if this flag is set, nm_setting_diff() and nm_connection_diff() will also include properties that are set to their default value. See also @NM_SETTING_COMPARE_FLAG_DIFF_RESULT_NO_DEFAULT.
-        /// `NM_SETTING_COMPARE_FLAG_DIFF_RESULT_WITH_DEFAULT`
-        DiffResultWithDefault = 32,
-        /// if this flag is set, nm_setting_diff() and nm_connection_diff() will not include properties that are set to their default value. This is the opposite of @NM_SETTING_COMPARE_FLAG_DIFF_RESULT_WITH_DEFAULT. If both flags are set together, @NM_SETTING_COMPARE_FLAG_DIFF_RESULT_WITH_DEFAULT wins. If both flags are unset, this means to exclude default properties if there is a setting to compare, but include all properties, if the setting 'b' is missing. This is the legacy behaviour of libnm-util, where nm_setting_diff() behaved differently depending on whether the setting 'b' was available. If @NM_SETTING_COMPARE_FLAG_DIFF_RESULT_WITH_DEFAULT is set, nm_setting_diff() will also set the flags @NM_SETTING_DIFF_RESULT_IN_A_DEFAULT and @NM_SETTING_DIFF_RESULT_IN_B_DEFAULT, if the values are default values.
-        /// `NM_SETTING_COMPARE_FLAG_DIFF_RESULT_NO_DEFAULT`
-        DiffResultNoDefault = 64,
-        /// ignore the connection's timestamp
-        /// `NM_SETTING_COMPARE_FLAG_IGNORE_TIMESTAMP`
-        IgnoreTimestamp = 128,
-    }
-}
-
-nm_enum! {
-    /// Controls if and how the MAC address of a device is randomzied.
-    ///
-    /// Since: 1.2
-    ///
-    /// `NMSettingMacRandomization` in NetworkManager, sent over D-Bus as `u`.
-    pub enum SettingMacRandomization: u32 {
-        /// the default value, which unless overridden by user-controlled defaults configuration, is "never".
-        /// `NM_SETTING_MAC_RANDOMIZATION_DEFAULT`
-        Default = 0,
-        /// the device's MAC address is always used.
-        /// `NM_SETTING_MAC_RANDOMIZATION_NEVER`
-        Never = 1,
-        /// a random MAC address is used.
-        /// `NM_SETTING_MAC_RANDOMIZATION_ALWAYS`
-        Always = 2,
-    }
-}
-
-nm_enum! {
-    /// These values indicate the result of a setting difference operation.
-    ///
-    /// `NMSettingDiffResult` in NetworkManager, sent over D-Bus as `u`.
-    pub enum SettingDiffResult: u32 {
-        /// unknown result
-        /// `NM_SETTING_DIFF_RESULT_UNKNOWN`
+    /// `NMWifiBand` in NetworkManager, sent over D-Bus as `u`.
+    pub enum WifiBand: u32 {
+        /// the band is unknown
+        ///
+        /// `NM_WIFI_BAND_UNKNOWN`
         Unknown = 0,
-        /// the property is present in setting A
-        /// `NM_SETTING_DIFF_RESULT_IN_A`
-        InA = 1,
-        /// the property is present in setting B
-        /// `NM_SETTING_DIFF_RESULT_IN_B`
-        InB = 2,
-        /// the property is present in setting A but is set to the default value. This flag is only set, if you specify @NM_SETTING_COMPARE_FLAG_DIFF_RESULT_WITH_DEFAULT.
-        /// `NM_SETTING_DIFF_RESULT_IN_A_DEFAULT`
-        InADefault = 4,
-        /// analog to @NM_SETTING_DIFF_RESULT_IN_A_DEFAULT.
-        /// `NM_SETTING_DIFF_RESULT_IN_B_DEFAULT`
-        InBDefault = 8,
+        /// the 2.4 GHz band
+        ///
+        /// `NM_WIFI_BAND_2_4_GHZ`
+        Band24Ghz = 1,
+        /// the 5 GHz band
+        ///
+        /// `NM_WIFI_BAND_5_GHZ`
+        Band5Ghz = 2,
+        /// the 6 GHz band
+        ///
+        /// `NM_WIFI_BAND_6_GHZ`
+        Band6Ghz = 3,
     }
 }
 
 nm_enum! {
-    /// VPN daemon states
+    /// WiMAX network type.
     ///
-    /// `NMVpnServiceState` in NetworkManager, sent over D-Bus as `u`.
-    pub enum VpnServiceState: u32 {
-        /// The state of the VPN plugin is unknown.
-        /// `NM_VPN_SERVICE_STATE_UNKNOWN`
+    /// `NMWimaxNspNetworkType` in NetworkManager, sent over D-Bus as `u`.
+    pub enum WimaxNspNetworkType: u32 {
+        /// unknown network type
+        ///
+        /// `NM_WIMAX_NSP_NETWORK_TYPE_UNKNOWN`
         Unknown = 0,
-        /// The VPN plugin is initialized.
-        /// `NM_VPN_SERVICE_STATE_INIT`
-        Init = 1,
-        /// Not used.
-        /// `NM_VPN_SERVICE_STATE_SHUTDOWN`
-        Shutdown = 2,
-        /// The plugin is attempting to connect to a VPN server.
-        /// `NM_VPN_SERVICE_STATE_STARTING`
-        Starting = 3,
-        /// The plugin has connected to a VPN server.
-        /// `NM_VPN_SERVICE_STATE_STARTED`
-        Started = 4,
-        /// The plugin is disconnecting from the VPN server.
-        /// `NM_VPN_SERVICE_STATE_STOPPING`
-        Stopping = 5,
-        /// The plugin has disconnected from the VPN server.
-        /// `NM_VPN_SERVICE_STATE_STOPPED`
-        Stopped = 6,
-    }
-}
-
-nm_enum! {
-    /// VPN connection states
-    ///
-    /// `NMVpnConnectionState` in NetworkManager, sent over D-Bus as `u`.
-    pub enum VpnConnectionState: u32 {
-        /// The state of the VPN connection is unknown.
-        /// `NM_VPN_CONNECTION_STATE_UNKNOWN`
-        Unknown = 0,
-        /// The VPN connection is preparing to connect.
-        /// `NM_VPN_CONNECTION_STATE_PREPARE`
-        Prepare = 1,
-        /// The VPN connection needs authorization credentials.
-        /// `NM_VPN_CONNECTION_STATE_NEED_AUTH`
-        NeedAuth = 2,
-        /// The VPN connection is being established.
-        /// `NM_VPN_CONNECTION_STATE_CONNECT`
-        Connect = 3,
-        /// The VPN connection is getting an IP address.
-        /// `NM_VPN_CONNECTION_STATE_IP_CONFIG_GET`
-        IpConfigGet = 4,
-        /// The VPN connection is active.
-        /// `NM_VPN_CONNECTION_STATE_ACTIVATED`
-        Activated = 5,
-        /// The VPN connection failed.
-        /// `NM_VPN_CONNECTION_STATE_FAILED`
-        Failed = 6,
-        /// The VPN connection is disconnected.
-        /// `NM_VPN_CONNECTION_STATE_DISCONNECTED`
-        Disconnected = 7,
-    }
-}
-
-nm_enum! {
-    /// `NMVpnConnectionStateReason` in NetworkManager, sent over D-Bus as `u`.
-    pub enum VpnConnectionStateReason: u32 {
-        /// `NM_VPN_CONNECTION_STATE_REASON_UNKNOWN`
-        Unknown = 0,
-        /// `NM_VPN_CONNECTION_STATE_REASON_NONE`
-        None = 1,
-        /// `NM_VPN_CONNECTION_STATE_REASON_USER_DISCONNECTED`
-        UserDisconnected = 2,
-        /// `NM_VPN_CONNECTION_STATE_REASON_DEVICE_DISCONNECTED`
-        DeviceDisconnected = 3,
-        /// `NM_VPN_CONNECTION_STATE_REASON_SERVICE_STOPPED`
-        ServiceStopped = 4,
-        /// `NM_VPN_CONNECTION_STATE_REASON_IP_CONFIG_INVALID`
-        IpConfigInvalid = 5,
-        /// `NM_VPN_CONNECTION_STATE_REASON_CONNECT_TIMEOUT`
-        ConnectTimeout = 6,
-        /// `NM_VPN_CONNECTION_STATE_REASON_SERVICE_START_TIMEOUT`
-        ServiceStartTimeout = 7,
-        /// `NM_VPN_CONNECTION_STATE_REASON_SERVICE_START_FAILED`
-        ServiceStartFailed = 8,
-        /// `NM_VPN_CONNECTION_STATE_REASON_NO_SECRETS`
-        NoSecrets = 9,
-        /// `NM_VPN_CONNECTION_STATE_REASON_LOGIN_FAILED`
-        LoginFailed = 10,
-        /// `NM_VPN_CONNECTION_STATE_REASON_CONNECTION_REMOVED`
-        ConnectionRemoved = 11,
-    }
-}
-
-nm_enum! {
-    /// VPN plugin failure reasons
-    ///
-    /// `NMVpnPluginFailure` in NetworkManager, sent over D-Bus as `u`.
-    pub enum VpnPluginFailure: u32 {
-        /// Login failed.
-        /// `NM_VPN_PLUGIN_FAILURE_LOGIN_FAILED`
-        LoginFailed = 0,
-        /// Connect failed.
-        /// `NM_VPN_PLUGIN_FAILURE_CONNECT_FAILED`
-        ConnectFailed = 1,
-        /// Invalid IP configuration returned from the VPN plugin.
-        /// `NM_VPN_PLUGIN_FAILURE_BAD_IP_CONFIG`
-        BadIpConfig = 2,
+        /// home network
+        ///
+        /// `NM_WIMAX_NSP_NETWORK_TYPE_HOME`
+        Home = 1,
+        /// partner network
+        ///
+        /// `NM_WIMAX_NSP_NETWORK_TYPE_PARTNER`
+        Partner = 2,
+        /// roaming partner network
+        ///
+        /// `NM_WIMAX_NSP_NETWORK_TYPE_ROAMING_PARTNER`
+        RoamingPartner = 3,
     }
 }

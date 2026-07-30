@@ -20,18 +20,19 @@ for device in devices {
 
 ## What is generated
 
-Everything under `netman/src/generated/` — 53 proxies, 43 enumerations and flag sets, and their
-documentation — comes from two things NetworkManager publishes, pinned to the release in
+Everything under `netman/src/generated/` — 53 proxies, 113 enumerations and flag sets, and
+their documentation — comes from what NetworkManager publishes, pinned to the release in
 `spec/nm-version.txt`:
 
-| Vendored | Gives |
-| --- | --- |
-| `introspection/*.xml` | the interfaces, and the gtk-doc documentation in their comments |
-| `spec/headers/*.h` | the enumerations and flag sets sent as integers |
+| In `spec/` | Gives | How |
+| --- | --- | --- |
+| `introspection/*.xml` | the interfaces, and the gtk-doc documentation in their comments | fetched from the git tag |
+| `NM-1.0.gir` | every enumeration and flag set, with values and documentation | built (`just build-spec`) |
+| `nm-settings-docs-dbus.xml` | connection-profile properties and their D-Bus types | built (`just build-spec`) |
 
-Three headers, because NetworkManager does not keep them in one place: the bulk in
-`nm-dbus-interface.h`, the VPN types in `nm-vpn-dbus-interface.h`, and `NMIPTunnelFlags` in a
-setting's header. Adding a fourth is one line in `HEADER_PATHS` (`codegen/src/fetch.rs`).
+No C source is parsed. The first is fetched straight from the git tag and diffs against
+upstream; the other two only exist once NetworkManager has been compiled, so a container does
+that and the results are committed — see [How generation works](#how-generation-works).
 
 Nothing is transcribed by hand. The only hand-written Rust in the crate is `src/repr.rs`
 (two macros defining how a NetworkManager type is put on the wire) and `src/ext.rs` (three
@@ -62,9 +63,10 @@ Tasks are [`just`](https://just.systems) recipes; `just --list` shows them all.
 
 ```
 just latest-version   # newest stable NetworkManager release
-just fetch            # vendor its spec into spec/ (just fetch 1.56.1 to pin one)
+just fetch            # vendor the introspection XML (just fetch 1.56.1 to pin one)
+just build-spec       # build the generated inputs in a container (slow, needs podman)
 just generate         # regenerate netman/src/generated/
-just update           # both, in one step
+just update           # all three, in one step
 just check            # fail if the checked-in output is stale
 just regen            # generate, format, and run everything CI runs
 ```
@@ -80,8 +82,8 @@ cannot drift apart.
 `zbus_xmlgen` writes the proxies, but NetworkManager's introspection XML on its own would only
 produce integers and undocumented methods. The generator in `codegen/` bridges that gap:
 
-1. `codegen/src/header.rs` reads the C headers: every `typedef enum`, its values, its gtk-doc
-   comment, and whether `/*< flags >*/` marks it as a bit set.
+1. `codegen/src/gir.rs` reads `NM-1.0.gir`: every `<enumeration>` and `<bitfield>`, with values
+   and documentation already resolved by the introspection scanner.
 2. `codegen/src/annotate.rs` recovers the type references and documentation from the XML
    comments — `Returns: NMDeviceState`, `@managed: (NMDeviceManaged) …`.
 3. `codegen/src/render.rs` writes both back into the XML as Telepathy `tp:` annotations, which
@@ -90,6 +92,25 @@ produce integers and undocumented methods. The generator in `codegen/` bridges t
 
 It stays a Rust crate rather than becoming shell recipes because it uses `zbus_xml` and
 `zbus_xmlgen` as libraries; `just` is what invokes it.
+
+### Why two of the three inputs are built rather than fetched
+
+The types of enumerations and of connection-profile properties are not machine-readable
+anywhere in NetworkManager's git tree — they come from GObject introspection data, which only
+exists once libnm has been compiled. `just build-spec` compiles it at the pinned tag in a
+container and runs NetworkManager's own generators. `ninja` is asked for one target, so the
+daemon is never linked.
+
+That cost lands only on whoever bumps the vendored release, which is already the moment a human
+reviews a regeneration. The artifacts are committed, so building `netman` as a dependency needs
+no container, no C toolchain and no GLib.
+
+The settings documentation is *not* derived from the introspection data alone, even though it
+could be: NetworkManager merges it with the `---dbus---` comment blocks in its sources, because
+about thirty properties travel as something other than their GObject type — `ipv4.dns` is an
+array of strings to GObject and an array of packed integers on the wire, and every MAC address
+is a string to GObject and a byte array on D-Bus. Taking NetworkManager's merged answer avoids
+having to reconcile that, and getting it wrong would corrupt profiles rather than fail loudly.
 
 The augmented XML is written to `target/netman-augmented/` on every run, so what the generator
 was fed is always inspectable.
