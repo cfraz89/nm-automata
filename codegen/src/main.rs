@@ -17,6 +17,7 @@ mod fetch;
 mod gir;
 mod overrides;
 mod render;
+mod settings;
 
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};

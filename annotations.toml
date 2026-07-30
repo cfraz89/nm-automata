@@ -27,3 +27,15 @@ type = "NMIPTunnelMode"
 interface = "org.freedesktop.NetworkManager.Device.IPTunnel"
 name = "Flags"
 type = "NMIPTunnelFlags"
+
+# Two settings are named so that neither the name NetworkManager sends nor the upper-case form
+# it also gives ("802_1X", "6LOWPAN") can open a Rust identifier. These say what to call them;
+# a third such setting appearing upstream fails generation rather than being mangled silently.
+[[setting]]
+name = "802-1x"
+field = "ieee8021x"
+
+[[setting]]
+name = "6lowpan"
+# NetworkManager's own device interface for this is `Device.Lowpan`.
+field = "lowpan"

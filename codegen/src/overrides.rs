@@ -24,6 +24,26 @@ pub struct Annotations {
     property: Vec<Property>,
     #[serde(default)]
     argument: Vec<Argument>,
+    #[serde(default)]
+    setting: Vec<SettingName>,
+}
+
+/// A name for a setting whose own name cannot open a Rust identifier.
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct SettingName {
+    name: String,
+    field: String,
+}
+
+impl Annotations {
+    /// The hand-given field names for settings, as [`crate::settings::parse`] wants them.
+    pub fn setting_fields(&self) -> Vec<(String, String)> {
+        self.setting
+            .iter()
+            .map(|s| (s.name.clone(), s.field.clone()))
+            .collect()
+    }
 }
 
 #[derive(Debug, Deserialize)]
