@@ -11,7 +11,7 @@ use zbus::zvariant::OwnedValue;
 
 use super::types::*;
 use crate::settings::{self, ProfileMap, Setting, SettingMap, SettingsError};
-use crate::{MacAddress, Ssid};
+use crate::{AssignedMacAddress, MacAddress, Ssid};
 
 /// An address as the deprecated `ipv6.addresses` carries it: the address bytes, the
 /// prefix length, and the gateway bytes. `address-data` is the form to prefer.
@@ -6152,7 +6152,7 @@ pub struct WiredSetting {
     /// The new field for the cloned MAC address. It can be either a hardware address in ASCII representation, or one of the special values "preserve", "permanent", "random" or "stable". This field replaces the deprecated "cloned-mac-address" on D-Bus, which can only contain explicit hardware addresses. Note that this property only exists in D-Bus API. libnm and nmcli continue to call this property "cloned-mac-address".
     ///
     /// `assigned-mac-address`
-    pub assigned_mac_address: Option<String>,
+    pub assigned_mac_address: Option<AssignedMacAddress>,
     /// When TRUE, enforce auto-negotiation of speed and duplex mode. If "speed" and "duplex" properties are both specified, only that single mode will be advertised and accepted during the link auto-negotiation process: this works only for BASE-T 802.3 specifications and is useful for enforcing gigabits modes, as in these cases link negotiation is mandatory. When FALSE, "speed" and "duplex" properties should be both set or link configuration will be skipped.
     ///
     /// `auto-negotiate`
@@ -6517,7 +6517,7 @@ pub struct WirelessSetting {
     /// The new field for the cloned MAC address. It can be either a hardware address in ASCII representation, or one of the special values "preserve", "permanent", "random" or "stable". This field replaces the deprecated "cloned-mac-address" on D-Bus, which can only contain explicit hardware addresses. Note that this property only exists in D-Bus API. libnm and nmcli continue to call this property "cloned-mac-address".
     ///
     /// `assigned-mac-address`
-    pub assigned_mac_address: Option<String>,
+    pub assigned_mac_address: Option<AssignedMacAddress>,
     /// 802.11 frequency band of the network.  One of "a" for 5GHz, "bg" for 2.4GHz or "6GHz".  This will lock associations to the Wi-Fi network to the specific band, i.e. if "a" is specified, the device will not associate with the same network in the 2.4GHz (bg) or 6GHz bands even if the network's settings are compatible.  This setting depends on specific driver capability and may not work with all drivers.
     ///
     /// `band`

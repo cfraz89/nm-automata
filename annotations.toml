@@ -498,3 +498,21 @@ type = "MacAddress"
 setting = "802-11-olpc-mesh"
 property = "dhcp-anycast-address"
 type = "MacAddress"
+
+[[newtype]]
+setting = "802-3-ethernet"
+property = "assigned-mac-address"
+type = "AssignedMacAddress"
+
+[[newtype]]
+setting = "802-11-wireless"
+property = "assigned-mac-address"
+type = "AssignedMacAddress"
+
+# The same, for a member of an interface rather than a property of a profile. `AccessPoint.Ssid`
+# is the network an access point announces, and is the byte string `802-11-wireless.ssid` is
+# matched against, so the two say so the same way.
+[[newtype]]
+interface = "org.freedesktop.NetworkManager.AccessPoint"
+name = "Ssid"
+type = "Ssid"

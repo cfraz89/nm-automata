@@ -10,6 +10,8 @@
 )]
 
 #[allow(unused_imports)]
+use crate::Ssid;
+#[allow(unused_imports)]
 use crate::generated::paths::*;
 #[allow(unused_imports)]
 use crate::generated::settings::ConnectionProfile;

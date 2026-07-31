@@ -220,26 +220,36 @@ pub fn resolve(
     Ok(sets)
 }
 
-/// Give every annotated property the hand-written type it names.
+/// The hand-written types in `nm-automata` a member can be read through.
+///
+/// Each is listed with what it reads: the settings table's name for it, and the D-Bus signature
+/// of the same thing, since these apply to interface members as well as to profile properties.
+/// A type not listed here is rejected rather than generated against, so `annotations.toml`
+/// cannot name something the crate does not have.
+pub fn newtype_wire(name: &str) -> Option<(PropertyType, &'static str)> {
+    Some(match name {
+        "Ssid" | "MacAddress" => (PropertyType::ByteArray, "ay"),
+        "AssignedMacAddress" => (PropertyType::Str, "s"),
+        _ => return None,
+    })
+}
+
+/// Give every annotated profile property the hand-written type it names.
+///
+/// The interface members among the entries are applied by [`crate::render`] instead, through the
+/// same `tp:type` mechanism the object paths and dictionary shapes use.
 pub fn apply_newtypes(settings: &mut [Setting], newtypes: &[Newtype]) -> Result<()> {
     for entry in newtypes {
-        let wanted = match entry.ty.as_str() {
-            // The hand-written types in `nm-automata`, each with the wire form it reads.
-            "Ssid" | "MacAddress" => PropertyType::ByteArray,
-            other => bail!(
-                "annotations.toml gives `{}.{}` the type `{other}`, which nm-automata does not \
-                 have — a new one needs a `nm_bytes_repr!` type in the crate and a line here",
-                entry.setting,
-                entry.property
-            ),
+        let Some((setting, property_name)) = entry.profile_property() else {
+            continue;
         };
-        let property = find_mut(settings, &entry.setting, &entry.property)?;
+        let (wanted, _) = newtype_wire(&entry.ty).ok_or_else(|| unknown_newtype(entry))?;
+        let property = find_mut(settings, setting, property_name)?;
         if property.ty != wanted {
             bail!(
-                "annotations.toml gives `{}.{}` the type `{}`, but the settings table types the \
+                "annotations.toml gives `{}` the type `{}`, but the settings table types the \
                  property as {:?} rather than {wanted:?}",
-                entry.setting,
-                entry.property,
+                entry.describe(),
                 entry.ty,
                 property.ty,
             );
@@ -249,6 +259,54 @@ pub fn apply_newtypes(settings: &mut [Setting], newtypes: &[Newtype]) -> Result<
         };
     }
     Ok(())
+}
+
+/// Check the entries that name an interface member against the introspection data.
+///
+/// The member has to exist and to travel as what the type reads. Without this an entry that no
+/// longer matches would simply stop applying: `zbus_xmlgen` ignores a `tp:type` whose signature
+/// disagrees with the member's, which is what keeps a wrong one from generating code that
+/// cannot decode.
+pub fn check_member_newtypes(
+    newtypes: &[Newtype],
+    interfaces: &[(String, String, String)],
+) -> Result<()> {
+    for entry in newtypes {
+        let Some((interface, member)) = entry.interface_member() else {
+            continue;
+        };
+        let (_, signature) = newtype_wire(&entry.ty).ok_or_else(|| unknown_newtype(entry))?;
+        let found = interfaces
+            .iter()
+            .find(|(i, m, _)| i == interface && m == member)
+            .ok_or_else(|| {
+                anyhow::anyhow!(
+                    "annotations.toml gives `{}` the type `{}`, but the vendored spec has no \
+                     such property",
+                    entry.describe(),
+                    entry.ty
+                )
+            })?;
+        if found.2 != signature {
+            bail!(
+                "annotations.toml gives `{}` the type `{}`, which reads `{signature}`, but the \
+                 property travels as `{}`",
+                entry.describe(),
+                entry.ty,
+                found.2
+            );
+        }
+    }
+    Ok(())
+}
+
+fn unknown_newtype(entry: &Newtype) -> anyhow::Error {
+    anyhow::anyhow!(
+        "annotations.toml gives `{}` the type `{}`, which nm-automata does not have — a new one \
+         needs a type in the crate and a line in `values::newtype_wire`",
+        entry.describe(),
+        entry.ty
+    )
 }
 
 /// Give every enumerated property the type generated for its values.
@@ -457,11 +515,7 @@ mod tests {
     #[test]
     fn a_newtype_must_match_the_wire_type() {
         let mut settings = settings();
-        let ok = [Newtype {
-            setting: "802-11-wireless".to_owned(),
-            property: "ssid".to_owned(),
-            ty: "Ssid".to_owned(),
-        }];
+        let ok = [Newtype::profile("802-11-wireless", "ssid", "Ssid")];
         apply_newtypes(&mut settings, &ok).unwrap();
         let ssid = find(&settings, "802-11-wireless", "ssid").unwrap();
         assert_eq!(
@@ -471,19 +525,49 @@ mod tests {
             }
         );
 
-        let wrong = [Newtype {
-            setting: "802-11-wireless".to_owned(),
-            property: "mode".to_owned(),
-            ty: "Ssid".to_owned(),
-        }];
+        // `mode` is a string, and `Ssid` reads a byte array.
+        let wrong = [Newtype::profile("802-11-wireless", "mode", "Ssid")];
         assert!(apply_newtypes(&mut settings, &wrong).is_err());
 
-        let unknown = [Newtype {
-            setting: "802-11-wireless".to_owned(),
-            property: "ssid".to_owned(),
-            ty: "Quaternion".to_owned(),
-        }];
+        let unknown = [Newtype::profile("802-11-wireless", "ssid", "Quaternion")];
         assert!(apply_newtypes(&mut settings, &unknown).is_err());
+    }
+
+    #[test]
+    fn an_interface_newtype_must_match_the_signature() {
+        let interfaces = [(
+            "org.freedesktop.NetworkManager.AccessPoint".to_owned(),
+            "Ssid".to_owned(),
+            "ay".to_owned(),
+        )];
+        let entry = |interface: &str, name: &str, ty: &str| {
+            toml::from_str::<Newtype>(&format!(
+                "interface = \"{interface}\"\nname = \"{name}\"\ntype = \"{ty}\"\n"
+            ))
+            .expect("the entry parses")
+        };
+
+        let ok = [entry(
+            "org.freedesktop.NetworkManager.AccessPoint",
+            "Ssid",
+            "Ssid",
+        )];
+        check_member_newtypes(&ok, &interfaces).unwrap();
+
+        // `AssignedMacAddress` reads a string, and the property travels as `ay`.
+        let wrong = [entry(
+            "org.freedesktop.NetworkManager.AccessPoint",
+            "Ssid",
+            "AssignedMacAddress",
+        )];
+        assert!(check_member_newtypes(&wrong, &interfaces).is_err());
+
+        let missing = [entry(
+            "org.freedesktop.NetworkManager.AccessPoint",
+            "Gone",
+            "Ssid",
+        )];
+        assert!(check_member_newtypes(&missing, &interfaces).is_err());
     }
 }
 

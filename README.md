@@ -134,9 +134,12 @@ are kept in `other` maps, so a read-modify-write against a newer daemon does not
   are read out of the spec like everything else; the handful it documents only in prose
   (`802-11-wireless.band`, the Wi-Fi security ciphers) are in `annotations.toml`, checked
   against the settings table. An SSID is an `Ssid` rather than a `Vec<u8>`, since 802.11 defines
-  it as octets and not as text, and a hardware address is a `MacAddress` that reads and writes
-  `4C:79:6E:DA:29:47`. None of this changes the wire: a value the binding does not know is kept
-  as it came and written back unchanged, so a read-modify-write never rewrites a profile.
+  it as octets and not as text — `AccessPoint.Ssid` on the proxy side too, since it is the same
+  string — and a hardware address is a `MacAddress` that reads and writes `4C:79:6E:DA:29:47`.
+  `assigned-mac-address` holds either an address or a word asking NetworkManager to pick one, so
+  it is an enum with both: `AssignedMacAddress::Random`, or `Address(MacAddress)`. None of this
+  changes the wire: a value the binding does not know is kept as it came and written back
+  unchanged, so a read-modify-write never rewrites a profile.
 
 ## Keeping up with upstream
 

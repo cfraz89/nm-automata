@@ -10,6 +10,8 @@
 )]
 
 #[allow(unused_imports)]
+use crate::Ssid;
+#[allow(unused_imports)]
 use crate::generated::paths::*;
 #[allow(unused_imports)]
 use crate::generated::settings::ConnectionProfile;
@@ -78,7 +80,7 @@ pub trait AccessPoint {
     ///
     /// The Service Set Identifier identifying the access point.
     #[zbus(property)]
-    fn ssid(&self) -> zbus::Result<Vec<u8>>;
+    fn ssid(&self) -> zbus::Result<Ssid>;
 
     /// Strength property
     ///

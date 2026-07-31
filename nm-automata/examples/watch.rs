@@ -37,7 +37,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         // A proxy, not a path: usable straight away.
                         println!(
                             "+ ap {:?} {} dBm",
-                            String::from_utf8_lossy(&access_point.ssid().await?),
+                            access_point.ssid().await?,
                             access_point.strength().await? as i8,
                         );
                     }
