@@ -30,11 +30,14 @@ pub trait NmPathSliceExt {
 
     /// Build the proxy for every object in the list.
     ///
+    /// Most members give you the objects directly — `get_devices` already returns proxies —
+    /// so this is for when you have held on to the paths themselves.
+    ///
     /// ```no_run
     /// # use netman::{NetworkManagerProxy, NmPathSliceExt};
     /// # async fn example(nm: NetworkManagerProxy<'_>) -> zbus::Result<()> {
     /// let connection = zbus::Connection::system().await?;
-    /// for device in nm.get_devices().await?.connect_all(&connection).await? {
+    /// for device in nm.get_device_paths().await?.connect_all(&connection).await? {
     ///     println!("{}", device.interface().await?);
     /// }
     /// # Ok(())

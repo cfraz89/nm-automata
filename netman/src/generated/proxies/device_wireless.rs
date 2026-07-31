@@ -24,24 +24,6 @@ use zbus::proxy;
     default_path = "/org/freedesktop/NetworkManager/Device/Wireless"
 )]
 pub trait Wireless {
-    /// GetAccessPoints method
-    ///
-    /// DEPRECATED. Get the list of access points visible to this device. Note that this list does not include access points which hide their SSID. To retrieve a list of all access points (including hidden ones) use the GetAllAccessPoints() method.
-    ///
-    /// # Arguments
-    ///
-    /// * `access_points` - List of access point object paths.
-    fn get_access_points(&self) -> zbus::Result<Vec<AccessPointPath>>;
-
-    /// GetAllAccessPoints method
-    ///
-    /// Get the list of all access points visible to this device, including hidden ones for which the SSID is not yet known.
-    ///
-    /// # Arguments
-    ///
-    /// * `access_points` - List of access point object paths.
-    fn get_all_access_points(&self) -> zbus::Result<Vec<AccessPointPath>>;
-
     /// RequestScan method
     ///
     /// Request the device to scan. To know when the scan is finished, use the "PropertiesChanged" signal from "org.freedesktop.DBus.Properties" to listen to changes to the "LastScan" property.
@@ -53,6 +35,26 @@ pub trait Wireless {
         &self,
         options: std::collections::HashMap<&str, &zbus::zvariant::Value<'_>>,
     ) -> zbus::Result<()>;
+
+    /// GetAccessPoints method
+    ///
+    /// DEPRECATED. Get the list of access points visible to this device. Note that this list does not include access points which hide their SSID. To retrieve a list of all access points (including hidden ones) use the GetAllAccessPoints() method.
+    ///
+    /// # Arguments
+    ///
+    /// * `access_points` - List of access point object paths.
+    #[zbus(name = "GetAccessPoints")]
+    fn get_access_point_paths(&self) -> zbus::Result<Vec<AccessPointPath>>;
+
+    /// GetAllAccessPoints method
+    ///
+    /// Get the list of all access points visible to this device, including hidden ones for which the SSID is not yet known.
+    ///
+    /// # Arguments
+    ///
+    /// * `access_points` - List of access point object paths.
+    #[zbus(name = "GetAllAccessPoints")]
+    fn get_all_access_point_paths(&self) -> zbus::Result<Vec<AccessPointPath>>;
 
     /// AccessPointAdded signal
     ///
@@ -73,18 +75,6 @@ pub trait Wireless {
     /// * `access_point` - The object path of the access point that has disappeared.
     #[zbus(signal)]
     fn access_point_removed(&self, access_point: AccessPointPath) -> zbus::Result<()>;
-
-    /// AccessPoints property
-    ///
-    /// List of object paths of access point visible to this wireless device.
-    #[zbus(property)]
-    fn access_points(&self) -> zbus::Result<Vec<AccessPointPath>>;
-
-    /// ActiveAccessPoint property
-    ///
-    /// Object path of the access point currently used by the wireless device.
-    #[zbus(property)]
-    fn active_access_point(&self) -> zbus::Result<AccessPointPath>;
 
     /// Bitrate property
     ///
@@ -121,4 +111,62 @@ pub trait Wireless {
     /// The capabilities of the wireless device.
     #[zbus(property)]
     fn wireless_capabilities(&self) -> zbus::Result<DeviceWifiCapabilities>;
+
+    /// AccessPoints property
+    ///
+    /// List of object paths of access point visible to this wireless device.
+    #[zbus(property, name = "AccessPoints")]
+    fn access_point_paths(&self) -> zbus::Result<Vec<AccessPointPath>>;
+
+    /// ActiveAccessPoint property
+    ///
+    /// Object path of the access point currently used by the wireless device.
+    #[zbus(property, name = "ActiveAccessPoint")]
+    fn active_access_point_path(&self) -> zbus::Result<AccessPointPath>;
+}
+
+impl WirelessProxy<'_> {
+    /// The objects the `AccessPoints` property points at.
+    ///
+    /// Built on this proxy's own connection. [`access_point_paths`](Self::access_point_paths) gives the paths
+    /// themselves.
+    pub async fn access_points(
+        &self,
+    ) -> zbus::Result<Vec<crate::proxies::access_point::AccessPointProxy<'static>>> {
+        let paths = self.access_point_paths().await?;
+        crate::NmPathSliceExt::connect_all(&paths, self.inner().connection()).await
+    }
+
+    /// The objects the `ActiveAccessPoint` property points at.
+    ///
+    /// Built on this proxy's own connection. [`active_access_point_path`](Self::active_access_point_path) gives the paths
+    /// themselves.
+    pub async fn active_access_point(
+        &self,
+    ) -> zbus::Result<crate::proxies::access_point::AccessPointProxy<'static>> {
+        let path = self.active_access_point_path().await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
+
+    /// The objects the `GetAccessPoints` method points at.
+    ///
+    /// Built on this proxy's own connection. [`get_access_point_paths`](Self::get_access_point_paths) gives the paths
+    /// themselves.
+    pub async fn get_access_points(
+        &self,
+    ) -> zbus::Result<Vec<crate::proxies::access_point::AccessPointProxy<'static>>> {
+        let paths = self.get_access_point_paths().await?;
+        crate::NmPathSliceExt::connect_all(&paths, self.inner().connection()).await
+    }
+
+    /// The objects the `GetAllAccessPoints` method points at.
+    ///
+    /// Built on this proxy's own connection. [`get_all_access_point_paths`](Self::get_all_access_point_paths) gives the paths
+    /// themselves.
+    pub async fn get_all_access_points(
+        &self,
+    ) -> zbus::Result<Vec<crate::proxies::access_point::AccessPointProxy<'static>>> {
+        let paths = self.get_all_access_point_paths().await?;
+        crate::NmPathSliceExt::connect_all(&paths, self.inner().connection()).await
+    }
 }

@@ -3,12 +3,12 @@
 Ergonomic NetworkManager bindings for Rust, generated from NetworkManager's own D-Bus spec.
 
 ```rust
-use netman::{DeviceState, NetworkManagerProxy, NmPathSliceExt};
+use netman::{DeviceState, NetworkManagerProxy};
 
 let connection = zbus::Connection::system().await?;
 let nm = NetworkManagerProxy::new(&connection).await?;
 
-for device in nm.get_devices().await?.connect_all(&connection).await? {
+for device in nm.get_devices().await? {
     if device.state().await? == DeviceState::Activated {
         println!("{} is up", device.interface().await?);
     }
@@ -62,10 +62,20 @@ are kept in `other` maps, so a read-modify-write against a newer daemon does not
 * **Upstream's documentation, as rustdoc.** NetworkManager keeps its docs in XML comments,
   which plain introspection tooling drops. Generation lifts them back out and puts them on the
   proxies, their methods, and every argument.
-* **Object paths know what they point at.** `get_devices` returns `Vec<DevicePath>`, not
-  `Vec<OwnedObjectPath>`, and a `DevicePath` builds a `DeviceProxy` and nothing else — 44 of the
-  45 path-valued properties are typed, plus the arguments and return values. The one left is
-  `Connection.Active.SpecificObject`, which really is an access point *or* a Wi-Fi P2P peer.
+* **Members that return object paths return the objects.** `get_devices()` gives
+  `Vec<DeviceProxy>`, `device.active_connection()` gives an `ActiveProxy` — built on the
+  connection the proxy already holds, so nothing has to be passed in:
+
+  ```rust
+  for device in nm.get_devices().await? {
+      let active = device.active_connection().await?;
+  }
+  ```
+
+  The paths are still reachable under a `_path`/`_paths` name (`get_device_paths`), and each is
+  a newtype that knows its interface, so 44 of the 45 path-valued properties are typed either
+  way. The one left is `Connection.Active.SpecificObject`, which really is an access point *or*
+  a Wi-Fi P2P peer.
 * **Narrowing a device is checked, not a cast.** `device.specialise()` reads the type once and
   returns an `AnyDevice`, whose variants each carry a proxy that could only have been built
   after the matching type was seen:

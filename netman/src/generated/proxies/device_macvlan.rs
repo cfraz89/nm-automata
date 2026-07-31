@@ -36,15 +36,26 @@ pub trait Macvlan {
     #[zbus(property)]
     fn no_promisc(&self) -> zbus::Result<bool>;
 
-    /// Parent property
-    ///
-    /// The object path of the parent device.
-    #[zbus(property)]
-    fn parent(&self) -> zbus::Result<DevicePath>;
-
     /// Tap property
     ///
     /// Whether the device is a macvtap.
     #[zbus(property)]
     fn tap(&self) -> zbus::Result<bool>;
+
+    /// Parent property
+    ///
+    /// The object path of the parent device.
+    #[zbus(property, name = "Parent")]
+    fn parent_path(&self) -> zbus::Result<DevicePath>;
+}
+
+impl MacvlanProxy<'_> {
+    /// The objects the `Parent` property points at.
+    ///
+    /// Built on this proxy's own connection. [`parent_path`](Self::parent_path) gives the paths
+    /// themselves.
+    pub async fn parent(&self) -> zbus::Result<crate::proxies::device::DeviceProxy<'static>> {
+        let path = self.parent_path().await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
 }

@@ -91,12 +91,6 @@ pub trait Device {
         reason: DeviceStateReason,
     ) -> zbus::Result<()>;
 
-    /// ActiveConnection property
-    ///
-    /// Object path of an ActiveConnection object that "owns" this device during activation. The ActiveConnection object tracks the life-cycle of a connection to a specific network and implements the org.freedesktop.NetworkManager.Connection.Active D-Bus interface.
-    #[zbus(property)]
-    fn active_connection(&self) -> zbus::Result<ConnectionActivePath>;
-
     /// Autoconnect property
     ///
     /// If TRUE, indicates the device is allowed to autoconnect. If FALSE, manual intervention is required before the device will automatically connect to a known network, such as activating a connection using the device, or setting this property to TRUE. This property cannot be set to TRUE for default-unmanaged devices, since they never autoconnect.
@@ -104,12 +98,6 @@ pub trait Device {
     fn autoconnect(&self) -> zbus::Result<bool>;
     #[zbus(property)]
     fn set_autoconnect(&self, value: bool) -> zbus::Result<()>;
-
-    /// AvailableConnections property
-    ///
-    /// An array of object paths of every configured connection that is currently 'available' through this device.
-    #[zbus(property)]
-    fn available_connections(&self) -> zbus::Result<Vec<SettingsConnectionPath>>;
 
     /// Capabilities property
     ///
@@ -122,18 +110,6 @@ pub trait Device {
     /// The general type of the network device; ie Ethernet, Wi-Fi, etc.
     #[zbus(property)]
     fn device_type(&self) -> zbus::Result<DeviceType>;
-
-    /// Dhcp4Config property
-    ///
-    /// Object path of the Dhcp4Config object describing the DHCP options returned by the DHCP server. Only valid when the device is in the NM_DEVICE_STATE_ACTIVATED state.
-    #[zbus(property)]
-    fn dhcp4_config(&self) -> zbus::Result<Dhcp4ConfigPath>;
-
-    /// Dhcp6Config property
-    ///
-    /// Object path of the Dhcp6Config object describing the DHCP options returned by the DHCP server. Only valid when the device is in the NM_DEVICE_STATE_ACTIVATED state.
-    #[zbus(property)]
-    fn dhcp6_config(&self) -> zbus::Result<Dhcp6ConfigPath>;
 
     /// Driver property
     ///
@@ -183,23 +159,11 @@ pub trait Device {
     #[zbus(property)]
     fn ip4_address(&self) -> zbus::Result<u32>;
 
-    /// Ip4Config property
-    ///
-    /// Object path of the Ip4Config object describing the configuration of the device. Only valid when the device is in the NM_DEVICE_STATE_ACTIVATED state.
-    #[zbus(property)]
-    fn ip4_config(&self) -> zbus::Result<Ip4ConfigPath>;
-
     /// Ip4Connectivity property
     ///
     /// The result of the last IPv4 connectivity check.
     #[zbus(property)]
     fn ip4_connectivity(&self) -> zbus::Result<ConnectivityState>;
-
-    /// Ip6Config property
-    ///
-    /// Object path of the Ip6Config object describing the configuration of the device. Only valid when the device is in the NM_DEVICE_STATE_ACTIVATED state.
-    #[zbus(property)]
-    fn ip6_config(&self) -> zbus::Result<Ip6ConfigPath>;
 
     /// Ip6Connectivity property
     ///
@@ -259,12 +223,6 @@ pub trait Device {
     #[zbus(property)]
     fn physical_port_id(&self) -> zbus::Result<String>;
 
-    /// Ports property
-    ///
-    /// The port devices of the controller device. Array of object paths representing devices which are currently set as port of this device. This replaces the 'Slaves' properties on the device-specific D-Bus interfaces.
-    #[zbus(property)]
-    fn ports(&self) -> zbus::Result<Vec<DevicePath>>;
-
     /// Real property
     ///
     /// True if the device exists, or False for placeholder devices that do not yet exist but could be automatically created by NetworkManager if one of their AvailableConnections was activated.
@@ -288,4 +246,123 @@ pub trait Device {
     /// Operating-system specific transient device hardware identifier. This is an opaque string representing the underlying hardware for the device, and shouldn't be used to keep track of individual devices. For some device types (Bluetooth, Modems) it is an identifier used by the hardware service (ie bluez or ModemManager) to refer to that device, and client programs use it get additional information from those services which NM does not provide. The Udi is not guaranteed to be consistent across reboots or hotplugs of the hardware. If you're looking for a way to uniquely track each device in your application, use the object path. If you're looking for a way to track a specific piece of hardware across reboot or hotplug, use a MAC address or USB serial number. Note that non-UTF-8 characters are backslash escaped. Use g_strcompress() to obtain the true (non-UTF-8) string.
     #[zbus(property)]
     fn udi(&self) -> zbus::Result<String>;
+
+    /// ActiveConnection property
+    ///
+    /// Object path of an ActiveConnection object that "owns" this device during activation. The ActiveConnection object tracks the life-cycle of a connection to a specific network and implements the org.freedesktop.NetworkManager.Connection.Active D-Bus interface.
+    #[zbus(property, name = "ActiveConnection")]
+    fn active_connection_path(&self) -> zbus::Result<ConnectionActivePath>;
+
+    /// Ip4Config property
+    ///
+    /// Object path of the Ip4Config object describing the configuration of the device. Only valid when the device is in the NM_DEVICE_STATE_ACTIVATED state.
+    #[zbus(property, name = "Ip4Config")]
+    fn ip4_config_path(&self) -> zbus::Result<Ip4ConfigPath>;
+
+    /// Dhcp4Config property
+    ///
+    /// Object path of the Dhcp4Config object describing the DHCP options returned by the DHCP server. Only valid when the device is in the NM_DEVICE_STATE_ACTIVATED state.
+    #[zbus(property, name = "Dhcp4Config")]
+    fn dhcp4_config_path(&self) -> zbus::Result<Dhcp4ConfigPath>;
+
+    /// Ip6Config property
+    ///
+    /// Object path of the Ip6Config object describing the configuration of the device. Only valid when the device is in the NM_DEVICE_STATE_ACTIVATED state.
+    #[zbus(property, name = "Ip6Config")]
+    fn ip6_config_path(&self) -> zbus::Result<Ip6ConfigPath>;
+
+    /// Dhcp6Config property
+    ///
+    /// Object path of the Dhcp6Config object describing the DHCP options returned by the DHCP server. Only valid when the device is in the NM_DEVICE_STATE_ACTIVATED state.
+    #[zbus(property, name = "Dhcp6Config")]
+    fn dhcp6_config_path(&self) -> zbus::Result<Dhcp6ConfigPath>;
+
+    /// AvailableConnections property
+    ///
+    /// An array of object paths of every configured connection that is currently 'available' through this device.
+    #[zbus(property, name = "AvailableConnections")]
+    fn available_connection_paths(&self) -> zbus::Result<Vec<SettingsConnectionPath>>;
+
+    /// Ports property
+    ///
+    /// The port devices of the controller device. Array of object paths representing devices which are currently set as port of this device. This replaces the 'Slaves' properties on the device-specific D-Bus interfaces.
+    #[zbus(property, name = "Ports")]
+    fn port_paths(&self) -> zbus::Result<Vec<DevicePath>>;
+}
+
+impl DeviceProxy<'_> {
+    /// The objects the `ActiveConnection` property points at.
+    ///
+    /// Built on this proxy's own connection. [`active_connection_path`](Self::active_connection_path) gives the paths
+    /// themselves.
+    pub async fn active_connection(
+        &self,
+    ) -> zbus::Result<crate::proxies::connection_active::ActiveProxy<'static>> {
+        let path = self.active_connection_path().await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
+
+    /// The objects the `Ip4Config` property points at.
+    ///
+    /// Built on this proxy's own connection. [`ip4_config_path`](Self::ip4_config_path) gives the paths
+    /// themselves.
+    pub async fn ip4_config(
+        &self,
+    ) -> zbus::Result<crate::proxies::ip4_config::IP4ConfigProxy<'static>> {
+        let path = self.ip4_config_path().await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
+
+    /// The objects the `Dhcp4Config` property points at.
+    ///
+    /// Built on this proxy's own connection. [`dhcp4_config_path`](Self::dhcp4_config_path) gives the paths
+    /// themselves.
+    pub async fn dhcp4_config(
+        &self,
+    ) -> zbus::Result<crate::proxies::dhcp4_config::DHCP4ConfigProxy<'static>> {
+        let path = self.dhcp4_config_path().await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
+
+    /// The objects the `Ip6Config` property points at.
+    ///
+    /// Built on this proxy's own connection. [`ip6_config_path`](Self::ip6_config_path) gives the paths
+    /// themselves.
+    pub async fn ip6_config(
+        &self,
+    ) -> zbus::Result<crate::proxies::ip6_config::IP6ConfigProxy<'static>> {
+        let path = self.ip6_config_path().await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
+
+    /// The objects the `Dhcp6Config` property points at.
+    ///
+    /// Built on this proxy's own connection. [`dhcp6_config_path`](Self::dhcp6_config_path) gives the paths
+    /// themselves.
+    pub async fn dhcp6_config(
+        &self,
+    ) -> zbus::Result<crate::proxies::dhcp6_config::DHCP6ConfigProxy<'static>> {
+        let path = self.dhcp6_config_path().await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
+
+    /// The objects the `AvailableConnections` property points at.
+    ///
+    /// Built on this proxy's own connection. [`available_connection_paths`](Self::available_connection_paths) gives the paths
+    /// themselves.
+    pub async fn available_connections(
+        &self,
+    ) -> zbus::Result<Vec<crate::proxies::settings_connection::ConnectionProxy<'static>>> {
+        let paths = self.available_connection_paths().await?;
+        crate::NmPathSliceExt::connect_all(&paths, self.inner().connection()).await
+    }
+
+    /// The objects the `Ports` property points at.
+    ///
+    /// Built on this proxy's own connection. [`port_paths`](Self::port_paths) gives the paths
+    /// themselves.
+    pub async fn ports(&self) -> zbus::Result<Vec<crate::proxies::device::DeviceProxy<'static>>> {
+        let paths = self.port_paths().await?;
+        crate::NmPathSliceExt::connect_all(&paths, self.inner().connection()).await
+    }
 }

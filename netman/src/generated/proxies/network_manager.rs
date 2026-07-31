@@ -24,23 +24,6 @@ use zbus::proxy;
     default_path = "/org/freedesktop/NetworkManager"
 )]
 pub trait NetworkManager {
-    /// ActivateConnection method
-    ///
-    /// Activate a connection using the supplied device.
-    ///
-    /// # Arguments
-    ///
-    /// * `connection` - The connection to activate. If "/" is given, a valid device path must be given, and NetworkManager picks the best connection to activate for the given device. VPN connections must always pass a valid connection path.
-    /// * `device` - The object path of device to be activated for physical connections. This parameter is ignored for VPN connections, because the specific_object (if provided) specifies the device to use.
-    /// * `specific_object` - The path of a connection-type-specific object this activation should use. This parameter is currently ignored for wired and mobile broadband connections, and the value of "/" should be used (ie, no specific object). For Wi-Fi connections, pass the object path of a specific AP from the card's scan list, or "/" to pick an AP automatically. For VPN connections, pass the object path of an ActiveConnection object that should serve as the "base" connection (to which the VPN connections lifetime will be tied), or pass "/" and NM will automatically use the current default device.
-    /// * `active_connection` - The path of the active connection object representing this active connection.
-    fn activate_connection(
-        &self,
-        connection: &SettingsConnectionPath,
-        device: &DevicePath,
-        specific_object: &zbus::zvariant::ObjectPath<'_>,
-    ) -> zbus::Result<ConnectionActivePath>;
-
     /// AddAndActivateConnection method
     ///
     /// Adds a new connection using the given details (if any) as a template (automatically filling in missing settings with the capabilities of the given device and specific object), then activate the new connection. Cannot be used for VPN connections at this time. See also AddAndActivateConnection2.
@@ -108,23 +91,6 @@ pub trait NetworkManager {
         add_timeout: u32,
     ) -> zbus::Result<()>;
 
-    /// CheckpointCreate method
-    ///
-    /// Create a checkpoint of the current networking configuration for given interfaces. If @rollback_timeout is not zero, a rollback is automatically performed after the given timeout.
-    ///
-    /// # Arguments
-    ///
-    /// * `devices` - A list of device paths for which a checkpoint should be created. An empty list means all devices.
-    /// * `rollback_timeout` - The time in seconds until NetworkManager will automatically rollback to the checkpoint. Set to zero for infinite.
-    /// * `flags` - Flags for the creation.
-    /// * `checkpoint` - On success, the path of the new checkpoint.
-    fn checkpoint_create(
-        &self,
-        devices: &[DevicePath],
-        rollback_timeout: u32,
-        flags: CheckpointCreateFlags,
-    ) -> zbus::Result<CheckpointPath>;
-
     /// CheckpointDestroy method
     ///
     /// Destroy a previously created checkpoint.
@@ -164,34 +130,6 @@ pub trait NetworkManager {
     ///
     /// * `enable` - If FALSE, indicates that all networking should be disabled. If TRUE, indicates that NetworkManager should begin managing network devices.
     fn enable(&self, enable: bool) -> zbus::Result<()>;
-
-    /// GetAllDevices method
-    ///
-    /// Get the list of all network devices.
-    ///
-    /// # Arguments
-    ///
-    /// * `devices` - List of object paths of network devices and device placeholders (eg, devices that do not yet exist but which can be automatically created by NetworkManager if one of their AvailableConnections was activated).
-    fn get_all_devices(&self) -> zbus::Result<Vec<DevicePath>>;
-
-    /// GetDeviceByIpIface method
-    ///
-    /// Return the object path of the network device referenced by its IP interface name. Note that some devices (usually modems) only have an IP interface name when they are connected.
-    ///
-    /// # Arguments
-    ///
-    /// * `iface` - Interface name of the device to find.
-    /// * `device` - Object path of the network device.
-    fn get_device_by_ip_iface(&self, iface: &str) -> zbus::Result<DevicePath>;
-
-    /// GetDevices method
-    ///
-    /// Get the list of realized network devices.
-    ///
-    /// # Arguments
-    ///
-    /// * `devices` - List of object paths of network devices known to the system. This list does not include device placeholders (see GetAllDevices()).
-    fn get_devices(&self) -> zbus::Result<Vec<DevicePath>>;
 
     /// GetLogging method
     ///
@@ -250,6 +188,73 @@ pub trait NetworkManager {
     #[zbus(name = "state")]
     fn state_method(&self) -> zbus::Result<State>;
 
+    /// GetDevices method
+    ///
+    /// Get the list of realized network devices.
+    ///
+    /// # Arguments
+    ///
+    /// * `devices` - List of object paths of network devices known to the system. This list does not include device placeholders (see GetAllDevices()).
+    #[zbus(name = "GetDevices")]
+    fn get_device_paths(&self) -> zbus::Result<Vec<DevicePath>>;
+
+    /// GetAllDevices method
+    ///
+    /// Get the list of all network devices.
+    ///
+    /// # Arguments
+    ///
+    /// * `devices` - List of object paths of network devices and device placeholders (eg, devices that do not yet exist but which can be automatically created by NetworkManager if one of their AvailableConnections was activated).
+    #[zbus(name = "GetAllDevices")]
+    fn get_all_device_paths(&self) -> zbus::Result<Vec<DevicePath>>;
+
+    /// GetDeviceByIpIface method
+    ///
+    /// Return the object path of the network device referenced by its IP interface name. Note that some devices (usually modems) only have an IP interface name when they are connected.
+    ///
+    /// # Arguments
+    ///
+    /// * `iface` - Interface name of the device to find.
+    /// * `device` - Object path of the network device.
+    #[zbus(name = "GetDeviceByIpIface")]
+    fn get_device_by_ip_iface_path(&self, iface: &str) -> zbus::Result<DevicePath>;
+
+    /// ActivateConnection method
+    ///
+    /// Activate a connection using the supplied device.
+    ///
+    /// # Arguments
+    ///
+    /// * `connection` - The connection to activate. If "/" is given, a valid device path must be given, and NetworkManager picks the best connection to activate for the given device. VPN connections must always pass a valid connection path.
+    /// * `device` - The object path of device to be activated for physical connections. This parameter is ignored for VPN connections, because the specific_object (if provided) specifies the device to use.
+    /// * `specific_object` - The path of a connection-type-specific object this activation should use. This parameter is currently ignored for wired and mobile broadband connections, and the value of "/" should be used (ie, no specific object). For Wi-Fi connections, pass the object path of a specific AP from the card's scan list, or "/" to pick an AP automatically. For VPN connections, pass the object path of an ActiveConnection object that should serve as the "base" connection (to which the VPN connections lifetime will be tied), or pass "/" and NM will automatically use the current default device.
+    /// * `active_connection` - The path of the active connection object representing this active connection.
+    #[zbus(name = "ActivateConnection")]
+    fn activate_connection_path(
+        &self,
+        connection: &SettingsConnectionPath,
+        device: &DevicePath,
+        specific_object: &zbus::zvariant::ObjectPath<'_>,
+    ) -> zbus::Result<ConnectionActivePath>;
+
+    /// CheckpointCreate method
+    ///
+    /// Create a checkpoint of the current networking configuration for given interfaces. If @rollback_timeout is not zero, a rollback is automatically performed after the given timeout.
+    ///
+    /// # Arguments
+    ///
+    /// * `devices` - A list of device paths for which a checkpoint should be created. An empty list means all devices.
+    /// * `rollback_timeout` - The time in seconds until NetworkManager will automatically rollback to the checkpoint. Set to zero for infinite.
+    /// * `flags` - Flags for the creation.
+    /// * `checkpoint` - On success, the path of the new checkpoint.
+    #[zbus(name = "CheckpointCreate")]
+    fn checkpoint_create_path(
+        &self,
+        devices: &[DevicePath],
+        rollback_timeout: u32,
+        flags: CheckpointCreateFlags,
+    ) -> zbus::Result<CheckpointPath>;
+
     /// CheckPermissions signal
     ///
     /// Emitted when system authorization details change, indicating that clients may wish to recheck permissions with GetPermissions.
@@ -286,35 +291,11 @@ pub trait NetworkManager {
     #[zbus(signal, name = "StateChanged")]
     fn state_changed_signal(&self, state: State) -> zbus::Result<()>;
 
-    /// ActivatingConnection property
-    ///
-    /// The object path of an active connection that is currently being activated and which is expected to become the new PrimaryConnection when it finishes activating.
-    #[zbus(property)]
-    fn activating_connection(&self) -> zbus::Result<ConnectionActivePath>;
-
-    /// ActiveConnections property
-    ///
-    /// List of active connection object paths.
-    #[zbus(property)]
-    fn active_connections(&self) -> zbus::Result<Vec<ConnectionActivePath>>;
-
-    /// AllDevices property
-    ///
-    /// The list of both realized and un-realized network devices. Un-realized devices are software devices which do not yet have backing resources, but for which backing resources can be created if the device is activated.
-    #[zbus(property)]
-    fn all_devices(&self) -> zbus::Result<Vec<DevicePath>>;
-
     /// Capabilities property
     ///
     /// The current set of capabilities. See NMCapability for currently defined capability numbers. The array is guaranteed to be sorted in ascending order without duplicates.
     #[zbus(property)]
     fn capabilities(&self) -> zbus::Result<Vec<Capability>>;
-
-    /// Checkpoints property
-    ///
-    /// The list of active checkpoints.
-    #[zbus(property)]
-    fn checkpoints(&self) -> zbus::Result<Vec<CheckpointPath>>;
 
     /// Connectivity property
     ///
@@ -342,12 +323,6 @@ pub trait NetworkManager {
     #[zbus(property)]
     fn connectivity_check_uri(&self) -> zbus::Result<String>;
 
-    /// Devices property
-    ///
-    /// The list of realized network devices. Realized devices are those which have backing resources (eg from the kernel or a management daemon like ModemManager, teamd, etc).
-    #[zbus(property)]
-    fn devices(&self) -> zbus::Result<Vec<DevicePath>>;
-
     /// GlobalDnsConfiguration property
     ///
     /// Dictionary of global DNS settings where the key is one of "searches", "options" and "domains". The values for the "searches" and "options" keys are string arrays describing the list of search domains and resolver options, respectively. The value of the "domains" key is a second-level dictionary, where each key is a domain name, and each key's value is a third-level dictionary with the keys "servers" and "options". "servers" is a string array of DNS servers, "options" is a string array of domain-specific options.
@@ -372,12 +347,6 @@ pub trait NetworkManager {
     /// Indicates if overall networking is currently enabled or not. See the Enable() method.
     #[zbus(property)]
     fn networking_enabled(&self) -> zbus::Result<bool>;
-
-    /// PrimaryConnection property
-    ///
-    /// The object path of the "primary" active connection being used to access the network. In particular, if there is no VPN active, or the VPN does not have the default route, then this indicates the connection that has the default route. If there is a VPN active with the default route, then this indicates the connection that contains the route to the VPN endpoint.
-    #[zbus(property)]
-    fn primary_connection(&self) -> zbus::Result<ConnectionActivePath>;
 
     /// PrimaryConnectionType property
     ///
@@ -456,4 +425,172 @@ pub trait NetworkManager {
     /// Indicates if the mobile broadband hardware is currently enabled, i.e. the state of the RF kill switch.
     #[zbus(property)]
     fn wwan_hardware_enabled(&self) -> zbus::Result<bool>;
+
+    /// Devices property
+    ///
+    /// The list of realized network devices. Realized devices are those which have backing resources (eg from the kernel or a management daemon like ModemManager, teamd, etc).
+    #[zbus(property, name = "Devices")]
+    fn device_paths(&self) -> zbus::Result<Vec<DevicePath>>;
+
+    /// AllDevices property
+    ///
+    /// The list of both realized and un-realized network devices. Un-realized devices are software devices which do not yet have backing resources, but for which backing resources can be created if the device is activated.
+    #[zbus(property, name = "AllDevices")]
+    fn all_device_paths(&self) -> zbus::Result<Vec<DevicePath>>;
+
+    /// Checkpoints property
+    ///
+    /// The list of active checkpoints.
+    #[zbus(property, name = "Checkpoints")]
+    fn checkpoint_paths(&self) -> zbus::Result<Vec<CheckpointPath>>;
+
+    /// ActiveConnections property
+    ///
+    /// List of active connection object paths.
+    #[zbus(property, name = "ActiveConnections")]
+    fn active_connection_paths(&self) -> zbus::Result<Vec<ConnectionActivePath>>;
+
+    /// PrimaryConnection property
+    ///
+    /// The object path of the "primary" active connection being used to access the network. In particular, if there is no VPN active, or the VPN does not have the default route, then this indicates the connection that has the default route. If there is a VPN active with the default route, then this indicates the connection that contains the route to the VPN endpoint.
+    #[zbus(property, name = "PrimaryConnection")]
+    fn primary_connection_path(&self) -> zbus::Result<ConnectionActivePath>;
+
+    /// ActivatingConnection property
+    ///
+    /// The object path of an active connection that is currently being activated and which is expected to become the new PrimaryConnection when it finishes activating.
+    #[zbus(property, name = "ActivatingConnection")]
+    fn activating_connection_path(&self) -> zbus::Result<ConnectionActivePath>;
+}
+
+impl NetworkManagerProxy<'_> {
+    /// The objects the `Devices` property points at.
+    ///
+    /// Built on this proxy's own connection. [`device_paths`](Self::device_paths) gives the paths
+    /// themselves.
+    pub async fn devices(&self) -> zbus::Result<Vec<crate::proxies::device::DeviceProxy<'static>>> {
+        let paths = self.device_paths().await?;
+        crate::NmPathSliceExt::connect_all(&paths, self.inner().connection()).await
+    }
+
+    /// The objects the `AllDevices` property points at.
+    ///
+    /// Built on this proxy's own connection. [`all_device_paths`](Self::all_device_paths) gives the paths
+    /// themselves.
+    pub async fn all_devices(
+        &self,
+    ) -> zbus::Result<Vec<crate::proxies::device::DeviceProxy<'static>>> {
+        let paths = self.all_device_paths().await?;
+        crate::NmPathSliceExt::connect_all(&paths, self.inner().connection()).await
+    }
+
+    /// The objects the `Checkpoints` property points at.
+    ///
+    /// Built on this proxy's own connection. [`checkpoint_paths`](Self::checkpoint_paths) gives the paths
+    /// themselves.
+    pub async fn checkpoints(
+        &self,
+    ) -> zbus::Result<Vec<crate::proxies::checkpoint::CheckpointProxy<'static>>> {
+        let paths = self.checkpoint_paths().await?;
+        crate::NmPathSliceExt::connect_all(&paths, self.inner().connection()).await
+    }
+
+    /// The objects the `ActiveConnections` property points at.
+    ///
+    /// Built on this proxy's own connection. [`active_connection_paths`](Self::active_connection_paths) gives the paths
+    /// themselves.
+    pub async fn active_connections(
+        &self,
+    ) -> zbus::Result<Vec<crate::proxies::connection_active::ActiveProxy<'static>>> {
+        let paths = self.active_connection_paths().await?;
+        crate::NmPathSliceExt::connect_all(&paths, self.inner().connection()).await
+    }
+
+    /// The objects the `PrimaryConnection` property points at.
+    ///
+    /// Built on this proxy's own connection. [`primary_connection_path`](Self::primary_connection_path) gives the paths
+    /// themselves.
+    pub async fn primary_connection(
+        &self,
+    ) -> zbus::Result<crate::proxies::connection_active::ActiveProxy<'static>> {
+        let path = self.primary_connection_path().await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
+
+    /// The objects the `ActivatingConnection` property points at.
+    ///
+    /// Built on this proxy's own connection. [`activating_connection_path`](Self::activating_connection_path) gives the paths
+    /// themselves.
+    pub async fn activating_connection(
+        &self,
+    ) -> zbus::Result<crate::proxies::connection_active::ActiveProxy<'static>> {
+        let path = self.activating_connection_path().await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
+
+    /// The objects the `GetDevices` method points at.
+    ///
+    /// Built on this proxy's own connection. [`get_device_paths`](Self::get_device_paths) gives the paths
+    /// themselves.
+    pub async fn get_devices(
+        &self,
+    ) -> zbus::Result<Vec<crate::proxies::device::DeviceProxy<'static>>> {
+        let paths = self.get_device_paths().await?;
+        crate::NmPathSliceExt::connect_all(&paths, self.inner().connection()).await
+    }
+
+    /// The objects the `GetAllDevices` method points at.
+    ///
+    /// Built on this proxy's own connection. [`get_all_device_paths`](Self::get_all_device_paths) gives the paths
+    /// themselves.
+    pub async fn get_all_devices(
+        &self,
+    ) -> zbus::Result<Vec<crate::proxies::device::DeviceProxy<'static>>> {
+        let paths = self.get_all_device_paths().await?;
+        crate::NmPathSliceExt::connect_all(&paths, self.inner().connection()).await
+    }
+
+    /// The objects the `GetDeviceByIpIface` method points at.
+    ///
+    /// Built on this proxy's own connection. [`get_device_by_ip_iface_path`](Self::get_device_by_ip_iface_path) gives the paths
+    /// themselves.
+    pub async fn get_device_by_ip_iface(
+        &self,
+        iface: &str,
+    ) -> zbus::Result<crate::proxies::device::DeviceProxy<'static>> {
+        let path = self.get_device_by_ip_iface_path(iface).await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
+
+    /// The objects the `ActivateConnection` method points at.
+    ///
+    /// Built on this proxy's own connection. [`activate_connection_path`](Self::activate_connection_path) gives the paths
+    /// themselves.
+    pub async fn activate_connection(
+        &self,
+        connection: &SettingsConnectionPath,
+        device: &DevicePath,
+        specific_object: &zbus::zvariant::ObjectPath<'_>,
+    ) -> zbus::Result<crate::proxies::connection_active::ActiveProxy<'static>> {
+        let path = self
+            .activate_connection_path(connection, device, specific_object)
+            .await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
+
+    /// The objects the `CheckpointCreate` method points at.
+    ///
+    /// Built on this proxy's own connection. [`checkpoint_create_path`](Self::checkpoint_create_path) gives the paths
+    /// themselves.
+    pub async fn checkpoint_create(
+        &self,
+        devices: &[DevicePath],
+        rollback_timeout: u32,
+        flags: CheckpointCreateFlags,
+    ) -> zbus::Result<crate::proxies::checkpoint::CheckpointProxy<'static>> {
+        let path = self
+            .checkpoint_create_path(devices, rollback_timeout, flags)
+            .await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
 }

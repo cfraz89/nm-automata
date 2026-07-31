@@ -2,7 +2,7 @@
 //!
 //! Run with `cargo run --example devices`.
 
-use netman::{AnyDevice, DeviceState, NetworkManagerProxy, NmPath};
+use netman::{AnyDevice, DeviceState, NetworkManagerProxy};
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -21,9 +21,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     );
     println!("capabilities: {:?}", nm.capabilities().await?);
 
-    // `get_devices` hands back `Vec<DevicePath>`, and each path builds its own proxy.
-    for path in nm.get_devices().await? {
-        let device = path.connect(&connection).await?;
+    // `get_devices` hands back the devices themselves, built on the connection `nm` holds.
+    for device in nm.get_devices().await? {
         let state = device.state().await?;
         println!(
             "\n{} ({:?}) — {:?}",
@@ -65,11 +64,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         if state == DeviceState::Activated {
             // A typed path: this one can only build a Connection.Active proxy.
-            let active = device
-                .active_connection()
-                .await?
-                .connect(&connection)
-                .await?;
+            let active = device.active_connection().await?;
             println!("  active connection: {:?}", active.state().await?);
         }
     }

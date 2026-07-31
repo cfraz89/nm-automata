@@ -24,19 +24,6 @@ use zbus::proxy;
     default_path = "/org/freedesktop/NetworkManager/Settings"
 )]
 pub trait Settings {
-    /// AddConnection method
-    ///
-    /// Add new connection and save it to disk. This operation does not start the network connection unless (1) device is idle and able to connect to the network described by the new connection, and (2) the connection is allowed to be started automatically.
-    ///
-    /// # Arguments
-    ///
-    /// * `connection` - Connection settings and properties.
-    /// * `path` - Object path of the new connection that was just added.
-    fn add_connection(
-        &self,
-        connection: &ConnectionProfile,
-    ) -> zbus::Result<SettingsConnectionPath>;
-
     /// AddConnection2 method
     ///
     /// Add a new connection profile. AddConnection2 is an alternative to AddConnection and AddConnectionUnsaved. The new variant can do everything that the older variants could, and more. Its behavior is extensible via extra %flags and %args arguments. The %flags argument accepts the combination of following values, logically or-ed together: 0x1 (to-disk): The connection is persisted to disk. 0x2 (in-memory): The change is only made in memory (without touching an eventual profile on disk). If neither 0x1 nor 0x2 is set, the change is made in memory only, if the connection is already in memory only. 0x20 (block-autoconnect): Blocks auto-connect on the new profile The %args argument accepts the following keys: plugin: The settings plugin the newly added connection will use, such as "keyfile" or "ifcfg-rh". Since 1.38 Either the flags 0x1 (to-disk) or 0x2 (in-memory) must be specified. The effect is whether to behave like AddConnection or AddConnectionUnsaved.
@@ -57,38 +44,6 @@ pub trait Settings {
         SettingsConnectionPath,
         std::collections::HashMap<String, zbus::zvariant::OwnedValue>,
     )>;
-
-    /// AddConnectionUnsaved method
-    ///
-    /// Add new connection but do not save it to disk immediately. This operation does not start the network connection unless (1) device is idle and able to connect to the network described by the new connection, and (2) the connection is allowed to be started automatically. Use the 'Save' method on the connection to save these changes to disk.
-    ///
-    /// # Arguments
-    ///
-    /// * `connection` - Connection settings and properties.
-    /// * `path` - Object path of the new connection that was just added.
-    fn add_connection_unsaved(
-        &self,
-        connection: &ConnectionProfile,
-    ) -> zbus::Result<SettingsConnectionPath>;
-
-    /// GetConnectionByUuid method
-    ///
-    /// Retrieve the object path of a connection, given that connection's UUID.
-    ///
-    /// # Arguments
-    ///
-    /// * `uuid` - The UUID to find the connection object path for.
-    /// * `connection` - The connection's object path.
-    fn get_connection_by_uuid(&self, uuid: &str) -> zbus::Result<SettingsConnectionPath>;
-
-    /// ListConnections method
-    ///
-    /// List the saved network connections known to NetworkManager.
-    ///
-    /// # Arguments
-    ///
-    /// * `connections` - List of connections.
-    fn list_connections(&self) -> zbus::Result<Vec<SettingsConnectionPath>>;
 
     /// LoadConnections method
     ///
@@ -119,6 +74,55 @@ pub trait Settings {
     /// * `hostname` - The hostname to save to persistent configuration. If blank, the persistent hostname is cleared.
     fn save_hostname(&self, hostname: &str) -> zbus::Result<()>;
 
+    /// ListConnections method
+    ///
+    /// List the saved network connections known to NetworkManager.
+    ///
+    /// # Arguments
+    ///
+    /// * `connections` - List of connections.
+    #[zbus(name = "ListConnections")]
+    fn list_connection_paths(&self) -> zbus::Result<Vec<SettingsConnectionPath>>;
+
+    /// GetConnectionByUuid method
+    ///
+    /// Retrieve the object path of a connection, given that connection's UUID.
+    ///
+    /// # Arguments
+    ///
+    /// * `uuid` - The UUID to find the connection object path for.
+    /// * `connection` - The connection's object path.
+    #[zbus(name = "GetConnectionByUuid")]
+    fn get_connection_by_uuid_path(&self, uuid: &str) -> zbus::Result<SettingsConnectionPath>;
+
+    /// AddConnection method
+    ///
+    /// Add new connection and save it to disk. This operation does not start the network connection unless (1) device is idle and able to connect to the network described by the new connection, and (2) the connection is allowed to be started automatically.
+    ///
+    /// # Arguments
+    ///
+    /// * `connection` - Connection settings and properties.
+    /// * `path` - Object path of the new connection that was just added.
+    #[zbus(name = "AddConnection")]
+    fn add_connection_path(
+        &self,
+        connection: &ConnectionProfile,
+    ) -> zbus::Result<SettingsConnectionPath>;
+
+    /// AddConnectionUnsaved method
+    ///
+    /// Add new connection but do not save it to disk immediately. This operation does not start the network connection unless (1) device is idle and able to connect to the network described by the new connection, and (2) the connection is allowed to be started automatically. Use the 'Save' method on the connection to save these changes to disk.
+    ///
+    /// # Arguments
+    ///
+    /// * `connection` - Connection settings and properties.
+    /// * `path` - Object path of the new connection that was just added.
+    #[zbus(name = "AddConnectionUnsaved")]
+    fn add_connection_unsaved_path(
+        &self,
+        connection: &ConnectionProfile,
+    ) -> zbus::Result<SettingsConnectionPath>;
+
     /// ConnectionRemoved signal
     ///
     /// Emitted when a connection is no longer available. This happens when the connection is deleted or if it is no longer accessible by any of the system's logged-in users. After receipt of this signal, the connection no longer exists and cannot be used. Also see the Settings.Connection.Removed signal.
@@ -145,12 +149,6 @@ pub trait Settings {
     #[zbus(property)]
     fn can_modify(&self) -> zbus::Result<bool>;
 
-    /// Connections property
-    ///
-    /// List of object paths of available network connection profiles.
-    #[zbus(property)]
-    fn connections(&self) -> zbus::Result<Vec<SettingsConnectionPath>>;
-
     /// Hostname property
     ///
     /// The machine hostname stored in persistent configuration.
@@ -162,4 +160,70 @@ pub trait Settings {
     /// The version of the settings. This is incremented whenever the profile changes and can be used to detect concurrent modifications. Since: 1.44
     #[zbus(property)]
     fn version_id(&self) -> zbus::Result<u64>;
+
+    /// Connections property
+    ///
+    /// List of object paths of available network connection profiles.
+    #[zbus(property, name = "Connections")]
+    fn connection_paths(&self) -> zbus::Result<Vec<SettingsConnectionPath>>;
+}
+
+impl SettingsProxy<'_> {
+    /// The objects the `Connections` property points at.
+    ///
+    /// Built on this proxy's own connection. [`connection_paths`](Self::connection_paths) gives the paths
+    /// themselves.
+    pub async fn connections(
+        &self,
+    ) -> zbus::Result<Vec<crate::proxies::settings_connection::ConnectionProxy<'static>>> {
+        let paths = self.connection_paths().await?;
+        crate::NmPathSliceExt::connect_all(&paths, self.inner().connection()).await
+    }
+
+    /// The objects the `ListConnections` method points at.
+    ///
+    /// Built on this proxy's own connection. [`list_connection_paths`](Self::list_connection_paths) gives the paths
+    /// themselves.
+    pub async fn list_connections(
+        &self,
+    ) -> zbus::Result<Vec<crate::proxies::settings_connection::ConnectionProxy<'static>>> {
+        let paths = self.list_connection_paths().await?;
+        crate::NmPathSliceExt::connect_all(&paths, self.inner().connection()).await
+    }
+
+    /// The objects the `GetConnectionByUuid` method points at.
+    ///
+    /// Built on this proxy's own connection. [`get_connection_by_uuid_path`](Self::get_connection_by_uuid_path) gives the paths
+    /// themselves.
+    pub async fn get_connection_by_uuid(
+        &self,
+        uuid: &str,
+    ) -> zbus::Result<crate::proxies::settings_connection::ConnectionProxy<'static>> {
+        let path = self.get_connection_by_uuid_path(uuid).await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
+
+    /// The objects the `AddConnection` method points at.
+    ///
+    /// Built on this proxy's own connection. [`add_connection_path`](Self::add_connection_path) gives the paths
+    /// themselves.
+    pub async fn add_connection(
+        &self,
+        connection: &ConnectionProfile,
+    ) -> zbus::Result<crate::proxies::settings_connection::ConnectionProxy<'static>> {
+        let path = self.add_connection_path(connection).await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
+
+    /// The objects the `AddConnectionUnsaved` method points at.
+    ///
+    /// Built on this proxy's own connection. [`add_connection_unsaved_path`](Self::add_connection_unsaved_path) gives the paths
+    /// themselves.
+    pub async fn add_connection_unsaved(
+        &self,
+        connection: &ConnectionProfile,
+    ) -> zbus::Result<crate::proxies::settings_connection::ConnectionProxy<'static>> {
+        let path = self.add_connection_unsaved_path(connection).await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
 }

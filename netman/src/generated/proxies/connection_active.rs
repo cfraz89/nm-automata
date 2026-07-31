@@ -39,18 +39,6 @@ pub trait Active {
         reason: ActiveConnectionStateReason,
     ) -> zbus::Result<()>;
 
-    /// Connection property
-    ///
-    /// The path of the connection.
-    #[zbus(property)]
-    fn connection(&self) -> zbus::Result<SettingsConnectionPath>;
-
-    /// Controller property
-    ///
-    /// The path to the controller device if the connection is a port. This property replaces the deprecated 'Master' property.
-    #[zbus(property)]
-    fn controller(&self) -> zbus::Result<DevicePath>;
-
     /// Default property
     ///
     /// Whether this active connection is the default IPv4 connection, i.e. whether it currently owns the default IPv4 route.
@@ -63,47 +51,11 @@ pub trait Active {
     #[zbus(property)]
     fn default6(&self) -> zbus::Result<bool>;
 
-    /// Devices property
-    ///
-    /// Array of object paths representing devices which are part of this active connection.
-    #[zbus(property)]
-    fn devices(&self) -> zbus::Result<Vec<DevicePath>>;
-
-    /// Dhcp4Config property
-    ///
-    /// Object path of the Dhcp4Config object describing the DHCP options returned by the DHCP server (assuming the connection used DHCP). Only valid when the connection is in the NM_ACTIVE_CONNECTION_STATE_ACTIVATED state.
-    #[zbus(property)]
-    fn dhcp4_config(&self) -> zbus::Result<Dhcp4ConfigPath>;
-
-    /// Dhcp6Config property
-    ///
-    /// Object path of the Dhcp6Config object describing the DHCP options returned by the DHCP server (assuming the connection used DHCP). Only valid when the connection is in the NM_ACTIVE_CONNECTION_STATE_ACTIVATED state.
-    #[zbus(property)]
-    fn dhcp6_config(&self) -> zbus::Result<Dhcp6ConfigPath>;
-
     /// Id property
     ///
     /// The ID of the connection, provided as a convenience so that clients do not have to retrieve all connection details.
     #[zbus(property)]
     fn id(&self) -> zbus::Result<String>;
-
-    /// Ip4Config property
-    ///
-    /// Object path of the Ip4Config object describing the configuration of the connection. Only valid when the connection is in the NM_ACTIVE_CONNECTION_STATE_ACTIVATED state.
-    #[zbus(property)]
-    fn ip4_config(&self) -> zbus::Result<Ip4ConfigPath>;
-
-    /// Ip6Config property
-    ///
-    /// Object path of the Ip6Config object describing the configuration of the connection. Only valid when the connection is in the NM_ACTIVE_CONNECTION_STATE_ACTIVATED state.
-    #[zbus(property)]
-    fn ip6_config(&self) -> zbus::Result<Ip6ConfigPath>;
-
-    /// Master property
-    ///
-    /// The path to the controller device if the connection is a port. DEPRECATED. This property is deprecated in favor of the 'Controller' property since 1.44.
-    #[zbus(property)]
-    fn master(&self) -> zbus::Result<DevicePath>;
 
     /// SpecificObject property
     ///
@@ -140,4 +92,136 @@ pub trait Active {
     /// Whether this active connection is also a VPN connection.
     #[zbus(property)]
     fn vpn(&self) -> zbus::Result<bool>;
+
+    /// Connection property
+    ///
+    /// The path of the connection.
+    #[zbus(property, name = "Connection")]
+    fn connection_path(&self) -> zbus::Result<SettingsConnectionPath>;
+
+    /// Devices property
+    ///
+    /// Array of object paths representing devices which are part of this active connection.
+    #[zbus(property, name = "Devices")]
+    fn device_paths(&self) -> zbus::Result<Vec<DevicePath>>;
+
+    /// Ip4Config property
+    ///
+    /// Object path of the Ip4Config object describing the configuration of the connection. Only valid when the connection is in the NM_ACTIVE_CONNECTION_STATE_ACTIVATED state.
+    #[zbus(property, name = "Ip4Config")]
+    fn ip4_config_path(&self) -> zbus::Result<Ip4ConfigPath>;
+
+    /// Dhcp4Config property
+    ///
+    /// Object path of the Dhcp4Config object describing the DHCP options returned by the DHCP server (assuming the connection used DHCP). Only valid when the connection is in the NM_ACTIVE_CONNECTION_STATE_ACTIVATED state.
+    #[zbus(property, name = "Dhcp4Config")]
+    fn dhcp4_config_path(&self) -> zbus::Result<Dhcp4ConfigPath>;
+
+    /// Ip6Config property
+    ///
+    /// Object path of the Ip6Config object describing the configuration of the connection. Only valid when the connection is in the NM_ACTIVE_CONNECTION_STATE_ACTIVATED state.
+    #[zbus(property, name = "Ip6Config")]
+    fn ip6_config_path(&self) -> zbus::Result<Ip6ConfigPath>;
+
+    /// Dhcp6Config property
+    ///
+    /// Object path of the Dhcp6Config object describing the DHCP options returned by the DHCP server (assuming the connection used DHCP). Only valid when the connection is in the NM_ACTIVE_CONNECTION_STATE_ACTIVATED state.
+    #[zbus(property, name = "Dhcp6Config")]
+    fn dhcp6_config_path(&self) -> zbus::Result<Dhcp6ConfigPath>;
+
+    /// Controller property
+    ///
+    /// The path to the controller device if the connection is a port. This property replaces the deprecated 'Master' property.
+    #[zbus(property, name = "Controller")]
+    fn controller_path(&self) -> zbus::Result<DevicePath>;
+
+    /// Master property
+    ///
+    /// The path to the controller device if the connection is a port. DEPRECATED. This property is deprecated in favor of the 'Controller' property since 1.44.
+    #[zbus(property, name = "Master")]
+    fn master_path(&self) -> zbus::Result<DevicePath>;
+}
+
+impl ActiveProxy<'_> {
+    /// The objects the `Connection` property points at.
+    ///
+    /// Built on this proxy's own connection. [`connection_path`](Self::connection_path) gives the paths
+    /// themselves.
+    pub async fn connection(
+        &self,
+    ) -> zbus::Result<crate::proxies::settings_connection::ConnectionProxy<'static>> {
+        let path = self.connection_path().await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
+
+    /// The objects the `Devices` property points at.
+    ///
+    /// Built on this proxy's own connection. [`device_paths`](Self::device_paths) gives the paths
+    /// themselves.
+    pub async fn devices(&self) -> zbus::Result<Vec<crate::proxies::device::DeviceProxy<'static>>> {
+        let paths = self.device_paths().await?;
+        crate::NmPathSliceExt::connect_all(&paths, self.inner().connection()).await
+    }
+
+    /// The objects the `Ip4Config` property points at.
+    ///
+    /// Built on this proxy's own connection. [`ip4_config_path`](Self::ip4_config_path) gives the paths
+    /// themselves.
+    pub async fn ip4_config(
+        &self,
+    ) -> zbus::Result<crate::proxies::ip4_config::IP4ConfigProxy<'static>> {
+        let path = self.ip4_config_path().await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
+
+    /// The objects the `Dhcp4Config` property points at.
+    ///
+    /// Built on this proxy's own connection. [`dhcp4_config_path`](Self::dhcp4_config_path) gives the paths
+    /// themselves.
+    pub async fn dhcp4_config(
+        &self,
+    ) -> zbus::Result<crate::proxies::dhcp4_config::DHCP4ConfigProxy<'static>> {
+        let path = self.dhcp4_config_path().await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
+
+    /// The objects the `Ip6Config` property points at.
+    ///
+    /// Built on this proxy's own connection. [`ip6_config_path`](Self::ip6_config_path) gives the paths
+    /// themselves.
+    pub async fn ip6_config(
+        &self,
+    ) -> zbus::Result<crate::proxies::ip6_config::IP6ConfigProxy<'static>> {
+        let path = self.ip6_config_path().await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
+
+    /// The objects the `Dhcp6Config` property points at.
+    ///
+    /// Built on this proxy's own connection. [`dhcp6_config_path`](Self::dhcp6_config_path) gives the paths
+    /// themselves.
+    pub async fn dhcp6_config(
+        &self,
+    ) -> zbus::Result<crate::proxies::dhcp6_config::DHCP6ConfigProxy<'static>> {
+        let path = self.dhcp6_config_path().await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
+
+    /// The objects the `Controller` property points at.
+    ///
+    /// Built on this proxy's own connection. [`controller_path`](Self::controller_path) gives the paths
+    /// themselves.
+    pub async fn controller(&self) -> zbus::Result<crate::proxies::device::DeviceProxy<'static>> {
+        let path = self.controller_path().await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
+
+    /// The objects the `Master` property points at.
+    ///
+    /// Built on this proxy's own connection. [`master_path`](Self::master_path) gives the paths
+    /// themselves.
+    pub async fn master(&self) -> zbus::Result<crate::proxies::device::DeviceProxy<'static>> {
+        let path = self.master_path().await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
 }

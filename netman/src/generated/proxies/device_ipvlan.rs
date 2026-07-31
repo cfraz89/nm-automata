@@ -28,10 +28,6 @@ pub trait Ipvlan {
     #[zbus(property)]
     fn mode(&self) -> zbus::Result<String>;
 
-    /// Parent property
-    #[zbus(property)]
-    fn parent(&self) -> zbus::Result<DevicePath>;
-
     /// Private property
     #[zbus(property)]
     fn private(&self) -> zbus::Result<bool>;
@@ -39,4 +35,19 @@ pub trait Ipvlan {
     /// Vepa property
     #[zbus(property)]
     fn vepa(&self) -> zbus::Result<bool>;
+
+    /// Parent property
+    #[zbus(property, name = "Parent")]
+    fn parent_path(&self) -> zbus::Result<DevicePath>;
+}
+
+impl IpvlanProxy<'_> {
+    /// The objects the `Parent` property points at.
+    ///
+    /// Built on this proxy's own connection. [`parent_path`](Self::parent_path) gives the paths
+    /// themselves.
+    pub async fn parent(&self) -> zbus::Result<crate::proxies::device::DeviceProxy<'static>> {
+        let path = self.parent_path().await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
 }

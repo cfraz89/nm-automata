@@ -7,18 +7,14 @@
 //! Run with `cargo run --example profiles`. It only reads.
 
 use netman::settings::ProfileMap;
-use netman::{ConnectionProfile, NmPathSliceExt, SettingsConnectionProxy, SettingsProxy};
+use netman::{ConnectionProfile, SettingsConnectionProxy, SettingsProxy};
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let connection = zbus::Connection::system().await?;
     let settings = SettingsProxy::new(&connection).await?;
 
-    let profiles: Vec<SettingsConnectionProxy> = settings
-        .list_connections()
-        .await?
-        .connect_all(&connection)
-        .await?;
+    let profiles: Vec<SettingsConnectionProxy> = settings.list_connections().await?;
     println!("{} saved profile(s)\n", profiles.len());
 
     let mut mismatches = 0;

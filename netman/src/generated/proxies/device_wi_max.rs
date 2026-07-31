@@ -31,7 +31,8 @@ pub trait WiMax {
     /// # Arguments
     ///
     /// * `nsps` - List of NSP object paths.
-    fn get_nsp_list(&self) -> zbus::Result<Vec<WiMaxNspPath>>;
+    #[zbus(name = "GetNspList")]
+    fn get_nsp_list_paths(&self) -> zbus::Result<Vec<WiMaxNspPath>>;
 
     /// NspAdded signal
     ///
@@ -52,12 +53,6 @@ pub trait WiMax {
     /// * `nsp` - The object path of the NSP that has disappeared.
     #[zbus(signal)]
     fn nsp_removed(&self, nsp: WiMaxNspPath) -> zbus::Result<()>;
-
-    /// ActiveNsp property
-    ///
-    /// Object path of the NSP currently used by the WiMax device.
-    #[zbus(property)]
-    fn active_nsp(&self) -> zbus::Result<WiMaxNspPath>;
 
     /// Bsid property
     ///
@@ -83,12 +78,6 @@ pub trait WiMax {
     #[zbus(property)]
     fn hw_address(&self) -> zbus::Result<String>;
 
-    /// Nsps property
-    ///
-    /// List of object paths of Network Service Providers (NSPs) visible to this WiMAX device.
-    #[zbus(property)]
-    fn nsps(&self) -> zbus::Result<Vec<WiMaxNspPath>>;
-
     /// Rssi property
     ///
     /// RSSI of the current radio link in dBm. This value indicates how strong the raw received RF signal from the base station is, but does not indicate the overall quality of the radio link. Has no meaning when the device is not connected.
@@ -100,4 +89,47 @@ pub trait WiMax {
     /// Average power of the last burst transmitted by the device, in units of 0.5 dBm. i.e. a TxPower of -11 represents an actual device TX power of -5.5 dBm. Has no meaning when the device is not connected.
     #[zbus(property)]
     fn tx_power(&self) -> zbus::Result<i32>;
+
+    /// Nsps property
+    ///
+    /// List of object paths of Network Service Providers (NSPs) visible to this WiMAX device.
+    #[zbus(property, name = "Nsps")]
+    fn nsp_paths(&self) -> zbus::Result<Vec<WiMaxNspPath>>;
+
+    /// ActiveNsp property
+    ///
+    /// Object path of the NSP currently used by the WiMax device.
+    #[zbus(property, name = "ActiveNsp")]
+    fn active_nsp_path(&self) -> zbus::Result<WiMaxNspPath>;
+}
+
+impl WiMaxProxy<'_> {
+    /// The objects the `Nsps` property points at.
+    ///
+    /// Built on this proxy's own connection. [`nsp_paths`](Self::nsp_paths) gives the paths
+    /// themselves.
+    pub async fn nsps(&self) -> zbus::Result<Vec<crate::proxies::wi_max_nsp::NspProxy<'static>>> {
+        let paths = self.nsp_paths().await?;
+        crate::NmPathSliceExt::connect_all(&paths, self.inner().connection()).await
+    }
+
+    /// The objects the `ActiveNsp` property points at.
+    ///
+    /// Built on this proxy's own connection. [`active_nsp_path`](Self::active_nsp_path) gives the paths
+    /// themselves.
+    pub async fn active_nsp(&self) -> zbus::Result<crate::proxies::wi_max_nsp::NspProxy<'static>> {
+        let path = self.active_nsp_path().await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
+
+    /// The objects the `GetNspList` method points at.
+    ///
+    /// Built on this proxy's own connection. [`get_nsp_list_paths`](Self::get_nsp_list_paths) gives the paths
+    /// themselves.
+    pub async fn get_nsp_list(
+        &self,
+    ) -> zbus::Result<Vec<crate::proxies::wi_max_nsp::NspProxy<'static>>> {
+        let paths = self.get_nsp_list_paths().await?;
+        crate::NmPathSliceExt::connect_all(&paths, self.inner().connection()).await
+    }
 }

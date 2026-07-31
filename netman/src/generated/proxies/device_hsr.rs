@@ -30,18 +30,6 @@ pub trait Hsr {
     #[zbus(property)]
     fn multicast_spec(&self) -> zbus::Result<u8>;
 
-    /// Port1 property
-    ///
-    /// The device's port1 device.
-    #[zbus(property)]
-    fn port1(&self) -> zbus::Result<DevicePath>;
-
-    /// Port2 property
-    ///
-    /// The device's port2 device.
-    #[zbus(property)]
-    fn port2(&self) -> zbus::Result<DevicePath>;
-
     /// Prp property
     ///
     /// Whether the PRP protocol is used or not.
@@ -53,4 +41,36 @@ pub trait Hsr {
     /// The supervision MAC address.
     #[zbus(property)]
     fn supervision_address(&self) -> zbus::Result<String>;
+
+    /// Port1 property
+    ///
+    /// The device's port1 device.
+    #[zbus(property, name = "Port1")]
+    fn port1_path(&self) -> zbus::Result<DevicePath>;
+
+    /// Port2 property
+    ///
+    /// The device's port2 device.
+    #[zbus(property, name = "Port2")]
+    fn port2_path(&self) -> zbus::Result<DevicePath>;
+}
+
+impl HsrProxy<'_> {
+    /// The objects the `Port1` property points at.
+    ///
+    /// Built on this proxy's own connection. [`port1_path`](Self::port1_path) gives the paths
+    /// themselves.
+    pub async fn port1(&self) -> zbus::Result<crate::proxies::device::DeviceProxy<'static>> {
+        let path = self.port1_path().await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
+
+    /// The objects the `Port2` property points at.
+    ///
+    /// Built on this proxy's own connection. [`port2_path`](Self::port2_path) gives the paths
+    /// themselves.
+    pub async fn port2(&self) -> zbus::Result<crate::proxies::device::DeviceProxy<'static>> {
+        let path = self.port2_path().await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
 }

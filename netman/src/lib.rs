@@ -9,13 +9,13 @@
 //! # Getting started
 //!
 //! ```no_run
-//! use netman::{DeviceState, NetworkManagerProxy, NmPathSliceExt};
+//! use netman::{DeviceState, NetworkManagerProxy};
 //!
 //! # async fn example() -> zbus::Result<()> {
 //! let connection = zbus::Connection::system().await?;
 //! let nm = NetworkManagerProxy::new(&connection).await?;
 //!
-//! for device in nm.get_devices().await?.connect_all(&connection).await? {
+//! for device in nm.get_devices().await? {
 //!     if device.state().await? == DeviceState::Activated {
 //!         println!("{} is up", device.interface().await?);
 //!     }
@@ -35,9 +35,10 @@
 //!   that upstream documents as one of them are typed as such instead of as a bare integer.
 //!   Both decode leniently, so a daemon newer than this binding still works: see
 //!   [`DeviceState::Other`] and [`DeviceCapabilities::from_bits_retain`].
-//! * [`paths`] holds a newtype per interface, so an object path says what is at the other end.
-//!   [`NmPath::connect`] builds the one proxy that path can mean, and
-//!   [`NmPathSliceExt::connect_all`] does it for a list.
+//! * Members that return object paths return the objects instead: `get_devices` hands back
+//!   devices, built on the connection the proxy already holds. The paths are still there under
+//!   a `_path` or `_paths` name — `get_device_paths` — and [`paths`] holds a newtype per
+//!   interface so that even those say what they point at.
 //! * [`ObjectPathExt`], [`ObjectPathSliceExt`] and [`ProxyExt`] turn bare object paths
 //!   into typed proxies, and move between the several interfaces one
 //!   object implements.

@@ -39,6 +39,17 @@ pub trait Bridge {
     /// Slaves property
     ///
     /// DEPRECATED. Use the "Ports" property in "org.freedesktop.NetworkManager.Device" instead which exists since version NetworkManager 1.34.0.
-    #[zbus(property)]
-    fn slaves(&self) -> zbus::Result<Vec<DevicePath>>;
+    #[zbus(property, name = "Slaves")]
+    fn slave_paths(&self) -> zbus::Result<Vec<DevicePath>>;
+}
+
+impl BridgeProxy<'_> {
+    /// The objects the `Slaves` property points at.
+    ///
+    /// Built on this proxy's own connection. [`slave_paths`](Self::slave_paths) gives the paths
+    /// themselves.
+    pub async fn slaves(&self) -> zbus::Result<Vec<crate::proxies::device::DeviceProxy<'static>>> {
+        let paths = self.slave_paths().await?;
+        crate::NmPathSliceExt::connect_all(&paths, self.inner().connection()).await
+    }
 }

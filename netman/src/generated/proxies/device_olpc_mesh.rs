@@ -30,15 +30,26 @@ pub trait OlpcMesh {
     #[zbus(property)]
     fn active_channel(&self) -> zbus::Result<u32>;
 
-    /// Companion property
-    ///
-    /// The object path of the companion device.
-    #[zbus(property)]
-    fn companion(&self) -> zbus::Result<DevicePath>;
-
     /// HwAddress property
     ///
     /// The hardware address of the device. DEPRECATED. Use the "HwAddress" property in "org.freedesktop.NetworkManager.Device" instead which exists since version NetworkManager 1.24.0.
     #[zbus(property)]
     fn hw_address(&self) -> zbus::Result<String>;
+
+    /// Companion property
+    ///
+    /// The object path of the companion device.
+    #[zbus(property, name = "Companion")]
+    fn companion_path(&self) -> zbus::Result<DevicePath>;
+}
+
+impl OlpcMeshProxy<'_> {
+    /// The objects the `Companion` property points at.
+    ///
+    /// Built on this proxy's own connection. [`companion_path`](Self::companion_path) gives the paths
+    /// themselves.
+    pub async fn companion(&self) -> zbus::Result<crate::proxies::device::DeviceProxy<'static>> {
+        let path = self.companion_path().await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
 }

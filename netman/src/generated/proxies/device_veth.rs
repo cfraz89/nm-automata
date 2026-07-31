@@ -27,6 +27,17 @@ pub trait Veth {
     /// Peer property
     ///
     /// The object path of the device's peer.
-    #[zbus(property)]
-    fn peer(&self) -> zbus::Result<DevicePath>;
+    #[zbus(property, name = "Peer")]
+    fn peer_path(&self) -> zbus::Result<DevicePath>;
+}
+
+impl VethProxy<'_> {
+    /// The objects the `Peer` property points at.
+    ///
+    /// Built on this proxy's own connection. [`peer_path`](Self::peer_path) gives the paths
+    /// themselves.
+    pub async fn peer(&self) -> zbus::Result<crate::proxies::device::DeviceProxy<'static>> {
+        let path = self.peer_path().await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
 }

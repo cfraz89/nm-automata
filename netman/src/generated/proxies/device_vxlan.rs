@@ -84,12 +84,6 @@ pub trait Vxlan {
     #[zbus(property)]
     fn local(&self) -> zbus::Result<String>;
 
-    /// Parent property
-    ///
-    /// The object path of the parent device (if the VXLAN is not purely internal to this host).
-    #[zbus(property)]
-    fn parent(&self) -> zbus::Result<DevicePath>;
-
     /// Proxy property
     ///
     /// True if the VXLAN is implementing DOVE ARP proxying for remote clients.
@@ -125,4 +119,21 @@ pub trait Vxlan {
     /// The value to use in the IP TTL field for VXLAN packets sent to other physical hosts.
     #[zbus(property)]
     fn ttl(&self) -> zbus::Result<u8>;
+
+    /// Parent property
+    ///
+    /// The object path of the parent device (if the VXLAN is not purely internal to this host).
+    #[zbus(property, name = "Parent")]
+    fn parent_path(&self) -> zbus::Result<DevicePath>;
+}
+
+impl VxlanProxy<'_> {
+    /// The objects the `Parent` property points at.
+    ///
+    /// Built on this proxy's own connection. [`parent_path`](Self::parent_path) gives the paths
+    /// themselves.
+    pub async fn parent(&self) -> zbus::Result<crate::proxies::device::DeviceProxy<'static>> {
+        let path = self.parent_path().await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
 }

@@ -79,12 +79,11 @@ pub trait ProxyExt<'p> {
     /// Another interface of the same object, on the same connection.
     ///
     /// ```no_run
-    /// # use netman::{DeviceProxy, ProxyExt, WirelessProxy};
+    /// # use netman::{DeviceProxy, ProxyExt, StatisticsProxy};
     /// # async fn example(device: DeviceProxy<'_>) -> zbus::Result<()> {
-    /// let wireless: WirelessProxy = device.cast().await?;
-    /// for ap in wireless.get_all_access_points().await? {
-    ///     println!("{ap}");
-    /// }
+    /// // Every device carries the statistics interface, so this cast cannot be wrong.
+    /// let statistics: StatisticsProxy = device.cast().await?;
+    /// println!("{} bytes received", statistics.rx_bytes().await?);
     /// # Ok(())
     /// # }
     /// ```

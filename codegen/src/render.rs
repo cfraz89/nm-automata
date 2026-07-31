@@ -217,9 +217,12 @@ fn reference_for(candidate: &Candidate, types: &BTreeMap<String, Resolved<'_>>) 
 pub struct Rename {
     /// The member name on the wire, e.g. `StateChanged`.
     pub member: String,
-    /// The name the member is generated under, e.g. `netman_rename_0`.
+    /// The name the member is generated under, e.g. `netman_rename_000`.
+    ///
+    /// The index is fixed width so that no sentinel is a prefix of another: replacing
+    /// `netman_rename_1` before `netman_rename_12` would corrupt the second.
     pub sentinel: String,
-    /// The type name generated from the sentinel, e.g. `NetmanRename0`.
+    /// The type name generated from the sentinel, e.g. `NetmanRename000`.
     pub sentinel_type: String,
     /// What the generated function should end up called, e.g. `state_changed_signal`.
     pub fn_name: String,
@@ -229,8 +232,122 @@ pub struct Rename {
     pub kind: &'static str,
 }
 
-/// Work out which members of `interface` collide, and what to call them instead.
-pub fn plan_renames(interface: &Interface<'_>) -> Vec<Rename> {
+/// A member that returns object paths, and the accessor generated beside it.
+///
+/// The raw member is renamed out of the way so that the plain name can return something
+/// usable: `get_devices` hands back proxies, and `get_device_paths` the paths it built them
+/// from.
+#[derive(Debug, Clone)]
+pub struct PathAccessor {
+    /// The renamed raw member, e.g. `get_device_paths`.
+    pub raw: String,
+    /// The accessor to generate, e.g. `get_devices`.
+    pub wrapper: String,
+    /// The interface objects at those paths implement.
+    pub target: String,
+    /// Whether the member returns a list of paths rather than one.
+    pub list: bool,
+    /// How the member is described, for the accessor's documentation.
+    pub description: String,
+}
+
+/// The name a path-returning member is moved to: `get_devices` -> `get_device_paths`.
+fn raw_path_name(name: &str, list: bool) -> String {
+    if !list {
+        return format!("{name}_path");
+    }
+    // `get_devices` reads better as `get_device_paths` than `get_devices_paths`.
+    match name.strip_suffix('s') {
+        Some(singular) => format!("{singular}_paths"),
+        None => format!("{name}_paths"),
+    }
+}
+
+/// The renames and path accessors for an interface.
+pub fn plan(
+    interface: &Interface<'_>,
+    objects: &BTreeMap<Site, String>,
+) -> (Vec<Rename>, Vec<PathAccessor>) {
+    let mut renames = plan_collisions(interface);
+    let mut accessors = Vec::new();
+
+    // Read-only path properties, and methods whose single output is a path.
+    let mut candidates: Vec<(Site, String, bool, String)> = Vec::new();
+    for property in interface.properties() {
+        let name = property.name().to_string();
+        let signature = property.ty().to_string();
+        if property.access().read() && matches!(signature.as_str(), "o" | "ao") {
+            candidates.push((
+                Site::Property(name.clone()),
+                name.clone(),
+                signature == "ao",
+                format!("the `{name}` property"),
+            ));
+        }
+    }
+    for method in interface.methods() {
+        let outputs: Vec<_> = method
+            .args()
+            .iter()
+            .filter(|a| a.direction() == Some(ArgDirection::Out))
+            .collect();
+        // A method returning a tuple keeps its raw form: unpicking which element is a path
+        // would change the shape of the return, not just its type.
+        let [output] = outputs.as_slice() else {
+            continue;
+        };
+        let Some(arg_name) = output.name() else {
+            continue;
+        };
+        let signature = output.ty().inner().to_string();
+        if matches!(signature.as_str(), "o" | "ao") {
+            let member = method.name().to_string();
+            candidates.push((
+                Site::Arg(member.clone(), arg_name.to_owned()),
+                member.clone(),
+                signature == "ao",
+                format!("the `{member}` method"),
+            ));
+        }
+    }
+
+    for (site, member, list, description) in candidates {
+        let Some(target) = objects.get(&site) else {
+            continue;
+        };
+        // A member already renamed for a collision keeps that name; wrapping it as well would
+        // need the two rules to agree, and none of them overlap in practice.
+        if renames.iter().any(|r| r.member == member) {
+            continue;
+        }
+        let wrapper = snake(&member);
+        let raw = raw_path_name(&wrapper, list);
+        let index = renames.len();
+        renames.push(Rename {
+            member: member.clone(),
+            sentinel: format!("netman_rename_{index:03}"),
+            sentinel_type: format!("NetmanRename{index:03}"),
+            fn_name: raw.clone(),
+            type_name: pascal_case(&raw),
+            kind: if matches!(site, Site::Property(_)) {
+                "property"
+            } else {
+                "method"
+            },
+        });
+        accessors.push(PathAccessor {
+            raw,
+            wrapper,
+            target: target.clone(),
+            list,
+            description,
+        });
+    }
+
+    (renames, accessors)
+}
+
+fn plan_collisions(interface: &Interface<'_>) -> Vec<Rename> {
     let mut taken: Vec<String> = Vec::new();
     for property in interface.properties() {
         let snake = snake(property.name().as_str());
@@ -250,8 +367,8 @@ pub fn plan_renames(interface: &Interface<'_>) -> Vec<Rename> {
         let index = renames.len();
         renames.push(Rename {
             member: member.to_owned(),
-            sentinel: format!("netman_rename_{index}"),
-            sentinel_type: format!("NetmanRename{index}"),
+            sentinel: format!("netman_rename_{index:03}"),
+            sentinel_type: format!("NetmanRename{index:03}"),
             fn_name: format!("{}_{suffix}", snake(member)),
             type_name: format!("{}{}", pascal_case(&snake(member)), capitalise(suffix)),
             kind,
@@ -339,7 +456,7 @@ fn write_interface(
     let _ = writeln!(out, r#"  <interface name="{}">"#, interface.name());
     write_docstring(out, iface_docs.and_then(|i| i.doc.as_deref()), "    ");
 
-    let renames = plan_renames(interface);
+    let renames = plan(interface, object_sites).0;
     let emitted_name = |member: &str| {
         renames
             .iter()
@@ -397,7 +514,8 @@ fn write_interface(
             .unwrap_or_else(|| profile_attribute(&property.ty().to_string()).to_owned());
         let _ = writeln!(
             out,
-            r#"    <property name="{name}" type="{}" access="{access}"{tp_type}>"#,
+            r#"    <property name="{}" type="{}" access="{access}"{tp_type}>"#,
+            emitted_name(&name),
             property.ty().inner()
         );
         write_docstring(
@@ -949,6 +1067,60 @@ pub fn paths_module(
     out
 }
 
+/// The parameters of a generated member, as written and as forwarded.
+///
+/// Returns the declaration to repeat after `&self` — `, iface: &str` — and the names to pass
+/// on — `iface`. `None` if the member is not there, which leaves it unwrapped rather than
+/// generating a call that cannot compile.
+fn parameters(code: &str, member: &str) -> Option<(String, String)> {
+    let start = code.find(&format!(" fn {member}("))? + format!(" fn {member}(").len();
+    let mut depth = 1usize;
+    let mut end = start;
+    for (offset, ch) in code[start..].char_indices() {
+        match ch {
+            '(' => depth += 1,
+            ')' => {
+                depth -= 1;
+                if depth == 0 {
+                    end = start + offset;
+                    break;
+                }
+            }
+            _ => {}
+        }
+    }
+    let inside = code.get(start..end)?.trim();
+    let rest = inside.strip_prefix("&self")?.trim_start_matches(',').trim();
+    if rest.is_empty() {
+        return Some((String::new(), String::new()));
+    }
+
+    // Split on the commas between parameters, ignoring those inside a type.
+    let mut names = Vec::new();
+    let (mut depth, mut last) = (0i32, 0usize);
+    for (offset, ch) in rest.char_indices() {
+        match ch {
+            '(' | '<' | '[' => depth += 1,
+            ')' | '>' | ']' => depth -= 1,
+            ',' if depth == 0 => {
+                names.push(rest[last..offset].trim());
+                last = offset + 1;
+            }
+            _ => {}
+        }
+    }
+    names.push(rest[last..].trim());
+
+    let forwarded: Vec<&str> = names
+        .iter()
+        .filter_map(|param| param.split(':').next())
+        .map(str::trim)
+        .filter(|name| !name.is_empty())
+        .collect();
+
+    Some((format!(", {rest}"), forwarded.join(", ")))
+}
+
 /// The path newtype for a module: `device_wireless` -> `DeviceWirelessPath`.
 pub fn path_type_name(module: &str) -> String {
     format!("{}Path", pascal_case(module))
@@ -1078,6 +1250,74 @@ pub fn devices_module(
          }})\n    }}\n}}\n"
     );
 
+    out
+}
+
+/// Emit the accessors that turn a member's object paths into the proxies they point at.
+///
+/// These are what make `get_devices` hand back devices rather than paths. They live on the
+/// proxy as inherent methods, using the connection the proxy already holds, so nothing has to
+/// be passed in.
+pub fn path_accessors(
+    code: &str,
+    accessors: &[PathAccessor],
+    trait_name: &str,
+    interfaces: &[String],
+) -> String {
+    if accessors.is_empty() {
+        return String::new();
+    }
+
+    let mut out = String::new();
+    let _ = writeln!(out, "\nimpl {trait_name}Proxy<'_> {{");
+    for accessor in accessors {
+        if !interfaces.iter().any(|i| i == &accessor.target) {
+            continue;
+        }
+        let module = crate::codegen::module_name(&accessor.target);
+        let target_trait = accessor
+            .target
+            .rsplit('.')
+            .next()
+            .unwrap_or(&accessor.target);
+        let proxy = format!("crate::proxies::{module}::{target_trait}Proxy<'static>");
+
+        // The raw member may take arguments; rather than work out their Rust types a second
+        // time, its parameter list is taken from the signature just generated for it.
+        let Some((declaration, forwarded)) = parameters(code, &accessor.raw) else {
+            continue;
+        };
+
+        let _ = writeln!(
+            out,
+            "    /// The objects {} points at.\n    \
+             ///\n    \
+             /// Built on this proxy's own connection. [`{raw}`](Self::{raw}) gives the paths\n    \
+             /// themselves.",
+            accessor.description,
+            raw = accessor.raw
+        );
+        if accessor.list {
+            let _ = writeln!(
+                out,
+                "    pub async fn {}(&self{declaration}) -> zbus::Result<Vec<{proxy}>> {{\n        \
+                 let paths = self.{}({forwarded}).await?;\n        \
+                 crate::NmPathSliceExt::connect_all(&paths, self.inner().connection()).await\n    \
+                 }}\n",
+                accessor.wrapper, accessor.raw
+            );
+        } else {
+            let _ = writeln!(
+                out,
+                "    pub async fn {}(&self{declaration}) -> zbus::Result<{proxy}> {{\n        \
+                 let path = self.{}({forwarded}).await?;\n        \
+                 crate::NmPath::connect(&path, self.inner().connection()).await\n    \
+                 }}\n",
+                accessor.wrapper, accessor.raw
+            );
+        }
+    }
+    let _ = writeln!(out, "}}\n");
     out
 }
 

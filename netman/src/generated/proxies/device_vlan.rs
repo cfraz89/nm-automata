@@ -36,15 +36,26 @@ pub trait Vlan {
     #[zbus(property)]
     fn hw_address(&self) -> zbus::Result<String>;
 
-    /// Parent property
-    ///
-    /// Object path of the parent device of this VLAN device.
-    #[zbus(property)]
-    fn parent(&self) -> zbus::Result<DevicePath>;
-
     /// VlanId property
     ///
     /// The VLAN ID of this VLAN interface.
     #[zbus(property)]
     fn vlan_id(&self) -> zbus::Result<u32>;
+
+    /// Parent property
+    ///
+    /// Object path of the parent device of this VLAN device.
+    #[zbus(property, name = "Parent")]
+    fn parent_path(&self) -> zbus::Result<DevicePath>;
+}
+
+impl VlanProxy<'_> {
+    /// The objects the `Parent` property points at.
+    ///
+    /// Built on this proxy's own connection. [`parent_path`](Self::parent_path) gives the paths
+    /// themselves.
+    pub async fn parent(&self) -> zbus::Result<crate::proxies::device::DeviceProxy<'static>> {
+        let path = self.parent_path().await?;
+        crate::NmPath::connect(&path, self.inner().connection()).await
+    }
 }

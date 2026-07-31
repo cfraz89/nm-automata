@@ -70,6 +70,19 @@ pub trait WifiP2P {
     /// Peers property
     ///
     /// List of object paths of peers visible to this Wi-Fi P2P device.
-    #[zbus(property)]
-    fn peers(&self) -> zbus::Result<Vec<WifiP2pPeerPath>>;
+    #[zbus(property, name = "Peers")]
+    fn peer_paths(&self) -> zbus::Result<Vec<WifiP2pPeerPath>>;
+}
+
+impl WifiP2PProxy<'_> {
+    /// The objects the `Peers` property points at.
+    ///
+    /// Built on this proxy's own connection. [`peer_paths`](Self::peer_paths) gives the paths
+    /// themselves.
+    pub async fn peers(
+        &self,
+    ) -> zbus::Result<Vec<crate::proxies::wifi_p2p_peer::WifiP2PPeerProxy<'static>>> {
+        let paths = self.peer_paths().await?;
+        crate::NmPathSliceExt::connect_all(&paths, self.inner().connection()).await
+    }
 }

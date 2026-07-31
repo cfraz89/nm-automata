@@ -107,16 +107,25 @@ pub fn generate(root: &Path) -> Result<BTreeMap<PathBuf, String>> {
             let iface_name = interface.name().to_string();
             // The renames were planned against the original interface, before its colliding
             // members were written out under sentinel names.
-            let renames = node
+            let empty = BTreeMap::new();
+            let sites = object_targets.get(&iface_name).unwrap_or(&empty);
+            let (renames, accessors) = node
                 .interfaces()
                 .iter()
                 .find(|original| original.name() == interface.name())
-                .map(render::plan_renames)
+                .map(|original| render::plan(original, sites))
                 .unwrap_or_default();
 
             let code = interface_code(interface, augmented_node.telepathy_types())
                 .with_context(|| format!("generating a proxy for {iface_name}"))?;
-            let code = apply_renames(&code, &renames);
+            let mut code = apply_renames(&code, &renames);
+            let accessor_code = render::path_accessors(
+                &code,
+                &accessors,
+                trait_name(&iface_name),
+                &interface_names,
+            );
+            code.push_str(&accessor_code);
             modules.push(Generated {
                 module: module_name(&iface_name),
                 trait_name: trait_name(&iface_name).to_owned(),

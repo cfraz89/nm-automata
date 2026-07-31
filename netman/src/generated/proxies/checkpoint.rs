@@ -30,15 +30,26 @@ pub trait Checkpoint {
     #[zbus(property)]
     fn created(&self) -> zbus::Result<i64>;
 
-    /// Devices property
-    ///
-    /// Array of object paths for devices which are part of this checkpoint.
-    #[zbus(property)]
-    fn devices(&self) -> zbus::Result<Vec<DevicePath>>;
-
     /// RollbackTimeout property
     ///
     /// Timeout in seconds for automatic rollback, or zero.
     #[zbus(property)]
     fn rollback_timeout(&self) -> zbus::Result<u32>;
+
+    /// Devices property
+    ///
+    /// Array of object paths for devices which are part of this checkpoint.
+    #[zbus(property, name = "Devices")]
+    fn device_paths(&self) -> zbus::Result<Vec<DevicePath>>;
+}
+
+impl CheckpointProxy<'_> {
+    /// The objects the `Devices` property points at.
+    ///
+    /// Built on this proxy's own connection. [`device_paths`](Self::device_paths) gives the paths
+    /// themselves.
+    pub async fn devices(&self) -> zbus::Result<Vec<crate::proxies::device::DeviceProxy<'static>>> {
+        let paths = self.device_paths().await?;
+        crate::NmPathSliceExt::connect_all(&paths, self.inner().connection()).await
+    }
 }
