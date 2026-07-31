@@ -88,3 +88,15 @@ pub trait IP6Config {
     #[zbus(property)]
     fn searches(&self) -> zbus::Result<Vec<String>>;
 }
+
+impl IP6ConfigProxy<'_> {
+    /// The path of the object this proxy is for.
+    ///
+    /// Typed, so it can be handed to a member that takes one — activating a connection
+    /// wants the device's path, and this is where to get it.
+    pub fn object_path(&self) -> crate::paths::Ip6ConfigPath {
+        crate::paths::Ip6ConfigPath::from(zbus::zvariant::OwnedObjectPath::from(
+            self.inner().path().to_owned(),
+        ))
+    }
+}

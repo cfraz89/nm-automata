@@ -8,6 +8,39 @@
 //! They cost nothing on the wire — each is a newtype over the path, with the same signature —
 //! and they make the mistake of handing a device path to something expecting an access point a
 //! compile error rather than a runtime one.
+//!
+//! # Getting one back out
+//!
+//! Most members hand you the object rather than its path, so a path usually appears when you
+//! need to give one to a member that takes one. Every proxy knows its own:
+//!
+//! ```no_run
+//! # use netman::{NetworkManagerProxy, SettingsProxy};
+//! # async fn example(connection: &zbus::Connection) -> zbus::Result<()> {
+//! let nm = NetworkManagerProxy::new(connection).await?;
+//! let settings = SettingsProxy::new(connection).await?;
+//!
+//! let device = nm.get_devices().await?.remove(0);
+//! let profile = settings.list_connections().await?.remove(0);
+//!
+//! let active = nm
+//!     .activate_connection(
+//!         &profile.object_path(),
+//!         &device.object_path(),
+//!         &Default::default(),
+//!     )
+//!     .await?;
+//! # Ok(())
+//! # }
+//! ```
+//!
+//! It is `object_path` rather than `path` because `Device.Path` is a real property — the one
+//! udev calls `ID_PATH`.
+//!
+//! The `_path` and `_paths` members are the raw form of anything that returns objects:
+//! `get_device_paths` beside `get_devices`. They are rarely what you want, but they are not
+//! merely redundant — a property's change stream is named after them, so watching
+//! `ActiveConnection` means `receive_active_connection_path_changed`.
 
 /// A path that knows the proxy it builds.
 pub trait NmPath {

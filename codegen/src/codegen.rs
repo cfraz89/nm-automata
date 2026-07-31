@@ -123,6 +123,7 @@ pub fn generate(root: &Path) -> Result<BTreeMap<PathBuf, String>> {
                 &code,
                 &accessors,
                 trait_name(&iface_name),
+                &module_name(&iface_name),
                 &interface_names,
             );
             code.push_str(&accessor_code);

@@ -32,3 +32,15 @@ pub trait DHCP6Config {
         &self,
     ) -> zbus::Result<std::collections::HashMap<String, zbus::zvariant::OwnedValue>>;
 }
+
+impl DHCP6ConfigProxy<'_> {
+    /// The path of the object this proxy is for.
+    ///
+    /// Typed, so it can be handed to a member that takes one — activating a connection
+    /// wants the device's path, and this is where to get it.
+    pub fn object_path(&self) -> crate::paths::Dhcp6ConfigPath {
+        crate::paths::Dhcp6ConfigPath::from(zbus::zvariant::OwnedObjectPath::from(
+            self.inner().path().to_owned(),
+        ))
+    }
+}

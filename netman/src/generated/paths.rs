@@ -20,6 +20,20 @@ impl crate::path::NmPath for AccessPointPath {
 }
 
 nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.AgentManager`.
+    pub struct AgentManagerPath: "org.freedesktop.NetworkManager.AgentManager";
+}
+
+impl crate::path::NmPath for AgentManagerPath {
+    type Proxy = crate::proxies::agent_manager::AgentManagerProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.AgentManager";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
     /// The path of an object implementing `org.freedesktop.NetworkManager.Checkpoint`.
     pub struct CheckpointPath: "org.freedesktop.NetworkManager.Checkpoint";
 }
@@ -41,6 +55,496 @@ nm_path! {
 impl crate::path::NmPath for ConnectionActivePath {
     type Proxy = crate::proxies::connection_active::ActiveProxy<'static>;
     const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Connection.Active";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device`.
+    pub struct DevicePath: "org.freedesktop.NetworkManager.Device";
+}
+
+impl crate::path::NmPath for DevicePath {
+    type Proxy = crate::proxies::device::DeviceProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Adsl`.
+    pub struct DeviceAdslPath: "org.freedesktop.NetworkManager.Device.Adsl";
+}
+
+impl crate::path::NmPath for DeviceAdslPath {
+    type Proxy = crate::proxies::device_adsl::AdslProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.Adsl";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Bluetooth`.
+    pub struct DeviceBluetoothPath: "org.freedesktop.NetworkManager.Device.Bluetooth";
+}
+
+impl crate::path::NmPath for DeviceBluetoothPath {
+    type Proxy = crate::proxies::device_bluetooth::BluetoothProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.Bluetooth";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Bond`.
+    pub struct DeviceBondPath: "org.freedesktop.NetworkManager.Device.Bond";
+}
+
+impl crate::path::NmPath for DeviceBondPath {
+    type Proxy = crate::proxies::device_bond::BondProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.Bond";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Bridge`.
+    pub struct DeviceBridgePath: "org.freedesktop.NetworkManager.Device.Bridge";
+}
+
+impl crate::path::NmPath for DeviceBridgePath {
+    type Proxy = crate::proxies::device_bridge::BridgeProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.Bridge";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Dummy`.
+    pub struct DeviceDummyPath: "org.freedesktop.NetworkManager.Device.Dummy";
+}
+
+impl crate::path::NmPath for DeviceDummyPath {
+    type Proxy = crate::proxies::device_dummy::DummyProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.Dummy";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Generic`.
+    pub struct DeviceGenericPath: "org.freedesktop.NetworkManager.Device.Generic";
+}
+
+impl crate::path::NmPath for DeviceGenericPath {
+    type Proxy = crate::proxies::device_generic::GenericProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.Generic";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Geneve`.
+    pub struct DeviceGenevePath: "org.freedesktop.NetworkManager.Device.Geneve";
+}
+
+impl crate::path::NmPath for DeviceGenevePath {
+    type Proxy = crate::proxies::device_geneve::GeneveProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.Geneve";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Hsr`.
+    pub struct DeviceHsrPath: "org.freedesktop.NetworkManager.Device.Hsr";
+}
+
+impl crate::path::NmPath for DeviceHsrPath {
+    type Proxy = crate::proxies::device_hsr::HsrProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.Hsr";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Infiniband`.
+    pub struct DeviceInfinibandPath: "org.freedesktop.NetworkManager.Device.Infiniband";
+}
+
+impl crate::path::NmPath for DeviceInfinibandPath {
+    type Proxy = crate::proxies::device_infiniband::InfinibandProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.Infiniband";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.IPTunnel`.
+    pub struct DeviceIpTunnelPath: "org.freedesktop.NetworkManager.Device.IPTunnel";
+}
+
+impl crate::path::NmPath for DeviceIpTunnelPath {
+    type Proxy = crate::proxies::device_ip_tunnel::IPTunnelProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.IPTunnel";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Ipvlan`.
+    pub struct DeviceIpvlanPath: "org.freedesktop.NetworkManager.Device.Ipvlan";
+}
+
+impl crate::path::NmPath for DeviceIpvlanPath {
+    type Proxy = crate::proxies::device_ipvlan::IpvlanProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.Ipvlan";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Loopback`.
+    pub struct DeviceLoopbackPath: "org.freedesktop.NetworkManager.Device.Loopback";
+}
+
+impl crate::path::NmPath for DeviceLoopbackPath {
+    type Proxy = crate::proxies::device_loopback::LoopbackProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.Loopback";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Lowpan`.
+    pub struct DeviceLowpanPath: "org.freedesktop.NetworkManager.Device.Lowpan";
+}
+
+impl crate::path::NmPath for DeviceLowpanPath {
+    type Proxy = crate::proxies::device_lowpan::LowpanProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.Lowpan";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Macsec`.
+    pub struct DeviceMacsecPath: "org.freedesktop.NetworkManager.Device.Macsec";
+}
+
+impl crate::path::NmPath for DeviceMacsecPath {
+    type Proxy = crate::proxies::device_macsec::MacsecProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.Macsec";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Macvlan`.
+    pub struct DeviceMacvlanPath: "org.freedesktop.NetworkManager.Device.Macvlan";
+}
+
+impl crate::path::NmPath for DeviceMacvlanPath {
+    type Proxy = crate::proxies::device_macvlan::MacvlanProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.Macvlan";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Modem`.
+    pub struct DeviceModemPath: "org.freedesktop.NetworkManager.Device.Modem";
+}
+
+impl crate::path::NmPath for DeviceModemPath {
+    type Proxy = crate::proxies::device_modem::ModemProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.Modem";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.OlpcMesh`.
+    pub struct DeviceOlpcMeshPath: "org.freedesktop.NetworkManager.Device.OlpcMesh";
+}
+
+impl crate::path::NmPath for DeviceOlpcMeshPath {
+    type Proxy = crate::proxies::device_olpc_mesh::OlpcMeshProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.OlpcMesh";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.OvsBridge`.
+    pub struct DeviceOvsBridgePath: "org.freedesktop.NetworkManager.Device.OvsBridge";
+}
+
+impl crate::path::NmPath for DeviceOvsBridgePath {
+    type Proxy = crate::proxies::device_ovs_bridge::OvsBridgeProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.OvsBridge";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.OvsInterface`.
+    pub struct DeviceOvsInterfacePath: "org.freedesktop.NetworkManager.Device.OvsInterface";
+}
+
+impl crate::path::NmPath for DeviceOvsInterfacePath {
+    type Proxy = crate::proxies::device_ovs_interface::OvsInterfaceProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.OvsInterface";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.OvsPort`.
+    pub struct DeviceOvsPortPath: "org.freedesktop.NetworkManager.Device.OvsPort";
+}
+
+impl crate::path::NmPath for DeviceOvsPortPath {
+    type Proxy = crate::proxies::device_ovs_port::OvsPortProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.OvsPort";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Ppp`.
+    pub struct DevicePppPath: "org.freedesktop.NetworkManager.Device.Ppp";
+}
+
+impl crate::path::NmPath for DevicePppPath {
+    type Proxy = crate::proxies::device_ppp::PppProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.Ppp";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Statistics`.
+    pub struct DeviceStatisticsPath: "org.freedesktop.NetworkManager.Device.Statistics";
+}
+
+impl crate::path::NmPath for DeviceStatisticsPath {
+    type Proxy = crate::proxies::device_statistics::StatisticsProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.Statistics";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Team`.
+    pub struct DeviceTeamPath: "org.freedesktop.NetworkManager.Device.Team";
+}
+
+impl crate::path::NmPath for DeviceTeamPath {
+    type Proxy = crate::proxies::device_team::TeamProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.Team";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Tun`.
+    pub struct DeviceTunPath: "org.freedesktop.NetworkManager.Device.Tun";
+}
+
+impl crate::path::NmPath for DeviceTunPath {
+    type Proxy = crate::proxies::device_tun::TunProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.Tun";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Veth`.
+    pub struct DeviceVethPath: "org.freedesktop.NetworkManager.Device.Veth";
+}
+
+impl crate::path::NmPath for DeviceVethPath {
+    type Proxy = crate::proxies::device_veth::VethProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.Veth";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Vlan`.
+    pub struct DeviceVlanPath: "org.freedesktop.NetworkManager.Device.Vlan";
+}
+
+impl crate::path::NmPath for DeviceVlanPath {
+    type Proxy = crate::proxies::device_vlan::VlanProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.Vlan";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Vrf`.
+    pub struct DeviceVrfPath: "org.freedesktop.NetworkManager.Device.Vrf";
+}
+
+impl crate::path::NmPath for DeviceVrfPath {
+    type Proxy = crate::proxies::device_vrf::VrfProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.Vrf";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Vxlan`.
+    pub struct DeviceVxlanPath: "org.freedesktop.NetworkManager.Device.Vxlan";
+}
+
+impl crate::path::NmPath for DeviceVxlanPath {
+    type Proxy = crate::proxies::device_vxlan::VxlanProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.Vxlan";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.WiMax`.
+    pub struct DeviceWiMaxPath: "org.freedesktop.NetworkManager.Device.WiMax";
+}
+
+impl crate::path::NmPath for DeviceWiMaxPath {
+    type Proxy = crate::proxies::device_wi_max::WiMaxProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.WiMax";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.WifiP2P`.
+    pub struct DeviceWifiP2pPath: "org.freedesktop.NetworkManager.Device.WifiP2P";
+}
+
+impl crate::path::NmPath for DeviceWifiP2pPath {
+    type Proxy = crate::proxies::device_wifi_p2p::WifiP2PProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.WifiP2P";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.WireGuard`.
+    pub struct DeviceWireGuardPath: "org.freedesktop.NetworkManager.Device.WireGuard";
+}
+
+impl crate::path::NmPath for DeviceWireGuardPath {
+    type Proxy = crate::proxies::device_wire_guard::WireGuardProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.WireGuard";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Wired`.
+    pub struct DeviceWiredPath: "org.freedesktop.NetworkManager.Device.Wired";
+}
+
+impl crate::path::NmPath for DeviceWiredPath {
+    type Proxy = crate::proxies::device_wired::WiredProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.Wired";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Wireless`.
+    pub struct DeviceWirelessPath: "org.freedesktop.NetworkManager.Device.Wireless";
+}
+
+impl crate::path::NmPath for DeviceWirelessPath {
+    type Proxy = crate::proxies::device_wireless::WirelessProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.Wireless";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Wpan`.
+    pub struct DeviceWpanPath: "org.freedesktop.NetworkManager.Device.Wpan";
+}
+
+impl crate::path::NmPath for DeviceWpanPath {
+    type Proxy = crate::proxies::device_wpan::WpanProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device.Wpan";
 
     async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
         crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
@@ -76,13 +580,13 @@ impl crate::path::NmPath for Dhcp6ConfigPath {
 }
 
 nm_path! {
-    /// The path of an object implementing `org.freedesktop.NetworkManager.Device`.
-    pub struct DevicePath: "org.freedesktop.NetworkManager.Device";
+    /// The path of an object implementing `org.freedesktop.NetworkManager.DnsManager`.
+    pub struct DnsManagerPath: "org.freedesktop.NetworkManager.DnsManager";
 }
 
-impl crate::path::NmPath for DevicePath {
-    type Proxy = crate::proxies::device::DeviceProxy<'static>;
-    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Device";
+impl crate::path::NmPath for DnsManagerPath {
+    type Proxy = crate::proxies::dns_manager::DnsManagerProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.DnsManager";
 
     async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
         crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
@@ -118,6 +622,62 @@ impl crate::path::NmPath for Ip6ConfigPath {
 }
 
 nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager`.
+    pub struct NetworkManagerPath: "org.freedesktop.NetworkManager";
+}
+
+impl crate::path::NmPath for NetworkManagerPath {
+    type Proxy = crate::proxies::network_manager::NetworkManagerProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.PPP`.
+    pub struct PppPath: "org.freedesktop.NetworkManager.PPP";
+}
+
+impl crate::path::NmPath for PppPath {
+    type Proxy = crate::proxies::ppp::PPPProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.PPP";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.SecretAgent`.
+    pub struct SecretAgentPath: "org.freedesktop.NetworkManager.SecretAgent";
+}
+
+impl crate::path::NmPath for SecretAgentPath {
+    type Proxy = crate::proxies::secret_agent::SecretAgentProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.SecretAgent";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.Settings`.
+    pub struct SettingsPath: "org.freedesktop.NetworkManager.Settings";
+}
+
+impl crate::path::NmPath for SettingsPath {
+    type Proxy = crate::proxies::settings::SettingsProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Settings";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
     /// The path of an object implementing `org.freedesktop.NetworkManager.Settings.Connection`.
     pub struct SettingsConnectionPath: "org.freedesktop.NetworkManager.Settings.Connection";
 }
@@ -125,6 +685,34 @@ nm_path! {
 impl crate::path::NmPath for SettingsConnectionPath {
     type Proxy = crate::proxies::settings_connection::ConnectionProxy<'static>;
     const INTERFACE: &'static str = "org.freedesktop.NetworkManager.Settings.Connection";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.VPN.Connection`.
+    pub struct VpnConnectionPath: "org.freedesktop.NetworkManager.VPN.Connection";
+}
+
+impl crate::path::NmPath for VpnConnectionPath {
+    type Proxy = crate::proxies::vpn_connection::ConnectionProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.VPN.Connection";
+
+    async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
+        crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+nm_path! {
+    /// The path of an object implementing `org.freedesktop.NetworkManager.VPN.Plugin`.
+    pub struct VpnPluginPath: "org.freedesktop.NetworkManager.VPN.Plugin";
+}
+
+impl crate::path::NmPath for VpnPluginPath {
+    type Proxy = crate::proxies::vpn_plugin::PluginProxy<'static>;
+    const INTERFACE: &'static str = "org.freedesktop.NetworkManager.VPN.Plugin";
 
     async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
         crate::ObjectPathExt::proxy(self.as_object_path(), connection).await

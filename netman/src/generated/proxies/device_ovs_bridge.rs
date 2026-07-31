@@ -32,6 +32,16 @@ pub trait OvsBridge {
 }
 
 impl OvsBridgeProxy<'_> {
+    /// The path of the object this proxy is for.
+    ///
+    /// Typed, so it can be handed to a member that takes one — activating a connection
+    /// wants the device's path, and this is where to get it.
+    pub fn object_path(&self) -> crate::paths::DeviceOvsBridgePath {
+        crate::paths::DeviceOvsBridgePath::from(zbus::zvariant::OwnedObjectPath::from(
+            self.inner().path().to_owned(),
+        ))
+    }
+
     /// The objects the `Slaves` property points at.
     ///
     /// Built on this proxy's own connection. [`slave_paths`](Self::slave_paths) gives the paths

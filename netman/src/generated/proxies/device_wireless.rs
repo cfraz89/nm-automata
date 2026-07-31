@@ -126,6 +126,16 @@ pub trait Wireless {
 }
 
 impl WirelessProxy<'_> {
+    /// The path of the object this proxy is for.
+    ///
+    /// Typed, so it can be handed to a member that takes one — activating a connection
+    /// wants the device's path, and this is where to get it.
+    pub fn object_path(&self) -> crate::paths::DeviceWirelessPath {
+        crate::paths::DeviceWirelessPath::from(zbus::zvariant::OwnedObjectPath::from(
+            self.inner().path().to_owned(),
+        ))
+    }
+
     /// The objects the `AccessPoints` property points at.
     ///
     /// Built on this proxy's own connection. [`access_point_paths`](Self::access_point_paths) gives the paths

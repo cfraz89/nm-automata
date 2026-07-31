@@ -38,6 +38,16 @@ pub trait Lowpan {
 }
 
 impl LowpanProxy<'_> {
+    /// The path of the object this proxy is for.
+    ///
+    /// Typed, so it can be handed to a member that takes one — activating a connection
+    /// wants the device's path, and this is where to get it.
+    pub fn object_path(&self) -> crate::paths::DeviceLowpanPath {
+        crate::paths::DeviceLowpanPath::from(zbus::zvariant::OwnedObjectPath::from(
+            self.inner().path().to_owned(),
+        ))
+    }
+
     /// The objects the `Parent` property points at.
     ///
     /// Built on this proxy's own connection. [`parent_path`](Self::parent_path) gives the paths

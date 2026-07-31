@@ -1018,12 +1018,9 @@ pub fn paths_module(
     modules: &[crate::codegen::Generated],
     nm_version: &str,
 ) -> String {
-    let mut wanted: Vec<&str> = targets
-        .values()
-        .flat_map(|sites| sites.values().map(String::as_str))
-        .collect();
-    wanted.sort();
-    wanted.dedup();
+    // One for every interface, not only the ones something points at: each proxy names its
+    // own path through `object_path`.
+    let _ = targets;
 
     let mut out = String::new();
     let _ = writeln!(
@@ -1036,10 +1033,8 @@ pub fn paths_module(
          use crate::path::nm_path;\n"
     );
 
-    for interface in wanted {
-        let Some(module) = modules.iter().find(|m| m.interface == interface) else {
-            continue;
-        };
+    for module in modules {
+        let interface = &module.interface;
         let path_name = path_type_name(&module.module);
 
         let _ = writeln!(out, "nm_path! {{");
@@ -1262,14 +1257,27 @@ pub fn path_accessors(
     code: &str,
     accessors: &[PathAccessor],
     trait_name: &str,
+    module: &str,
     interfaces: &[String],
 ) -> String {
-    if accessors.is_empty() {
-        return String::new();
-    }
-
     let mut out = String::new();
     let _ = writeln!(out, "\nimpl {trait_name}Proxy<'_> {{");
+
+    // Where this proxy is, in the form the members that take a path expect. `path` is not
+    // available as a name: `Device.Path` is a real property, the one udev calls `ID_PATH`.
+    let _ = writeln!(
+        out,
+        "    /// The path of the object this proxy is for.\n    \
+         ///\n    \
+         /// Typed, so it can be handed to a member that takes one — activating a connection\n    \
+         /// wants the device's path, and this is where to get it.\n    \
+         pub fn object_path(&self) -> crate::paths::{path} {{\n        \
+         crate::paths::{path}::from(zbus::zvariant::OwnedObjectPath::from(\n            \
+         self.inner().path().to_owned(),\n        \
+         ))\n    \
+         }}\n",
+        path = path_type_name(module)
+    );
     for accessor in accessors {
         if !interfaces.iter().any(|i| i == &accessor.target) {
             continue;

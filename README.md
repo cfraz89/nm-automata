@@ -72,10 +72,13 @@ are kept in `other` maps, so a read-modify-write against a newer daemon does not
   }
   ```
 
-  The paths are still reachable under a `_path`/`_paths` name (`get_device_paths`), and each is
-  a newtype that knows its interface, so 44 of the 45 path-valued properties are typed either
-  way. The one left is `Connection.Active.SpecificObject`, which really is an access point *or*
-  a Wi-Fi P2P peer.
+  Going the other way, every proxy knows its own path — `device.object_path()` gives a
+  `DevicePath`, which is what the members that take one expect. The raw members are still there
+  under a `_path`/`_paths` name (`get_device_paths`); they are rarely what you want, but a
+  property's change stream is named after them, so watching `ActiveConnection` means
+  `receive_active_connection_path_changed`. 44 of the 45 path-valued properties are typed either
+  way; the one left is `Connection.Active.SpecificObject`, which really is an access point *or* a
+  Wi-Fi P2P peer.
 * **Narrowing a device is checked, not a cast.** `device.specialise()` reads the type once and
   returns an `AnyDevice`, whose variants each carry a proxy that could only have been built
   after the matching type was seen:

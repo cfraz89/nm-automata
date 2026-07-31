@@ -123,3 +123,15 @@ pub trait Connection {
     #[zbus(property)]
     fn unsaved(&self) -> zbus::Result<bool>;
 }
+
+impl ConnectionProxy<'_> {
+    /// The path of the object this proxy is for.
+    ///
+    /// Typed, so it can be handed to a member that takes one — activating a connection
+    /// wants the device's path, and this is where to get it.
+    pub fn object_path(&self) -> crate::paths::SettingsConnectionPath {
+        crate::paths::SettingsConnectionPath::from(zbus::zvariant::OwnedObjectPath::from(
+            self.inner().path().to_owned(),
+        ))
+    }
+}

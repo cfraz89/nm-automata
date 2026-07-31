@@ -51,3 +51,15 @@ pub trait Connection {
     #[zbus(property)]
     fn vpn_state(&self) -> zbus::Result<VpnConnectionState>;
 }
+
+impl ConnectionProxy<'_> {
+    /// The path of the object this proxy is for.
+    ///
+    /// Typed, so it can be handed to a member that takes one — activating a connection
+    /// wants the device's path, and this is where to get it.
+    pub fn object_path(&self) -> crate::paths::VpnConnectionPath {
+        crate::paths::VpnConnectionPath::from(zbus::zvariant::OwnedObjectPath::from(
+            self.inner().path().to_owned(),
+        ))
+    }
+}
