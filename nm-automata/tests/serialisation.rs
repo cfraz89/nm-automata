@@ -7,16 +7,18 @@
 //! The maps behind a profile are `HashMap`s built afresh by `to_map`, and their iteration order
 //! is not stable between instances, so this is the property that keeps them in line.
 
-use nm_automata::{AddressData, ConnectionProfile, Ipv4Setting, WirelessSetting};
+use nm_automata::{
+    AddressData, ConnectionProfile, Ipv4Setting, Ssid, WirelessBand, WirelessMode, WirelessSetting,
+};
 use zbus::zvariant::{LE, serialized::Context, serialized_size, to_bytes};
 
 /// Enough settings and properties that a varying order would show up as a varying length.
 fn profile() -> ConnectionProfile {
     let mut profile = ConnectionProfile::new("nm-automata");
     profile.wireless = Some(WirelessSetting {
-        ssid: Some(b"nm-automata".to_vec()),
-        mode: Some("infrastructure".into()),
-        band: Some("a".into()),
+        ssid: Some(Ssid::from("nm-automata")),
+        mode: Some(WirelessMode::Infrastructure),
+        band: Some(WirelessBand::A),
         hidden: Some(true),
         ..Default::default()
     });

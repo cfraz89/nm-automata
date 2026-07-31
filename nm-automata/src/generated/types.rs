@@ -5,7 +5,7 @@
 
 #![allow(rustdoc::invalid_html_tags)]
 
-use crate::repr::{nm_enum, nm_flags};
+use crate::repr::{nm_enum, nm_flags, nm_str_enum};
 
 nm_flags! {
     /// 802.11 access point flags.
@@ -4369,5 +4369,226 @@ nm_enum! {
         ///
         /// `NM_WIMAX_NSP_NETWORK_TYPE_ROAMING_PARTNER`
         RoamingPartner = 3,
+    }
+}
+
+nm_str_enum! {
+    /// The values `802-11-wireless.band` takes, sent over D-Bus as `s`.
+    pub enum WirelessBand {
+        /// 5GHz.
+        ///
+        /// `a`
+        A = "a",
+        /// 2.4GHz.
+        ///
+        /// `bg`
+        Bg = "bg",
+        /// 6GHz. Supported since NetworkManager 1.58.
+        ///
+        /// `6GHz`
+        Ghz6 = "6GHz",
+    }
+}
+
+nm_str_enum! {
+    /// The values `802-11-wireless.mode` takes, sent over D-Bus as `s`.
+    pub enum WirelessMode {
+        /// Indicates Ad-Hoc mode where no access point is expected to be present.
+        ///
+        /// `NM_SETTING_WIRELESS_MODE_ADHOC`
+        Adhoc = "adhoc",
+        /// Indicates AP/master mode where the wireless device is started as an access
+        /// point/hotspot.
+        ///
+        /// `NM_SETTING_WIRELESS_MODE_AP`
+        Ap = "ap",
+        /// Indicates infrastructure mode where an access point is expected to be present
+        /// for this connection.
+        ///
+        /// `NM_SETTING_WIRELESS_MODE_INFRA`
+        Infrastructure = "infrastructure",
+        /// Indicates that the connection should create a mesh point.
+        ///
+        /// `NM_SETTING_WIRELESS_MODE_MESH`
+        Mesh = "mesh",
+    }
+}
+
+nm_str_enum! {
+    /// The values `802-11-wireless-security.auth-alg` takes, sent over D-Bus as `s`.
+    pub enum WirelessSecurityAuthAlg {
+        /// Open System.
+        ///
+        /// `open`
+        Open = "open",
+        /// Shared Key.
+        ///
+        /// `shared`
+        Shared = "shared",
+        /// Cisco LEAP, which also needs `leap-username` and `leap-password`.
+        ///
+        /// `leap`
+        Leap = "leap",
+    }
+}
+
+nm_str_enum! {
+    /// The values `802-11-wireless-security.group` takes, sent over D-Bus as `s`.
+    pub enum WirelessSecurityGroup {
+        /// `wep40`
+        Wep40 = "wep40",
+        /// `wep104`
+        Wep104 = "wep104",
+        /// `tkip`
+        Tkip = "tkip",
+        /// `ccmp`
+        Ccmp = "ccmp",
+    }
+}
+
+nm_str_enum! {
+    /// The values `802-11-wireless-security.key-mgmt` takes, sent over D-Bus as `s`.
+    pub enum WirelessSecurityKeyMgmt {
+        /// WEP, or no password protection at all.
+        ///
+        /// `none`
+        None = "none",
+        /// Dynamic WEP.
+        ///
+        /// `ieee8021x`
+        Ieee8021x = "ieee8021x",
+        /// Opportunistic Wireless Encryption.
+        ///
+        /// `owe`
+        Owe = "owe",
+        /// WPA2 and WPA3 personal.
+        ///
+        /// `wpa-psk`
+        WpaPsk = "wpa-psk",
+        /// WPA3 personal only.
+        ///
+        /// `sae`
+        Sae = "sae",
+        /// WPA2 and WPA3 enterprise.
+        ///
+        /// `wpa-eap`
+        WpaEap = "wpa-eap",
+        /// WPA3 enterprise only.
+        ///
+        /// `wpa-eap-suite-b-192`
+        WpaEapSuiteB192 = "wpa-eap-suite-b-192",
+    }
+}
+
+nm_str_enum! {
+    /// The values `802-11-wireless-security.pairwise` takes, sent over D-Bus as `s`.
+    pub enum WirelessSecurityPairwise {
+        /// `tkip`
+        Tkip = "tkip",
+        /// `ccmp`
+        Ccmp = "ccmp",
+    }
+}
+
+nm_str_enum! {
+    /// The values `802-11-wireless-security.proto` takes, sent over D-Bus as `s`.
+    pub enum WirelessSecurityProto {
+        /// Allow WPA.
+        ///
+        /// `wpa`
+        Wpa = "wpa",
+        /// Allow WPA2/RSN.
+        ///
+        /// `rsn`
+        Rsn = "rsn",
+    }
+}
+
+nm_str_enum! {
+    /// The values `adsl.encapsulation` takes, sent over D-Bus as `s`.
+    pub enum AdslEncapsulation {
+        /// `NM_SETTING_ADSL_ENCAPSULATION_LLC`
+        Llc = "llc",
+        /// `NM_SETTING_ADSL_ENCAPSULATION_VCMUX`
+        Vcmux = "vcmux",
+    }
+}
+
+nm_str_enum! {
+    /// The values `adsl.protocol` takes, sent over D-Bus as `s`.
+    pub enum AdslProtocol {
+        /// `NM_SETTING_ADSL_PROTOCOL_IPOATM`
+        Ipoatm = "ipoatm",
+        /// `NM_SETTING_ADSL_PROTOCOL_PPPOA`
+        Pppoa = "pppoa",
+        /// `NM_SETTING_ADSL_PROTOCOL_PPPOE`
+        Pppoe = "pppoe",
+    }
+}
+
+nm_str_enum! {
+    /// The values `bluetooth.type` takes, sent over D-Bus as `s`.
+    pub enum BluetoothType {
+        /// Connection type describing a connection to devices that support the Bluetooth
+        /// DUN profile.
+        ///
+        /// `NM_SETTING_BLUETOOTH_TYPE_DUN`
+        Dun = "dun",
+        /// Connection type describing a Bluetooth NAP (Network Access Point),
+        /// which accepts PANU clients.
+        ///
+        /// `NM_SETTING_BLUETOOTH_TYPE_NAP`
+        Nap = "nap",
+        /// Connection type describing PANU connection to a Bluetooth NAP (Network
+        /// Access Point).
+        ///
+        /// `NM_SETTING_BLUETOOTH_TYPE_PANU`
+        Panu = "panu",
+    }
+}
+
+nm_str_enum! {
+    /// The values `team.runner` takes, sent over D-Bus as `s`.
+    pub enum TeamRunner {
+        /// `NM_SETTING_TEAM_RUNNER_ACTIVEBACKUP`
+        Activebackup = "activebackup",
+        /// `NM_SETTING_TEAM_RUNNER_BROADCAST`
+        Broadcast = "broadcast",
+        /// `NM_SETTING_TEAM_RUNNER_LACP`
+        Lacp = "lacp",
+        /// `NM_SETTING_TEAM_RUNNER_LOADBALANCE`
+        Loadbalance = "loadbalance",
+        /// `NM_SETTING_TEAM_RUNNER_RANDOM`
+        Random = "random",
+        /// `NM_SETTING_TEAM_RUNNER_ROUNDROBIN`
+        Roundrobin = "roundrobin",
+    }
+}
+
+nm_str_enum! {
+    /// The values `team.runner-agg-select-policy` takes, sent over D-Bus as `s`.
+    pub enum TeamRunnerAggSelectPolicy {
+        /// `NM_SETTING_TEAM_RUNNER_AGG_SELECT_POLICY_BANDWIDTH`
+        Bandwidth = "bandwidth",
+        /// `NM_SETTING_TEAM_RUNNER_AGG_SELECT_POLICY_COUNT`
+        Count = "count",
+        /// `NM_SETTING_TEAM_RUNNER_AGG_SELECT_POLICY_LACP_PRIO`
+        LacpPrio = "lacp_prio",
+        /// `NM_SETTING_TEAM_RUNNER_AGG_SELECT_POLICY_LACP_PRIO_STABLE`
+        LacpPrioStable = "lacp_prio_stable",
+        /// `NM_SETTING_TEAM_RUNNER_AGG_SELECT_POLICY_PORT_CONFIG`
+        PortConfig = "port_config",
+    }
+}
+
+nm_str_enum! {
+    /// The values `team.runner-hwaddr-policy` takes, sent over D-Bus as `s`.
+    pub enum TeamRunnerHwaddrPolicy {
+        /// `NM_SETTING_TEAM_RUNNER_HWADDR_POLICY_BY_ACTIVE`
+        ByActive = "by_active",
+        /// `NM_SETTING_TEAM_RUNNER_HWADDR_POLICY_ONLY_ACTIVE`
+        OnlyActive = "only_active",
+        /// `NM_SETTING_TEAM_RUNNER_HWADDR_POLICY_SAME_ALL`
+        SameAll = "same_all",
     }
 }

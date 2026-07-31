@@ -32,6 +32,50 @@ pub struct Annotations {
     device: Vec<DeviceInterface>,
     #[serde(default)]
     vardict: Vec<Vardict>,
+    #[serde(default)]
+    enumeration: Vec<Enumeration>,
+    #[serde(default)]
+    newtype: Vec<Newtype>,
+}
+
+/// The values a settings property takes, where NetworkManager declares no constants for them.
+///
+/// Checked against the settings table: the property must exist and travel as a string, and it
+/// must not be one whose values [`crate::values::derive`] already reads out of the spec.
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Enumeration {
+    /// The setting, as it appears in a profile, e.g. `802-11-wireless`.
+    pub setting: String,
+    /// The property, e.g. `band`.
+    pub property: String,
+    #[serde(default)]
+    pub doc: Option<String>,
+    #[serde(default, rename = "value")]
+    pub values: Vec<EnumerationValue>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct EnumerationValue {
+    /// The string that travels, e.g. `bg`.
+    pub value: String,
+    /// The variant to generate, where the value itself would not make a readable one.
+    #[serde(default)]
+    pub name: Option<String>,
+    #[serde(default)]
+    pub doc: Option<String>,
+}
+
+/// A `byte array` property read through one of the hand-written types in `nm-automata`.
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Newtype {
+    pub setting: String,
+    pub property: String,
+    /// The type to give it, e.g. `Ssid`.
+    #[serde(rename = "type")]
+    pub ty: String,
 }
 
 /// A dictionary property whose keys NetworkManager documents only in prose.
@@ -89,6 +133,16 @@ impl Annotations {
     /// The hand-written dictionary shapes.
     pub fn vardicts(&self) -> &[Vardict] {
         &self.vardict
+    }
+
+    /// The hand-written value sets, for the properties whose values are only in the prose.
+    pub fn enumerations(&self) -> &[Enumeration] {
+        &self.enumeration
+    }
+
+    /// The properties given one of the crate's own types.
+    pub fn newtypes(&self) -> &[Newtype] {
+        &self.newtype
     }
 
     /// The hand-given device-type interfaces, keyed by the type's introspection name.

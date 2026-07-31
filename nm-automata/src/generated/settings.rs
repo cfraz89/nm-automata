@@ -11,6 +11,7 @@ use zbus::zvariant::OwnedValue;
 
 use super::types::*;
 use crate::settings::{self, ProfileMap, Setting, SettingMap, SettingsError};
+use crate::{MacAddress, Ssid};
 
 /// An address as the deprecated `ipv6.addresses` carries it: the address bytes, the
 /// prefix length, and the gateway bytes. `address-data` is the form to prefer.
@@ -1164,7 +1165,7 @@ pub struct AdslSetting {
     /// Encapsulation of ADSL connection.  Can be "vcmux" or "llc".
     ///
     /// `encapsulation`
-    pub encapsulation: Option<String>,
+    pub encapsulation: Option<AdslEncapsulation>,
     /// Password used to authenticate with the ADSL service.
     ///
     /// `password`
@@ -1178,7 +1179,7 @@ pub struct AdslSetting {
     /// ADSL connection protocol.  Can be "pppoa", "pppoe" or "ipoatm".
     ///
     /// `protocol`
-    pub protocol: Option<String>,
+    pub protocol: Option<AdslProtocol>,
     /// Username used to authenticate with the ADSL service.
     ///
     /// `username`
@@ -1252,11 +1253,11 @@ pub struct BluetoothSetting {
     /// The Bluetooth address of the device.
     ///
     /// `bdaddr`
-    pub bdaddr: Option<Vec<u8>>,
+    pub bdaddr: Option<MacAddress>,
     /// Either "dun" for Dial-Up Networking connections or "panu" for Personal Area Networking connections to devices supporting the NAP profile.
     ///
     /// `type`
-    pub type_: Option<String>,
+    pub type_: Option<BluetoothType>,
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
@@ -1351,7 +1352,7 @@ pub struct BridgeSetting {
     /// The address must be a link-local address in standard Ethernet MAC address format, ie an address of the form 01:80:C2:00:00:0X, with X in \[0, 4..F\]. If not specified the default value is 01:80:C2:00:00:00.
     ///
     /// `group-address`
-    pub group_address: Option<Vec<u8>>,
+    pub group_address: Option<MacAddress>,
     /// A mask of group addresses to forward. Usually, group addresses in the range from 01:80:C2:00:00:00 to 01:80:C2:00:00:0F are not forwarded according to standards. This property is a mask of 16 bits, each corresponding to a group address in that range that must be forwarded. The mask can't have bits 0, 1 or 2 set because they are used for STP, MAC pause frames and LACP.
     ///
     /// `group-forward-mask`
@@ -1373,7 +1374,7 @@ pub struct BridgeSetting {
     /// If this field is left unspecified, the "ethernet.cloned-mac-address" is referred instead to generate the initial MAC address. Note that setting "ethernet.cloned-mac-address" anyway overwrites the MAC address of the bridge later while activating the bridge.
     ///
     /// `mac-address`
-    pub mac_address: Option<Vec<u8>>,
+    pub mac_address: Option<MacAddress>,
     /// The Spanning Tree Protocol (STP) maximum message age, in seconds.
     ///
     /// `max-age`
@@ -2553,7 +2554,7 @@ pub struct InfinibandSetting {
     /// If specified, this connection will only apply to the IPoIB device whose permanent MAC address matches. This property does not change the MAC address of the device (i.e. MAC spoofing).
     ///
     /// `mac-address`
-    pub mac_address: Option<Vec<u8>>,
+    pub mac_address: Option<MacAddress>,
     /// If non-zero, only transmit packets of the specified size or smaller, breaking larger packets up into multiple frames.
     ///
     /// `mtu`
@@ -4260,11 +4261,11 @@ pub struct OlpcMeshSetting {
     /// This is currently only implemented by dhclient DHCP plugin.
     ///
     /// `dhcp-anycast-address`
-    pub dhcp_anycast_address: Option<Vec<u8>>,
+    pub dhcp_anycast_address: Option<MacAddress>,
     /// SSID of the mesh network to join.
     ///
     /// `ssid`
-    pub ssid: Option<Vec<u8>>,
+    pub ssid: Option<Ssid>,
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
@@ -5244,7 +5245,7 @@ pub struct TeamSetting {
     /// Corresponds to the teamd runner.name. Permitted values are: "roundrobin", "broadcast", "activebackup", "loadbalance", "lacp", "random".
     ///
     /// `runner`
-    pub runner: Option<String>,
+    pub runner: Option<TeamRunner>,
     /// Corresponds to the teamd runner.active.
     ///
     /// `runner-active`
@@ -5254,7 +5255,7 @@ pub struct TeamSetting {
     /// Corresponds to the teamd runner.agg_select_policy.
     ///
     /// `runner-agg-select-policy`
-    pub runner_agg_select_policy: Option<String>,
+    pub runner_agg_select_policy: Option<TeamRunnerAggSelectPolicy>,
     /// Corresponds to the teamd runner.fast_rate.
     ///
     /// `runner-fast-rate`
@@ -5264,7 +5265,7 @@ pub struct TeamSetting {
     /// Corresponds to the teamd runner.hwaddr_policy.
     ///
     /// `runner-hwaddr-policy`
-    pub runner_hwaddr_policy: Option<String>,
+    pub runner_hwaddr_policy: Option<TeamRunnerHwaddrPolicy>,
     /// Corresponds to the teamd runner.min_ports.
     ///
     /// `runner-min-ports`
@@ -6096,7 +6097,7 @@ pub struct WimaxSetting {
     /// If specified, this connection will only apply to the WiMAX device whose MAC address matches. This property does not change the MAC address of the device (known as MAC spoofing).
     ///
     /// `mac-address`
-    pub mac_address: Option<Vec<u8>>,
+    pub mac_address: Option<MacAddress>,
     /// Network Service Provider (NSP) name of the WiMAX network this connection should use.
     ///
     /// `network-name`
@@ -6161,7 +6162,7 @@ pub struct WiredSetting {
     /// This D-Bus field is deprecated in favor of "assigned-mac-address" which is more flexible and allows specifying special variants like "random". For libnm and nmcli, this field is called "cloned-mac-address".
     ///
     /// `cloned-mac-address`
-    pub cloned_mac_address: Option<Vec<u8>>,
+    pub cloned_mac_address: Option<MacAddress>,
     /// When a value is set, either "half" or "full", configures the device to use the specified duplex mode. If "auto-negotiate" is "yes" the specified duplex mode will be the only one advertised during link negotiation: this works only for BASE-T 802.3 specifications and is useful for enforcing gigabits modes, as in these cases link negotiation is mandatory. If the value is unset (the default), the link configuration will be either skipped (if "auto-negotiate" is "no", the default) or will be auto-negotiated (if "auto-negotiate" is "yes") and the local device will advertise all the supported duplex modes. Must be set together with the "speed" property if specified. Before specifying a duplex mode be sure your device supports it.
     ///
     /// `duplex`
@@ -6181,7 +6182,7 @@ pub struct WiredSetting {
     /// If specified, this connection will only apply to the Ethernet device whose permanent MAC address matches. This property does not change the MAC address of the device (i.e. MAC spoofing).
     ///
     /// `mac-address`
-    pub mac_address: Option<Vec<u8>>,
+    pub mac_address: Option<MacAddress>,
     /// If specified, this connection will never apply to the Ethernet device whose permanent MAC address matches an address in the list.  Each MAC address is in the standard hex-digits-and-colons notation (00:11:22:33:44:55).
     ///
     /// `mac-address-blacklist`
@@ -6520,13 +6521,13 @@ pub struct WirelessSetting {
     /// 802.11 frequency band of the network.  One of "a" for 5GHz, "bg" for 2.4GHz or "6GHz".  This will lock associations to the Wi-Fi network to the specific band, i.e. if "a" is specified, the device will not associate with the same network in the 2.4GHz (bg) or 6GHz bands even if the network's settings are compatible.  This setting depends on specific driver capability and may not work with all drivers.
     ///
     /// `band`
-    pub band: Option<String>,
+    pub band: Option<WirelessBand>,
     /// If specified, directs the device to only associate with the given access point.  This capability is highly driver dependent and not supported by all devices.  Note: this property does not control the BSSID used when creating an Ad-Hoc network and is unlikely to in the future.
     ///
     /// Locking a client profile to a certain BSSID will prevent roaming and also disable background scanning. That can be useful, if there is only one access point for the SSID.
     ///
     /// `bssid`
-    pub bssid: Option<Vec<u8>>,
+    pub bssid: Option<MacAddress>,
     /// Wireless channel to use for the Wi-Fi connection.  The device will only join (or create for Ad-Hoc networks) a Wi-Fi network on the specified channel.  Because channel numbers overlap between bands, this property also requires the "band" property to be set.
     ///
     /// `channel`
@@ -6548,7 +6549,7 @@ pub struct WirelessSetting {
     /// This D-Bus field is deprecated in favor of "assigned-mac-address" which is more flexible and allows specifying special variants like "random". For libnm and nmcli, this field is called "cloned-mac-address".
     ///
     /// `cloned-mac-address`
-    pub cloned_mac_address: Option<Vec<u8>>,
+    pub cloned_mac_address: Option<MacAddress>,
     /// With "cloned-mac-address" setting "random" or "stable", by default all bits of the MAC address are scrambled and a locally-administered, unicast MAC address is created. This property allows one to specify that certain bits are fixed. Note that the least significant bit of the first MAC address will always be unset to create a unicast MAC address.
     ///
     /// If the property is NULL, it is eligible to be overwritten by a default connection setting. If the value is still NULL or an empty string, the default is to create a locally-administered, unicast MAC address.
@@ -6576,7 +6577,7 @@ pub struct WirelessSetting {
     /// If specified, this connection will only apply to the Wi-Fi device whose permanent MAC address matches. This property does not change the MAC address of the device (i.e. MAC spoofing).
     ///
     /// `mac-address`
-    pub mac_address: Option<Vec<u8>>,
+    pub mac_address: Option<MacAddress>,
     /// A list of permanent MAC addresses of Wi-Fi devices to which this connection should never apply.  Each MAC address should be given in the standard hex-digits-and-colons notation (eg "00:11:22:33:44:55").
     ///
     /// `mac-address-blacklist`
@@ -6594,7 +6595,7 @@ pub struct WirelessSetting {
     /// Wi-Fi network mode; one of "infrastructure", "mesh", "adhoc" or "ap".  If blank, infrastructure is assumed.
     ///
     /// `mode`
-    pub mode: Option<String>,
+    pub mode: Option<WirelessMode>,
     /// If non-zero, only transmit packets of the specified size or smaller, breaking larger packets up into multiple Ethernet frames.
     ///
     /// `mtu`
@@ -6622,7 +6623,7 @@ pub struct WirelessSetting {
     /// SSID of the Wi-Fi network. Must be specified.
     ///
     /// `ssid`
-    pub ssid: Option<Vec<u8>>,
+    pub ssid: Option<Ssid>,
     /// This property is not implemented and has no effect.
     ///
     /// `tx-power`
@@ -6769,7 +6770,7 @@ pub struct WirelessSecuritySetting {
     /// When WEP is used (ie, key-mgmt = "none" or "ieee8021x") indicate the 802.11 authentication algorithm required by the AP here.  One of "open" for Open System, "shared" for Shared Key, or "leap" for Cisco LEAP.  When using Cisco LEAP (ie, key-mgmt = "ieee8021x" and auth-alg = "leap") the "leap-username" and "leap-password" properties must be specified.
     ///
     /// `auth-alg`
-    pub auth_alg: Option<String>,
+    pub auth_alg: Option<WirelessSecurityAuthAlg>,
     /// Indicates whether Fast Initial Link Setup (802.11ai) must be enabled for the connection.  One of 0 (default) (use global default value), 1 (disable) (disable FILS), 2 (optional) (enable FILS if the supplicant and the access point support it) or 3 (required) (enable FILS and fail if not supported).  When set to 0 (default) and no global default is set, FILS will be optionally enabled.
     ///
     /// `fils`
@@ -6779,13 +6780,13 @@ pub struct WirelessSecuritySetting {
     /// A list of group/broadcast encryption algorithms which prevents connections to Wi-Fi networks that do not utilize one of the algorithms in the list.  For maximum compatibility leave this property empty.  Each list element may be one of "wep40", "wep104", "tkip", or "ccmp".
     ///
     /// `group`
-    pub group: Option<Vec<String>>,
+    pub group: Option<Vec<WirelessSecurityGroup>>,
     /// Key management used for the connection. One of "none" (WEP or no password protection), "ieee8021x" (Dynamic WEP), "owe" (Opportunistic Wireless Encryption), "wpa-psk" (WPA2 + WPA3 personal), "sae" (WPA3 personal only), "wpa-eap" (WPA2 + WPA3 enterprise) or "wpa-eap-suite-b-192" (WPA3 enterprise only).
     ///
     /// This property must be set for any Wi-Fi connection that uses security.
     ///
     /// `key-mgmt`
-    pub key_mgmt: Option<String>,
+    pub key_mgmt: Option<WirelessSecurityKeyMgmt>,
     /// The login password for legacy LEAP connections (ie, key-mgmt = "ieee8021x" and auth-alg = "leap").
     ///
     /// `leap-password`
@@ -6803,7 +6804,7 @@ pub struct WirelessSecuritySetting {
     /// A list of pairwise encryption algorithms which prevents connections to Wi-Fi networks that do not utilize one of the algorithms in the list. For maximum compatibility leave this property empty.  Each list element may be one of "tkip" or "ccmp".
     ///
     /// `pairwise`
-    pub pairwise: Option<Vec<String>>,
+    pub pairwise: Option<Vec<WirelessSecurityPairwise>>,
     /// Indicates whether Protected Management Frames (802.11w) must be enabled for the connection.  One of 0 (default) (use global default value), 1 (disable) (disable PMF), 2 (optional) (enable PMF if the supplicant and the access point support it) or 3 (required) (enable PMF and fail if not supported).  When set to 0 (default) and no global default is set, PMF will be optionally enabled.
     ///
     /// `pmf`
@@ -6813,7 +6814,7 @@ pub struct WirelessSecuritySetting {
     /// List of strings specifying the allowed WPA protocol versions to use. Each element may be one "wpa" (allow WPA) or "rsn" (allow WPA2/RSN).  If not specified, both WPA and RSN connections are allowed.
     ///
     /// `proto`
-    pub proto: Option<Vec<String>>,
+    pub proto: Option<Vec<WirelessSecurityProto>>,
     /// Pre-Shared-Key for WPA networks. For WPA-PSK, it's either an ASCII passphrase of 8 to 63 characters that is (as specified in the 802.11i standard) hashed to derive the actual key, or the key in form of 64 hexadecimal character. The WPA3-Personal networks use a passphrase of any length for SAE authentication.
     ///
     /// `psk`
@@ -7629,10 +7630,11 @@ impl ConnectionProfile {
     /// which one determines what kind of connection it is:
     ///
     /// ```no_run
-    /// # use nm_automata::{ConnectionProfile, WirelessSetting};
+    /// # use nm_automata::{ConnectionProfile, Ssid, WirelessMode, WirelessSetting};
     /// let mut profile = ConnectionProfile::new("home wifi");
     /// profile.wireless = Some(WirelessSetting {
-    ///     ssid: Some(b"my-network".to_vec()),
+    ///     ssid: Some(Ssid::from("my-network")),
+    ///     mode: Some(WirelessMode::Infrastructure),
     ///     ..Default::default()
     /// });
     /// ```

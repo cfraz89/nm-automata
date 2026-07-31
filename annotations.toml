@@ -335,3 +335,166 @@ keys = [
     { name = "interface", type = "string", doc = "The interface they are reached on." },
     { name = "vpn", type = "boolean", doc = "Whether this came from a VPN connection." },
 ]
+
+# The values a settings property takes, where NetworkManager declares no constants for them.
+#
+# Most string properties whose values are fixed need nothing here: NetworkManager declares them
+# as constants extending the property's own — `NM_SETTING_WIRELESS_MODE_INFRA` — and generation
+# reads them straight out of the spec. These are the ones it documents in prose instead, so an
+# entry is a transcription of what the property's own description says, and generation fails if
+# that property stops being a string or starts declaring constants of its own.
+#
+# Unlisted values still decode: anything these do not name is kept verbatim in `Other`, and
+# written back unchanged.
+
+[[enumeration]]
+setting = "802-11-wireless"
+property = "band"
+[[enumeration.value]]
+value = "a"
+doc = "5GHz."
+[[enumeration.value]]
+value = "bg"
+doc = "2.4GHz."
+[[enumeration.value]]
+# Not `6GHz`, which cannot open a Rust identifier.
+name = "Ghz6"
+value = "6GHz"
+doc = "6GHz. Supported since NetworkManager 1.58."
+
+[[enumeration]]
+setting = "802-11-wireless-security"
+property = "key-mgmt"
+[[enumeration.value]]
+value = "none"
+doc = "WEP, or no password protection at all."
+[[enumeration.value]]
+value = "ieee8021x"
+doc = "Dynamic WEP."
+[[enumeration.value]]
+value = "owe"
+doc = "Opportunistic Wireless Encryption."
+[[enumeration.value]]
+value = "wpa-psk"
+doc = "WPA2 and WPA3 personal."
+[[enumeration.value]]
+value = "sae"
+doc = "WPA3 personal only."
+[[enumeration.value]]
+value = "wpa-eap"
+doc = "WPA2 and WPA3 enterprise."
+[[enumeration.value]]
+value = "wpa-eap-suite-b-192"
+doc = "WPA3 enterprise only."
+
+[[enumeration]]
+setting = "802-11-wireless-security"
+property = "auth-alg"
+[[enumeration.value]]
+value = "open"
+doc = "Open System."
+[[enumeration.value]]
+value = "shared"
+doc = "Shared Key."
+[[enumeration.value]]
+value = "leap"
+doc = "Cisco LEAP, which also needs `leap-username` and `leap-password`."
+
+[[enumeration]]
+setting = "802-11-wireless-security"
+property = "proto"
+[[enumeration.value]]
+value = "wpa"
+doc = "Allow WPA."
+[[enumeration.value]]
+value = "rsn"
+doc = "Allow WPA2/RSN."
+
+[[enumeration]]
+setting = "802-11-wireless-security"
+property = "group"
+[[enumeration.value]]
+value = "wep40"
+[[enumeration.value]]
+value = "wep104"
+[[enumeration.value]]
+value = "tkip"
+[[enumeration.value]]
+value = "ccmp"
+
+[[enumeration]]
+setting = "802-11-wireless-security"
+property = "pairwise"
+[[enumeration.value]]
+value = "tkip"
+[[enumeration.value]]
+value = "ccmp"
+
+# The `byte array` properties that are not really bytes. Each names one of the types in
+# `nm-automata` that reads them — the wire form is untouched, so this only says what the octets
+# already were. Generation fails if the property stops being a byte array.
+
+[[newtype]]
+setting = "802-11-wireless"
+property = "ssid"
+type = "Ssid"
+
+[[newtype]]
+setting = "802-11-olpc-mesh"
+property = "ssid"
+type = "Ssid"
+
+[[newtype]]
+setting = "802-11-wireless"
+property = "bssid"
+type = "MacAddress"
+
+[[newtype]]
+setting = "802-11-wireless"
+property = "mac-address"
+type = "MacAddress"
+
+[[newtype]]
+setting = "802-11-wireless"
+property = "cloned-mac-address"
+type = "MacAddress"
+
+[[newtype]]
+setting = "802-3-ethernet"
+property = "mac-address"
+type = "MacAddress"
+
+[[newtype]]
+setting = "802-3-ethernet"
+property = "cloned-mac-address"
+type = "MacAddress"
+
+[[newtype]]
+setting = "bluetooth"
+property = "bdaddr"
+type = "MacAddress"
+
+[[newtype]]
+setting = "bridge"
+property = "mac-address"
+type = "MacAddress"
+
+[[newtype]]
+setting = "bridge"
+property = "group-address"
+type = "MacAddress"
+
+[[newtype]]
+setting = "infiniband"
+property = "mac-address"
+type = "MacAddress"
+
+[[newtype]]
+setting = "wimax"
+property = "mac-address"
+type = "MacAddress"
+
+[[newtype]]
+setting = "802-11-olpc-mesh"
+property = "dhcp-anycast-address"
+type = "MacAddress"
