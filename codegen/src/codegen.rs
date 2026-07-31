@@ -84,6 +84,24 @@ pub fn generate(root: &Path) -> Result<BTreeMap<PathBuf, String>> {
         .collect();
     let object_targets = objects::resolve(&parsed, &interface_names, &annotations.object_targets());
 
+    // The interface members read through one of the crate's own types, checked here so that an
+    // entry which no longer matches the spec fails rather than silently ceasing to apply.
+    let member_newtypes = annotations.member_newtypes();
+    let properties: Vec<(String, String, String)> = parsed
+        .iter()
+        .flat_map(|(_, node, _)| node.interfaces())
+        .flat_map(|interface| {
+            interface.properties().iter().map(|property| {
+                (
+                    interface.name().to_string(),
+                    property.name().to_string(),
+                    property.ty().to_string(),
+                )
+            })
+        })
+        .collect();
+    values::check_member_newtypes(annotations.newtypes(), &properties)?;
+
     let types = resolve_types(&defs, &parsed);
     let by_c_name: BTreeMap<String, Resolved<'_>> = types
         .iter()
@@ -107,6 +125,7 @@ pub fn generate(root: &Path) -> Result<BTreeMap<PathBuf, String>> {
             &by_c_name,
             &object_targets,
             annotations.vardicts(),
+            &member_newtypes,
         );
         std::fs::write(debug_dir.join(name), &augmented).ok();
 
@@ -162,10 +181,16 @@ pub fn generate(root: &Path) -> Result<BTreeMap<PathBuf, String>> {
 
     let generated = root.join("nm-automata/src/generated");
     let mut files = BTreeMap::new();
+    // The hand-written types live at the crate root rather than in a generated module, so the
+    // proxies that use one have to name it.
+    let mut wrappers: Vec<&str> = member_newtypes.iter().map(|(_, _, ty)| *ty).collect();
+    wrappers.sort_unstable();
+    wrappers.dedup();
+
     for module in &modules {
         files.insert(
             generated.join(format!("proxies/{}.rs", module.module)),
-            rustfmt(&proxy_module(module, &nm_version))?,
+            rustfmt(&proxy_module(module, &wrappers, &nm_version))?,
         );
     }
     files.insert(
@@ -455,7 +480,15 @@ fn trait_name(interface: &str) -> &str {
     interface.rsplit('.').next().unwrap_or(interface)
 }
 
-fn proxy_module(module: &Generated, nm_version: &str) -> String {
+fn proxy_module(module: &Generated, wrappers: &[&str], nm_version: &str) -> String {
+    let wrappers = match wrappers.is_empty() {
+        true => String::new(),
+        false => format!(
+            "#[allow(unused_imports)]\nuse crate::{{{}}};\n",
+            wrappers.join(", ")
+        ),
+    };
+
     let mut out = String::new();
     let _ = writeln!(
         out,
@@ -474,6 +507,7 @@ fn proxy_module(module: &Generated, nm_version: &str) -> String {
          use crate::generated::settings::ConnectionProfile;\n\
          #[allow(unused_imports)]\n\
          use crate::generated::types::*;\n\
+         {wrappers}\
          use zbus::proxy;\n",
         module.interface
     );

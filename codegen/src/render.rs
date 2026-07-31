@@ -32,6 +32,7 @@ pub fn augmented_xml(
     types: &BTreeMap<String, Resolved<'_>>,
     objects: &crate::objects::Targets,
     vardicts: &[crate::overrides::Vardict],
+    newtypes: &[(&str, &str, &str)],
 ) -> String {
     let mut out = String::new();
     let _ = writeln!(out, r#"<?xml version="1.0" encoding="UTF-8"?>"#);
@@ -89,8 +90,29 @@ pub fn augmented_xml(
         );
     }
 
+    // And the hand-written types any of this file's members are read through.
+    let mut wrapped: Vec<(&str, &str)> = Vec::new();
     for interface in node.interfaces() {
-        write_interface(&mut out, interface, docs, types, objects, vardicts);
+        for property in interface.properties() {
+            if let Some((name, signature)) =
+                newtype_for(newtypes, interface.name().as_str(), &property.name())
+                && !wrapped.iter().any(|(other, _)| *other == name)
+            {
+                wrapped.push((name, signature));
+            }
+        }
+    }
+    for (name, signature) in &wrapped {
+        let _ = writeln!(
+            out,
+            r#"  <tp:simple-type name="{name}" type="{signature}"/>"#
+        );
+    }
+
+    for interface in node.interfaces() {
+        write_interface(
+            &mut out, interface, docs, types, objects, vardicts, newtypes,
+        );
     }
 
     let _ = writeln!(out, "</node>");
@@ -497,6 +519,7 @@ fn write_interface(
     types: &BTreeMap<String, Resolved<'_>>,
     objects: &crate::objects::Targets,
     vardicts: &[crate::overrides::Vardict],
+    newtypes: &[(&str, &str, &str)],
 ) {
     let empty = BTreeMap::new();
     let object_sites = objects.get(interface.name().as_str()).unwrap_or(&empty);
@@ -561,6 +584,10 @@ fn write_interface(
         let tp_type = references
             .get(&site)
             .map(|r| format!(r#" tp:type="{r}""#))
+            .or_else(|| {
+                let (wrapper, _) = newtype_for(newtypes, interface.name().as_str(), &name)?;
+                Some(format!(r#" tp:type="{wrapper}""#))
+            })
             .or_else(|| object_attribute(object_sites, &site, &property.ty().to_string()))
             .or_else(|| {
                 vardict_attribute(
@@ -1073,6 +1100,25 @@ fn write_profile_struct(out: &mut String, settings: &[crate::settings::Setting])
 /// Every argument and property with this signature is a profile — a whole one, or the subset
 /// of it that carries secrets — so no annotation data is needed to recognise them.
 pub const PROFILE_SIGNATURE: &str = "a{sa{sv}}";
+
+/// The hand-written type a member is read through, with the signature it reads.
+///
+/// `zbus_xmlgen` only resolves a `tp:type` whose declared signature matches the member's, so a
+/// wrong one would quietly leave the member as its structural type; that is what
+/// [`crate::values::check_member_newtypes`] is for.
+fn newtype_for<'a>(
+    newtypes: &[(&'a str, &str, &'a str)],
+    interface: &str,
+    property: &str,
+) -> Option<(&'a str, &'a str)> {
+    newtypes
+        .iter()
+        .find(|(i, member, _)| *i == interface && *member == property)
+        .and_then(|(_, _, ty)| {
+            let (_, signature) = crate::values::newtype_wire(ty)?;
+            Some((*ty, signature))
+        })
+}
 
 /// The `tp:type` attribute for a property whose dictionary shape is written down.
 fn vardict_attribute(

@@ -38,10 +38,13 @@
 //!   properties that travel as one of a fixed set of *strings* are there too —
 //!   [`WirelessMode`], [`WirelessSecurityKeyMgmt`] — and decode the same way, keeping an
 //!   unfamiliar value verbatim so that writing the profile back sends what was read.
-//! * A few profile properties are byte arrays that are not really bytes, and have a type that
-//!   says what they are: [`Ssid`] for the name of a Wi-Fi network, which 802.11 defines as
-//!   octets rather than text, and [`MacAddress`] for a hardware address, which NetworkManager
-//!   writes as hex digits and colons everywhere except on the wire.
+//! * A few members are byte arrays that are not really bytes, or strings that are more than
+//!   one thing, and have a type that says what they are: [`Ssid`] for the name of a Wi-Fi
+//!   network — on [`WirelessSetting`] and on [`AccessPointProxy::ssid`] alike, since they are
+//!   the same string — [`MacAddress`] for a hardware address, which NetworkManager writes as
+//!   hex digits and colons everywhere except on the wire, and [`AssignedMacAddress`] for
+//!   `assigned-mac-address`, which holds either an address or a word asking NetworkManager to
+//!   work one out.
 //! * Members that return object paths return the objects instead: `get_devices` hands back
 //!   devices, built on the connection the proxy already holds. The paths are still there under
 //!   a `_path` or `_paths` name — `get_device_paths` — and [`paths`] holds a newtype per
@@ -96,7 +99,7 @@ pub use generated::settings::*;
 pub use generated::types::*;
 pub use generated::vardict::*;
 pub use generated::{NM_VERSION, devices, paths, proxies, types, vardict};
-pub use mac::{InvalidMacAddress, MacAddress};
+pub use mac::{AssignedMacAddress, InvalidMacAddress, MacAddress};
 pub use path::{NmPath, NmPathSliceExt};
 pub use ssid::Ssid;
 

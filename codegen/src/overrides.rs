@@ -67,15 +67,81 @@ pub struct EnumerationValue {
     pub doc: Option<String>,
 }
 
-/// A `byte array` property read through one of the hand-written types in `nm-automata`.
+/// A member read through one of the hand-written types in `nm-automata`.
+///
+/// Either a connection-profile property, named by its `setting` and `property`, or a member of
+/// a D-Bus interface, named by its `interface` and `name`. Both are checked against the spec:
+/// the member has to exist, and to travel as what the type reads.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Newtype {
-    pub setting: String,
-    pub property: String,
+    #[serde(default)]
+    setting: Option<String>,
+    #[serde(default)]
+    property: Option<String>,
+    #[serde(default)]
+    interface: Option<String>,
+    #[serde(default)]
+    name: Option<String>,
     /// The type to give it, e.g. `Ssid`.
     #[serde(rename = "type")]
     pub ty: String,
+}
+
+impl Newtype {
+    /// The connection-profile property this applies to, if that is the form it takes.
+    pub fn profile_property(&self) -> Option<(&str, &str)> {
+        Some((self.setting.as_deref()?, self.property.as_deref()?))
+    }
+
+    /// The interface member this applies to, if that is the form it takes.
+    pub fn interface_member(&self) -> Option<(&str, &str)> {
+        Some((self.interface.as_deref()?, self.name.as_deref()?))
+    }
+
+    /// One naming a connection-profile property, for the tests.
+    #[cfg(test)]
+    pub fn profile(setting: &str, property: &str, ty: &str) -> Self {
+        Self {
+            setting: Some(setting.to_owned()),
+            property: Some(property.to_owned()),
+            interface: None,
+            name: None,
+            ty: ty.to_owned(),
+        }
+    }
+
+    /// The member as it reads in an error message.
+    pub fn describe(&self) -> String {
+        match (self.profile_property(), self.interface_member()) {
+            (Some((setting, property)), _) => format!("{setting}.{property}"),
+            (_, Some((interface, name))) => format!("{interface}.{name}"),
+            _ => format!("a `[[newtype]]` entry for `{}`", self.ty),
+        }
+    }
+
+    /// Fail on an entry that names neither form, or both, or half of one.
+    fn check(&self) -> Result<()> {
+        let fields = [&self.setting, &self.property, &self.interface, &self.name];
+        let given: Vec<&str> = ["setting", "property", "interface", "name"]
+            .into_iter()
+            .zip(fields)
+            .filter_map(|(name, value)| value.is_some().then_some(name))
+            .collect();
+        if !matches!(given[..], ["setting", "property"] | ["interface", "name"]) {
+            bail!(
+                "the `[[newtype]]` entry for `{}` gives {}, but it must name either a profile \
+                 property (`setting` and `property`) or an interface member (`interface` and \
+                 `name`)",
+                self.ty,
+                match given.is_empty() {
+                    true => "neither".to_owned(),
+                    false => format!("`{}`", given.join("`, `")),
+                }
+            );
+        }
+        Ok(())
+    }
 }
 
 /// A dictionary property whose keys NetworkManager documents only in prose.
@@ -140,9 +206,20 @@ impl Annotations {
         &self.enumeration
     }
 
-    /// The properties given one of the crate's own types.
+    /// The members given one of the crate's own types.
     pub fn newtypes(&self) -> &[Newtype] {
         &self.newtype
+    }
+
+    /// The interface members among them, as `(interface, member, type)`.
+    pub fn member_newtypes(&self) -> Vec<(&str, &str, &str)> {
+        self.newtype
+            .iter()
+            .filter_map(|entry| {
+                let (interface, name) = entry.interface_member()?;
+                Some((interface, name, entry.ty.as_str()))
+            })
+            .collect()
     }
 
     /// The hand-given device-type interfaces, keyed by the type's introspection name.
@@ -195,7 +272,12 @@ pub fn load(root: &Path) -> Result<Annotations> {
     let Ok(source) = std::fs::read_to_string(&path) else {
         return Ok(Annotations::default());
     };
-    toml::from_str(&source).with_context(|| format!("parsing {}", path.display()))
+    let annotations: Annotations =
+        toml::from_str(&source).with_context(|| format!("parsing {}", path.display()))?;
+    for newtype in &annotations.newtype {
+        newtype.check()?;
+    }
+    Ok(annotations)
 }
 
 impl Annotations {

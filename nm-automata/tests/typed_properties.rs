@@ -10,7 +10,8 @@ use std::collections::HashMap;
 
 use nm_automata::settings::{ProfileMap, SettingMap};
 use nm_automata::{
-    ConnectionProfile, MacAddress, Ssid, WirelessMode, WirelessSecurityProto, WirelessSetting,
+    AssignedMacAddress, ConnectionProfile, MacAddress, Ssid, WirelessMode, WirelessSecurityProto,
+    WirelessSetting,
 };
 use zbus::zvariant::{OwnedValue, Value};
 
@@ -105,6 +106,46 @@ fn keeps_the_elements_of_a_list_it_only_half_knows() {
     assert_eq!(
         written["802-11-wireless-security"]["proto"],
         value(vec!["rsn".to_owned(), "wpa4".to_owned()])
+    );
+}
+
+/// `assigned-mac-address` is one string holding either an address or a way of choosing one.
+#[test]
+fn reads_an_address_and_a_way_of_choosing_one_from_the_same_property() {
+    let profile = ConnectionProfile::from_map(&wireless([(
+        "assigned-mac-address",
+        value("4C:79:6E:DA:29:47"),
+    )]))
+    .expect("the profile decodes");
+    let assigned = profile
+        .wireless
+        .as_ref()
+        .and_then(|w| w.assigned_mac_address.clone());
+    assert_eq!(
+        assigned.as_ref().and_then(AssignedMacAddress::address),
+        Some(&MacAddress::from([0x4c, 0x79, 0x6e, 0xda, 0x29, 0x47]))
+    );
+
+    // And back byte for byte, since NetworkManager sends the canonical form.
+    let written = profile.to_map().expect("the profile encodes");
+    assert_eq!(
+        written["802-11-wireless"]["assigned-mac-address"],
+        value("4C:79:6E:DA:29:47")
+    );
+
+    let stable =
+        ConnectionProfile::from_map(&wireless([("assigned-mac-address", value("stable-ssid"))]))
+            .expect("the profile decodes");
+    assert_eq!(
+        stable
+            .wireless
+            .as_ref()
+            .and_then(|w| w.assigned_mac_address.clone()),
+        Some(AssignedMacAddress::StableSsid)
+    );
+    assert_eq!(
+        stable.to_map().expect("the profile encodes")["802-11-wireless"]["assigned-mac-address"],
+        value("stable-ssid")
     );
 }
 
