@@ -28,6 +28,18 @@ pub struct Annotations {
     setting: Vec<SettingName>,
     #[serde(default)]
     object: Vec<ObjectTarget>,
+    #[serde(default)]
+    device: Vec<DeviceInterface>,
+}
+
+/// The interface a device type implies, where it is not named after it.
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct DeviceInterface {
+    /// The introspection name of the `NMDeviceType` value, e.g. `ethernet`.
+    #[serde(rename = "type")]
+    ty: String,
+    interface: String,
 }
 
 /// What kind of object an object-path member points at, where it cannot be worked out.
@@ -50,6 +62,14 @@ struct SettingName {
 }
 
 impl Annotations {
+    /// The hand-given device-type interfaces, keyed by the type's introspection name.
+    pub fn device_interfaces(&self) -> Vec<(String, String)> {
+        self.device
+            .iter()
+            .map(|d| (d.ty.clone(), d.interface.clone()))
+            .collect()
+    }
+
     /// The hand-given object-path targets, as [`crate::objects::resolve`] wants them.
     pub fn object_targets(&self) -> Vec<(String, String, String)> {
         self.object

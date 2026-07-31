@@ -89,9 +89,12 @@ pub trait ProxyExt<'p> {
     /// # }
     /// ```
     ///
-    /// Whether the object really implements the target interface is only discovered when a
-    /// call is made on the returned proxy: a wired device cast to [`WirelessProxy`] builds
-    /// fine and fails on first use.
+    /// This is unchecked: whether the object implements the target interface is only
+    /// discovered when a call is made, so a wired device cast to [`WirelessProxy`] builds fine
+    /// and fails on first use. For devices,
+    /// [`DeviceProxy::specialise`](crate::DeviceProxy::specialise) reads the type first and
+    /// hands back a proxy that is certain to work. Reach for this when the interface is one
+    /// every object of its kind carries — `Device.Statistics` is on every device.
     ///
     /// [`WirelessProxy`]: crate::WirelessProxy
     fn cast<P>(&self) -> impl Future<Output = Result<P>>

@@ -2,7 +2,7 @@
 //!
 //! Run with `cargo run --example devices`.
 
-use netman::{DeviceState, NetworkManagerProxy, NmPath, ProxyExt, WirelessProxy};
+use netman::{AnyDevice, DeviceState, NetworkManagerProxy, NmPath};
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -38,10 +38,29 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             device.metered().await?
         );
 
-        // The same object also carries the wireless interface when it is a Wi-Fi card.
-        let wireless: WirelessProxy = device.cast().await?;
-        if let Ok(access_points) = wireless.get_access_points().await {
-            println!("  {} access point(s) seen", access_points.len());
+        // Narrowed once from the reported type, so each branch has a proxy that is certain
+        // to work rather than one that might fail on first use.
+        match device.specialise().await? {
+            AnyDevice::Wireless(wifi) => {
+                println!(
+                    "  {} access point(s) seen",
+                    wifi.get_access_points().await?.len()
+                );
+                println!(
+                    "  mode {:?}, bitrate {}",
+                    wifi.mode().await?,
+                    wifi.bitrate().await?
+                );
+            }
+            AnyDevice::Wired(wired) => {
+                println!(
+                    "  speed {} Mb/s, carrier {}",
+                    wired.speed().await?,
+                    wired.carrier().await?
+                );
+            }
+            AnyDevice::Bluetooth(bt) => println!("  bt name {:?}", bt.name().await?),
+            other => println!("  no specialised interface for {:?}", other.device_type()),
         }
 
         if state == DeviceState::Activated {

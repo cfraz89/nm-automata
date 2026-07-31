@@ -68,12 +68,13 @@ mod repr;
 pub mod settings;
 
 pub use ext::{ObjectPathExt, ObjectPathSliceExt, ProxyExt};
+pub use generated::devices::AnyDevice;
 pub use generated::paths::*;
 pub use generated::proxies::*;
 pub use generated::settings as profile;
 pub use generated::settings::*;
 pub use generated::types::*;
-pub use generated::{NM_VERSION, paths, proxies, types};
+pub use generated::{NM_VERSION, devices, paths, proxies, types};
 pub use path::{NmPath, NmPathSliceExt};
 
 /// zbus, re-exported: its [`Connection`](zbus::Connection) is the entry point to every proxy,

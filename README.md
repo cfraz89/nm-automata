@@ -66,8 +66,20 @@ are kept in `other` maps, so a read-modify-write against a newer daemon does not
   `Vec<OwnedObjectPath>`, and a `DevicePath` builds a `DeviceProxy` and nothing else — 44 of the
   45 path-valued properties are typed, plus the arguments and return values. The one left is
   `Connection.Active.SpecificObject`, which really is an access point *or* a Wi-Fi P2P peer.
-  `ProxyExt::cast` moves between the several interfaces one object implements — a device object
-  carries `Device`, `Device.Wired` and `Device.Statistics` at once.
+* **Narrowing a device is checked, not a cast.** `device.specialise()` reads the type once and
+  returns an `AnyDevice`, whose variants each carry a proxy that could only have been built
+  after the matching type was seen:
+
+  ```rust
+  match device.specialise().await? {
+      AnyDevice::Wireless(wifi) => wifi.get_access_points().await?,
+      AnyDevice::Wired(wired) => { wired.speed().await?; vec![] }
+      other => { println!("{:?}", other.device_type()); vec![] }
+  }
+  ```
+
+  `ProxyExt::cast` is still there for the interfaces every object of a kind carries —
+  `Device.Statistics` is on every device — but it is unchecked and documented as such.
 * **Signals and property changes** come straight from zbus: `receive_state_changed()` for the
   property stream, `receive_state_changed_signal()` for the signal.
 * **Connection profiles are structs, not `a{sa{sv}}`.** All 530 properties across 57 settings

@@ -264,3 +264,21 @@ target = "org.freedesktop.NetworkManager.Settings.Connection"
 interface = "org.freedesktop.NetworkManager.SecretAgent"
 name = "DeleteSecrets.connection_path"
 target = "org.freedesktop.NetworkManager.Settings.Connection"
+
+# Device types whose interface is not named after them. NetworkManager calls the type
+# `ethernet` and the interface `Wired`, and so on; the other 29 match by name.
+[[device]]
+type = "ethernet"
+interface = "org.freedesktop.NetworkManager.Device.Wired"
+
+[[device]]
+type = "wifi"
+interface = "org.freedesktop.NetworkManager.Device.Wireless"
+
+[[device]]
+type = "bt"
+interface = "org.freedesktop.NetworkManager.Device.Bluetooth"
+
+[[device]]
+type = "6lowpan"
+interface = "org.freedesktop.NetworkManager.Device.Lowpan"
