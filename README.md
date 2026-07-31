@@ -1,9 +1,14 @@
-# netman
+# nm-automata
 
-Ergonomic NetworkManager bindings for Rust, generated from NetworkManager's own D-Bus spec.
+NetworkManager bindings for Rust, generated in full from NetworkManager's own spec.
+
+Every interface, every enumeration, every connection-profile property — 53 proxies, 113 types
+and 530 settings properties, with upstream's documentation attached — produced by machine from
+what NetworkManager publishes, and regenerated when it releases. Nothing is transcribed by
+hand, so nothing is half-covered and nothing drifts.
 
 ```rust
-use netman::{DeviceState, NetworkManagerProxy};
+use nm_automata::{DeviceState, NetworkManagerProxy};
 
 let connection = zbus::Connection::system().await?;
 let nm = NetworkManagerProxy::new(&connection).await?;
@@ -19,7 +24,7 @@ for device in nm.get_devices().await? {
 
 ## What is generated
 
-Everything under `netman/src/generated/` — 53 proxies, 113 enumerations and flag sets, and
+Everything under `nm-automata/src/generated/` — 53 proxies, 113 enumerations and flag sets, and
 their documentation — comes from what NetworkManager publishes, pinned to the release in
 `spec/nm-version.txt`:
 
@@ -132,14 +137,14 @@ Tasks are [`just`](https://just.systems) recipes; `just --list` shows them all.
 just latest-version   # newest stable NetworkManager release
 just fetch            # vendor the introspection XML (just fetch 1.56.1 to pin one)
 just build-spec       # build the generated inputs in a container (slow, needs podman)
-just generate         # regenerate netman/src/generated/
+just generate         # regenerate nm-automata/src/generated/
 just update           # all three, in one step
 just check            # fail if the checked-in output is stale
 just regen            # generate, format, and run everything CI runs
 ```
 
 `.github/workflows/update-spec.yml` runs `just update` weekly, verifies the result with
-`just ci`, and opens a pull request. The diff under `netman/src/generated/` *is* the API
+`just ci`, and opens a pull request. The diff under `nm-automata/src/generated/` *is* the API
 change, so a NetworkManager release is reviewed as a normal PR rather than chased by hand.
 `.github/workflows/ci.yml` runs `just check` on every push, so the generator and its output
 cannot drift apart.
@@ -169,7 +174,7 @@ container and runs NetworkManager's own generators. `ninja` is asked for one tar
 daemon is never linked.
 
 That cost lands only on whoever bumps the vendored release, which is already the moment a human
-reviews a regeneration. The artifacts are committed, so building `netman` as a dependency needs
+reviews a regeneration. The artifacts are committed, so building `nm-automata` as a dependency needs
 no container, no C toolchain and no GLib.
 
 The settings documentation is *not* derived from the introspection data alone, even though it
@@ -179,7 +184,7 @@ array of strings to GObject and an array of packed integers on the wire, and eve
 is a string to GObject and a byte array on D-Bus. Taking NetworkManager's merged answer avoids
 having to reconcile that, and getting it wrong would corrupt profiles rather than fail loudly.
 
-The augmented XML is written to `target/netman-augmented/` on every run, so what the generator
+The augmented XML is written to `target/nm-automata-augmented/` on every run, so what the generator
 was fed is always inspectable.
 
 Two details worth knowing:

@@ -1,5 +1,5 @@
 #!/bin/bash
-# Produce the two generated inputs netman needs, for a NetworkManager release tag, into /out:
+# Produce the two generated inputs nm-automata needs, for a NetworkManager release tag, into /out:
 #
 #   NM-1.0.gir                 every enumeration and flag set, with values and documentation
 #   nm-settings-docs-dbus.xml  connection-profile properties, with their D-Bus types

@@ -1,4 +1,4 @@
-//! Automation that keeps `netman` in step with upstream NetworkManager.
+//! Automation that keeps `nm-automata` in step with upstream NetworkManager.
 //!
 //! The whole binding is derived from two files that NetworkManager publishes:
 //!
@@ -9,7 +9,7 @@
 //!   own tooling in a container (see `spec/build/`).
 //!
 //! `fetch` vendors both into `spec/` at a pinned release, and `generate` turns them into
-//! `netman/src/generated/`. Nothing in between is hand-maintained.
+//! `nm-automata/src/generated/`. Nothing in between is hand-maintained.
 
 mod annotate;
 mod codegen;
@@ -27,7 +27,7 @@ use anyhow::{Context, Result, bail};
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
-#[command(about = "Regenerate netman from the upstream NetworkManager D-Bus spec")]
+#[command(about = "Regenerate nm-automata from the upstream NetworkManager D-Bus spec")]
 struct Cli {
     #[command(subcommand)]
     command: Command,
@@ -43,7 +43,7 @@ enum Command {
         #[arg(long)]
         version: Option<String>,
     },
-    /// Regenerate `netman/src/generated/` from the vendored spec.
+    /// Regenerate `nm-automata/src/generated/` from the vendored spec.
     Generate,
     /// Vendor a spec and regenerate, in one step.
     Update {

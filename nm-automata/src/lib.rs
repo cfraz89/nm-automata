@@ -9,7 +9,7 @@
 //! # Getting started
 //!
 //! ```no_run
-//! use netman::{DeviceState, NetworkManagerProxy};
+//! use nm_automata::{DeviceState, NetworkManagerProxy};
 //!
 //! # async fn example() -> zbus::Result<()> {
 //! let connection = zbus::Connection::system().await?;
@@ -50,7 +50,7 @@
 //!
 //! ```no_run
 //! use futures_util::StreamExt;
-//! # use netman::DeviceProxy;
+//! # use nm_automata::DeviceProxy;
 //! # async fn example(device: DeviceProxy<'_>) -> zbus::Result<()> {
 //! let mut changes = device.receive_state_changed().await;
 //! while let Some(change) = changes.next().await {

@@ -6,8 +6,8 @@
 //!
 //! Run with `cargo run --example profiles`. It only reads.
 
-use netman::settings::ProfileMap;
-use netman::{ConnectionProfile, SettingsConnectionProxy, SettingsProxy};
+use nm_automata::settings::ProfileMap;
+use nm_automata::{ConnectionProfile, SettingsConnectionProxy, SettingsProxy};
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

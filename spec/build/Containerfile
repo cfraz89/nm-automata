@@ -4,7 +4,7 @@
 # git tree: they are derived from GObject introspection data, which only exists once libnm has
 # been compiled. This image compiles just enough of NetworkManager at a release tag to run that
 # generator, so `spec/nm-settings-docs-dbus.xml` can be committed and everything downstream --
-# including anyone depending on netman -- stays pure Rust with no C toolchain.
+# including anyone depending on nm-automata -- stays pure Rust with no C toolchain.
 FROM fedora:43
 
 RUN dnf install -y --setopt=install_weak_deps=False \

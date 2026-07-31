@@ -1,4 +1,4 @@
-# netman task runner. `just --list` shows everything.
+# nm-automata task runner. `just --list` shows everything.
 #
 # The generator lives in `codegen/` and stays Rust: it drives `zbus_xmlgen` and parses the
 # introspection XML with `zbus_xml`, both of which it uses as libraries. These recipes are
@@ -25,17 +25,17 @@ fetch version="":
 # to read them from. This runs NetworkManager's own generator against a release tag.
 #
 # Slow, and needs podman. It is only ever run when the vendored release changes: the result is
-# committed, so building netman as a dependency needs no container and no C toolchain.
+# committed, so building nm-automata as a dependency needs no container and no C toolchain.
 build-spec version="":
     #!/usr/bin/env bash
     set -euo pipefail
     version="{{ version }}"
     [ -n "$version" ] || version="$(cat spec/nm-version.txt)"
     echo "building NetworkManager $version to generate its settings documentation"
-    podman build -t netman-nmspec -f spec/build/Containerfile spec/build/
-    podman run --rm -v "$PWD/spec:/out:Z" netman-nmspec "$version"
+    podman build -t nm-automata-spec -f spec/build/Containerfile spec/build/
+    podman run --rm -v "$PWD/spec:/out:Z" nm-automata-spec "$version"
 
-# Regenerate `netman/src/generated/` from the vendored spec.
+# Regenerate `nm-automata/src/generated/` from the vendored spec.
 generate:
     {{ codegen }} generate
 
@@ -70,13 +70,13 @@ test:
     cargo test --workspace
 
 doc *args:
-    RUSTDOCFLAGS="-D warnings" cargo doc --no-deps --package netman {{ args }}
+    RUSTDOCFLAGS="-D warnings" cargo doc --no-deps --package nm-automata {{ args }}
 
 # Build against each supported runtime, since they are mutually exclusive.
 features:
-    cargo build --package netman --no-default-features --features async-io
-    cargo build --package netman --no-default-features --features tokio
-    cargo build --package netman --no-default-features --features async-io,blocking-api
+    cargo build --package nm-automata --no-default-features --features async-io
+    cargo build --package nm-automata --no-default-features --features tokio
+    cargo build --package nm-automata --no-default-features --features async-io,blocking-api
 
 # Everything CI runs, in the order that fails fastest.
 ci: check lint test doc features
@@ -84,7 +84,7 @@ ci: check lint test doc features
 
 # Talk to the NetworkManager on this machine.
 example name="devices":
-    cargo run --package netman --example {{ name }}
+    cargo run --package nm-automata --example {{ name }}
 
 # Regenerate, tidy up, and verify — what to run after changing the generator or the spec.
 regen: generate fmt

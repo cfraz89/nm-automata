@@ -131,7 +131,7 @@ impl proxies::device::DeviceProxy<'_> {
     /// Narrow this device to the interface its type implies.
     ///
     /// ```no_run
-    /// # use netman::{AnyDevice, DeviceProxy};
+    /// # use nm_automata::{AnyDevice, DeviceProxy};
     /// # async fn example(device: DeviceProxy<'_>) -> zbus::Result<()> {
     /// match device.specialise().await? {
     ///     AnyDevice::Wireless(wifi) => {

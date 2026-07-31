@@ -79,7 +79,7 @@ pub trait ProxyExt<'p> {
     /// Another interface of the same object, on the same connection.
     ///
     /// ```no_run
-    /// # use netman::{DeviceProxy, ProxyExt, StatisticsProxy};
+    /// # use nm_automata::{DeviceProxy, ProxyExt, StatisticsProxy};
     /// # async fn example(device: DeviceProxy<'_>) -> zbus::Result<()> {
     /// // Every device carries the statistics interface, so this cast cannot be wrong.
     /// let statistics: StatisticsProxy = device.cast().await?;

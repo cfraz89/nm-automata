@@ -241,12 +241,12 @@ fn reference_for(candidate: &Candidate, types: &BTreeMap<String, Resolved<'_>>) 
 pub struct Rename {
     /// The member name on the wire, e.g. `StateChanged`.
     pub member: String,
-    /// The name the member is generated under, e.g. `netman_rename_000`.
+    /// The name the member is generated under, e.g. `nm_rename_000`.
     ///
     /// The index is fixed width so that no sentinel is a prefix of another: replacing
-    /// `netman_rename_1` before `netman_rename_12` would corrupt the second.
+    /// `nm_rename_1` before `nm_rename_12` would corrupt the second.
     pub sentinel: String,
-    /// The type name generated from the sentinel, e.g. `NetmanRename000`.
+    /// The type name generated from the sentinel, e.g. `NmRename000`.
     pub sentinel_type: String,
     /// What the generated function should end up called, e.g. `state_changed_signal`.
     pub fn_name: String,
@@ -370,8 +370,8 @@ pub fn plan(
         let index = renames.len();
         renames.push(Rename {
             member: member.clone(),
-            sentinel: format!("netman_rename_{index:03}"),
-            sentinel_type: format!("NetmanRename{index:03}"),
+            sentinel: format!("nm_rename_{index:03}"),
+            sentinel_type: format!("NmRename{index:03}"),
             fn_name: raw.clone(),
             type_name: pascal_case(&raw),
             kind: match (&site, signals.contains(&member)) {
@@ -417,8 +417,8 @@ fn plan_collisions(interface: &Interface<'_>) -> Vec<Rename> {
         let index = renames.len();
         renames.push(Rename {
             member: member.to_owned(),
-            sentinel: format!("netman_rename_{index:03}"),
-            sentinel_type: format!("NetmanRename{index:03}"),
+            sentinel: format!("nm_rename_{index:03}"),
+            sentinel_type: format!("NmRename{index:03}"),
             fn_name: format!("{}_{suffix}", snake(member)),
             type_name: format!("{}{}", pascal_case(&snake(member)), capitalise(suffix)),
             kind,
@@ -911,7 +911,7 @@ fn write_profile_struct(out: &mut String, settings: &[crate::settings::Setting])
          /// which one determines what kind of connection it is:\n    \
          ///\n    \
          /// ```no_run\n    \
-         /// # use netman::{{ConnectionProfile, WirelessSetting}};\n    \
+         /// # use nm_automata::{{ConnectionProfile, WirelessSetting}};\n    \
          /// let mut profile = ConnectionProfile::new(\"home wifi\");\n    \
          /// profile.wireless = Some(WirelessSetting {{\n    \
          ///     ssid: Some(b\"my-network\".to_vec()),\n    \
@@ -1290,7 +1290,7 @@ pub fn devices_module(
          /// Narrow this device to the interface its type implies.\n    \
          ///\n    \
          /// ```no_run\n    \
-         /// # use netman::{{AnyDevice, DeviceProxy}};\n    \
+         /// # use nm_automata::{{AnyDevice, DeviceProxy}};\n    \
          /// # async fn example(device: DeviceProxy<'_>) -> zbus::Result<()> {{\n    \
          /// match device.specialise().await? {{\n    \
          ///     AnyDevice::Wireless(wifi) => {{\n    \

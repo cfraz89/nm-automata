@@ -7,7 +7,7 @@
 //! scan list is refreshed; devices need one adding, e.g. `sudo ip link add dummy0 type dummy`.
 
 use futures_util::StreamExt;
-use netman::{AnyDevice, NetworkManagerProxy};
+use nm_automata::{AnyDevice, NetworkManagerProxy};
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

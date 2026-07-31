@@ -7629,7 +7629,7 @@ impl ConnectionProfile {
     /// which one determines what kind of connection it is:
     ///
     /// ```no_run
-    /// # use netman::{ConnectionProfile, WirelessSetting};
+    /// # use nm_automata::{ConnectionProfile, WirelessSetting};
     /// let mut profile = ConnectionProfile::new("home wifi");
     /// profile.wireless = Some(WirelessSetting {
     ///     ssid: Some(b"my-network".to_vec()),

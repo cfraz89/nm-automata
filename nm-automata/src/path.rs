@@ -15,7 +15,7 @@
 //! need to give one to a member that takes one. Every proxy knows its own:
 //!
 //! ```no_run
-//! # use netman::{NetworkManagerProxy, SettingsProxy};
+//! # use nm_automata::{NetworkManagerProxy, SettingsProxy};
 //! # async fn example(connection: &zbus::Connection) -> zbus::Result<()> {
 //! let nm = NetworkManagerProxy::new(connection).await?;
 //! let settings = SettingsProxy::new(connection).await?;
@@ -67,7 +67,7 @@ pub trait NmPathSliceExt {
     /// so this is for when you have held on to the paths themselves.
     ///
     /// ```no_run
-    /// # use netman::{NetworkManagerProxy, NmPathSliceExt};
+    /// # use nm_automata::{NetworkManagerProxy, NmPathSliceExt};
     /// # async fn example(nm: NetworkManagerProxy<'_>) -> zbus::Result<()> {
     /// let connection = zbus::Connection::system().await?;
     /// for device in nm.get_device_paths().await?.connect_all(&connection).await? {

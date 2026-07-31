@@ -819,7 +819,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "netman"
+name = "nm-automata"
 version = "0.1.0"
 dependencies = [
  "bitflags",

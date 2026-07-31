@@ -2,7 +2,7 @@
 //!
 //! Run with `cargo run --example devices`.
 
-use netman::{AnyDevice, DeviceState, NetworkManagerProxy};
+use nm_automata::{AnyDevice, DeviceState, NetworkManagerProxy};
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

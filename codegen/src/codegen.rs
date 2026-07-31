@@ -1,4 +1,4 @@
-//! Turning the vendored spec into `netman/src/generated/`.
+//! Turning the vendored spec into `nm-automata/src/generated/`.
 //!
 //! The flow is: read the spec, recover the annotations NetworkManager keeps in comments, write
 //! them back as Telepathy XML, and hand that to `zbus_xmlgen`. The proxies come out of the
@@ -78,7 +78,7 @@ pub fn generate(root: &Path) -> Result<BTreeMap<PathBuf, String>> {
 
     // Keeping the augmented XML around makes it possible to see exactly what the generator
     // was fed when a binding looks wrong.
-    let debug_dir = root.join("target/netman-augmented");
+    let debug_dir = root.join("target/nm-automata-augmented");
     std::fs::create_dir_all(&debug_dir).ok();
 
     let mut modules: Vec<Generated> = Vec::new();
@@ -146,7 +146,7 @@ pub fn generate(root: &Path) -> Result<BTreeMap<PathBuf, String>> {
     annotations.check_all_applied(&applied)?;
     check_name_clashes(&types, &modules)?;
 
-    let generated = root.join("netman/src/generated");
+    let generated = root.join("nm-automata/src/generated");
     let mut files = BTreeMap::new();
     for module in &modules {
         files.insert(
@@ -329,7 +329,7 @@ fn default_path(interface: &str) -> String {
 
 /// Put the members generated under a sentinel name back under their real one.
 ///
-/// The sentinel — `netman_rename_0` — was chosen so that `zbus_xmlgen` always writes the
+/// The sentinel — `nm_rename_0` — was chosen so that `zbus_xmlgen` always writes the
 /// D-Bus name out as an attribute (its snake and Pascal forms differ), and so that it appears
 /// nowhere else in the generated source. Restoring the attribute and then replacing what is
 /// left renames the Rust items without touching the wire.

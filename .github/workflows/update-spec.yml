@@ -60,7 +60,7 @@ jobs:
             `just update` run against NetworkManager
             **${{ steps.versions.outputs.latest }}** (was ${{ steps.versions.outputs.current }}).
 
-            Everything here is generated. Review the diff under `netman/src/generated/` as the
+            Everything here is generated. Review the diff under `nm-automata/src/generated/` as the
             API change: it is what upstream added, removed or retyped.
 
             `just ci` passed before this was opened.
