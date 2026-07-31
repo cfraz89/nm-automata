@@ -16,17 +16,11 @@ use zbus::{Connection, Proxy, Result};
 pub trait ObjectPathExt {
     /// The proxy for one of this object's interfaces.
     ///
-    /// ```no_run
-    /// # use netman::{DeviceProxy, NetworkManagerProxy, ObjectPathExt};
-    /// # async fn example(nm: NetworkManagerProxy<'_>) -> zbus::Result<()> {
-    /// let connection = zbus::Connection::system().await?;
-    /// for path in nm.get_devices().await? {
-    ///     let device: DeviceProxy = path.proxy(&connection).await?;
-    ///     println!("{}", device.interface().await?);
-    /// }
-    /// # Ok(())
-    /// # }
-    /// ```
+    /// A typed path knows which proxy it means, so [`NmPath::connect`] is what to reach for
+    /// first; this is the escape hatch for a bare path, or for an interface the path type does
+    /// not name.
+    ///
+    /// [`NmPath::connect`]: crate::NmPath::connect
     fn proxy<P>(&self, connection: &Connection) -> impl Future<Output = Result<P>>
     where
         P: Defaults + From<Proxy<'static>>;
@@ -48,14 +42,11 @@ impl ObjectPathExt for ObjectPath<'_> {
 pub trait ObjectPathSliceExt {
     /// The proxies for one interface of every object in the list.
     ///
-    /// ```no_run
-    /// # use netman::{DeviceProxy, NetworkManagerProxy, ObjectPathSliceExt};
-    /// # async fn example(nm: NetworkManagerProxy<'_>) -> zbus::Result<()> {
-    /// let connection = zbus::Connection::system().await?;
-    /// let devices: Vec<DeviceProxy> = nm.get_devices().await?.proxies(&connection).await?;
-    /// # Ok(())
-    /// # }
-    /// ```
+    /// Most members give a typed path, for which [`NmPathSliceExt::connect_all`] is simpler.
+    /// This is for the few that hand back a bare path — `Connection.Active.SpecificObject`
+    /// being the one whose target genuinely varies.
+    ///
+    /// [`NmPathSliceExt::connect_all`]: crate::NmPathSliceExt::connect_all
     fn proxies<P>(&self, connection: &Connection) -> impl Future<Output = Result<Vec<P>>>
     where
         P: Defaults + From<Proxy<'static>>;

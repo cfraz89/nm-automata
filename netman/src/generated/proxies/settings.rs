@@ -10,6 +10,8 @@
 )]
 
 #[allow(unused_imports)]
+use crate::generated::paths::*;
+#[allow(unused_imports)]
 use crate::generated::settings::ConnectionProfile;
 #[allow(unused_imports)]
 use crate::generated::types::*;
@@ -33,7 +35,7 @@ pub trait Settings {
     fn add_connection(
         &self,
         connection: &ConnectionProfile,
-    ) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    ) -> zbus::Result<SettingsConnectionPath>;
 
     /// AddConnection2 method
     ///
@@ -52,7 +54,7 @@ pub trait Settings {
         flags: u32,
         args: std::collections::HashMap<&str, &zbus::zvariant::Value<'_>>,
     ) -> zbus::Result<(
-        zbus::zvariant::OwnedObjectPath,
+        SettingsConnectionPath,
         std::collections::HashMap<String, zbus::zvariant::OwnedValue>,
     )>;
 
@@ -67,7 +69,7 @@ pub trait Settings {
     fn add_connection_unsaved(
         &self,
         connection: &ConnectionProfile,
-    ) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    ) -> zbus::Result<SettingsConnectionPath>;
 
     /// GetConnectionByUuid method
     ///
@@ -77,7 +79,7 @@ pub trait Settings {
     ///
     /// * `uuid` - The UUID to find the connection object path for.
     /// * `connection` - The connection's object path.
-    fn get_connection_by_uuid(&self, uuid: &str) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    fn get_connection_by_uuid(&self, uuid: &str) -> zbus::Result<SettingsConnectionPath>;
 
     /// ListConnections method
     ///
@@ -86,7 +88,7 @@ pub trait Settings {
     /// # Arguments
     ///
     /// * `connections` - List of connections.
-    fn list_connections(&self) -> zbus::Result<Vec<zbus::zvariant::OwnedObjectPath>>;
+    fn list_connections(&self) -> zbus::Result<Vec<SettingsConnectionPath>>;
 
     /// LoadConnections method
     ///
@@ -125,7 +127,7 @@ pub trait Settings {
     ///
     /// * `connection` - Object path of the removed connection.
     #[zbus(signal)]
-    fn connection_removed(&self, connection: zbus::zvariant::ObjectPath<'_>) -> zbus::Result<()>;
+    fn connection_removed(&self, connection: SettingsConnectionPath) -> zbus::Result<()>;
 
     /// NewConnection signal
     ///
@@ -135,7 +137,7 @@ pub trait Settings {
     ///
     /// * `connection` - Object path of the new connection.
     #[zbus(signal)]
-    fn new_connection(&self, connection: zbus::zvariant::ObjectPath<'_>) -> zbus::Result<()>;
+    fn new_connection(&self, connection: SettingsConnectionPath) -> zbus::Result<()>;
 
     /// CanModify property
     ///
@@ -147,7 +149,7 @@ pub trait Settings {
     ///
     /// List of object paths of available network connection profiles.
     #[zbus(property)]
-    fn connections(&self) -> zbus::Result<Vec<zbus::zvariant::OwnedObjectPath>>;
+    fn connections(&self) -> zbus::Result<Vec<SettingsConnectionPath>>;
 
     /// Hostname property
     ///

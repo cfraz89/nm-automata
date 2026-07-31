@@ -10,6 +10,8 @@
 )]
 
 #[allow(unused_imports)]
+use crate::generated::paths::*;
+#[allow(unused_imports)]
 use crate::generated::settings::ConnectionProfile;
 #[allow(unused_imports)]
 use crate::generated::types::*;
@@ -32,7 +34,7 @@ pub trait Checkpoint {
     ///
     /// Array of object paths for devices which are part of this checkpoint.
     #[zbus(property)]
-    fn devices(&self) -> zbus::Result<Vec<zbus::zvariant::OwnedObjectPath>>;
+    fn devices(&self) -> zbus::Result<Vec<DevicePath>>;
 
     /// RollbackTimeout property
     ///

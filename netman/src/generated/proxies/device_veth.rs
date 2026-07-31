@@ -10,6 +10,8 @@
 )]
 
 #[allow(unused_imports)]
+use crate::generated::paths::*;
+#[allow(unused_imports)]
 use crate::generated::settings::ConnectionProfile;
 #[allow(unused_imports)]
 use crate::generated::types::*;
@@ -26,5 +28,5 @@ pub trait Veth {
     ///
     /// The object path of the device's peer.
     #[zbus(property)]
-    fn peer(&self) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    fn peer(&self) -> zbus::Result<DevicePath>;
 }

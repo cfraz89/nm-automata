@@ -10,6 +10,8 @@
 )]
 
 #[allow(unused_imports)]
+use crate::generated::paths::*;
+#[allow(unused_imports)]
 use crate::generated::settings::ConnectionProfile;
 #[allow(unused_imports)]
 use crate::generated::types::*;
@@ -32,5 +34,5 @@ pub trait Lowpan {
     ///
     /// The object path of the parent device.
     #[zbus(property)]
-    fn parent(&self) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    fn parent(&self) -> zbus::Result<DevicePath>;
 }

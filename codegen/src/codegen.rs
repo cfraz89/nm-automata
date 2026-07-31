@@ -19,6 +19,7 @@ use zbus_xml::Node;
 use crate::annotate::{self, Docs};
 use crate::fetch;
 use crate::gir::{self, TypeDef};
+use crate::objects;
 use crate::overrides;
 use crate::render::{self, Resolved};
 use crate::settings;
@@ -62,6 +63,13 @@ pub fn generate(root: &Path) -> Result<BTreeMap<PathBuf, String>> {
         })
         .collect::<Result<_>>()?;
 
+    // What kind of object each object path points at, needed before any interface is written.
+    let interface_names: Vec<String> = parsed
+        .iter()
+        .flat_map(|(_, node, _)| node.interfaces().iter().map(|i| i.name().to_string()))
+        .collect();
+    let object_targets = objects::resolve(&parsed, &interface_names, &annotations.object_targets());
+
     let types = resolve_types(&defs, &parsed);
     let by_c_name: BTreeMap<String, Resolved<'_>> = types
         .iter()
@@ -79,7 +87,7 @@ pub fn generate(root: &Path) -> Result<BTreeMap<PathBuf, String>> {
     let mut applied: HashSet<(String, String)> = HashSet::new();
 
     for (name, node, docs) in &parsed {
-        let augmented = render::augmented_xml(node, docs, &by_c_name);
+        let augmented = render::augmented_xml(node, docs, &by_c_name, &object_targets);
         std::fs::write(debug_dir.join(name), &augmented).ok();
 
         let augmented_node = Node::try_from(augmented.as_str())
@@ -139,6 +147,14 @@ pub fn generate(root: &Path) -> Result<BTreeMap<PathBuf, String>> {
         rustfmt(&render::types_module(&types, &nm_version))?,
     );
     files.insert(
+        generated.join("paths.rs"),
+        rustfmt(&render::paths_module(
+            &object_targets,
+            &modules,
+            &nm_version,
+        ))?,
+    );
+    files.insert(
         generated.join("settings.rs"),
         rustfmt(&render::settings_module(
             &profile_settings,
@@ -152,13 +168,13 @@ pub fn generate(root: &Path) -> Result<BTreeMap<PathBuf, String>> {
 }
 
 /// One generated proxy module.
-struct Generated {
+pub struct Generated {
     /// The module it lives in, e.g. `device_wireless`.
-    module: String,
+    pub module: String,
     /// The D-Bus interface it proxies.
-    interface: String,
+    pub interface: String,
     /// The trait name `zbus_xmlgen` derives from the interface, e.g. `Wireless`.
-    trait_name: String,
+    pub trait_name: String,
     code: String,
 }
 
@@ -319,7 +335,7 @@ fn strip_type_defs(code: &str) -> &str {
 }
 
 /// The module name for an interface: `…NetworkManager.Device.Wireless` -> `device_wireless`.
-fn module_name(interface: &str) -> String {
+pub fn module_name(interface: &str) -> String {
     let tail = interface
         .strip_prefix(SERVICE)
         .unwrap_or(interface)
@@ -347,6 +363,8 @@ fn proxy_module(module: &Generated, nm_version: &str) -> String {
          #![allow(\n    clippy::too_many_arguments,\n    clippy::type_complexity,\n    \
          rustdoc::invalid_html_tags\n)]\n\n\
          #[allow(unused_imports)]\n\
+         use crate::generated::paths::*;\n\
+         #[allow(unused_imports)]\n\
          use crate::generated::settings::ConnectionProfile;\n\
          #[allow(unused_imports)]\n\
          use crate::generated::types::*;\n\
@@ -365,6 +383,23 @@ fn proxy_module(module: &Generated, nm_version: &str) -> String {
 /// `StateChanged` signal type. Names that are unique across the spec are re-exported as they
 /// are; the rest get their module's name in front, which is how NetworkManager's own
 /// documentation distinguishes them.
+/// The name a module's proxy is re-exported under at the crate root.
+///
+/// Unique trait names keep their own; the rest take their module's, which is how
+/// NetworkManager's documentation tells `Settings.Connection` and `VPN.Connection` apart.
+pub fn root_alias(modules: &[Generated], module: &Generated, suffix: &str) -> String {
+    let unique = modules
+        .iter()
+        .filter(|other| other.trait_name == module.trait_name)
+        .count()
+        == 1;
+    if unique {
+        format!("{}{suffix}", module.trait_name)
+    } else {
+        format!("{}{suffix}", render::pascal_case(&module.module))
+    }
+}
+
 fn proxies_mod(modules: &[Generated], nm_version: &str) -> String {
     let mut out = String::new();
     let _ = writeln!(
@@ -387,20 +422,8 @@ fn proxies_mod(modules: &[Generated], nm_version: &str) -> String {
     }
     out.push('\n');
 
-    let mut counts: BTreeMap<&str, usize> = BTreeMap::new();
     for module in modules {
-        *counts.entry(module.trait_name.as_str()).or_default() += 1;
-    }
-
-    for module in modules {
-        let unique = counts[module.trait_name.as_str()] == 1;
-        let alias = |suffix: &str| {
-            if unique {
-                format!("{}{suffix}", module.trait_name)
-            } else {
-                format!("{}{suffix}", render::pascal_case(&module.module))
-            }
-        };
+        let alias = |suffix: &str| root_alias(modules, module, suffix);
         let _ = writeln!(
             out,
             "#[doc(inline)]\npub use {module}::{trait_name}Proxy as {name};",
@@ -427,6 +450,7 @@ fn mod_module(nm_version: &str) -> String {
          //!\n\
          //! Generated by `just generate` from NetworkManager {nm_version}.\n\
          \n\
+         pub mod paths;\n\
          pub mod proxies;\n\
          pub mod settings;\n\
          pub mod types;\n\

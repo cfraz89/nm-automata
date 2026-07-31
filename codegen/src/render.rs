@@ -28,6 +28,7 @@ pub fn augmented_xml(
     node: &Node<'_>,
     docs: &Docs,
     types: &BTreeMap<String, Resolved<'_>>,
+    objects: &crate::objects::Targets,
 ) -> String {
     let mut out = String::new();
     let _ = writeln!(out, r#"<?xml version="1.0" encoding="UTF-8"?>"#);
@@ -46,9 +47,26 @@ pub fn augmented_xml(
             r#"  <tp:simple-type name="ConnectionProfile" type="{PROFILE_SIGNATURE}"/>"#
         );
     }
+    // Likewise for the paths this file's members point at.
+    let mut path_types: Vec<String> = node
+        .interfaces()
+        .iter()
+        .filter_map(|i| objects.get(i.name().as_str()))
+        .flat_map(|sites| sites.values().cloned())
+        .collect();
+    path_types.sort();
+    path_types.dedup();
+    for interface in &path_types {
+        let _ = writeln!(
+            out,
+            r#"  <tp:simple-type name="{}" type="{}"/>"#,
+            path_type_name(&crate::codegen::module_name(interface)),
+            crate::objects::PATH
+        );
+    }
 
     for interface in node.interfaces() {
-        write_interface(&mut out, interface, docs, types);
+        write_interface(&mut out, interface, docs, types, objects);
     }
 
     let _ = writeln!(out, "</node>");
@@ -310,7 +328,10 @@ fn write_interface(
     interface: &Interface<'_>,
     docs: &Docs,
     types: &BTreeMap<String, Resolved<'_>>,
+    objects: &crate::objects::Targets,
 ) {
+    let empty = BTreeMap::new();
+    let object_sites = objects.get(interface.name().as_str()).unwrap_or(&empty);
     let references = interface_references(interface, docs, types);
     let iface_docs = docs.interfaces.get(interface.name().as_str());
     let member_docs = |name: &str| iface_docs.and_then(|i| i.members.get(name));
@@ -337,7 +358,15 @@ fn write_interface(
                 Some(ArgDirection::Out) => "out",
                 _ => "in",
             };
-            write_arg(out, arg, &name, Some(direction), &references, member);
+            write_arg(
+                out,
+                arg,
+                &name,
+                Some(direction),
+                &references,
+                object_sites,
+                member,
+            );
         }
         let _ = writeln!(out, "    </method>");
     }
@@ -348,7 +377,7 @@ fn write_interface(
         let _ = writeln!(out, r#"    <signal name="{}">"#, emitted_name(&name));
         write_docstring(out, member.and_then(|m| m.doc.as_deref()), "      ");
         for arg in signal.args() {
-            write_arg(out, arg, &name, None, &references, member);
+            write_arg(out, arg, &name, None, &references, object_sites, member);
         }
         let _ = writeln!(out, "    </signal>");
     }
@@ -360,9 +389,11 @@ fn write_interface(
             (false, true) => "write",
             _ => "read",
         };
+        let site = Site::Property(name.clone());
         let tp_type = references
-            .get(&Site::Property(name.clone()))
+            .get(&site)
             .map(|r| format!(r#" tp:type="{r}""#))
+            .or_else(|| object_attribute(object_sites, &site, &property.ty().to_string()))
             .unwrap_or_else(|| profile_attribute(&property.ty().to_string()).to_owned());
         let _ = writeln!(
             out,
@@ -386,15 +417,18 @@ fn write_arg(
     member: &str,
     direction: Option<&str>,
     references: &BTreeMap<Site, String>,
+    object_sites: &BTreeMap<Site, String>,
     member_docs: Option<&crate::annotate::MemberDocs>,
 ) {
     let name = arg.name().unwrap_or_default();
     let direction = direction
         .map(|d| format!(r#" direction="{d}""#))
         .unwrap_or_default();
+    let site = Site::Arg(member.to_owned(), name.to_owned());
     let tp_type = references
-        .get(&Site::Arg(member.to_owned(), name.to_owned()))
+        .get(&site)
         .map(|r| format!(r#" tp:type="{r}""#))
+        .or_else(|| object_attribute(object_sites, &site, &arg.ty().inner().to_string()))
         .unwrap_or_else(|| profile_attribute(&arg.ty().inner().to_string()).to_owned());
     let doc = member_docs
         .and_then(|m| m.args.get(name))
@@ -499,13 +533,14 @@ fn write_doc_lines(out: &mut String, doc: Option<&str>, indent: &str) -> bool {
 pub fn pascal_case(name: &str) -> String {
     let mut out = String::with_capacity(name.len());
     for word in name.split('_').filter(|w| !w.is_empty()) {
-        if word.contains(|c: char| c.is_ascii_digit()) {
-            out.push_str(word);
-            continue;
-        }
         let mut chars = word.chars();
-        if let Some(first) = chars.next() {
-            out.push(first.to_ascii_uppercase());
+        let Some(first) = chars.next() else { continue };
+        out.push(first.to_ascii_uppercase());
+        // A word carrying digits keeps its spelling, so `802` and `P2P` survive; only the
+        // first character is ever forced, or `ip4_config` would stay lower case.
+        if word.contains(|c: char| c.is_ascii_digit()) {
+            out.push_str(chars.as_str());
+        } else {
             out.extend(chars.map(|c| c.to_ascii_lowercase()));
         }
     }
@@ -803,6 +838,21 @@ fn write_profile_struct(out: &mut String, settings: &[crate::settings::Setting])
 /// of it that carries secrets — so no annotation data is needed to recognise them.
 pub const PROFILE_SIGNATURE: &str = "a{sa{sv}}";
 
+/// The `tp:type` attribute for a member whose object path has a known target.
+fn object_attribute(
+    sites: &BTreeMap<Site, String>,
+    site: &Site,
+    signature: &str,
+) -> Option<String> {
+    let interface = sites.get(site)?;
+    let name = path_type_name(&crate::codegen::module_name(interface));
+    match signature {
+        crate::objects::PATH => Some(format!(r#" tp:type="{name}""#)),
+        crate::objects::PATH_ARRAY => Some(format!(r#" tp:type="{name}[]""#)),
+        _ => None,
+    }
+}
+
 /// The `tp:type` attribute for a member whose signature says it carries a profile.
 fn profile_attribute(signature: &str) -> &'static str {
     if signature == PROFILE_SIGNATURE {
@@ -839,6 +889,69 @@ fn rust_type(ty: &crate::settings::PropertyType, types: &BTreeMap<String, Resolv
             .map(|resolved| resolved.def.rust_name.clone())
             .unwrap_or_else(|| "u32".into()),
     }
+}
+
+/// Emit the module of typed object paths.
+///
+/// Each is a newtype over an object path that knows the interface at the other end, so it can
+/// build the right proxy and only that one.
+pub fn paths_module(
+    targets: &crate::objects::Targets,
+    modules: &[crate::codegen::Generated],
+    nm_version: &str,
+) -> String {
+    let mut wanted: Vec<&str> = targets
+        .values()
+        .flat_map(|sites| sites.values().map(String::as_str))
+        .collect();
+    wanted.sort();
+    wanted.dedup();
+
+    let mut out = String::new();
+    let _ = writeln!(
+        out,
+        "//! Object paths that know what they point at.\n\
+         //!\n\
+         //! Generated by `just generate` from the introspection XML of NetworkManager\n\
+         //! {nm_version}. Do not edit.\n\
+         \n\
+         use crate::path::nm_path;\n"
+    );
+
+    for interface in wanted {
+        let Some(module) = modules.iter().find(|m| m.interface == interface) else {
+            continue;
+        };
+        let path_name = path_type_name(&module.module);
+
+        let _ = writeln!(out, "nm_path! {{");
+        let _ = writeln!(
+            out,
+            "    /// The path of an object implementing `{interface}`."
+        );
+        let _ = writeln!(out, "    pub struct {path_name}: \"{interface}\";");
+        let _ = writeln!(out, "}}\n");
+        let _ = writeln!(
+            out,
+            "impl crate::path::NmPath for {path_name} {{\n    \
+             type Proxy = crate::proxies::{module}::{trait_name}Proxy<'static>;\n    \
+             const INTERFACE: &'static str = \"{interface}\";\n\
+             \n    \
+             async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {{\n        \
+             crate::ObjectPathExt::proxy(self.as_object_path(), connection).await\n    \
+             }}\n\
+             }}\n",
+            module = module.module,
+            trait_name = module.trait_name,
+        );
+    }
+
+    out
+}
+
+/// The path newtype for a module: `device_wireless` -> `DeviceWirelessPath`.
+pub fn path_type_name(module: &str) -> String {
+    format!("{}Path", pascal_case(module))
 }
 
 #[cfg(test)]

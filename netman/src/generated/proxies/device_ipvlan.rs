@@ -10,6 +10,8 @@
 )]
 
 #[allow(unused_imports)]
+use crate::generated::paths::*;
+#[allow(unused_imports)]
 use crate::generated::settings::ConnectionProfile;
 #[allow(unused_imports)]
 use crate::generated::types::*;
@@ -28,7 +30,7 @@ pub trait Ipvlan {
 
     /// Parent property
     #[zbus(property)]
-    fn parent(&self) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    fn parent(&self) -> zbus::Result<DevicePath>;
 
     /// Private property
     #[zbus(property)]

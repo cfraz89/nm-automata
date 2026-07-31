@@ -10,6 +10,8 @@
 )]
 
 #[allow(unused_imports)]
+use crate::generated::paths::*;
+#[allow(unused_imports)]
 use crate::generated::settings::ConnectionProfile;
 #[allow(unused_imports)]
 use crate::generated::types::*;
@@ -47,7 +49,7 @@ pub trait WifiP2P {
     ///
     /// * `peer` - The object path of the newly found access point.
     #[zbus(signal)]
-    fn peer_added(&self, peer: zbus::zvariant::ObjectPath<'_>) -> zbus::Result<()>;
+    fn peer_added(&self, peer: WifiP2pPeerPath) -> zbus::Result<()>;
 
     /// PeerRemoved signal
     ///
@@ -57,7 +59,7 @@ pub trait WifiP2P {
     ///
     /// * `peer` - The object path of the Wi-Fi P2P peer that has disappeared.
     #[zbus(signal)]
-    fn peer_removed(&self, peer: zbus::zvariant::ObjectPath<'_>) -> zbus::Result<()>;
+    fn peer_removed(&self, peer: WifiP2pPeerPath) -> zbus::Result<()>;
 
     /// HwAddress property
     ///
@@ -69,5 +71,5 @@ pub trait WifiP2P {
     ///
     /// List of object paths of peers visible to this Wi-Fi P2P device.
     #[zbus(property)]
-    fn peers(&self) -> zbus::Result<Vec<zbus::zvariant::OwnedObjectPath>>;
+    fn peers(&self) -> zbus::Result<Vec<WifiP2pPeerPath>>;
 }

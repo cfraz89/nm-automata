@@ -9,14 +9,13 @@
 //! # Getting started
 //!
 //! ```no_run
-//! use netman::{DeviceProxy, DeviceState, NetworkManagerProxy, ObjectPathSliceExt};
+//! use netman::{DeviceState, NetworkManagerProxy, NmPathSliceExt};
 //!
 //! # async fn example() -> zbus::Result<()> {
 //! let connection = zbus::Connection::system().await?;
 //! let nm = NetworkManagerProxy::new(&connection).await?;
 //!
-//! let devices: Vec<DeviceProxy> = nm.get_devices().await?.proxies(&connection).await?;
-//! for device in devices {
+//! for device in nm.get_devices().await?.connect_all(&connection).await? {
 //!     if device.state().await? == DeviceState::Activated {
 //!         println!("{} is up", device.interface().await?);
 //!     }
@@ -36,8 +35,11 @@
 //!   that upstream documents as one of them are typed as such instead of as a bare integer.
 //!   Both decode leniently, so a daemon newer than this binding still works: see
 //!   [`DeviceState::Other`] and [`DeviceCapabilities::from_bits_retain`].
-//! * [`ObjectPathExt`], [`ObjectPathSliceExt`] and [`ProxyExt`] turn the object paths
-//!   NetworkManager hands out into typed proxies, and move between the several interfaces one
+//! * [`paths`] holds a newtype per interface, so an object path says what is at the other end.
+//!   [`NmPath::connect`] builds the one proxy that path can mean, and
+//!   [`NmPathSliceExt::connect_all`] does it for a list.
+//! * [`ObjectPathExt`], [`ObjectPathSliceExt`] and [`ProxyExt`] turn bare object paths
+//!   into typed proxies, and move between the several interfaces one
 //!   object implements.
 //!
 //! # Signals and property changes
@@ -61,15 +63,18 @@
 
 mod ext;
 mod generated;
+mod path;
 mod repr;
 pub mod settings;
 
 pub use ext::{ObjectPathExt, ObjectPathSliceExt, ProxyExt};
+pub use generated::paths::*;
 pub use generated::proxies::*;
 pub use generated::settings as profile;
 pub use generated::settings::*;
 pub use generated::types::*;
-pub use generated::{NM_VERSION, proxies, types};
+pub use generated::{NM_VERSION, paths, proxies, types};
+pub use path::{NmPath, NmPathSliceExt};
 
 /// zbus, re-exported: its [`Connection`](zbus::Connection) is the entry point to every proxy,
 /// and its error type is what they return.

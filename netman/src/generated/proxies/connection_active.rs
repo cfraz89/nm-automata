@@ -10,6 +10,8 @@
 )]
 
 #[allow(unused_imports)]
+use crate::generated::paths::*;
+#[allow(unused_imports)]
 use crate::generated::settings::ConnectionProfile;
 #[allow(unused_imports)]
 use crate::generated::types::*;
@@ -41,13 +43,13 @@ pub trait Active {
     ///
     /// The path of the connection.
     #[zbus(property)]
-    fn connection(&self) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    fn connection(&self) -> zbus::Result<SettingsConnectionPath>;
 
     /// Controller property
     ///
     /// The path to the controller device if the connection is a port. This property replaces the deprecated 'Master' property.
     #[zbus(property)]
-    fn controller(&self) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    fn controller(&self) -> zbus::Result<DevicePath>;
 
     /// Default property
     ///
@@ -65,19 +67,19 @@ pub trait Active {
     ///
     /// Array of object paths representing devices which are part of this active connection.
     #[zbus(property)]
-    fn devices(&self) -> zbus::Result<Vec<zbus::zvariant::OwnedObjectPath>>;
+    fn devices(&self) -> zbus::Result<Vec<DevicePath>>;
 
     /// Dhcp4Config property
     ///
     /// Object path of the Dhcp4Config object describing the DHCP options returned by the DHCP server (assuming the connection used DHCP). Only valid when the connection is in the NM_ACTIVE_CONNECTION_STATE_ACTIVATED state.
     #[zbus(property)]
-    fn dhcp4_config(&self) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    fn dhcp4_config(&self) -> zbus::Result<Dhcp4ConfigPath>;
 
     /// Dhcp6Config property
     ///
     /// Object path of the Dhcp6Config object describing the DHCP options returned by the DHCP server (assuming the connection used DHCP). Only valid when the connection is in the NM_ACTIVE_CONNECTION_STATE_ACTIVATED state.
     #[zbus(property)]
-    fn dhcp6_config(&self) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    fn dhcp6_config(&self) -> zbus::Result<Dhcp6ConfigPath>;
 
     /// Id property
     ///
@@ -89,19 +91,19 @@ pub trait Active {
     ///
     /// Object path of the Ip4Config object describing the configuration of the connection. Only valid when the connection is in the NM_ACTIVE_CONNECTION_STATE_ACTIVATED state.
     #[zbus(property)]
-    fn ip4_config(&self) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    fn ip4_config(&self) -> zbus::Result<Ip4ConfigPath>;
 
     /// Ip6Config property
     ///
     /// Object path of the Ip6Config object describing the configuration of the connection. Only valid when the connection is in the NM_ACTIVE_CONNECTION_STATE_ACTIVATED state.
     #[zbus(property)]
-    fn ip6_config(&self) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    fn ip6_config(&self) -> zbus::Result<Ip6ConfigPath>;
 
     /// Master property
     ///
     /// The path to the controller device if the connection is a port. DEPRECATED. This property is deprecated in favor of the 'Controller' property since 1.44.
     #[zbus(property)]
-    fn master(&self) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    fn master(&self) -> zbus::Result<DevicePath>;
 
     /// SpecificObject property
     ///

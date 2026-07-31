@@ -15,6 +15,7 @@ mod annotate;
 mod codegen;
 mod fetch;
 mod gir;
+mod objects;
 mod overrides;
 mod render;
 mod settings;

@@ -10,6 +10,8 @@
 )]
 
 #[allow(unused_imports)]
+use crate::generated::paths::*;
+#[allow(unused_imports)]
 use crate::generated::settings::ConnectionProfile;
 #[allow(unused_imports)]
 use crate::generated::types::*;
@@ -29,7 +31,7 @@ pub trait Wireless {
     /// # Arguments
     ///
     /// * `access_points` - List of access point object paths.
-    fn get_access_points(&self) -> zbus::Result<Vec<zbus::zvariant::OwnedObjectPath>>;
+    fn get_access_points(&self) -> zbus::Result<Vec<AccessPointPath>>;
 
     /// GetAllAccessPoints method
     ///
@@ -38,7 +40,7 @@ pub trait Wireless {
     /// # Arguments
     ///
     /// * `access_points` - List of access point object paths.
-    fn get_all_access_points(&self) -> zbus::Result<Vec<zbus::zvariant::OwnedObjectPath>>;
+    fn get_all_access_points(&self) -> zbus::Result<Vec<AccessPointPath>>;
 
     /// RequestScan method
     ///
@@ -60,7 +62,7 @@ pub trait Wireless {
     ///
     /// * `access_point` - The object path of the newly found access point.
     #[zbus(signal)]
-    fn access_point_added(&self, access_point: zbus::zvariant::ObjectPath<'_>) -> zbus::Result<()>;
+    fn access_point_added(&self, access_point: AccessPointPath) -> zbus::Result<()>;
 
     /// AccessPointRemoved signal
     ///
@@ -70,22 +72,19 @@ pub trait Wireless {
     ///
     /// * `access_point` - The object path of the access point that has disappeared.
     #[zbus(signal)]
-    fn access_point_removed(
-        &self,
-        access_point: zbus::zvariant::ObjectPath<'_>,
-    ) -> zbus::Result<()>;
+    fn access_point_removed(&self, access_point: AccessPointPath) -> zbus::Result<()>;
 
     /// AccessPoints property
     ///
     /// List of object paths of access point visible to this wireless device.
     #[zbus(property)]
-    fn access_points(&self) -> zbus::Result<Vec<zbus::zvariant::OwnedObjectPath>>;
+    fn access_points(&self) -> zbus::Result<Vec<AccessPointPath>>;
 
     /// ActiveAccessPoint property
     ///
     /// Object path of the access point currently used by the wireless device.
     #[zbus(property)]
-    fn active_access_point(&self) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    fn active_access_point(&self) -> zbus::Result<AccessPointPath>;
 
     /// Bitrate property
     ///

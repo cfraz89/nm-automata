@@ -26,6 +26,19 @@ pub struct Annotations {
     argument: Vec<Argument>,
     #[serde(default)]
     setting: Vec<SettingName>,
+    #[serde(default)]
+    object: Vec<ObjectTarget>,
+}
+
+/// What kind of object an object-path member points at, where it cannot be worked out.
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ObjectTarget {
+    interface: String,
+    /// A property name, or `Member.argument` for an argument.
+    name: String,
+    /// The interface an object at that path implements.
+    target: String,
 }
 
 /// A name for a setting whose own name cannot open a Rust identifier.
@@ -37,6 +50,14 @@ struct SettingName {
 }
 
 impl Annotations {
+    /// The hand-given object-path targets, as [`crate::objects::resolve`] wants them.
+    pub fn object_targets(&self) -> Vec<(String, String, String)> {
+        self.object
+            .iter()
+            .map(|o| (o.interface.clone(), o.name.clone(), o.target.clone()))
+            .collect()
+    }
+
     /// The hand-given field names for settings, as [`crate::settings::parse`] wants them.
     pub fn setting_fields(&self) -> Vec<(String, String)> {
         self.setting

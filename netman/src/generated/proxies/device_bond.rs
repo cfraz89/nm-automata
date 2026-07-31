@@ -10,6 +10,8 @@
 )]
 
 #[allow(unused_imports)]
+use crate::generated::paths::*;
+#[allow(unused_imports)]
 use crate::generated::settings::ConnectionProfile;
 #[allow(unused_imports)]
 use crate::generated::types::*;
@@ -38,5 +40,5 @@ pub trait Bond {
     ///
     /// DEPRECATED. Use the "Ports" property in "org.freedesktop.NetworkManager.Device" instead which exists since version NetworkManager 1.34.0.
     #[zbus(property)]
-    fn slaves(&self) -> zbus::Result<Vec<zbus::zvariant::OwnedObjectPath>>;
+    fn slaves(&self) -> zbus::Result<Vec<DevicePath>>;
 }

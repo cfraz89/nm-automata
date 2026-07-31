@@ -3,13 +3,12 @@
 Ergonomic NetworkManager bindings for Rust, generated from NetworkManager's own D-Bus spec.
 
 ```rust
-use netman::{DeviceProxy, DeviceState, NetworkManagerProxy, ObjectPathSliceExt};
+use netman::{DeviceState, NetworkManagerProxy, NmPathSliceExt};
 
 let connection = zbus::Connection::system().await?;
 let nm = NetworkManagerProxy::new(&connection).await?;
 
-let devices: Vec<DeviceProxy> = nm.get_devices().await?.proxies(&connection).await?;
-for device in devices {
+for device in nm.get_devices().await?.connect_all(&connection).await? {
     if device.state().await? == DeviceState::Activated {
         println!("{} is up", device.interface().await?);
     }
@@ -63,8 +62,10 @@ are kept in `other` maps, so a read-modify-write against a newer daemon does not
 * **Upstream's documentation, as rustdoc.** NetworkManager keeps its docs in XML comments,
   which plain introspection tooling drops. Generation lifts them back out and puts them on the
   proxies, their methods, and every argument.
-* **Typed navigation.** Almost everything NetworkManager returns is an object path.
-  `ObjectPathExt::proxy` and `ObjectPathSliceExt::proxies` turn those into proxies, and
+* **Object paths know what they point at.** `get_devices` returns `Vec<DevicePath>`, not
+  `Vec<OwnedObjectPath>`, and a `DevicePath` builds a `DeviceProxy` and nothing else — 44 of the
+  45 path-valued properties are typed, plus the arguments and return values. The one left is
+  `Connection.Active.SpecificObject`, which really is an access point *or* a Wi-Fi P2P peer.
   `ProxyExt::cast` moves between the several interfaces one object implements — a device object
   carries `Device`, `Device.Wired` and `Device.Statistics` at once.
 * **Signals and property changes** come straight from zbus: `receive_state_changed()` for the

@@ -10,6 +10,8 @@
 )]
 
 #[allow(unused_imports)]
+use crate::generated::paths::*;
+#[allow(unused_imports)]
 use crate::generated::settings::ConnectionProfile;
 #[allow(unused_imports)]
 use crate::generated::types::*;
@@ -32,13 +34,13 @@ pub trait Hsr {
     ///
     /// The device's port1 device.
     #[zbus(property)]
-    fn port1(&self) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    fn port1(&self) -> zbus::Result<DevicePath>;
 
     /// Port2 property
     ///
     /// The device's port2 device.
     #[zbus(property)]
-    fn port2(&self) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    fn port2(&self) -> zbus::Result<DevicePath>;
 
     /// Prp property
     ///

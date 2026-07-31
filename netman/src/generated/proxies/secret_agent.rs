@@ -10,6 +10,8 @@
 )]
 
 #[allow(unused_imports)]
+use crate::generated::paths::*;
+#[allow(unused_imports)]
 use crate::generated::settings::ConnectionProfile;
 #[allow(unused_imports)]
 use crate::generated::types::*;
@@ -32,7 +34,7 @@ pub trait SecretAgent {
     /// * `setting_name` - Setting name for which secrets for this connection were originally being requested.
     fn cancel_get_secrets(
         &self,
-        connection_path: &zbus::zvariant::ObjectPath<'_>,
+        connection_path: &SettingsConnectionPath,
         setting_name: &str,
     ) -> zbus::Result<()>;
 
@@ -47,7 +49,7 @@ pub trait SecretAgent {
     fn delete_secrets(
         &self,
         connection: &ConnectionProfile,
-        connection_path: &zbus::zvariant::ObjectPath<'_>,
+        connection_path: &SettingsConnectionPath,
     ) -> zbus::Result<()>;
 
     /// GetSecrets method
@@ -65,7 +67,7 @@ pub trait SecretAgent {
     fn get_secrets(
         &self,
         connection: &ConnectionProfile,
-        connection_path: &zbus::zvariant::ObjectPath<'_>,
+        connection_path: &SettingsConnectionPath,
         setting_name: &str,
         hints: &[&str],
         flags: SecretAgentGetSecretsFlags,
@@ -82,6 +84,6 @@ pub trait SecretAgent {
     fn save_secrets(
         &self,
         connection: &ConnectionProfile,
-        connection_path: &zbus::zvariant::ObjectPath<'_>,
+        connection_path: &SettingsConnectionPath,
     ) -> zbus::Result<()>;
 }

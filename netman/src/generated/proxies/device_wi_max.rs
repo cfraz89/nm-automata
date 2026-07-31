@@ -10,6 +10,8 @@
 )]
 
 #[allow(unused_imports)]
+use crate::generated::paths::*;
+#[allow(unused_imports)]
 use crate::generated::settings::ConnectionProfile;
 #[allow(unused_imports)]
 use crate::generated::types::*;
@@ -29,7 +31,7 @@ pub trait WiMax {
     /// # Arguments
     ///
     /// * `nsps` - List of NSP object paths.
-    fn get_nsp_list(&self) -> zbus::Result<Vec<zbus::zvariant::OwnedObjectPath>>;
+    fn get_nsp_list(&self) -> zbus::Result<Vec<WiMaxNspPath>>;
 
     /// NspAdded signal
     ///
@@ -39,7 +41,7 @@ pub trait WiMax {
     ///
     /// * `nsp` - The object path of the newly found NSP.
     #[zbus(signal)]
-    fn nsp_added(&self, nsp: zbus::zvariant::ObjectPath<'_>) -> zbus::Result<()>;
+    fn nsp_added(&self, nsp: WiMaxNspPath) -> zbus::Result<()>;
 
     /// NspRemoved signal
     ///
@@ -49,13 +51,13 @@ pub trait WiMax {
     ///
     /// * `nsp` - The object path of the NSP that has disappeared.
     #[zbus(signal)]
-    fn nsp_removed(&self, nsp: zbus::zvariant::ObjectPath<'_>) -> zbus::Result<()>;
+    fn nsp_removed(&self, nsp: WiMaxNspPath) -> zbus::Result<()>;
 
     /// ActiveNsp property
     ///
     /// Object path of the NSP currently used by the WiMax device.
     #[zbus(property)]
-    fn active_nsp(&self) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    fn active_nsp(&self) -> zbus::Result<WiMaxNspPath>;
 
     /// Bsid property
     ///
@@ -85,7 +87,7 @@ pub trait WiMax {
     ///
     /// List of object paths of Network Service Providers (NSPs) visible to this WiMAX device.
     #[zbus(property)]
-    fn nsps(&self) -> zbus::Result<Vec<zbus::zvariant::OwnedObjectPath>>;
+    fn nsps(&self) -> zbus::Result<Vec<WiMaxNspPath>>;
 
     /// Rssi property
     ///

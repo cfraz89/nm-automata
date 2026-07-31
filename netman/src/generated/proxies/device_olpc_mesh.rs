@@ -10,6 +10,8 @@
 )]
 
 #[allow(unused_imports)]
+use crate::generated::paths::*;
+#[allow(unused_imports)]
 use crate::generated::settings::ConnectionProfile;
 #[allow(unused_imports)]
 use crate::generated::types::*;
@@ -32,7 +34,7 @@ pub trait OlpcMesh {
     ///
     /// The object path of the companion device.
     #[zbus(property)]
-    fn companion(&self) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    fn companion(&self) -> zbus::Result<DevicePath>;
 
     /// HwAddress property
     ///

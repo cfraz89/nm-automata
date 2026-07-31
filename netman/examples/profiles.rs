@@ -7,7 +7,7 @@
 //! Run with `cargo run --example profiles`. It only reads.
 
 use netman::settings::ProfileMap;
-use netman::{ConnectionProfile, ObjectPathSliceExt, SettingsConnectionProxy, SettingsProxy};
+use netman::{ConnectionProfile, NmPathSliceExt, SettingsConnectionProxy, SettingsProxy};
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -17,7 +17,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let profiles: Vec<SettingsConnectionProxy> = settings
         .list_connections()
         .await?
-        .proxies(&connection)
+        .connect_all(&connection)
         .await?;
     println!("{} saved profile(s)\n", profiles.len());
 

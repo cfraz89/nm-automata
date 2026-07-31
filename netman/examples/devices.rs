@@ -2,9 +2,7 @@
 //!
 //! Run with `cargo run --example devices`.
 
-use netman::{
-    DeviceProxy, DeviceState, NetworkManagerProxy, ObjectPathSliceExt, ProxyExt, WirelessProxy,
-};
+use netman::{DeviceState, NetworkManagerProxy, NmPath, ProxyExt, WirelessProxy};
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -23,8 +21,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     );
     println!("capabilities: {:?}", nm.capabilities().await?);
 
-    let devices: Vec<DeviceProxy> = nm.get_devices().await?.proxies(&connection).await?;
-    for device in devices {
+    // `get_devices` hands back `Vec<DevicePath>`, and each path builds its own proxy.
+    for path in nm.get_devices().await? {
+        let device = path.connect(&connection).await?;
         let state = device.state().await?;
         println!(
             "\n{} ({:?}) — {:?}",
@@ -46,7 +45,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
 
         if state == DeviceState::Activated {
-            println!("  active connection: {}", device.active_connection().await?);
+            // A typed path: this one can only build a Connection.Active proxy.
+            let active = device
+                .active_connection()
+                .await?
+                .connect(&connection)
+                .await?;
+            println!("  active connection: {:?}", active.state().await?);
         }
     }
 

@@ -10,6 +10,8 @@
 )]
 
 #[allow(unused_imports)]
+use crate::generated::paths::*;
+#[allow(unused_imports)]
 use crate::generated::settings::ConnectionProfile;
 #[allow(unused_imports)]
 use crate::generated::types::*;
@@ -93,7 +95,7 @@ pub trait Device {
     ///
     /// Object path of an ActiveConnection object that "owns" this device during activation. The ActiveConnection object tracks the life-cycle of a connection to a specific network and implements the org.freedesktop.NetworkManager.Connection.Active D-Bus interface.
     #[zbus(property)]
-    fn active_connection(&self) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    fn active_connection(&self) -> zbus::Result<ConnectionActivePath>;
 
     /// Autoconnect property
     ///
@@ -107,7 +109,7 @@ pub trait Device {
     ///
     /// An array of object paths of every configured connection that is currently 'available' through this device.
     #[zbus(property)]
-    fn available_connections(&self) -> zbus::Result<Vec<zbus::zvariant::OwnedObjectPath>>;
+    fn available_connections(&self) -> zbus::Result<Vec<SettingsConnectionPath>>;
 
     /// Capabilities property
     ///
@@ -125,13 +127,13 @@ pub trait Device {
     ///
     /// Object path of the Dhcp4Config object describing the DHCP options returned by the DHCP server. Only valid when the device is in the NM_DEVICE_STATE_ACTIVATED state.
     #[zbus(property)]
-    fn dhcp4_config(&self) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    fn dhcp4_config(&self) -> zbus::Result<Dhcp4ConfigPath>;
 
     /// Dhcp6Config property
     ///
     /// Object path of the Dhcp6Config object describing the DHCP options returned by the DHCP server. Only valid when the device is in the NM_DEVICE_STATE_ACTIVATED state.
     #[zbus(property)]
-    fn dhcp6_config(&self) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    fn dhcp6_config(&self) -> zbus::Result<Dhcp6ConfigPath>;
 
     /// Driver property
     ///
@@ -185,7 +187,7 @@ pub trait Device {
     ///
     /// Object path of the Ip4Config object describing the configuration of the device. Only valid when the device is in the NM_DEVICE_STATE_ACTIVATED state.
     #[zbus(property)]
-    fn ip4_config(&self) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    fn ip4_config(&self) -> zbus::Result<Ip4ConfigPath>;
 
     /// Ip4Connectivity property
     ///
@@ -197,7 +199,7 @@ pub trait Device {
     ///
     /// Object path of the Ip6Config object describing the configuration of the device. Only valid when the device is in the NM_DEVICE_STATE_ACTIVATED state.
     #[zbus(property)]
-    fn ip6_config(&self) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    fn ip6_config(&self) -> zbus::Result<Ip6ConfigPath>;
 
     /// Ip6Connectivity property
     ///
@@ -261,7 +263,7 @@ pub trait Device {
     ///
     /// The port devices of the controller device. Array of object paths representing devices which are currently set as port of this device. This replaces the 'Slaves' properties on the device-specific D-Bus interfaces.
     #[zbus(property)]
-    fn ports(&self) -> zbus::Result<Vec<zbus::zvariant::OwnedObjectPath>>;
+    fn ports(&self) -> zbus::Result<Vec<DevicePath>>;
 
     /// Real property
     ///

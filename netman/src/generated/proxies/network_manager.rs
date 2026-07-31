@@ -10,6 +10,8 @@
 )]
 
 #[allow(unused_imports)]
+use crate::generated::paths::*;
+#[allow(unused_imports)]
 use crate::generated::settings::ConnectionProfile;
 #[allow(unused_imports)]
 use crate::generated::types::*;
@@ -34,10 +36,10 @@ pub trait NetworkManager {
     /// * `active_connection` - The path of the active connection object representing this active connection.
     fn activate_connection(
         &self,
-        connection: &zbus::zvariant::ObjectPath<'_>,
-        device: &zbus::zvariant::ObjectPath<'_>,
+        connection: &SettingsConnectionPath,
+        device: &DevicePath,
         specific_object: &zbus::zvariant::ObjectPath<'_>,
-    ) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    ) -> zbus::Result<ConnectionActivePath>;
 
     /// AddAndActivateConnection method
     ///
@@ -53,12 +55,9 @@ pub trait NetworkManager {
     fn add_and_activate_connection(
         &self,
         connection: &ConnectionProfile,
-        device: &zbus::zvariant::ObjectPath<'_>,
+        device: &DevicePath,
         specific_object: &zbus::zvariant::ObjectPath<'_>,
-    ) -> zbus::Result<(
-        zbus::zvariant::OwnedObjectPath,
-        zbus::zvariant::OwnedObjectPath,
-    )>;
+    ) -> zbus::Result<(SettingsConnectionPath, ConnectionActivePath)>;
 
     /// AddAndActivateConnection2 method
     ///
@@ -77,12 +76,12 @@ pub trait NetworkManager {
     fn add_and_activate_connection2(
         &self,
         connection: &ConnectionProfile,
-        device: &zbus::zvariant::ObjectPath<'_>,
+        device: &DevicePath,
         specific_object: &zbus::zvariant::ObjectPath<'_>,
         options: std::collections::HashMap<&str, &zbus::zvariant::Value<'_>>,
     ) -> zbus::Result<(
-        zbus::zvariant::OwnedObjectPath,
-        zbus::zvariant::OwnedObjectPath,
+        SettingsConnectionPath,
+        ConnectionActivePath,
         std::collections::HashMap<String, zbus::zvariant::OwnedValue>,
     )>;
 
@@ -105,7 +104,7 @@ pub trait NetworkManager {
     /// * `add_timeout` - Number of seconds from now in which the timeout will expire. Set to 0 to disable the timeout.
     fn checkpoint_adjust_rollback_timeout(
         &self,
-        checkpoint: &zbus::zvariant::ObjectPath<'_>,
+        checkpoint: &CheckpointPath,
         add_timeout: u32,
     ) -> zbus::Result<()>;
 
@@ -121,10 +120,10 @@ pub trait NetworkManager {
     /// * `checkpoint` - On success, the path of the new checkpoint.
     fn checkpoint_create(
         &self,
-        devices: &[&zbus::zvariant::ObjectPath<'_>],
+        devices: &[DevicePath],
         rollback_timeout: u32,
         flags: CheckpointCreateFlags,
-    ) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    ) -> zbus::Result<CheckpointPath>;
 
     /// CheckpointDestroy method
     ///
@@ -133,7 +132,7 @@ pub trait NetworkManager {
     /// # Arguments
     ///
     /// * `checkpoint` - The checkpoint to be destroyed. Set to empty to cancel all pending checkpoints.
-    fn checkpoint_destroy(&self, checkpoint: &zbus::zvariant::ObjectPath<'_>) -> zbus::Result<()>;
+    fn checkpoint_destroy(&self, checkpoint: &CheckpointPath) -> zbus::Result<()>;
 
     /// CheckpointRollback method
     ///
@@ -145,7 +144,7 @@ pub trait NetworkManager {
     /// * `result` - On return, a dictionary of devices and results. Devices are represented by their original D-Bus path; each result is a RollbackResult.
     fn checkpoint_rollback(
         &self,
-        checkpoint: &zbus::zvariant::ObjectPath<'_>,
+        checkpoint: &CheckpointPath,
     ) -> zbus::Result<std::collections::HashMap<String, u32>>;
 
     /// DeactivateConnection method
@@ -155,10 +154,7 @@ pub trait NetworkManager {
     /// # Arguments
     ///
     /// * `active_connection` - The currently active connection to deactivate.
-    fn deactivate_connection(
-        &self,
-        active_connection: &zbus::zvariant::ObjectPath<'_>,
-    ) -> zbus::Result<()>;
+    fn deactivate_connection(&self, active_connection: &ConnectionActivePath) -> zbus::Result<()>;
 
     /// Enable method
     ///
@@ -176,7 +172,7 @@ pub trait NetworkManager {
     /// # Arguments
     ///
     /// * `devices` - List of object paths of network devices and device placeholders (eg, devices that do not yet exist but which can be automatically created by NetworkManager if one of their AvailableConnections was activated).
-    fn get_all_devices(&self) -> zbus::Result<Vec<zbus::zvariant::OwnedObjectPath>>;
+    fn get_all_devices(&self) -> zbus::Result<Vec<DevicePath>>;
 
     /// GetDeviceByIpIface method
     ///
@@ -186,7 +182,7 @@ pub trait NetworkManager {
     ///
     /// * `iface` - Interface name of the device to find.
     /// * `device` - Object path of the network device.
-    fn get_device_by_ip_iface(&self, iface: &str) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    fn get_device_by_ip_iface(&self, iface: &str) -> zbus::Result<DevicePath>;
 
     /// GetDevices method
     ///
@@ -195,7 +191,7 @@ pub trait NetworkManager {
     /// # Arguments
     ///
     /// * `devices` - List of object paths of network devices known to the system. This list does not include device placeholders (see GetAllDevices()).
-    fn get_devices(&self) -> zbus::Result<Vec<zbus::zvariant::OwnedObjectPath>>;
+    fn get_devices(&self) -> zbus::Result<Vec<DevicePath>>;
 
     /// GetLogging method
     ///
@@ -268,7 +264,7 @@ pub trait NetworkManager {
     ///
     /// * `device_path` - The object path of the newly added device.
     #[zbus(signal)]
-    fn device_added(&self, device_path: zbus::zvariant::ObjectPath<'_>) -> zbus::Result<()>;
+    fn device_added(&self, device_path: DevicePath) -> zbus::Result<()>;
 
     /// DeviceRemoved signal
     ///
@@ -278,7 +274,7 @@ pub trait NetworkManager {
     ///
     /// * `device_path` - The object path of the device that was just removed.
     #[zbus(signal)]
-    fn device_removed(&self, device_path: zbus::zvariant::ObjectPath<'_>) -> zbus::Result<()>;
+    fn device_removed(&self, device_path: DevicePath) -> zbus::Result<()>;
 
     /// StateChanged signal
     ///
@@ -294,19 +290,19 @@ pub trait NetworkManager {
     ///
     /// The object path of an active connection that is currently being activated and which is expected to become the new PrimaryConnection when it finishes activating.
     #[zbus(property)]
-    fn activating_connection(&self) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    fn activating_connection(&self) -> zbus::Result<ConnectionActivePath>;
 
     /// ActiveConnections property
     ///
     /// List of active connection object paths.
     #[zbus(property)]
-    fn active_connections(&self) -> zbus::Result<Vec<zbus::zvariant::OwnedObjectPath>>;
+    fn active_connections(&self) -> zbus::Result<Vec<ConnectionActivePath>>;
 
     /// AllDevices property
     ///
     /// The list of both realized and un-realized network devices. Un-realized devices are software devices which do not yet have backing resources, but for which backing resources can be created if the device is activated.
     #[zbus(property)]
-    fn all_devices(&self) -> zbus::Result<Vec<zbus::zvariant::OwnedObjectPath>>;
+    fn all_devices(&self) -> zbus::Result<Vec<DevicePath>>;
 
     /// Capabilities property
     ///
@@ -318,7 +314,7 @@ pub trait NetworkManager {
     ///
     /// The list of active checkpoints.
     #[zbus(property)]
-    fn checkpoints(&self) -> zbus::Result<Vec<zbus::zvariant::OwnedObjectPath>>;
+    fn checkpoints(&self) -> zbus::Result<Vec<CheckpointPath>>;
 
     /// Connectivity property
     ///
@@ -350,7 +346,7 @@ pub trait NetworkManager {
     ///
     /// The list of realized network devices. Realized devices are those which have backing resources (eg from the kernel or a management daemon like ModemManager, teamd, etc).
     #[zbus(property)]
-    fn devices(&self) -> zbus::Result<Vec<zbus::zvariant::OwnedObjectPath>>;
+    fn devices(&self) -> zbus::Result<Vec<DevicePath>>;
 
     /// GlobalDnsConfiguration property
     ///
@@ -381,7 +377,7 @@ pub trait NetworkManager {
     ///
     /// The object path of the "primary" active connection being used to access the network. In particular, if there is no VPN active, or the VPN does not have the default route, then this indicates the connection that has the default route. If there is a VPN active with the default route, then this indicates the connection that contains the route to the VPN endpoint.
     #[zbus(property)]
-    fn primary_connection(&self) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    fn primary_connection(&self) -> zbus::Result<ConnectionActivePath>;
 
     /// PrimaryConnectionType property
     ///
