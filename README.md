@@ -254,6 +254,27 @@ break graphs that zbus itself handles. With neither, zbus fails to compile with 
 
 `blocking-api` additionally generates the blocking proxies.
 
+## Empty strings
+
+D-Bus has no null, so a property with no value still has to send something, and many of
+NetworkManager's send `""` — a device with no permanent hardware address, or a Wi-Fi P2P device
+asked for its `HwAddress`. `NonEmpty` reads that as absent where you know that is the meaning:
+
+```rust
+use nm_automata::NonEmpty;
+
+match wireless.perm_hw_address().await?.non_empty() {
+    Some(address) => println!("permanent address {address}"),
+    None => println!("no permanent address"),
+}
+```
+
+The getters themselves keep returning what NetworkManager sent, because nothing upstream says
+which properties mean it — the introspection XML has no nullability annotation, and the GIR
+marks no property nullable. Guessing would also be wrong often: an empty `connection.permissions`
+grants *every* user access, and an empty `802-1x.altsubject-matches` disables certificate
+verification. Reading either as "unset" inverts it.
+
 ## Licence
 
 MIT or Apache-2.0, at your option. The vendored spec under `spec/` is NetworkManager's, under
