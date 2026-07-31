@@ -59,7 +59,9 @@ impl zbus::zvariant::Type for AddressData {
 
 impl serde::Serialize for AddressData {
     fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        serde::Serialize::serialize(
+        // Through `settings::serialize_setting` because `to_map` builds a fresh map every
+        // call and zvariant serialises twice; see there.
+        settings::serialize_setting(
             &self.to_map().map_err(serde::ser::Error::custom)?,
             serializer,
         )
@@ -150,7 +152,9 @@ impl zbus::zvariant::Type for RouteData {
 
 impl serde::Serialize for RouteData {
     fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        serde::Serialize::serialize(
+        // Through `settings::serialize_setting` because `to_map` builds a fresh map every
+        // call and zvariant serialises twice; see there.
+        settings::serialize_setting(
             &self.to_map().map_err(serde::ser::Error::custom)?,
             serializer,
         )
@@ -223,7 +227,9 @@ impl zbus::zvariant::Type for NameserverData {
 
 impl serde::Serialize for NameserverData {
     fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        serde::Serialize::serialize(
+        // Through `settings::serialize_setting` because `to_map` builds a fresh map every
+        // call and zvariant serialises twice; see there.
+        settings::serialize_setting(
             &self.to_map().map_err(serde::ser::Error::custom)?,
             serializer,
         )
@@ -324,7 +330,9 @@ impl zbus::zvariant::Type for DnsConfiguration {
 
 impl serde::Serialize for DnsConfiguration {
     fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        serde::Serialize::serialize(
+        // Through `settings::serialize_setting` because `to_map` builds a fresh map every
+        // call and zvariant serialises twice; see there.
+        settings::serialize_setting(
             &self.to_map().map_err(serde::ser::Error::custom)?,
             serializer,
         )

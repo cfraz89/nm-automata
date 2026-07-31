@@ -18,7 +18,7 @@
 //! [`ConnectionProfile`](crate::ConnectionProfile) and of each setting, so reading a profile
 //! from a newer NetworkManager, changing one field and writing it back does not drop the rest.
 
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 use std::fmt;
 
 use zbus::zvariant::{OwnedValue, Value};
@@ -145,6 +145,53 @@ pub fn merge_unknown(
         map.insert(key.clone(), value);
     }
     Ok(())
+}
+
+/// Serialise a setting's properties in a fixed order.
+///
+/// See [`serialize_profile`] for why the order has to be fixed.
+pub fn serialize_setting<S: serde::Serializer>(
+    map: &SettingMap,
+    serializer: S,
+) -> Result<S::Ok, S::Error> {
+    let ordered: BTreeMap<&str, &OwnedValue> = map
+        .iter()
+        .map(|(key, value)| (key.as_str(), value))
+        .collect();
+    serde::Serialize::serialize(&ordered, serializer)
+}
+
+/// Serialise a whole profile in a fixed order.
+///
+/// **zvariant serialises a value twice** - once to size the buffer, then again to fill it - and
+/// the length it writes into the message comes from the first pass. A [`Serialize`] impl that
+/// builds a fresh [`HashMap`] each call (which is what `to_map` does) would iterate the two
+/// passes in different orders, and since dict entries are padded to their alignment, a different
+/// order is a different length. The message then declares one length and carries another, which
+/// a strict bus rejects outright: `dbus-broker` closes the connection with "sent a message with
+/// an invalid body", taking every later call on it down too.
+///
+/// Sorting by key is the cheapest order that does not depend on which map instance produced it.
+/// D-Bus dictionaries are unordered, so nothing downstream can tell the difference.
+///
+/// [`Serialize`]: serde::Serialize
+pub fn serialize_profile<S: serde::Serializer>(
+    map: &ProfileMap,
+    serializer: S,
+) -> Result<S::Ok, S::Error> {
+    let ordered: BTreeMap<&str, BTreeMap<&str, &OwnedValue>> = map
+        .iter()
+        .map(|(setting, properties)| {
+            (
+                setting.as_str(),
+                properties
+                    .iter()
+                    .map(|(key, value)| (key.as_str(), value))
+                    .collect(),
+            )
+        })
+        .collect();
+    serde::Serialize::serialize(&ordered, serializer)
 }
 
 /// Read a setting out of a profile, if it is present.

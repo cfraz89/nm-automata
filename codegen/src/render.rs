@@ -996,7 +996,9 @@ fn write_profile_struct(out: &mut String, settings: &[crate::settings::Setting])
          \n\
          impl serde::Serialize for ConnectionProfile {{\n    \
          fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {{\n        \
-         serde::Serialize::serialize(&self.to_map().map_err(serde::ser::Error::custom)?, serializer)\n    \
+         // Through `settings::serialize_profile` because `to_map` builds a fresh map every\n        \
+         // call and zvariant serialises twice; see there.\n        \
+         settings::serialize_profile(&self.to_map().map_err(serde::ser::Error::custom)?, serializer)\n    \
          }}\n\
          }}\n\
          \n\
@@ -1557,7 +1559,9 @@ pub fn vardict_module(
              \n\
              impl serde::Serialize for {name} {{\n    \
              fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {{\n        \
-             serde::Serialize::serialize(&self.to_map().map_err(serde::ser::Error::custom)?, serializer)\n    \
+             // Through `settings::serialize_setting` because `to_map` builds a fresh map every\n        \
+             // call and zvariant serialises twice; see there.\n        \
+             settings::serialize_setting(&self.to_map().map_err(serde::ser::Error::custom)?, serializer)\n    \
              }}\n\
              }}\n\
              \n\
