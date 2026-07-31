@@ -62,9 +62,12 @@
 mod ext;
 mod generated;
 mod repr;
+pub mod settings;
 
 pub use ext::{ObjectPathExt, ObjectPathSliceExt, ProxyExt};
 pub use generated::proxies::*;
+pub use generated::settings as profile;
+pub use generated::settings::*;
 pub use generated::types::*;
 pub use generated::{NM_VERSION, proxies, types};
 

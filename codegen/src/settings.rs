@@ -60,7 +60,9 @@ pub enum PropertyType {
     /// here, so these stay maps.
     VardictArray,
     /// One of NetworkManager's enumerations or flag sets, named as it is in the headers.
-    Named { c_name: String },
+    Named {
+        c_name: String,
+    },
     /// `a(ayuay)` — `ipv6.addresses`, kept for compatibility by NetworkManager.
     LegacyIp6Addresses,
     /// `a(ayuayu)` — `ipv6.routes`, likewise.
@@ -68,28 +70,18 @@ pub enum PropertyType {
 }
 
 impl PropertyType {
-    /// The D-Bus signature a value of this type travels as.
-    pub fn signature(&self) -> &'static str {
-        match self {
-            Self::Bool => "b",
-            Self::Byte => "y",
-            Self::Int32 => "i",
-            Self::Uint32 => "u",
-            Self::Int64 => "x",
-            Self::Uint64 => "t",
-            Self::Str => "s",
-            Self::StrArray => "as",
-            Self::ByteArray => "ay",
-            Self::ByteArrayArray => "aay",
-            Self::Uint32Array => "au",
-            Self::Uint32ArrayArray => "aau",
-            Self::StringMap => "a{ss}",
-            Self::VardictArray => "aa{sv}",
-            Self::LegacyIp6Addresses => "a(ayuay)",
-            Self::LegacyIp6Routes => "a(ayuayu)",
-            // Filled in from the enumeration's own resolved width.
-            Self::Named { .. } => "",
-        }
+    /// Whether a value of this type is `Copy`, and so needs no clone when written out.
+    pub fn is_copy(&self) -> bool {
+        matches!(
+            self,
+            Self::Bool
+                | Self::Byte
+                | Self::Int32
+                | Self::Uint32
+                | Self::Int64
+                | Self::Uint64
+                | Self::Named { .. }
+        )
     }
 
     /// Read one of the type strings the table uses.
@@ -143,7 +135,9 @@ pub fn parse(source: &str, field_name_overrides: &[(String, String)]) -> Result<
 
     let mut settings = Vec::new();
     for node in root.children().filter(|n| n.has_tag_name("setting")) {
-        let name = node.attribute("name").context("a <setting> without a name")?;
+        let name = node
+            .attribute("name")
+            .context("a <setting> without a name")?;
 
         let field_name = field_name(name, node.attribute("name_upper"), field_name_overrides)
             .with_context(|| {
@@ -207,7 +201,11 @@ pub fn parse(source: &str, field_name_overrides: &[(String, String)]) -> Result<
 
 /// The field a setting becomes: its own name where that works, else the upper-case form
 /// NetworkManager also gives (`802-3-ethernet` is `WIRED`), else an override.
-fn field_name(name: &str, name_upper: Option<&str>, overrides: &[(String, String)]) -> Option<String> {
+fn field_name(
+    name: &str,
+    name_upper: Option<&str>,
+    overrides: &[(String, String)],
+) -> Option<String> {
     if let Some((_, field)) = overrides.iter().find(|(setting, _)| setting == name) {
         return Some(field.clone());
     }
@@ -221,7 +219,10 @@ fn field_name(name: &str, name_upper: Option<&str>, overrides: &[(String, String
 fn field_ident(name: &str) -> String {
     let ident = name.replace('-', "_").to_ascii_lowercase();
     // A handful of property names are Rust keywords.
-    if matches!(ident.as_str(), "type" | "match" | "priority" | "fn" | "mod" | "ref") {
+    if matches!(
+        ident.as_str(),
+        "type" | "match" | "priority" | "fn" | "mod" | "ref"
+    ) {
         return format!("{ident}_");
     }
     ident
@@ -294,7 +295,9 @@ mod tests {
         assert_eq!(settings[0].properties[1].default.as_deref(), Some("0"));
         assert_eq!(
             settings[1].properties[0].ty,
-            PropertyType::Named { c_name: "NMMetered".to_owned() }
+            PropertyType::Named {
+                c_name: "NMMetered".to_owned()
+            }
         );
     }
 
@@ -347,7 +350,8 @@ mod vendored {
         )))
         .expect("annotations.toml parses");
 
-        let settings = super::parse(&source, &overrides.setting_fields()).expect("the table parses");
+        let settings =
+            super::parse(&source, &overrides.setting_fields()).expect("the table parses");
 
         let properties: usize = settings.iter().map(|s| s.properties.len()).sum();
         assert!(
