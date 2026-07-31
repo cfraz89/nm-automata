@@ -15,6 +15,7 @@ zbus = { workspace = true }
 bitflags = { workspace = true }
 serde = { workspace = true }
 serde_repr = { workspace = true }
+futures-util = { version = "0.3.33", default-features = false, features = ["std"] }
 
 [dev-dependencies]
 zbus = { workspace = true, features = ["async-io"] }

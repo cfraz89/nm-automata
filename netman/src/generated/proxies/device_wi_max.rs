@@ -43,8 +43,8 @@ pub trait WiMax {
     /// # Arguments
     ///
     /// * `nsp` - The object path of the newly found NSP.
-    #[zbus(signal)]
-    fn nsp_added(&self, nsp: WiMaxNspPath) -> zbus::Result<()>;
+    #[zbus(signal, name = "NspAdded")]
+    fn nsp_added_path(&self, nsp: WiMaxNspPath) -> zbus::Result<()>;
 
     /// NspRemoved signal
     ///
@@ -53,8 +53,8 @@ pub trait WiMax {
     /// # Arguments
     ///
     /// * `nsp` - The object path of the NSP that has disappeared.
-    #[zbus(signal)]
-    fn nsp_removed(&self, nsp: WiMaxNspPath) -> zbus::Result<()>;
+    #[zbus(signal, name = "NspRemoved")]
+    fn nsp_removed_path(&self, nsp: WiMaxNspPath) -> zbus::Result<()>;
 
     /// Bsid property
     ///
@@ -132,6 +132,48 @@ impl WiMaxProxy<'_> {
     pub async fn active_nsp(&self) -> zbus::Result<crate::proxies::wi_max_nsp::NspProxy<'static>> {
         let path = self.active_nsp_path().await?;
         crate::NmPath::connect(&path, self.inner().connection()).await
+    }
+
+    /// The objects the `NspAdded` signal carries, as they arrive.
+    ///
+    /// Each is built on this proxy's own connection.
+    /// [`receive_nsp_added_path`](Self::receive_nsp_added_path) gives the signal itself, carrying
+    /// the path.
+    pub async fn receive_nsp_added(
+        &self,
+    ) -> zbus::Result<
+        impl futures_util::Stream<Item = zbus::Result<crate::proxies::wi_max_nsp::NspProxy<'static>>>
+        + use<>,
+    > {
+        let connection = self.inner().connection().clone();
+        let signals = self.receive_nsp_added_path().await?;
+        Ok(futures_util::StreamExt::then(signals, move |signal| {
+            let connection = connection.clone();
+            // Boxed so the stream stays `Unpin` and can be polled with `next()`
+            // without pinning it first.
+            Box::pin(async move { crate::NmPath::connect(signal.args()?.nsp(), &connection).await })
+        }))
+    }
+
+    /// The objects the `NspRemoved` signal carries, as they arrive.
+    ///
+    /// Each is built on this proxy's own connection.
+    /// [`receive_nsp_removed_path`](Self::receive_nsp_removed_path) gives the signal itself, carrying
+    /// the path.
+    pub async fn receive_nsp_removed(
+        &self,
+    ) -> zbus::Result<
+        impl futures_util::Stream<Item = zbus::Result<crate::proxies::wi_max_nsp::NspProxy<'static>>>
+        + use<>,
+    > {
+        let connection = self.inner().connection().clone();
+        let signals = self.receive_nsp_removed_path().await?;
+        Ok(futures_util::StreamExt::then(signals, move |signal| {
+            let connection = connection.clone();
+            // Boxed so the stream stays `Unpin` and can be polled with `next()`
+            // without pinning it first.
+            Box::pin(async move { crate::NmPath::connect(signal.args()?.nsp(), &connection).await })
+        }))
     }
 
     /// The objects the `GetNspList` method points at.

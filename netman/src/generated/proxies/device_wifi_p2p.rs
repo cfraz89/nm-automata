@@ -50,8 +50,8 @@ pub trait WifiP2P {
     /// # Arguments
     ///
     /// * `peer` - The object path of the newly found access point.
-    #[zbus(signal)]
-    fn peer_added(&self, peer: WifiP2pPeerPath) -> zbus::Result<()>;
+    #[zbus(signal, name = "PeerAdded")]
+    fn peer_added_path(&self, peer: WifiP2pPeerPath) -> zbus::Result<()>;
 
     /// PeerRemoved signal
     ///
@@ -60,8 +60,8 @@ pub trait WifiP2P {
     /// # Arguments
     ///
     /// * `peer` - The object path of the Wi-Fi P2P peer that has disappeared.
-    #[zbus(signal)]
-    fn peer_removed(&self, peer: WifiP2pPeerPath) -> zbus::Result<()>;
+    #[zbus(signal, name = "PeerRemoved")]
+    fn peer_removed_path(&self, peer: WifiP2pPeerPath) -> zbus::Result<()>;
 
     /// HwAddress property
     ///
@@ -96,5 +96,53 @@ impl WifiP2PProxy<'_> {
     ) -> zbus::Result<Vec<crate::proxies::wifi_p2p_peer::WifiP2PPeerProxy<'static>>> {
         let paths = self.peer_paths().await?;
         crate::NmPathSliceExt::connect_all(&paths, self.inner().connection()).await
+    }
+
+    /// The objects the `PeerAdded` signal carries, as they arrive.
+    ///
+    /// Each is built on this proxy's own connection.
+    /// [`receive_peer_added_path`](Self::receive_peer_added_path) gives the signal itself, carrying
+    /// the path.
+    pub async fn receive_peer_added(
+        &self,
+    ) -> zbus::Result<
+        impl futures_util::Stream<
+            Item = zbus::Result<crate::proxies::wifi_p2p_peer::WifiP2PPeerProxy<'static>>,
+        > + use<>,
+    > {
+        let connection = self.inner().connection().clone();
+        let signals = self.receive_peer_added_path().await?;
+        Ok(futures_util::StreamExt::then(signals, move |signal| {
+            let connection = connection.clone();
+            // Boxed so the stream stays `Unpin` and can be polled with `next()`
+            // without pinning it first.
+            Box::pin(
+                async move { crate::NmPath::connect(signal.args()?.peer(), &connection).await },
+            )
+        }))
+    }
+
+    /// The objects the `PeerRemoved` signal carries, as they arrive.
+    ///
+    /// Each is built on this proxy's own connection.
+    /// [`receive_peer_removed_path`](Self::receive_peer_removed_path) gives the signal itself, carrying
+    /// the path.
+    pub async fn receive_peer_removed(
+        &self,
+    ) -> zbus::Result<
+        impl futures_util::Stream<
+            Item = zbus::Result<crate::proxies::wifi_p2p_peer::WifiP2PPeerProxy<'static>>,
+        > + use<>,
+    > {
+        let connection = self.inner().connection().clone();
+        let signals = self.receive_peer_removed_path().await?;
+        Ok(futures_util::StreamExt::then(signals, move |signal| {
+            let connection = connection.clone();
+            // Boxed so the stream stays `Unpin` and can be polled with `next()`
+            // without pinning it first.
+            Box::pin(
+                async move { crate::NmPath::connect(signal.args()?.peer(), &connection).await },
+            )
+        }))
     }
 }

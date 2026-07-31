@@ -271,6 +271,8 @@ pub struct PathAccessor {
     pub target: String,
     /// Whether the member returns a list of paths rather than one.
     pub list: bool,
+    /// The argument a signal carries, when the member is one.
+    pub signal_arg: Option<String>,
     /// How the member is described, for the accessor's documentation.
     pub description: String,
 }
@@ -297,6 +299,7 @@ pub fn plan(
 
     // Read-only path properties, and methods whose single output is a path.
     let mut candidates: Vec<(Site, String, bool, String)> = Vec::new();
+    let mut signals: Vec<String> = Vec::new();
     for property in interface.properties() {
         let name = property.name().to_string();
         let signature = property.ty().to_string();
@@ -309,6 +312,24 @@ pub fn plan(
             ));
         }
     }
+    for signal in interface.signals() {
+        // Only a signal whose whole payload is one path can become a stream of objects;
+        // anything else would have to change shape, not just type.
+        let [arg] = signal.args() else { continue };
+        let Some(arg_name) = arg.name() else { continue };
+        if arg.ty().inner().to_string() != "o" {
+            continue;
+        }
+        let member = signal.name().to_string();
+        candidates.push((
+            Site::Arg(member.clone(), arg_name.to_owned()),
+            member.clone(),
+            false,
+            format!("the `{member}` signal"),
+        ));
+        signals.push(member);
+    }
+
     for method in interface.methods() {
         let outputs: Vec<_> = method
             .args()
@@ -353,17 +374,22 @@ pub fn plan(
             sentinel_type: format!("NetmanRename{index:03}"),
             fn_name: raw.clone(),
             type_name: pascal_case(&raw),
-            kind: if matches!(site, Site::Property(_)) {
-                "property"
-            } else {
-                "method"
+            kind: match (&site, signals.contains(&member)) {
+                (Site::Property(_), _) => "property",
+                (_, true) => "signal",
+                _ => "method",
             },
+        });
+        let signal_arg = signals.contains(&member).then(|| match &site {
+            Site::Arg(_, arg) => arg.clone(),
+            Site::Property(name) => name.clone(),
         });
         accessors.push(PathAccessor {
             raw,
             wrapper,
             target: target.clone(),
             list,
+            signal_arg,
             description,
         });
     }
@@ -1339,6 +1365,36 @@ pub fn path_accessors(
             .next()
             .unwrap_or(&accessor.target);
         let proxy = format!("crate::proxies::{module}::{target_trait}Proxy<'static>");
+
+        // A signal becomes a stream of objects rather than an accessor.
+        if let Some(arg) = &accessor.signal_arg {
+            let _ = writeln!(
+                out,
+                "    /// The objects {description} carries, as they arrive.\n    \
+                 ///\n    \
+                 /// Each is built on this proxy's own connection.\n    \
+                 /// [`receive_{raw}`](Self::receive_{raw}) gives the signal itself, carrying\n    \
+                 /// the path.\n    \
+                 pub async fn receive_{wrapper}(\n        \
+                 &self,\n    \
+                 ) -> zbus::Result<impl futures_util::Stream<Item = zbus::Result<{proxy}>> + use<>> {{\n        \
+                 let connection = self.inner().connection().clone();\n        \
+                 let signals = self.receive_{raw}().await?;\n        \
+                 Ok(futures_util::StreamExt::then(signals, move |signal| {{\n            \
+                 let connection = connection.clone();\n            \
+                 // Boxed so the stream stays `Unpin` and can be polled with `next()`\n            \
+                 // without pinning it first.\n            \
+                 Box::pin(async move {{\n                \
+                 crate::NmPath::connect(signal.args()?.{arg}(), &connection).await\n            \
+                 }})\n        \
+                 }}))\n    \
+                 }}\n",
+                description = accessor.description,
+                raw = accessor.raw,
+                wrapper = accessor.wrapper,
+            );
+            continue;
+        }
 
         // The raw member may take arguments; rather than work out their Rust types a second
         // time, its parameter list is taken from the signature just generated for it.

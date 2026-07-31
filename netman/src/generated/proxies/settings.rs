@@ -125,16 +125,6 @@ pub trait Settings {
         connection: &ConnectionProfile,
     ) -> zbus::Result<SettingsConnectionPath>;
 
-    /// ConnectionRemoved signal
-    ///
-    /// Emitted when a connection is no longer available. This happens when the connection is deleted or if it is no longer accessible by any of the system's logged-in users. After receipt of this signal, the connection no longer exists and cannot be used. Also see the Settings.Connection.Removed signal.
-    ///
-    /// # Arguments
-    ///
-    /// * `connection` - Object path of the removed connection.
-    #[zbus(signal)]
-    fn connection_removed(&self, connection: SettingsConnectionPath) -> zbus::Result<()>;
-
     /// NewConnection signal
     ///
     /// Emitted when a new connection has been added after NetworkManager has started up and initialized. This signal is not emitted for connections read while starting up, because NetworkManager's D-Bus service is only available after all connections have been read, and to prevent spamming listeners with too many signals at one time. To retrieve the initial connection list, call the ListConnections() method once, and then listen for individual Settings.NewConnection and Settings.Connection.Deleted signals for further updates.
@@ -142,8 +132,18 @@ pub trait Settings {
     /// # Arguments
     ///
     /// * `connection` - Object path of the new connection.
-    #[zbus(signal)]
-    fn new_connection(&self, connection: SettingsConnectionPath) -> zbus::Result<()>;
+    #[zbus(signal, name = "NewConnection")]
+    fn new_connection_path(&self, connection: SettingsConnectionPath) -> zbus::Result<()>;
+
+    /// ConnectionRemoved signal
+    ///
+    /// Emitted when a connection is no longer available. This happens when the connection is deleted or if it is no longer accessible by any of the system's logged-in users. After receipt of this signal, the connection no longer exists and cannot be used. Also see the Settings.Connection.Removed signal.
+    ///
+    /// # Arguments
+    ///
+    /// * `connection` - Object path of the removed connection.
+    #[zbus(signal, name = "ConnectionRemoved")]
+    fn connection_removed_path(&self, connection: SettingsConnectionPath) -> zbus::Result<()>;
 
     /// CanModify property
     ///
@@ -190,6 +190,54 @@ impl SettingsProxy<'_> {
     ) -> zbus::Result<Vec<crate::proxies::settings_connection::ConnectionProxy<'static>>> {
         let paths = self.connection_paths().await?;
         crate::NmPathSliceExt::connect_all(&paths, self.inner().connection()).await
+    }
+
+    /// The objects the `NewConnection` signal carries, as they arrive.
+    ///
+    /// Each is built on this proxy's own connection.
+    /// [`receive_new_connection_path`](Self::receive_new_connection_path) gives the signal itself, carrying
+    /// the path.
+    pub async fn receive_new_connection(
+        &self,
+    ) -> zbus::Result<
+        impl futures_util::Stream<
+            Item = zbus::Result<crate::proxies::settings_connection::ConnectionProxy<'static>>,
+        > + use<>,
+    > {
+        let connection = self.inner().connection().clone();
+        let signals = self.receive_new_connection_path().await?;
+        Ok(futures_util::StreamExt::then(signals, move |signal| {
+            let connection = connection.clone();
+            // Boxed so the stream stays `Unpin` and can be polled with `next()`
+            // without pinning it first.
+            Box::pin(async move {
+                crate::NmPath::connect(signal.args()?.connection(), &connection).await
+            })
+        }))
+    }
+
+    /// The objects the `ConnectionRemoved` signal carries, as they arrive.
+    ///
+    /// Each is built on this proxy's own connection.
+    /// [`receive_connection_removed_path`](Self::receive_connection_removed_path) gives the signal itself, carrying
+    /// the path.
+    pub async fn receive_connection_removed(
+        &self,
+    ) -> zbus::Result<
+        impl futures_util::Stream<
+            Item = zbus::Result<crate::proxies::settings_connection::ConnectionProxy<'static>>,
+        > + use<>,
+    > {
+        let connection = self.inner().connection().clone();
+        let signals = self.receive_connection_removed_path().await?;
+        Ok(futures_util::StreamExt::then(signals, move |signal| {
+            let connection = connection.clone();
+            // Boxed so the stream stays `Unpin` and can be polled with `next()`
+            // without pinning it first.
+            Box::pin(async move {
+                crate::NmPath::connect(signal.args()?.connection(), &connection).await
+            })
+        }))
     }
 
     /// The objects the `ListConnections` method points at.

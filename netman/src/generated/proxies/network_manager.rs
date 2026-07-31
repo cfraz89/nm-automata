@@ -263,26 +263,6 @@ pub trait NetworkManager {
     #[zbus(signal)]
     fn check_permissions(&self) -> zbus::Result<()>;
 
-    /// DeviceAdded signal
-    ///
-    /// A device was added to the system
-    ///
-    /// # Arguments
-    ///
-    /// * `device_path` - The object path of the newly added device.
-    #[zbus(signal)]
-    fn device_added(&self, device_path: DevicePath) -> zbus::Result<()>;
-
-    /// DeviceRemoved signal
-    ///
-    /// A device was removed from the system, and is no longer available.
-    ///
-    /// # Arguments
-    ///
-    /// * `device_path` - The object path of the device that was just removed.
-    #[zbus(signal)]
-    fn device_removed(&self, device_path: DevicePath) -> zbus::Result<()>;
-
     /// StateChanged signal
     ///
     /// NetworkManager's state changed.
@@ -292,6 +272,26 @@ pub trait NetworkManager {
     /// * `state` - The new state of NetworkManager.
     #[zbus(signal, name = "StateChanged")]
     fn state_changed_signal(&self, state: State) -> zbus::Result<()>;
+
+    /// DeviceAdded signal
+    ///
+    /// A device was added to the system
+    ///
+    /// # Arguments
+    ///
+    /// * `device_path` - The object path of the newly added device.
+    #[zbus(signal, name = "DeviceAdded")]
+    fn device_added_path(&self, device_path: DevicePath) -> zbus::Result<()>;
+
+    /// DeviceRemoved signal
+    ///
+    /// A device was removed from the system, and is no longer available.
+    ///
+    /// # Arguments
+    ///
+    /// * `device_path` - The object path of the device that was just removed.
+    #[zbus(signal, name = "DeviceRemoved")]
+    fn device_removed_path(&self, device_path: DevicePath) -> zbus::Result<()>;
 
     /// Capabilities property
     ///
@@ -538,6 +538,52 @@ impl NetworkManagerProxy<'_> {
     ) -> zbus::Result<crate::proxies::connection_active::ActiveProxy<'static>> {
         let path = self.activating_connection_path().await?;
         crate::NmPath::connect(&path, self.inner().connection()).await
+    }
+
+    /// The objects the `DeviceAdded` signal carries, as they arrive.
+    ///
+    /// Each is built on this proxy's own connection.
+    /// [`receive_device_added_path`](Self::receive_device_added_path) gives the signal itself, carrying
+    /// the path.
+    pub async fn receive_device_added(
+        &self,
+    ) -> zbus::Result<
+        impl futures_util::Stream<Item = zbus::Result<crate::proxies::device::DeviceProxy<'static>>>
+        + use<>,
+    > {
+        let connection = self.inner().connection().clone();
+        let signals = self.receive_device_added_path().await?;
+        Ok(futures_util::StreamExt::then(signals, move |signal| {
+            let connection = connection.clone();
+            // Boxed so the stream stays `Unpin` and can be polled with `next()`
+            // without pinning it first.
+            Box::pin(async move {
+                crate::NmPath::connect(signal.args()?.device_path(), &connection).await
+            })
+        }))
+    }
+
+    /// The objects the `DeviceRemoved` signal carries, as they arrive.
+    ///
+    /// Each is built on this proxy's own connection.
+    /// [`receive_device_removed_path`](Self::receive_device_removed_path) gives the signal itself, carrying
+    /// the path.
+    pub async fn receive_device_removed(
+        &self,
+    ) -> zbus::Result<
+        impl futures_util::Stream<Item = zbus::Result<crate::proxies::device::DeviceProxy<'static>>>
+        + use<>,
+    > {
+        let connection = self.inner().connection().clone();
+        let signals = self.receive_device_removed_path().await?;
+        Ok(futures_util::StreamExt::then(signals, move |signal| {
+            let connection = connection.clone();
+            // Boxed so the stream stays `Unpin` and can be polled with `next()`
+            // without pinning it first.
+            Box::pin(async move {
+                crate::NmPath::connect(signal.args()?.device_path(), &connection).await
+            })
+        }))
     }
 
     /// The objects the `GetDevices` method points at.

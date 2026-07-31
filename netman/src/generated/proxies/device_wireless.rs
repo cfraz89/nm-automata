@@ -65,8 +65,8 @@ pub trait Wireless {
     /// # Arguments
     ///
     /// * `access_point` - The object path of the newly found access point.
-    #[zbus(signal)]
-    fn access_point_added(&self, access_point: AccessPointPath) -> zbus::Result<()>;
+    #[zbus(signal, name = "AccessPointAdded")]
+    fn access_point_added_path(&self, access_point: AccessPointPath) -> zbus::Result<()>;
 
     /// AccessPointRemoved signal
     ///
@@ -75,8 +75,8 @@ pub trait Wireless {
     /// # Arguments
     ///
     /// * `access_point` - The object path of the access point that has disappeared.
-    #[zbus(signal)]
-    fn access_point_removed(&self, access_point: AccessPointPath) -> zbus::Result<()>;
+    #[zbus(signal, name = "AccessPointRemoved")]
+    fn access_point_removed_path(&self, access_point: AccessPointPath) -> zbus::Result<()>;
 
     /// Bitrate property
     ///
@@ -158,6 +158,54 @@ impl WirelessProxy<'_> {
     ) -> zbus::Result<crate::proxies::access_point::AccessPointProxy<'static>> {
         let path = self.active_access_point_path().await?;
         crate::NmPath::connect(&path, self.inner().connection()).await
+    }
+
+    /// The objects the `AccessPointAdded` signal carries, as they arrive.
+    ///
+    /// Each is built on this proxy's own connection.
+    /// [`receive_access_point_added_path`](Self::receive_access_point_added_path) gives the signal itself, carrying
+    /// the path.
+    pub async fn receive_access_point_added(
+        &self,
+    ) -> zbus::Result<
+        impl futures_util::Stream<
+            Item = zbus::Result<crate::proxies::access_point::AccessPointProxy<'static>>,
+        > + use<>,
+    > {
+        let connection = self.inner().connection().clone();
+        let signals = self.receive_access_point_added_path().await?;
+        Ok(futures_util::StreamExt::then(signals, move |signal| {
+            let connection = connection.clone();
+            // Boxed so the stream stays `Unpin` and can be polled with `next()`
+            // without pinning it first.
+            Box::pin(async move {
+                crate::NmPath::connect(signal.args()?.access_point(), &connection).await
+            })
+        }))
+    }
+
+    /// The objects the `AccessPointRemoved` signal carries, as they arrive.
+    ///
+    /// Each is built on this proxy's own connection.
+    /// [`receive_access_point_removed_path`](Self::receive_access_point_removed_path) gives the signal itself, carrying
+    /// the path.
+    pub async fn receive_access_point_removed(
+        &self,
+    ) -> zbus::Result<
+        impl futures_util::Stream<
+            Item = zbus::Result<crate::proxies::access_point::AccessPointProxy<'static>>,
+        > + use<>,
+    > {
+        let connection = self.inner().connection().clone();
+        let signals = self.receive_access_point_removed_path().await?;
+        Ok(futures_util::StreamExt::then(signals, move |signal| {
+            let connection = connection.clone();
+            // Boxed so the stream stays `Unpin` and can be polled with `next()`
+            // without pinning it first.
+            Box::pin(async move {
+                crate::NmPath::connect(signal.args()?.access_point(), &connection).await
+            })
+        }))
     }
 
     /// The objects the `GetAccessPoints` method points at.

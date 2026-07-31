@@ -100,8 +100,18 @@ are kept in `other` maps, so a read-modify-write against a newer daemon does not
   is a read-only property, where a mistake is a decode error rather than a corrupted profile.
   `Device.LldpNeighbors` is deliberately left as a map: it maps LLDP TLV names to values and
   has no fixed shape.
-* **Signals and property changes** come straight from zbus: `receive_state_changed()` for the
-  property stream, `receive_state_changed_signal()` for the signal.
+* **Signals carry objects too.** `receive_access_point_added()` yields `AccessPointProxy`, not a
+  path, so a new access point can be asked what it is straight away:
+
+  ```rust
+  while let Some(access_point) = seen.next().await {
+      println!("{:?}", access_point?.ssid().await?);
+  }
+  ```
+
+  `cargo run --example watch` shows it against real scan activity. Property changes come
+  straight from zbus: `receive_state_changed()` for the property stream,
+  `receive_state_changed_signal()` for the signal of the same name.
 * **Connection profiles are structs, not `a{sa{sv}}`.** All 530 properties across 57 settings
   have real fields — `profile.wireless.ssid`, `profile.ipv4.method` — with upstream's
   documentation on each, and the proxies speak them directly:
