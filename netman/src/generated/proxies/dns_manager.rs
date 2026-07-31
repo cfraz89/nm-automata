@@ -15,6 +15,8 @@ use crate::generated::paths::*;
 use crate::generated::settings::ConnectionProfile;
 #[allow(unused_imports)]
 use crate::generated::types::*;
+#[allow(unused_imports)]
+use crate::generated::vardict::*;
 use zbus::proxy;
 
 /// DNS Configuration State. The interface contains DNS-related information.
@@ -28,9 +30,7 @@ pub trait DnsManager {
     ///
     /// The current DNS configuration represented as an array of dictionaries. Each dictionary has the "nameservers", "priority" keys and, optionally, "interface" and "vpn". "nameservers" is the list of DNS servers, "priority" their relative priority, "interface" the interface on which these servers are contacted, "vpn" a boolean telling whether the configuration was obtained from a VPN connection.
     #[zbus(property)]
-    fn configuration(
-        &self,
-    ) -> zbus::Result<Vec<std::collections::HashMap<String, zbus::zvariant::OwnedValue>>>;
+    fn configuration(&self) -> zbus::Result<Vec<DnsConfiguration>>;
 
     /// Mode property
     ///

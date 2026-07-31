@@ -30,6 +30,30 @@ pub struct Annotations {
     object: Vec<ObjectTarget>,
     #[serde(default)]
     device: Vec<DeviceInterface>,
+    #[serde(default)]
+    vardict: Vec<Vardict>,
+}
+
+/// A dictionary property whose keys NetworkManager documents only in prose.
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Vardict {
+    /// The struct to generate, e.g. `AddressData`.
+    pub name: String,
+    pub doc: String,
+    /// The properties it describes, as `interface.Property`.
+    pub applies: Vec<String>,
+    pub keys: Vec<VardictKey>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct VardictKey {
+    /// The key as it appears in the dictionary, e.g. `next-hop`.
+    pub name: String,
+    #[serde(rename = "type")]
+    pub ty: String,
+    pub doc: String,
 }
 
 /// The interface a device type implies, where it is not named after it.
@@ -62,6 +86,11 @@ struct SettingName {
 }
 
 impl Annotations {
+    /// The hand-written dictionary shapes.
+    pub fn vardicts(&self) -> &[Vardict] {
+        &self.vardict
+    }
+
     /// The hand-given device-type interfaces, keyed by the type's introspection name.
     pub fn device_interfaces(&self) -> Vec<(String, String)> {
         self.device

@@ -15,6 +15,8 @@ use crate::generated::paths::*;
 use crate::generated::settings::ConnectionProfile;
 #[allow(unused_imports)]
 use crate::generated::types::*;
+#[allow(unused_imports)]
+use crate::generated::vardict::*;
 use zbus::proxy;
 
 /// Connection Settings Profile Manager. The Settings interface allows clients to view and administrate the connections stored and used by NetworkManager.

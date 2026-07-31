@@ -15,6 +15,8 @@ use crate::generated::paths::*;
 use crate::generated::settings::ConnectionProfile;
 #[allow(unused_imports)]
 use crate::generated::types::*;
+#[allow(unused_imports)]
+use crate::generated::vardict::*;
 use zbus::proxy;
 
 /// WiMax Network Service Provider. DEPRECATED: NetworkManager no longer supports WiMAX since version 1.2. This interface is no longer used.

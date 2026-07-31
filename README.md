@@ -93,6 +93,13 @@ are kept in `other` maps, so a read-modify-write against a newer daemon does not
 
   `ProxyExt::cast` is still there for the interfaces every object of a kind carries —
   `Device.Statistics` is on every device — but it is unchecked and documented as such.
+* **The dictionaries are structs too.** `ip4.address_data()` gives `Vec<AddressData>` with
+  `address` and `prefix` fields, not a map of variants; likewise routes and the resolver
+  configuration. These four shapes are the one place NetworkManager describes its keys only in
+  prose, so they are written down in `annotations.toml` — safe to do because every one of them
+  is a read-only property, where a mistake is a decode error rather than a corrupted profile.
+  `Device.LldpNeighbors` is deliberately left as a map: it maps LLDP TLV names to values and
+  has no fixed shape.
 * **Signals and property changes** come straight from zbus: `receive_state_changed()` for the
   property stream, `receive_state_changed_signal()` for the signal.
 * **Connection profiles are structs, not `a{sa{sv}}`.** All 530 properties across 57 settings

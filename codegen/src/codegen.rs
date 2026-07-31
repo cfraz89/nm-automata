@@ -87,7 +87,13 @@ pub fn generate(root: &Path) -> Result<BTreeMap<PathBuf, String>> {
     let mut applied: HashSet<(String, String)> = HashSet::new();
 
     for (name, node, docs) in &parsed {
-        let augmented = render::augmented_xml(node, docs, &by_c_name, &object_targets);
+        let augmented = render::augmented_xml(
+            node,
+            docs,
+            &by_c_name,
+            &object_targets,
+            annotations.vardicts(),
+        );
         std::fs::write(debug_dir.join(name), &augmented).ok();
 
         let augmented_node = Node::try_from(augmented.as_str())
@@ -155,6 +161,14 @@ pub fn generate(root: &Path) -> Result<BTreeMap<PathBuf, String>> {
     files.insert(
         generated.join("types.rs"),
         rustfmt(&render::types_module(&types, &nm_version))?,
+    );
+    files.insert(
+        generated.join("vardict.rs"),
+        rustfmt(&render::vardict_module(
+            annotations.vardicts(),
+            &by_c_name,
+            &nm_version,
+        )?)?,
     );
     files.insert(generated.join("devices.rs"), {
         let device_type = defs
@@ -441,6 +455,8 @@ fn proxy_module(module: &Generated, nm_version: &str) -> String {
          #[allow(unused_imports)]\n\
          use crate::generated::paths::*;\n\
          #[allow(unused_imports)]\n\
+         use crate::generated::vardict::*;\n\
+         #[allow(unused_imports)]\n\
          use crate::generated::settings::ConnectionProfile;\n\
          #[allow(unused_imports)]\n\
          use crate::generated::types::*;\n\
@@ -530,6 +546,7 @@ fn mod_module(nm_version: &str) -> String {
          pub mod paths;\n\
          pub mod proxies;\n\
          pub mod settings;\n\
+         pub mod vardict;\n\
          pub mod types;\n\
          \n\
          /// The NetworkManager release this binding was generated from.\n\

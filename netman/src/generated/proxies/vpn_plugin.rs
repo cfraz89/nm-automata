@@ -15,6 +15,8 @@ use crate::generated::paths::*;
 use crate::generated::settings::ConnectionProfile;
 #[allow(unused_imports)]
 use crate::generated::types::*;
+#[allow(unused_imports)]
+use crate::generated::vardict::*;
 use zbus::proxy;
 
 /// VPN Service. This interface is provided by plugins providing VPN services to the NetworkManager daemon.

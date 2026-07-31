@@ -7,6 +7,7 @@ pub mod paths;
 pub mod proxies;
 pub mod settings;
 pub mod types;
+pub mod vardict;
 
 /// The NetworkManager release this binding was generated from.
 pub const NM_VERSION: &str = "1.58.0";

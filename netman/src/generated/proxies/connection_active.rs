@@ -15,6 +15,8 @@ use crate::generated::paths::*;
 use crate::generated::settings::ConnectionProfile;
 #[allow(unused_imports)]
 use crate::generated::types::*;
+#[allow(unused_imports)]
+use crate::generated::vardict::*;
 use zbus::proxy;
 
 /// Active Connection. Objects that implement the Connection.Active interface represent an attempt to connect to a network using the details provided by a Connection object. The Connection.Active object tracks the life-cycle of the connection attempt and if successful indicates whether the connected network is the "default" or preferred network for access. NetworkManager has the concept of connections, which can be thought of as settings, a profile or a configuration that can be applied on a networking device. Such settings-connections are exposed as D-Bus object and the active-connection expresses this relationship between device and settings-connection. At any time a settings-connection can only be activated on one device and vice versa. However, during activation and deactivation multiple active-connections can reference the same device or settings-connection as they are waiting to be activated or to be deactivated.

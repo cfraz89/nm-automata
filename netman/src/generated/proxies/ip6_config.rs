@@ -15,6 +15,8 @@ use crate::generated::paths::*;
 use crate::generated::settings::ConnectionProfile;
 #[allow(unused_imports)]
 use crate::generated::types::*;
+#[allow(unused_imports)]
+use crate::generated::vardict::*;
 use zbus::proxy;
 
 /// IPv6 Configuration Set.
@@ -28,9 +30,7 @@ pub trait IP6Config {
     ///
     /// Array of IP address data objects. All addresses will include "address" (an IP address string), and "prefix" (a uint). Some addresses may include additional attributes.
     #[zbus(property)]
-    fn address_data(
-        &self,
-    ) -> zbus::Result<Vec<std::collections::HashMap<String, zbus::zvariant::OwnedValue>>>;
+    fn address_data(&self) -> zbus::Result<Vec<AddressData>>;
 
     /// Addresses property
     ///
@@ -72,9 +72,7 @@ pub trait IP6Config {
     ///
     /// Array of IP route data objects. All routes will include "dest" (an IP address string) and "prefix" (a uint). Some routes may include "next-hop" (an IP address string), "metric" (a uint), and additional attributes.
     #[zbus(property)]
-    fn route_data(
-        &self,
-    ) -> zbus::Result<Vec<std::collections::HashMap<String, zbus::zvariant::OwnedValue>>>;
+    fn route_data(&self) -> zbus::Result<Vec<RouteData>>;
 
     /// Routes property
     ///

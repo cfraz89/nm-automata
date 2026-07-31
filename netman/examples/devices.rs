@@ -63,9 +63,28 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
 
         if state == DeviceState::Activated {
-            // A typed path: this one can only build a Connection.Active proxy.
             let active = device.active_connection().await?;
             println!("  active connection: {:?}", active.state().await?);
+
+            // Typed dictionaries: addresses and routes come back with real fields rather
+            // than as maps of variants.
+            let ip4 = device.ip4_config().await?;
+            for address in ip4.address_data().await? {
+                println!(
+                    "  address {}/{}",
+                    address.address.unwrap_or_default(),
+                    address.prefix.unwrap_or_default()
+                );
+            }
+            for route in ip4.route_data().await?.iter().take(2) {
+                println!(
+                    "  route {}/{} via {} metric {}",
+                    route.dest.clone().unwrap_or_default(),
+                    route.prefix.unwrap_or_default(),
+                    route.next_hop.clone().unwrap_or_else(|| "-".into()),
+                    route.metric.unwrap_or_default()
+                );
+            }
         }
     }
 

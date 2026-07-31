@@ -282,3 +282,56 @@ interface = "org.freedesktop.NetworkManager.Device.Bluetooth"
 [[device]]
 type = "6lowpan"
 interface = "org.freedesktop.NetworkManager.Device.Lowpan"
+
+# The `aa{sv}` properties whose keys NetworkManager documents in prose. Every one of them is
+# read-only, so a key typed wrongly here shows up as a decode error rather than as a corrupted
+# profile — which is why these are hand-written where the writable settings are not.
+#
+# Unlisted keys are kept in `other`, since NetworkManager says "additional attributes" for most
+# of these. `Device.LldpNeighbors` is deliberately absent: it maps LLDP TLV names to values and
+# has no fixed shape at all.
+
+[[vardict]]
+name = "AddressData"
+doc = "An IP address, as NetworkManager reports it."
+applies = [
+    "org.freedesktop.NetworkManager.IP4Config.AddressData",
+    "org.freedesktop.NetworkManager.IP6Config.AddressData",
+]
+keys = [
+    { name = "address", type = "string", doc = "The address itself." },
+    { name = "prefix", type = "uint32", doc = "The prefix length." },
+]
+
+[[vardict]]
+name = "RouteData"
+doc = "An IP route, as NetworkManager reports it."
+applies = [
+    "org.freedesktop.NetworkManager.IP4Config.RouteData",
+    "org.freedesktop.NetworkManager.IP6Config.RouteData",
+]
+keys = [
+    { name = "dest", type = "string", doc = "The destination address." },
+    { name = "prefix", type = "uint32", doc = "The prefix length of the destination." },
+    { name = "next-hop", type = "string", doc = "The next hop, where there is one." },
+    { name = "metric", type = "uint32", doc = "The route metric, where there is one." },
+]
+
+[[vardict]]
+name = "NameserverData"
+doc = "A nameserver in use."
+applies = ["org.freedesktop.NetworkManager.IP4Config.NameserverData"]
+keys = [
+    { name = "address", type = "string", doc = "The address of the nameserver." },
+]
+
+[[vardict]]
+name = "DnsConfiguration"
+doc = "One entry of the resolver configuration NetworkManager has assembled."
+applies = ["org.freedesktop.NetworkManager.DnsManager.Configuration"]
+keys = [
+    { name = "nameservers", type = "array of string", doc = "The servers to contact." },
+    { name = "priority", type = "int32", doc = "Their priority relative to other entries." },
+    { name = "interface", type = "string", doc = "The interface they are reached on." },
+    { name = "vpn", type = "boolean", doc = "Whether this came from a VPN connection." },
+]

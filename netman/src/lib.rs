@@ -75,7 +75,8 @@ pub use generated::proxies::*;
 pub use generated::settings as profile;
 pub use generated::settings::*;
 pub use generated::types::*;
-pub use generated::{NM_VERSION, devices, paths, proxies, types};
+pub use generated::vardict::*;
+pub use generated::{NM_VERSION, devices, paths, proxies, types, vardict};
 pub use path::{NmPath, NmPathSliceExt};
 
 /// zbus, re-exported: its [`Connection`](zbus::Connection) is the entry point to every proxy,

@@ -15,6 +15,8 @@ use crate::generated::paths::*;
 use crate::generated::settings::ConnectionProfile;
 #[allow(unused_imports)]
 use crate::generated::types::*;
+#[allow(unused_imports)]
+use crate::generated::vardict::*;
 use zbus::proxy;
 
 /// User Secret Agent. Private D-Bus interface used by secret agents that store and provide secrets to NetworkManager. If an agent provides secrets to NetworkManager as part of connection creation, and the some of those secrets are "agent owned" the agent should store those secrets itself and should not expect its SaveSecrets() method to be called. SaveSecrets() will be called eg if some program other than the agent itself (like a connection editor) changes the secrets out of band. The agent should implement this D-Bus interface on an object with the path /org/freedesktop/NetworkManager/SecretAgent.
