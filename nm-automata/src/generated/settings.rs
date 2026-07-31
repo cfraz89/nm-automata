@@ -7849,7 +7849,9 @@ impl zbus::zvariant::Type for ConnectionProfile {
 
 impl serde::Serialize for ConnectionProfile {
     fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        serde::Serialize::serialize(
+        // Through `settings::serialize_profile` because `to_map` builds a fresh map every
+        // call and zvariant serialises twice; see there.
+        settings::serialize_profile(
             &self.to_map().map_err(serde::ser::Error::custom)?,
             serializer,
         )
