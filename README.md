@@ -141,6 +141,7 @@ just generate         # regenerate nm-automata/src/generated/
 just update           # all three, in one step
 just check            # fail if the checked-in output is stale
 just regen            # generate, format, and run everything CI runs
+just clean            # drop this crate's build artifacts, keeping compiled dependencies
 ```
 
 `.github/workflows/update-spec.yml` runs `just update` weekly, verifies the result with

@@ -72,15 +72,28 @@ test:
 doc *args:
     RUSTDOCFLAGS="-D warnings" cargo doc --no-deps --package nm-automata {{ args }}
 
-# Build against each supported runtime, since they are mutually exclusive.
+# Check against each supported runtime, since they are mutually exclusive.
+#
+# `check` rather than `build`: the question is whether each combination compiles, and asking it
+# without linking is both faster and a great deal smaller on disk — three full builds of the
+# generated code is most of what `target/` ever grows to.
 features:
-    cargo build --package nm-automata --no-default-features --features async-io
-    cargo build --package nm-automata --no-default-features --features tokio
-    cargo build --package nm-automata --no-default-features --features async-io,blocking-api
+    cargo check --package nm-automata --no-default-features --features async-io
+    cargo check --package nm-automata --no-default-features --features tokio
+    cargo check --package nm-automata --no-default-features --features async-io,blocking-api
 
 # Everything CI runs, in the order that fails fastest.
 ci: check lint test doc features
     @just fmt --check
+
+# Throw away this crate's build artifacts, keeping the compiled dependencies.
+#
+# That is where the bulk is — the generated code is large and gets built in several
+# configurations — and recovering costs one crate's rebuild rather than the whole tree's. Use
+# `cargo clean` for everything, when the disk really needs it.
+clean:
+    cargo clean --package nm-automata
+    cargo clean --package codegen
 
 # Talk to the NetworkManager on this machine.
 example name="devices":
