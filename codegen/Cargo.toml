@@ -1,0 +1,20 @@
+[package]
+name = "codegen"
+version = "0.0.0"
+publish = false
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+zbus_xml = { workspace = true }
+zbus_xmlgen = { workspace = true }
+zbus = { workspace = true, features = ["async-io"] }
+clap = { version = "4", features = ["derive"] }
+ureq = { version = "3", features = ["json"] }
+serde = { workspace = true }
+serde_json = "1"
+snakecase = "0.1"
+toml = "0.9"
+roxmltree = "0.20"

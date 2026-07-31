@@ -1,0 +1,40 @@
+[package]
+name = "nm-automata"
+version = "0.1.0"
+description = "NetworkManager D-Bus bindings, generated in full from NetworkManager's own spec"
+keywords = ["networkmanager", "dbus", "zbus", "network", "bindings"]
+categories = ["api-bindings", "network-programming", "os::linux-apis"]
+readme = "../README.md"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+zbus = { workspace = true }
+bitflags = { workspace = true }
+serde = { workspace = true }
+serde_repr = { workspace = true }
+futures-util = { version = "0.3.33", default-features = false, features = ["std"] }
+
+[dev-dependencies]
+# No runtime feature here: the crate's own `async-io`/`tokio` feature selects one,
+# and naming it again would force async-io into every test and example.
+zbus = { workspace = true }
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+futures-util = "0.3.33"
+
+[features]
+default = ["async-io"]
+# The async runtime zbus drives its connection with; these mirror the zbus features of the same
+# name. One of them is required. Enabling both is allowed rather than rejected, because cargo
+# unifies features additively and two crates in one tree may each want a different runtime — but
+# zbus gates on `tokio`, so tokio wins and async-io is then only dead weight.
+async-io = ["zbus/async-io"]
+tokio = ["zbus/tokio"]
+# Emit blocking proxies alongside the async ones.
+blocking-api = ["zbus/blocking-api"]
+
+[package.metadata.docs.rs]
+all-features = false
+features = ["async-io", "blocking-api"]

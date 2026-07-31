@@ -1,0 +1,337 @@
+# Type annotations that cannot be read out of the vendored spec.
+#
+# `just generate` types a property or argument as one of NetworkManager's enumerations
+# whenever the upstream documentation says so — through a `Returns:` line, an `@argument`
+# entry, or, for single values, a mention in the prose. What is left over goes here.
+#
+# Every entry is checked: the named type must exist in the vendored headers, and the annotated
+# member must exist with a matching D-Bus signature. An entry that no longer applies fails
+# generation, so this file cannot rot silently as NetworkManager changes.
+
+# Documented as "See NMCapability for currently defined capability numbers" — prose, and an
+# array, which generation does not infer from on its own after `VersionInfo` showed why
+# (its elements do not all mean the same thing).
+[[property]]
+interface = "org.freedesktop.NetworkManager"
+name = "Capabilities"
+type = "NMCapability"
+
+# Documented only as "The tunneling mode." and "Tunnel flags." — the type is named nowhere,
+# so there is nothing to read out of the spec.
+[[property]]
+interface = "org.freedesktop.NetworkManager.Device.IPTunnel"
+name = "Mode"
+type = "NMIPTunnelMode"
+
+[[property]]
+interface = "org.freedesktop.NetworkManager.Device.IPTunnel"
+name = "Flags"
+type = "NMIPTunnelFlags"
+
+# Two settings are named so that neither the name NetworkManager sends nor the upper-case form
+# it also gives ("802_1X", "6LOWPAN") can open a Rust identifier. These say what to call them;
+# a third such setting appearing upstream fails generation rather than being mangled silently.
+[[setting]]
+name = "802-1x"
+field = "ieee8021x"
+
+[[setting]]
+name = "6lowpan"
+# NetworkManager's own device interface for this is `Device.Lowpan`.
+field = "lowpan"
+
+# Object paths whose target neither the documentation nor the member's own name gives.
+# `Parent`, `Ports` and the rest are devices; `Connections` is ambiguous between the settings
+# and VPN interfaces of the same name, so inference refuses it rather than picking.
+[[object]]
+interface = "org.freedesktop.NetworkManager"
+name = "AllDevices"
+target = "org.freedesktop.NetworkManager.Device"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager"
+name = "ActiveConnections"
+target = "org.freedesktop.NetworkManager.Connection.Active"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager"
+name = "PrimaryConnection"
+target = "org.freedesktop.NetworkManager.Connection.Active"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager"
+name = "ActivatingConnection"
+target = "org.freedesktop.NetworkManager.Connection.Active"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.Settings"
+name = "Connections"
+target = "org.freedesktop.NetworkManager.Settings.Connection"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.Device"
+name = "AvailableConnections"
+target = "org.freedesktop.NetworkManager.Settings.Connection"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.Device"
+name = "Ports"
+target = "org.freedesktop.NetworkManager.Device"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.Connection.Active"
+name = "Connection"
+target = "org.freedesktop.NetworkManager.Settings.Connection"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.Connection.Active"
+name = "Controller"
+target = "org.freedesktop.NetworkManager.Device"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.Connection.Active"
+name = "Master"
+target = "org.freedesktop.NetworkManager.Device"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.Device.Wireless"
+name = "ActiveAccessPoint"
+target = "org.freedesktop.NetworkManager.AccessPoint"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.Device.WifiP2P"
+name = "Peers"
+target = "org.freedesktop.NetworkManager.WifiP2PPeer"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.Device.WiMax"
+name = "ActiveNsp"
+target = "org.freedesktop.NetworkManager.WiMax.Nsp"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.Device.Veth"
+name = "Peer"
+target = "org.freedesktop.NetworkManager.Device"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.Device.OlpcMesh"
+name = "Companion"
+target = "org.freedesktop.NetworkManager.Device"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.Device.Hsr"
+name = "Port1"
+target = "org.freedesktop.NetworkManager.Device"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.Device.Hsr"
+name = "Port2"
+target = "org.freedesktop.NetworkManager.Device"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.Device.IPTunnel"
+name = "Parent"
+target = "org.freedesktop.NetworkManager.Device"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.Device.Ipvlan"
+name = "Parent"
+target = "org.freedesktop.NetworkManager.Device"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.Device.Lowpan"
+name = "Parent"
+target = "org.freedesktop.NetworkManager.Device"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.Device.Macsec"
+name = "Parent"
+target = "org.freedesktop.NetworkManager.Device"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.Device.Macvlan"
+name = "Parent"
+target = "org.freedesktop.NetworkManager.Device"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.Device.Vlan"
+name = "Parent"
+target = "org.freedesktop.NetworkManager.Device"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.Device.Vxlan"
+name = "Parent"
+target = "org.freedesktop.NetworkManager.Device"
+
+# Object-path arguments, in `Member.argument` form. `connection` is ambiguous between the
+# settings and VPN interfaces, and `active_connection` and `path` say nothing on their own.
+[[object]]
+interface = "org.freedesktop.NetworkManager"
+name = "ActivateConnection.connection"
+target = "org.freedesktop.NetworkManager.Settings.Connection"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager"
+name = "ActivateConnection.active_connection"
+target = "org.freedesktop.NetworkManager.Connection.Active"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager"
+name = "AddAndActivateConnection.path"
+target = "org.freedesktop.NetworkManager.Settings.Connection"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager"
+name = "AddAndActivateConnection.active_connection"
+target = "org.freedesktop.NetworkManager.Connection.Active"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager"
+name = "AddAndActivateConnection2.path"
+target = "org.freedesktop.NetworkManager.Settings.Connection"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager"
+name = "AddAndActivateConnection2.active_connection"
+target = "org.freedesktop.NetworkManager.Connection.Active"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager"
+name = "DeactivateConnection.active_connection"
+target = "org.freedesktop.NetworkManager.Connection.Active"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.Settings"
+name = "ListConnections.connections"
+target = "org.freedesktop.NetworkManager.Settings.Connection"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.Settings"
+name = "GetConnectionByUuid.connection"
+target = "org.freedesktop.NetworkManager.Settings.Connection"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.Settings"
+name = "AddConnection.path"
+target = "org.freedesktop.NetworkManager.Settings.Connection"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.Settings"
+name = "AddConnectionUnsaved.path"
+target = "org.freedesktop.NetworkManager.Settings.Connection"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.Settings"
+name = "AddConnection2.path"
+target = "org.freedesktop.NetworkManager.Settings.Connection"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.Settings"
+name = "NewConnection.connection"
+target = "org.freedesktop.NetworkManager.Settings.Connection"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.Settings"
+name = "ConnectionRemoved.connection"
+target = "org.freedesktop.NetworkManager.Settings.Connection"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.Device.WifiP2P"
+name = "PeerAdded.peer"
+target = "org.freedesktop.NetworkManager.WifiP2PPeer"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.Device.WifiP2P"
+name = "PeerRemoved.peer"
+target = "org.freedesktop.NetworkManager.WifiP2PPeer"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.SecretAgent"
+name = "GetSecrets.connection_path"
+target = "org.freedesktop.NetworkManager.Settings.Connection"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.SecretAgent"
+name = "CancelGetSecrets.connection_path"
+target = "org.freedesktop.NetworkManager.Settings.Connection"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.SecretAgent"
+name = "SaveSecrets.connection_path"
+target = "org.freedesktop.NetworkManager.Settings.Connection"
+
+[[object]]
+interface = "org.freedesktop.NetworkManager.SecretAgent"
+name = "DeleteSecrets.connection_path"
+target = "org.freedesktop.NetworkManager.Settings.Connection"
+
+# Device types whose interface is not named after them. NetworkManager calls the type
+# `ethernet` and the interface `Wired`, and so on; the other 29 match by name.
+[[device]]
+type = "ethernet"
+interface = "org.freedesktop.NetworkManager.Device.Wired"
+
+[[device]]
+type = "wifi"
+interface = "org.freedesktop.NetworkManager.Device.Wireless"
+
+[[device]]
+type = "bt"
+interface = "org.freedesktop.NetworkManager.Device.Bluetooth"
+
+[[device]]
+type = "6lowpan"
+interface = "org.freedesktop.NetworkManager.Device.Lowpan"
+
+# The `aa{sv}` properties whose keys NetworkManager documents in prose. Every one of them is
+# read-only, so a key typed wrongly here shows up as a decode error rather than as a corrupted
+# profile — which is why these are hand-written where the writable settings are not.
+#
+# Unlisted keys are kept in `other`, since NetworkManager says "additional attributes" for most
+# of these. `Device.LldpNeighbors` is deliberately absent: it maps LLDP TLV names to values and
+# has no fixed shape at all.
+
+[[vardict]]
+name = "AddressData"
+doc = "An IP address, as NetworkManager reports it."
+applies = [
+    "org.freedesktop.NetworkManager.IP4Config.AddressData",
+    "org.freedesktop.NetworkManager.IP6Config.AddressData",
+]
+keys = [
+    { name = "address", type = "string", doc = "The address itself." },
+    { name = "prefix", type = "uint32", doc = "The prefix length." },
+]
+
+[[vardict]]
+name = "RouteData"
+doc = "An IP route, as NetworkManager reports it."
+applies = [
+    "org.freedesktop.NetworkManager.IP4Config.RouteData",
+    "org.freedesktop.NetworkManager.IP6Config.RouteData",
+]
+keys = [
+    { name = "dest", type = "string", doc = "The destination address." },
+    { name = "prefix", type = "uint32", doc = "The prefix length of the destination." },
+    { name = "next-hop", type = "string", doc = "The next hop, where there is one." },
+    { name = "metric", type = "uint32", doc = "The route metric, where there is one." },
+]
+
+[[vardict]]
+name = "NameserverData"
+doc = "A nameserver in use."
+applies = ["org.freedesktop.NetworkManager.IP4Config.NameserverData"]
+keys = [
+    { name = "address", type = "string", doc = "The address of the nameserver." },
+]
+
+[[vardict]]
+name = "DnsConfiguration"
+doc = "One entry of the resolver configuration NetworkManager has assembled."
+applies = ["org.freedesktop.NetworkManager.DnsManager.Configuration"]
+keys = [
+    { name = "nameservers", type = "array of string", doc = "The servers to contact." },
+    { name = "priority", type = "int32", doc = "Their priority relative to other entries." },
+    { name = "interface", type = "string", doc = "The interface they are reached on." },
+    { name = "vpn", type = "boolean", doc = "Whether this came from a VPN connection." },
+]

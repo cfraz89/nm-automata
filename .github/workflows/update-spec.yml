@@ -1,0 +1,67 @@
+name: Update NetworkManager spec
+
+# Watches upstream for a new stable NetworkManager release and opens a pull request with the
+# re-vendored spec and the regenerated bindings. The diff of that PR is the API change: new
+# properties, new enumeration values, and anything that moved.
+on:
+  schedule:
+    # Weekly, early Monday — NetworkManager releases roughly every few months.
+    - cron: "17 4 * * 1"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "NetworkManager release tag to vendor (defaults to the newest stable)"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: taiki-e/install-action@just
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Read the vendored and available versions
+        id: versions
+        run: |
+          echo "current=$(just vendored-version)" >> "$GITHUB_OUTPUT"
+          if [ -n "${{ inputs.version }}" ]; then
+            echo "latest=${{ inputs.version }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "latest=$(just latest-version)" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Re-vendor and regenerate
+        if: steps.versions.outputs.current != steps.versions.outputs.latest
+        run: just update "${{ steps.versions.outputs.latest }}"
+
+      # A generated API that does not compile, or whose types no longer match the signatures
+      # NetworkManager publishes, must not become a pull request that looks routine.
+      - name: Verify
+        if: steps.versions.outputs.current != steps.versions.outputs.latest
+        run: just ci
+
+      - name: Open a pull request
+        if: steps.versions.outputs.current != steps.versions.outputs.latest
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: nm-${{ steps.versions.outputs.latest }}
+          commit-message: "Regenerate against NetworkManager ${{ steps.versions.outputs.latest }}"
+          title: "Regenerate against NetworkManager ${{ steps.versions.outputs.latest }}"
+          body: |
+            `just update` run against NetworkManager
+            **${{ steps.versions.outputs.latest }}** (was ${{ steps.versions.outputs.current }}).
+
+            Everything here is generated. Review the diff under `nm-automata/src/generated/` as the
+            API change: it is what upstream added, removed or retyped.
+
+            `just ci` passed before this was opened.
+          labels: dependencies
