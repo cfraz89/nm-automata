@@ -81,6 +81,8 @@ features:
     cargo check --package nm-automata --no-default-features --features async-io
     cargo check --package nm-automata --no-default-features --features tokio
     cargo check --package nm-automata --no-default-features --features async-io,blocking-api
+    # The examples too, since they are what the README points at for trying tokio.
+    cargo check --package nm-automata --all-targets --no-default-features --features tokio
 
 # Everything CI runs, in the order that fails fastest.
 ci: check lint test doc features

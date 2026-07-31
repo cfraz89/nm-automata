@@ -210,12 +210,49 @@ guard done properly.
 
 ## Features
 
-`async-io` (default) or `tokio` picks the runtime zbus drives its connection with, and one of
-them is required; with neither, zbus fails to compile with its own `compile_error!` before this
-crate is reached. Enabling both is permitted rather than rejected, since cargo unifies features
-additively and two crates in one tree may each want a different runtime — but zbus gates on
-`tokio`, so tokio wins and async-io is then only dead weight. `blocking-api` additionally
-generates the blocking proxies.
+```toml
+# async-io, the default
+nm-automata = "0.1"
+
+# tokio instead
+nm-automata = { version = "0.1", default-features = false, features = ["tokio"] }
+```
+
+### Using it with tokio
+
+`async-io` and `tokio` select the runtime zbus drives its connection with, and one of them is
+required. Turning defaults off is the part that matters — adding `tokio` on its own leaves
+`async-io` enabled as well, and zbus gates on `tokio`, so you would get tokio anyway with
+async-io compiled in and unused.
+
+Nothing else changes. Build the connection inside your runtime as usual:
+
+```rust
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let connection = zbus::Connection::system().await?;
+    let nm = nm_automata::NetworkManagerProxy::new(&connection).await?;
+
+    for device in nm.get_devices().await? {
+        println!("{}", device.interface().await?);
+    }
+    Ok(())
+}
+```
+
+The examples run either way, which is how this is checked:
+
+```
+cargo run --example devices                                            # async-io
+cargo run --example devices --no-default-features --features tokio     # tokio
+```
+
+Enabling both is permitted rather than rejected, since cargo unifies features additively and two
+crates in one dependency tree may each ask for a different runtime — a hard error here would
+break graphs that zbus itself handles. With neither, zbus fails to compile with its own
+`compile_error!` before this crate is reached.
+
+`blocking-api` additionally generates the blocking proxies.
 
 ## Licence
 

@@ -18,7 +18,9 @@ serde_repr = { workspace = true }
 futures-util = { version = "0.3.33", default-features = false, features = ["std"] }
 
 [dev-dependencies]
-zbus = { workspace = true, features = ["async-io"] }
+# No runtime feature here: the crate's own `async-io`/`tokio` feature selects one,
+# and naming it again would force async-io into every test and example.
+zbus = { workspace = true }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 futures-util = "0.3.33"
 
