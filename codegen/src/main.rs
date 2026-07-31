@@ -19,6 +19,7 @@ mod objects;
 mod overrides;
 mod render;
 mod settings;
+mod values;
 
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};

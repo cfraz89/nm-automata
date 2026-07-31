@@ -76,6 +76,20 @@ impl TypeDef {
     }
 }
 
+/// One of the string constants NetworkManager declares alongside its settings.
+///
+/// These are how a connection-profile property whose values are strings says what those values
+/// are: `NM_SETTING_WIRELESS_MODE` names the property, and `NM_SETTING_WIRELESS_MODE_INFRA` and
+/// its siblings are the values it takes. See [`crate::values`].
+#[derive(Debug, Clone)]
+pub struct Constant {
+    /// The name as written in the C header, without the `NM_` prefix every one of them shares,
+    /// e.g. `SETTING_WIRELESS_MODE_INFRA`.
+    pub name: String,
+    pub value: String,
+    pub doc: Option<String>,
+}
+
 const CORE_NS: &str = "http://www.gtk.org/introspection/core/1.0";
 const C_NS: &str = "http://www.gtk.org/introspection/c/1.0";
 
@@ -144,6 +158,47 @@ pub fn parse(source: &str) -> Result<Vec<TypeDef>> {
         bail!("no <enumeration> or <bitfield> found — has the introspection format changed?");
     }
     Ok(defs)
+}
+
+/// Read the string constants of the `NM` namespace.
+///
+/// Only the string-valued ones: a constant declared as an integer is a limit or a default —
+/// `NM_SETTING_WPAN_CHANNEL_DEFAULT` — and never the value of a property that travels as text.
+pub fn parse_constants(source: &str) -> Result<Vec<Constant>> {
+    let document = roxmltree::Document::parse(source).context("parsing NM-1.0.gir")?;
+    let namespace = document
+        .descendants()
+        .find(|node| node.has_tag_name((CORE_NS, "namespace")))
+        .context("NM-1.0.gir has no <namespace>")?;
+
+    let mut out = Vec::new();
+    for node in namespace
+        .children()
+        .filter(|c| c.has_tag_name((CORE_NS, "constant")))
+    {
+        let is_string = node
+            .children()
+            .find(|c| c.has_tag_name((CORE_NS, "type")))
+            .and_then(|ty| ty.attribute("name"))
+            == Some("utf8");
+        if !is_string {
+            continue;
+        }
+
+        let (Some(name), Some(value)) = (node.attribute("name"), node.attribute("value")) else {
+            continue;
+        };
+        out.push(Constant {
+            name: name.to_owned(),
+            value: value.to_owned(),
+            doc: doc_of(node),
+        });
+    }
+
+    if out.is_empty() {
+        bail!("no string <constant> found — has the introspection format changed?");
+    }
+    Ok(out)
 }
 
 fn doc_of(node: roxmltree::Node<'_, '_>) -> Option<String> {

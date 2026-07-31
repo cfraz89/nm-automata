@@ -61,8 +61,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             println!("  ipv4.method={:?} dns={:?}", ipv4.method, ipv4.dns);
         }
         if let Some(wireless) = &typed.wireless {
-            let ssid = wireless.ssid.as_deref().map(String::from_utf8_lossy);
-            println!("  wireless.ssid={ssid:?}");
+            println!(
+                "  wireless.ssid={:?} mode={:?} band={:?}",
+                wireless.ssid, wireless.mode, wireless.band
+            );
         }
     }
 

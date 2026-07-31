@@ -63,6 +63,19 @@ pub enum PropertyType {
     Named {
         c_name: String,
     },
+    /// A `string` whose values are enumerated, as the generated type for them. See
+    /// [`crate::values`].
+    Value {
+        name: String,
+    },
+    /// An `array of string` whose elements are.
+    ValueArray {
+        name: String,
+    },
+    /// A `byte array` read through one of the hand-written types in `nm-automata`, e.g. `Ssid`.
+    Newtype {
+        name: String,
+    },
     /// `a(ayuay)` — `ipv6.addresses`, kept for compatibility by NetworkManager.
     LegacyIp6Addresses,
     /// `a(ayuayu)` — `ipv6.routes`, likewise.

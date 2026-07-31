@@ -23,6 +23,7 @@ use crate::objects;
 use crate::overrides;
 use crate::render::{self, Resolved};
 use crate::settings;
+use crate::values;
 
 const SERVICE: &str = "org.freedesktop.NetworkManager";
 
@@ -50,7 +51,20 @@ pub fn generate(root: &Path) -> Result<BTreeMap<PathBuf, String>> {
             settings_path.display()
         )
     })?;
-    let profile_settings = settings::parse(&settings_source, &annotations.setting_fields())?;
+    let mut profile_settings = settings::parse(&settings_source, &annotations.setting_fields())?;
+
+    // The properties that are worth more than the table's `string` or `byte array`: those whose
+    // values NetworkManager enumerates, and those the crate has a type for.
+    let constants = gir::parse_constants(&gir_source)?;
+    let value_sets = values::resolve(
+        values::derive(&constants, &profile_settings),
+        annotations.enumerations(),
+        &profile_settings,
+    )?;
+    values::apply(&mut profile_settings, &value_sets)?;
+    values::apply_newtypes(&mut profile_settings, annotations.newtypes())?;
+    let profile_settings = profile_settings;
+
     let sources = read_dir(&spec.join("introspection"), "xml")?;
     let parsed: Vec<(String, Node<'_>, Docs)> = sources
         .iter()
@@ -144,7 +158,7 @@ pub fn generate(root: &Path) -> Result<BTreeMap<PathBuf, String>> {
     modules.sort_by(|a, b| a.module.cmp(&b.module));
 
     annotations.check_all_applied(&applied)?;
-    check_name_clashes(&types, &modules)?;
+    check_name_clashes(&types, &value_sets, &modules)?;
 
     let generated = root.join("nm-automata/src/generated");
     let mut files = BTreeMap::new();
@@ -160,7 +174,7 @@ pub fn generate(root: &Path) -> Result<BTreeMap<PathBuf, String>> {
     );
     files.insert(
         generated.join("types.rs"),
-        rustfmt(&render::types_module(&types, &nm_version))?,
+        rustfmt(&render::types_module(&types, &value_sets, &nm_version))?,
     );
     files.insert(
         generated.join("vardict.rs"),
@@ -573,7 +587,11 @@ pub fn unescape_doc_comments(code: &str) -> String {
 }
 
 /// Fail loudly rather than emit code that will not compile, or that quietly shadows a name.
-fn check_name_clashes(types: &[Resolved<'_>], modules: &[Generated]) -> Result<()> {
+fn check_name_clashes(
+    types: &[Resolved<'_>],
+    values: &[values::ValueSet],
+    modules: &[Generated],
+) -> Result<()> {
     let mut taken: HashSet<String> = HashSet::new();
     for module in modules {
         taken.insert(format!("{}Proxy", module.trait_name));
@@ -602,6 +620,28 @@ fn check_name_clashes(types: &[Resolved<'_>], modules: &[Generated]) -> Result<(
                 "`{}` has a variant named `{}` that collides with the generated `Other`",
                 resolved.def.c_name,
                 variant.c_name
+            );
+        }
+    }
+
+    // The value sets share the namespace: they are generated into the same module and
+    // re-exported at the crate root alongside everything else.
+    for set in values {
+        let name = set.rust_name.as_str();
+        if taken.contains(name) {
+            bail!(
+                "the values of `{}.{}` generate `{name}`, which collides with a generated proxy \
+                 of the same name",
+                set.setting,
+                set.property
+            );
+        }
+        if !seen.insert(name) {
+            bail!(
+                "the values of `{}.{}` generate `{name}`, which is already the name of a \
+                 NetworkManager type",
+                set.setting,
+                set.property
             );
         }
     }

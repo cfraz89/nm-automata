@@ -640,7 +640,11 @@ fn escape(text: &str) -> String {
 }
 
 /// Emit the Rust module holding NetworkManager's enumerations and flag sets.
-pub fn types_module(types: &[Resolved<'_>], nm_version: &str) -> String {
+pub fn types_module(
+    types: &[Resolved<'_>],
+    values: &[crate::values::ValueSet],
+    nm_version: &str,
+) -> String {
     let mut out = String::new();
     let _ = writeln!(
         out,
@@ -651,7 +655,10 @@ pub fn types_module(types: &[Resolved<'_>], nm_version: &str) -> String {
          \n\
          #![allow(rustdoc::invalid_html_tags)]\n"
     );
-    let _ = writeln!(out, "use crate::repr::{{nm_enum, nm_flags}};\n");
+    let _ = writeln!(
+        out,
+        "use crate::repr::{{nm_enum, nm_flags, nm_str_enum}};\n"
+    );
 
     for resolved in types {
         let def = resolved.def;
@@ -684,6 +691,37 @@ pub fn types_module(types: &[Resolved<'_>], nm_version: &str) -> String {
             }
             let _ = writeln!(out, "        /// `{}`", variant.c_name);
             let _ = writeln!(out, "        {name} = {},", variant.value);
+        }
+        let _ = writeln!(out, "    }}\n}}\n");
+    }
+
+    // The properties that travel as a string from a fixed set. NetworkManager declares most of
+    // these as constants and the rest only in its prose; see `crate::values`.
+    for set in values {
+        let _ = writeln!(out, "nm_str_enum! {{");
+        if write_doc_lines(&mut out, set.doc.as_deref(), "    ") {
+            let _ = writeln!(out, "    ///");
+        }
+        let _ = writeln!(
+            out,
+            "    /// The values `{}.{}` takes, sent over D-Bus as `s`.",
+            set.setting, set.property
+        );
+        let _ = writeln!(out, "    pub enum {} {{", set.rust_name);
+        for value in &set.values {
+            if write_doc_lines(&mut out, value.doc.as_deref(), "        ") {
+                let _ = writeln!(out, "        ///");
+            }
+            match &value.c_name {
+                Some(c_name) => {
+                    let _ = writeln!(out, "        /// `{c_name}`");
+                }
+                // Nothing upstream names it, so the string itself is the whole story.
+                None => {
+                    let _ = writeln!(out, "        /// `{}`", value.text);
+                }
+            }
+            let _ = writeln!(out, "        {} = \"{}\",", value.rust_name, value.text);
         }
         let _ = writeln!(out, "    }}\n}}\n");
     }
@@ -749,6 +787,23 @@ pub fn settings_module(
     types: &BTreeMap<String, Resolved<'_>>,
     nm_version: &str,
 ) -> String {
+    // The hand-written types some properties are read through, which unlike the generated ones
+    // live at the crate root.
+    let mut used: Vec<&str> = settings
+        .iter()
+        .flat_map(|setting| &setting.properties)
+        .filter_map(|property| match &property.ty {
+            crate::settings::PropertyType::Newtype { name } => Some(name.as_str()),
+            _ => None,
+        })
+        .collect();
+    used.sort_unstable();
+    used.dedup();
+    let newtypes = match used.is_empty() {
+        true => String::new(),
+        false => format!("use crate::{{{}}};\n", used.join(", ")),
+    };
+
     let mut out = String::new();
     let _ = writeln!(
         out,
@@ -764,6 +819,7 @@ pub fn settings_module(
          use zbus::zvariant::OwnedValue;\n\
          \n\
          use super::types::*;\n\
+         {newtypes}\
          use crate::settings::{{self, ProfileMap, Setting, SettingMap, SettingsError}};\n\
          \n\
          /// An address as the deprecated `ipv6.addresses` carries it: the address bytes, the\n\
@@ -911,10 +967,11 @@ fn write_profile_struct(out: &mut String, settings: &[crate::settings::Setting])
          /// which one determines what kind of connection it is:\n    \
          ///\n    \
          /// ```no_run\n    \
-         /// # use nm_automata::{{ConnectionProfile, WirelessSetting}};\n    \
+         /// # use nm_automata::{{ConnectionProfile, Ssid, WirelessMode, WirelessSetting}};\n    \
          /// let mut profile = ConnectionProfile::new(\"home wifi\");\n    \
          /// profile.wireless = Some(WirelessSetting {{\n    \
-         ///     ssid: Some(b\"my-network\".to_vec()),\n    \
+         ///     ssid: Some(Ssid::from(\"my-network\")),\n    \
+         ///     mode: Some(WirelessMode::Infrastructure),\n    \
          ///     ..Default::default()\n    \
          /// }});\n    \
          /// ```\n    \
@@ -1074,6 +1131,8 @@ fn rust_type(ty: &crate::settings::PropertyType, types: &BTreeMap<String, Resolv
         P::ByteArrayArray => "Vec<Vec<u8>>".into(),
         P::Uint32Array => "Vec<u32>".into(),
         P::Uint32ArrayArray => "Vec<Vec<u32>>".into(),
+        P::Value { name } | P::Newtype { name } => name.clone(),
+        P::ValueArray { name } => format!("Vec<{name}>"),
         P::StringMap => "HashMap<String, String>".into(),
         P::VardictArray => "Vec<HashMap<String, OwnedValue>>".into(),
         P::LegacyIp6Addresses => "Vec<LegacyIp6Address>".into(),

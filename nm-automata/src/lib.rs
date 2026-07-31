@@ -34,7 +34,14 @@
 //! * [`types`] holds NetworkManager's enumerations and flag sets. Properties and arguments
 //!   that upstream documents as one of them are typed as such instead of as a bare integer.
 //!   Both decode leniently, so a daemon newer than this binding still works: see
-//!   [`DeviceState::Other`] and [`DeviceCapabilities::from_bits_retain`].
+//!   [`DeviceState::Other`] and [`DeviceCapabilities::from_bits_retain`]. The connection-profile
+//!   properties that travel as one of a fixed set of *strings* are there too —
+//!   [`WirelessMode`], [`WirelessSecurityKeyMgmt`] — and decode the same way, keeping an
+//!   unfamiliar value verbatim so that writing the profile back sends what was read.
+//! * A few profile properties are byte arrays that are not really bytes, and have a type that
+//!   says what they are: [`Ssid`] for the name of a Wi-Fi network, which 802.11 defines as
+//!   octets rather than text, and [`MacAddress`] for a hardware address, which NetworkManager
+//!   writes as hex digits and colons everywhere except on the wire.
 //! * Members that return object paths return the objects instead: `get_devices` hands back
 //!   devices, built on the connection the proxy already holds. The paths are still there under
 //!   a `_path` or `_paths` name — `get_device_paths` — and [`paths`] holds a newtype per
@@ -73,9 +80,11 @@ compile_error!(
 mod empty;
 mod ext;
 mod generated;
+mod mac;
 mod path;
 mod repr;
 pub mod settings;
+mod ssid;
 
 pub use empty::NonEmpty;
 pub use ext::{ObjectPathExt, ObjectPathSliceExt, ProxyExt};
@@ -87,7 +96,9 @@ pub use generated::settings::*;
 pub use generated::types::*;
 pub use generated::vardict::*;
 pub use generated::{NM_VERSION, devices, paths, proxies, types, vardict};
+pub use mac::{InvalidMacAddress, MacAddress};
 pub use path::{NmPath, NmPathSliceExt};
+pub use ssid::Ssid;
 
 /// zbus, re-exported: its [`Connection`](zbus::Connection) is the entry point to every proxy,
 /// and its error type is what they return.
