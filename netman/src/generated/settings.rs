@@ -7841,3 +7841,24 @@ impl ConnectionProfile {
         Ok(profile)
     }
 }
+
+impl zbus::zvariant::Type for ConnectionProfile {
+    const SIGNATURE: &'static zbus::zvariant::Signature =
+        <ProfileMap as zbus::zvariant::Type>::SIGNATURE;
+}
+
+impl serde::Serialize for ConnectionProfile {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        serde::Serialize::serialize(
+            &self.to_map().map_err(serde::ser::Error::custom)?,
+            serializer,
+        )
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for ConnectionProfile {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let map = <ProfileMap as serde::Deserialize>::deserialize(deserializer)?;
+        Self::from_map(&map).map_err(serde::de::Error::custom)
+    }
+}

@@ -10,6 +10,8 @@
 )]
 
 #[allow(unused_imports)]
+use crate::generated::settings::ConnectionProfile;
+#[allow(unused_imports)]
 use crate::generated::types::*;
 use zbus::proxy;
 
@@ -38,15 +40,7 @@ pub trait Connection {
     ///
     /// * `setting_name` - Name of the setting to return secrets for (mandatory).
     /// * `secrets` - Nested settings maps containing secrets.
-    fn get_secrets(
-        &self,
-        setting_name: &str,
-    ) -> zbus::Result<
-        std::collections::HashMap<
-            String,
-            std::collections::HashMap<String, zbus::zvariant::OwnedValue>,
-        >,
-    >;
+    fn get_secrets(&self, setting_name: &str) -> zbus::Result<ConnectionProfile>;
 
     /// GetSettings method
     ///
@@ -55,14 +49,7 @@ pub trait Connection {
     /// # Arguments
     ///
     /// * `settings` - The nested settings maps describing this object.
-    fn get_settings(
-        &self,
-    ) -> zbus::Result<
-        std::collections::HashMap<
-            String,
-            std::collections::HashMap<String, zbus::zvariant::OwnedValue>,
-        >,
-    >;
+    fn get_settings(&self) -> zbus::Result<ConnectionProfile>;
 
     /// Save method
     ///
@@ -76,13 +63,7 @@ pub trait Connection {
     /// # Arguments
     ///
     /// * `properties` - New connection settings, properties, and (optionally) secrets.
-    fn update(
-        &self,
-        properties: std::collections::HashMap<
-            &str,
-            std::collections::HashMap<&str, &zbus::zvariant::Value<'_>>,
-        >,
-    ) -> zbus::Result<()>;
+    fn update(&self, properties: &ConnectionProfile) -> zbus::Result<()>;
 
     /// Update2 method
     ///
@@ -96,10 +77,7 @@ pub trait Connection {
     /// * `result` - Currently no results are returned.
     fn update2(
         &self,
-        settings: std::collections::HashMap<
-            &str,
-            std::collections::HashMap<&str, &zbus::zvariant::Value<'_>>,
-        >,
+        settings: &ConnectionProfile,
         flags: u32,
         args: std::collections::HashMap<&str, &zbus::zvariant::Value<'_>>,
     ) -> zbus::Result<std::collections::HashMap<String, zbus::zvariant::OwnedValue>>;
@@ -111,13 +89,7 @@ pub trait Connection {
     /// # Arguments
     ///
     /// * `properties` - New connection settings, properties, and (optionally) secrets.
-    fn update_unsaved(
-        &self,
-        properties: std::collections::HashMap<
-            &str,
-            std::collections::HashMap<&str, &zbus::zvariant::Value<'_>>,
-        >,
-    ) -> zbus::Result<()>;
+    fn update_unsaved(&self, properties: &ConnectionProfile) -> zbus::Result<()>;
 
     /// Removed signal
     ///

@@ -10,6 +10,8 @@
 )]
 
 #[allow(unused_imports)]
+use crate::generated::settings::ConnectionProfile;
+#[allow(unused_imports)]
 use crate::generated::types::*;
 use zbus::proxy;
 
@@ -50,10 +52,7 @@ pub trait NetworkManager {
     /// * `active_connection` - The path of the active connection object representing this active connection.
     fn add_and_activate_connection(
         &self,
-        connection: std::collections::HashMap<
-            &str,
-            std::collections::HashMap<&str, &zbus::zvariant::Value<'_>>,
-        >,
+        connection: &ConnectionProfile,
         device: &zbus::zvariant::ObjectPath<'_>,
         specific_object: &zbus::zvariant::ObjectPath<'_>,
     ) -> zbus::Result<(
@@ -77,10 +76,7 @@ pub trait NetworkManager {
     #[allow(clippy::too_many_arguments)]
     fn add_and_activate_connection2(
         &self,
-        connection: std::collections::HashMap<
-            &str,
-            std::collections::HashMap<&str, &zbus::zvariant::Value<'_>>,
-        >,
+        connection: &ConnectionProfile,
         device: &zbus::zvariant::ObjectPath<'_>,
         specific_object: &zbus::zvariant::ObjectPath<'_>,
         options: std::collections::HashMap<&str, &zbus::zvariant::Value<'_>>,

@@ -10,6 +10,8 @@
 )]
 
 #[allow(unused_imports)]
+use crate::generated::settings::ConnectionProfile;
+#[allow(unused_imports)]
 use crate::generated::types::*;
 use zbus::proxy;
 
@@ -30,10 +32,7 @@ pub trait Settings {
     /// * `path` - Object path of the new connection that was just added.
     fn add_connection(
         &self,
-        connection: std::collections::HashMap<
-            &str,
-            std::collections::HashMap<&str, &zbus::zvariant::Value<'_>>,
-        >,
+        connection: &ConnectionProfile,
     ) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
 
     /// AddConnection2 method
@@ -49,10 +48,7 @@ pub trait Settings {
     /// * `result` - Output argument, currently no additional results are returned.
     fn add_connection2(
         &self,
-        settings: std::collections::HashMap<
-            &str,
-            std::collections::HashMap<&str, &zbus::zvariant::Value<'_>>,
-        >,
+        settings: &ConnectionProfile,
         flags: u32,
         args: std::collections::HashMap<&str, &zbus::zvariant::Value<'_>>,
     ) -> zbus::Result<(
@@ -70,10 +66,7 @@ pub trait Settings {
     /// * `path` - Object path of the new connection that was just added.
     fn add_connection_unsaved(
         &self,
-        connection: std::collections::HashMap<
-            &str,
-            std::collections::HashMap<&str, &zbus::zvariant::Value<'_>>,
-        >,
+        connection: &ConnectionProfile,
     ) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
 
     /// GetConnectionByUuid method

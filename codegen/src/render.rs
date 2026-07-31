@@ -38,6 +38,14 @@ pub fn augmented_xml(
     for name in referenced_types(node, docs, types) {
         write_type_def(&mut out, &types[&name]);
     }
+    // `zbus_xmlgen` only names a type it has a definition for. The body it generates from this
+    // one is stripped like all the others; the real struct is in the settings module.
+    if node_carries_profile(node) {
+        let _ = writeln!(
+            out,
+            r#"  <tp:simple-type name="ConnectionProfile" type="{PROFILE_SIGNATURE}"/>"#
+        );
+    }
 
     for interface in node.interfaces() {
         write_interface(&mut out, interface, docs, types);
@@ -45,6 +53,22 @@ pub fn augmented_xml(
 
     let _ = writeln!(out, "</node>");
     out
+}
+
+/// Whether any member of `node` carries a connection profile.
+fn node_carries_profile(node: &Node<'_>) -> bool {
+    node.interfaces().iter().any(|interface| {
+        interface
+            .properties()
+            .iter()
+            .any(|p| p.ty().to_string() == PROFILE_SIGNATURE)
+            || interface
+                .methods()
+                .iter()
+                .flat_map(|m| m.args())
+                .chain(interface.signals().iter().flat_map(|s| s.args()))
+                .any(|a| a.ty().to_string() == PROFILE_SIGNATURE)
+    })
 }
 
 /// The types referenced by any member of `node`, in a stable order.
@@ -339,7 +363,7 @@ fn write_interface(
         let tp_type = references
             .get(&Site::Property(name.clone()))
             .map(|r| format!(r#" tp:type="{r}""#))
-            .unwrap_or_default();
+            .unwrap_or_else(|| profile_attribute(&property.ty().to_string()).to_owned());
         let _ = writeln!(
             out,
             r#"    <property name="{name}" type="{}" access="{access}"{tp_type}>"#,
@@ -371,7 +395,7 @@ fn write_arg(
     let tp_type = references
         .get(&Site::Arg(member.to_owned(), name.to_owned()))
         .map(|r| format!(r#" tp:type="{r}""#))
-        .unwrap_or_default();
+        .unwrap_or_else(|| profile_attribute(&arg.ty().inner().to_string()).to_owned());
     let doc = member_docs
         .and_then(|m| m.args.get(name))
         .and_then(|a| a.doc.as_deref());
@@ -748,6 +772,44 @@ fn write_profile_struct(out: &mut String, settings: &[crate::settings::Setting])
          }}\n        \
          Ok(profile)\n    }}\n}}\n"
     );
+
+    // With these, `#[proxy]` can use a profile directly: every `a{sa{sv}}` argument and return
+    // value becomes a `ConnectionProfile` instead of a map the caller has to convert.
+    let _ = writeln!(
+        out,
+        "impl zbus::zvariant::Type for ConnectionProfile {{\n    \
+         const SIGNATURE: &'static zbus::zvariant::Signature =\n        \
+         <ProfileMap as zbus::zvariant::Type>::SIGNATURE;\n\
+         }}\n\
+         \n\
+         impl serde::Serialize for ConnectionProfile {{\n    \
+         fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {{\n        \
+         serde::Serialize::serialize(&self.to_map().map_err(serde::ser::Error::custom)?, serializer)\n    \
+         }}\n\
+         }}\n\
+         \n\
+         impl<'de> serde::Deserialize<'de> for ConnectionProfile {{\n    \
+         fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {{\n        \
+         let map = <ProfileMap as serde::Deserialize>::deserialize(deserializer)?;\n        \
+         Self::from_map(&map).map_err(serde::de::Error::custom)\n    \
+         }}\n\
+         }}\n"
+    );
+}
+
+/// The signature a connection profile travels as.
+///
+/// Every argument and property with this signature is a profile — a whole one, or the subset
+/// of it that carries secrets — so no annotation data is needed to recognise them.
+pub const PROFILE_SIGNATURE: &str = "a{sa{sv}}";
+
+/// The `tp:type` attribute for a member whose signature says it carries a profile.
+fn profile_attribute(signature: &str) -> &'static str {
+    if signature == PROFILE_SIGNATURE {
+        r#" tp:type="ConnectionProfile""#
+    } else {
+        ""
+    }
 }
 
 /// The Rust type a connection-profile property becomes.

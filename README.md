@@ -71,8 +71,15 @@ are kept in `other` maps, so a read-modify-write against a newer daemon does not
   property stream, `receive_state_changed_signal()` for the signal.
 * **Connection profiles are structs, not `a{sa{sv}}`.** All 530 properties across 57 settings
   have real fields — `profile.wireless.ssid`, `profile.ipv4.method` — with upstream's
-  documentation on each. `cargo run --example profiles` round-trips every profile on the
-  machine and reports anything that does not survive.
+  documentation on each, and the proxies speak them directly:
+
+  ```rust
+  fn get_settings(&self) -> zbus::Result<ConnectionProfile>;
+  fn update(&self, properties: &ConnectionProfile) -> zbus::Result<()>;
+  ```
+
+  `cargo run --example profiles` reads every profile on the machine through both the typed and
+  the raw path and reports any property that differs.
 
 ## Keeping up with upstream
 

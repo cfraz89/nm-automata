@@ -10,6 +10,8 @@
 )]
 
 #[allow(unused_imports)]
+use crate::generated::settings::ConnectionProfile;
+#[allow(unused_imports)]
 use crate::generated::types::*;
 use zbus::proxy;
 
@@ -27,13 +29,7 @@ pub trait Plugin {
     /// # Arguments
     ///
     /// * `connection` - Describes the connection to be established.
-    fn connect(
-        &self,
-        connection: std::collections::HashMap<
-            &str,
-            std::collections::HashMap<&str, &zbus::zvariant::Value<'_>>,
-        >,
-    ) -> zbus::Result<()>;
+    fn connect(&self, connection: &ConnectionProfile) -> zbus::Result<()>;
 
     /// ConnectInteractive method
     ///
@@ -45,10 +41,7 @@ pub trait Plugin {
     /// * `details` - Additional details about the Connect process.
     fn connect_interactive(
         &self,
-        connection: std::collections::HashMap<
-            &str,
-            std::collections::HashMap<&str, &zbus::zvariant::Value<'_>>,
-        >,
+        connection: &ConnectionProfile,
         details: std::collections::HashMap<&str, &zbus::zvariant::Value<'_>>,
     ) -> zbus::Result<()>;
 
@@ -65,13 +58,7 @@ pub trait Plugin {
     ///
     /// * `settings` - Describes the connection that may need secrets.
     /// * `setting_name` - The setting name within the provided connection that requires secrets, if any.
-    fn need_secrets(
-        &self,
-        settings: std::collections::HashMap<
-            &str,
-            std::collections::HashMap<&str, &zbus::zvariant::Value<'_>>,
-        >,
-    ) -> zbus::Result<String>;
+    fn need_secrets(&self, settings: &ConnectionProfile) -> zbus::Result<String>;
 
     /// NewSecrets method
     ///
@@ -80,13 +67,7 @@ pub trait Plugin {
     /// # Arguments
     ///
     /// * `connection` - Describes the connection including the new secrets.
-    fn new_secrets(
-        &self,
-        connection: std::collections::HashMap<
-            &str,
-            std::collections::HashMap<&str, &zbus::zvariant::Value<'_>>,
-        >,
-    ) -> zbus::Result<()>;
+    fn new_secrets(&self, connection: &ConnectionProfile) -> zbus::Result<()>;
 
     /// SetConfig method
     ///

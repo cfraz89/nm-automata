@@ -10,6 +10,8 @@
 )]
 
 #[allow(unused_imports)]
+use crate::generated::settings::ConnectionProfile;
+#[allow(unused_imports)]
 use crate::generated::types::*;
 use zbus::proxy;
 
@@ -39,16 +41,7 @@ pub trait Device {
     /// * `flags` - Flags which would modify the behavior of the GetAppliedConnection call. There are no flags defined currently and the users should use the value of 0.
     /// * `connection` - The effective connection settings that the connection has currently applied.
     /// * `version_id` - The version-id of the currently applied connection. This can be specified during Reapply to avoid races where you first fetch the applied connection, modify it and try to reapply it. If the applied connection is modified in the meantime, the version_id gets incremented and Reapply will fail.
-    fn get_applied_connection(
-        &self,
-        flags: u32,
-    ) -> zbus::Result<(
-        std::collections::HashMap<
-            String,
-            std::collections::HashMap<String, zbus::zvariant::OwnedValue>,
-        >,
-        u64,
-    )>;
+    fn get_applied_connection(&self, flags: u32) -> zbus::Result<(ConnectionProfile, u64)>;
 
     /// Reapply method
     ///
@@ -61,10 +54,7 @@ pub trait Device {
     /// * `flags` - Flags which would modify the behavior of the Reapply call. Invalid flags are rejected.
     fn reapply(
         &self,
-        connection: std::collections::HashMap<
-            &str,
-            std::collections::HashMap<&str, &zbus::zvariant::Value<'_>>,
-        >,
+        connection: &ConnectionProfile,
         version_id: u64,
         flags: u32,
     ) -> zbus::Result<()>;

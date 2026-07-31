@@ -10,6 +10,8 @@
 )]
 
 #[allow(unused_imports)]
+use crate::generated::settings::ConnectionProfile;
+#[allow(unused_imports)]
 use crate::generated::types::*;
 use zbus::proxy;
 
@@ -44,10 +46,7 @@ pub trait SecretAgent {
     /// * `connection_path` - Object path of the connection for which the agent should delete secrets from backing storage.
     fn delete_secrets(
         &self,
-        connection: std::collections::HashMap<
-            &str,
-            std::collections::HashMap<&str, &zbus::zvariant::Value<'_>>,
-        >,
+        connection: &ConnectionProfile,
         connection_path: &zbus::zvariant::ObjectPath<'_>,
     ) -> zbus::Result<()>;
 
@@ -65,20 +64,12 @@ pub trait SecretAgent {
     /// * `secrets` - Nested settings maps containing secrets. Each setting MUST contain at least the 'name' field, containing the name of the setting, and one or more secrets.
     fn get_secrets(
         &self,
-        connection: std::collections::HashMap<
-            &str,
-            std::collections::HashMap<&str, &zbus::zvariant::Value<'_>>,
-        >,
+        connection: &ConnectionProfile,
         connection_path: &zbus::zvariant::ObjectPath<'_>,
         setting_name: &str,
         hints: &[&str],
         flags: SecretAgentGetSecretsFlags,
-    ) -> zbus::Result<
-        std::collections::HashMap<
-            String,
-            std::collections::HashMap<String, zbus::zvariant::OwnedValue>,
-        >,
-    >;
+    ) -> zbus::Result<ConnectionProfile>;
 
     /// SaveSecrets method
     ///
@@ -90,10 +81,7 @@ pub trait SecretAgent {
     /// * `connection_path` - Object path of the connection for which the agent should save secrets to backing storage.
     fn save_secrets(
         &self,
-        connection: std::collections::HashMap<
-            &str,
-            std::collections::HashMap<&str, &zbus::zvariant::Value<'_>>,
-        >,
+        connection: &ConnectionProfile,
         connection_path: &zbus::zvariant::ObjectPath<'_>,
     ) -> zbus::Result<()>;
 }

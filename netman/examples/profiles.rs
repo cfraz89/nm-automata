@@ -23,8 +23,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut mismatches = 0;
     for profile in profiles {
-        let sent: ProfileMap = profile.get_settings().await?;
-        let typed = ConnectionProfile::from_map(&sent)?;
+        // The raw wire form, fetched through the underlying zbus proxy, against the typed
+        // form the generated method returns. Comparing the two checks the whole path.
+        let sent: ProfileMap = profile.inner().call("GetSettings", &()).await?;
+        let typed: ConnectionProfile = profile.get_settings().await?;
         let returned = typed.to_map()?;
 
         let id = typed

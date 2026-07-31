@@ -347,6 +347,8 @@ fn proxy_module(module: &Generated, nm_version: &str) -> String {
          #![allow(\n    clippy::too_many_arguments,\n    clippy::type_complexity,\n    \
          rustdoc::invalid_html_tags\n)]\n\n\
          #[allow(unused_imports)]\n\
+         use crate::generated::settings::ConnectionProfile;\n\
+         #[allow(unused_imports)]\n\
          use crate::generated::types::*;\n\
          use zbus::proxy;\n",
         module.interface
