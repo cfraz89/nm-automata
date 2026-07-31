@@ -62,6 +62,14 @@
 
 #![warn(missing_debug_implementations)]
 
+// A backstop only: zbus is a dependency and so is compiled first, and it has the same check,
+// so in practice its message is the one seen. This one would fire if that ever went away.
+#[cfg(not(any(feature = "async-io", feature = "tokio")))]
+compile_error!(
+    "nm-automata needs an async runtime for zbus to drive its connection with. Enable either \
+     the `async-io` feature (on by default) or `tokio`."
+);
+
 mod ext;
 mod generated;
 mod path;

@@ -210,8 +210,12 @@ guard done properly.
 
 ## Features
 
-`async-io` (default) or `tokio` picks the runtime zbus drives its connection with; enable
-exactly one. `blocking-api` additionally generates the blocking proxies.
+`async-io` (default) or `tokio` picks the runtime zbus drives its connection with, and one of
+them is required; with neither, zbus fails to compile with its own `compile_error!` before this
+crate is reached. Enabling both is permitted rather than rejected, since cargo unifies features
+additively and two crates in one tree may each want a different runtime — but zbus gates on
+`tokio`, so tokio wins and async-io is then only dead weight. `blocking-api` additionally
+generates the blocking proxies.
 
 ## Licence
 

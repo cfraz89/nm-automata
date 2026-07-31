@@ -24,8 +24,10 @@ futures-util = "0.3.33"
 
 [features]
 default = ["async-io"]
-# Pick the async runtime zbus drives its connection with. These mirror the zbus
-# features of the same name; enable exactly one.
+# The async runtime zbus drives its connection with; these mirror the zbus features of the same
+# name. One of them is required. Enabling both is allowed rather than rejected, because cargo
+# unifies features additively and two crates in one tree may each want a different runtime — but
+# zbus gates on `tokio`, so tokio wins and async-io is then only dead weight.
 async-io = ["zbus/async-io"]
 tokio = ["zbus/tokio"]
 # Emit blocking proxies alongside the async ones.
