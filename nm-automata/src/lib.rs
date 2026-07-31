@@ -70,12 +70,14 @@ compile_error!(
      the `async-io` feature (on by default) or `tokio`."
 );
 
+mod empty;
 mod ext;
 mod generated;
 mod path;
 mod repr;
 pub mod settings;
 
+pub use empty::NonEmpty;
 pub use ext::{ObjectPathExt, ObjectPathSliceExt, ProxyExt};
 pub use generated::devices::AnyDevice;
 pub use generated::paths::*;
