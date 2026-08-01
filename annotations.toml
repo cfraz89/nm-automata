@@ -516,3 +516,43 @@ type = "AssignedMacAddress"
 interface = "org.freedesktop.NetworkManager.AccessPoint"
 name = "Ssid"
 type = "Ssid"
+
+# The options dictionary of `AddAndActivateConnection2`, whose two keys NetworkManager
+# documents in the method's own prose. Unlike the read-only dictionaries above this one is
+# written, so a key typed wrongly here would be a rejected call rather than a decode error —
+# which is why it is only the keys upstream spells out, with anything else kept in `other`.
+
+[[enumeration]]
+name = "ActivationPersist"
+doc = "How long a connection added by `AddAndActivateConnection2` should last."
+[[enumeration.value]]
+value = "disk"
+doc = "Save it, as any other profile. The default."
+[[enumeration.value]]
+value = "memory"
+doc = "Do not save it to disk."
+[[enumeration.value]]
+value = "volatile"
+doc = "Do not save it to disk, and destroy it when it disconnects."
+
+[[enumeration]]
+name = "ActivationBinding"
+doc = "What the lifetime of an activation is tied to."
+[[enumeration.value]]
+value = "none"
+doc = "Nothing: the connection stays activated normally. The default."
+[[enumeration.value]]
+name = "DbusClient"
+value = "dbus-client"
+doc = "The requesting process, disconnecting when it leaves the bus."
+
+[[vardict]]
+name = "ActivationOptions"
+doc = "Further options for `AddAndActivateConnection2`."
+applies = [
+    "org.freedesktop.NetworkManager.AddAndActivateConnection2.options",
+]
+keys = [
+    { name = "persist", type = "ActivationPersist", doc = "How long the new connection should last." },
+    { name = "bind-activation", type = "ActivationBinding", doc = "What to tie the activation's lifetime to." },
+]

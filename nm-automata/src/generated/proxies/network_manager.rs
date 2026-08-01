@@ -65,7 +65,7 @@ pub trait NetworkManager {
         connection: &ConnectionProfile,
         device: &DevicePath,
         specific_object: &zbus::zvariant::ObjectPath<'_>,
-        options: std::collections::HashMap<&str, &zbus::zvariant::Value<'_>>,
+        options: &ActivationOptions,
     ) -> zbus::Result<(
         SettingsConnectionPath,
         ConnectionActivePath,

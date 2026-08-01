@@ -102,6 +102,14 @@ pub fn generate(root: &Path) -> Result<BTreeMap<PathBuf, String>> {
         .collect();
     values::check_member_newtypes(annotations.newtypes(), &properties)?;
 
+    // And the members that carry one of the hand-written dictionary shapes, likewise: a
+    // `[[vardict]]` naming something the spec does not have would otherwise apply to nothing.
+    let dictionaries: Vec<(String, String)> = parsed
+        .iter()
+        .flat_map(|(_, node, _)| render::dictionary_sites(node))
+        .collect();
+    annotations.check_vardicts(&dictionaries)?;
+
     let types = resolve_types(&defs, &parsed);
     let by_c_name: BTreeMap<String, Resolved<'_>> = types
         .iter()
@@ -206,6 +214,7 @@ pub fn generate(root: &Path) -> Result<BTreeMap<PathBuf, String>> {
         rustfmt(&render::vardict_module(
             annotations.vardicts(),
             &by_c_name,
+            &value_sets,
             &nm_version,
         )?)?,
     );
@@ -664,18 +673,16 @@ fn check_name_clashes(
         let name = set.rust_name.as_str();
         if taken.contains(name) {
             bail!(
-                "the values of `{}.{}` generate `{name}`, which collides with a generated proxy \
-                 of the same name",
-                set.setting,
-                set.property
+                "the values of `{}` generate `{name}`, which collides with a generated proxy of \
+                 the same name",
+                set.describe()
             );
         }
         if !seen.insert(name) {
             bail!(
-                "the values of `{}.{}` generate `{name}`, which is already the name of a \
+                "the values of `{}` generate `{name}`, which is already the name of a \
                  NetworkManager type",
-                set.setting,
-                set.property
+                set.describe()
             );
         }
     }

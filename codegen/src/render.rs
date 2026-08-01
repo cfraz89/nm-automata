@@ -69,18 +69,16 @@ pub fn augmented_xml(
         );
     }
 
-    // The dictionary shapes any of this file's properties carry.
+    // The dictionary shapes any of this file's members carry.
+    let sites = dictionary_sites(node);
     let mut shapes: Vec<&str> = Vec::new();
-    for interface in node.interfaces() {
-        for property in interface.properties() {
-            let member = format!("{}.{}", interface.name(), property.name());
-            for vardict in vardicts {
-                if vardict.applies.iter().any(|a| a == &member)
-                    && !shapes.contains(&vardict.name.as_str())
-                {
-                    shapes.push(&vardict.name);
-                }
-            }
+    for vardict in vardicts {
+        let applies = vardict
+            .applies
+            .iter()
+            .any(|a| sites.iter().any(|(target, _)| target == a));
+        if applies && !shapes.contains(&vardict.name.as_str()) {
+            shapes.push(&vardict.name);
         }
     }
     for shape in &shapes {
@@ -116,6 +114,43 @@ pub fn augmented_xml(
     }
 
     let _ = writeln!(out, "</node>");
+    out
+}
+
+/// Every member of `node` that could carry a dictionary, and the signature it carries.
+///
+/// A property is named `Interface.Property` and an argument `Interface.Member.argument`, which
+/// is how `annotations.toml` names them in a `[[vardict]]`'s `applies`.
+pub fn dictionary_sites(node: &Node<'_>) -> Vec<(String, String)> {
+    let mut out = Vec::new();
+    for interface in node.interfaces() {
+        let name = interface.name().to_string();
+        for property in interface.properties() {
+            out.push((
+                format!("{name}.{}", property.name()),
+                property.ty().to_string(),
+            ));
+        }
+        let members = interface
+            .methods()
+            .iter()
+            .map(|m| (m.name().to_string(), m.args()))
+            .chain(
+                interface
+                    .signals()
+                    .iter()
+                    .map(|s| (s.name().to_string(), s.args())),
+            );
+        for (member, args) in members {
+            for arg in args {
+                let Some(argument) = arg.name() else { continue };
+                out.push((
+                    format!("{name}.{member}.{argument}"),
+                    arg.ty().inner().to_string(),
+                ));
+            }
+        }
+    }
     out
 }
 
@@ -555,10 +590,12 @@ fn write_interface(
             write_arg(
                 out,
                 arg,
+                interface.name().as_str(),
                 &name,
                 Some(direction),
                 &references,
                 object_sites,
+                vardicts,
                 member,
             );
         }
@@ -571,7 +608,17 @@ fn write_interface(
         let _ = writeln!(out, r#"    <signal name="{}">"#, emitted_name(&name));
         write_docstring(out, member.and_then(|m| m.doc.as_deref()), "      ");
         for arg in signal.args() {
-            write_arg(out, arg, &name, None, &references, object_sites, member);
+            write_arg(
+                out,
+                arg,
+                interface.name().as_str(),
+                &name,
+                None,
+                &references,
+                object_sites,
+                vardicts,
+                member,
+            );
         }
         let _ = writeln!(out, "    </signal>");
     }
@@ -618,13 +665,16 @@ fn write_interface(
     let _ = writeln!(out, "  </interface>");
 }
 
+#[allow(clippy::too_many_arguments)]
 fn write_arg(
     out: &mut String,
     arg: &zbus_xml::Arg,
+    interface: &str,
     member: &str,
     direction: Option<&str>,
     references: &BTreeMap<Site, String>,
     object_sites: &BTreeMap<Site, String>,
+    vardicts: &[crate::overrides::Vardict],
     member_docs: Option<&crate::annotate::MemberDocs>,
 ) {
     let name = arg.name().unwrap_or_default();
@@ -632,11 +682,13 @@ fn write_arg(
         .map(|d| format!(r#" direction="{d}""#))
         .unwrap_or_default();
     let site = Site::Arg(member.to_owned(), name.to_owned());
+    let signature = arg.ty().inner().to_string();
     let tp_type = references
         .get(&site)
         .map(|r| format!(r#" tp:type="{r}""#))
-        .or_else(|| object_attribute(object_sites, &site, &arg.ty().inner().to_string()))
-        .unwrap_or_else(|| profile_attribute(&arg.ty().inner().to_string()).to_owned());
+        .or_else(|| object_attribute(object_sites, &site, &signature))
+        .or_else(|| vardict_attribute(vardicts, interface, &format!("{member}.{name}"), &signature))
+        .unwrap_or_else(|| profile_attribute(&signature).to_owned());
     let doc = member_docs
         .and_then(|m| m.args.get(name))
         .and_then(|a| a.doc.as_deref());
@@ -734,8 +786,8 @@ pub fn types_module(
         }
         let _ = writeln!(
             out,
-            "    /// The values `{}.{}` takes, sent over D-Bus as `s`.",
-            set.setting, set.property
+            "    /// The values `{}` takes, sent over D-Bus as `s`.",
+            set.describe()
         );
         let _ = writeln!(out, "    pub enum {} {{", set.rust_name);
         for value in &set.values {
@@ -1205,17 +1257,21 @@ fn newtype_for<'a>(
 fn vardict_attribute(
     vardicts: &[crate::overrides::Vardict],
     interface: &str,
-    property: &str,
+    member: &str,
     signature: &str,
 ) -> Option<String> {
-    if signature != "aa{sv}" {
-        return None;
-    }
-    let member = format!("{interface}.{property}");
+    // A list of them where a property carries several, and one where a member takes exactly
+    // one — the options dictionaries of the `*2` methods being the latter.
+    let suffix = match signature {
+        VARDICT_ARRAY_SIGNATURE => "[]",
+        VARDICT_SIGNATURE => "",
+        _ => return None,
+    };
+    let target = format!("{interface}.{member}");
     vardicts
         .iter()
-        .find(|vardict| vardict.applies.iter().any(|a| a == &member))
-        .map(|vardict| format!(r#" tp:type="{}[]""#, vardict.name))
+        .find(|vardict| vardict.applies.iter().any(|a| a == &target))
+        .map(|vardict| format!(r#" tp:type="{}{suffix}""#, vardict.name))
 }
 
 /// The `tp:type` attribute for a member whose object path has a known target.
@@ -1645,18 +1701,24 @@ pub fn path_accessors(
 
 /// Emit the module of dictionary shapes.
 ///
-/// These are the `aa{sv}` properties whose keys NetworkManager describes only in prose. Every
-/// one is read-only, so a key typed wrongly is a decode error and not a corrupted profile —
-/// which is what makes hand-written shapes acceptable here.
+/// These are the members whose dictionary keys NetworkManager describes only in prose. Most are
+/// read-only properties, where a key typed wrongly is a decode error rather than a corrupted
+/// profile — which is what makes hand-written shapes acceptable at all. `ActivationOptions` is
+/// the exception and is held to a higher standard: it is an argument this crate *sends*, so it
+/// carries only the keys upstream spells out.
 pub fn vardict_module(
     vardicts: &[crate::overrides::Vardict],
     types: &BTreeMap<String, Resolved<'_>>,
+    values: &[crate::values::ValueSet],
     nm_version: &str,
 ) -> Result<String, anyhow::Error> {
     let mut out = String::new();
     let _ = writeln!(
         out,
-        "//! The dictionaries NetworkManager reports configuration in.\n\
+        "//! The dictionaries NetworkManager describes the keys of only in prose.\n\
+         //!\n\
+         //! Most are configuration it reports and this crate only reads. `ActivationOptions` is\n\
+         //! the one it sends, and carries only the keys upstream spells out.\n\
          //!\n\
          //! Generated by `just generate` from `annotations.toml`, against NetworkManager\n\
          //! {nm_version}. Do not edit.\n\
@@ -1671,26 +1733,39 @@ pub fn vardict_module(
     );
 
     for vardict in vardicts {
-        let fields: Vec<(&crate::overrides::VardictKey, String, bool)> = vardict
+        let fields: Vec<(&crate::overrides::VardictKey, String, bool, String)> = vardict
             .keys
             .iter()
             .map(|key| {
-                let ty = crate::settings::PropertyType::parse(&key.ty)
-                    .with_context(|| format!("the type of `{}.{}`", vardict.name, key.name))?;
-                Ok((key, rust_type(&ty, types), ty.is_copy()))
+                // A key may name one of the enumerations `annotations.toml` declares, as well
+                // as a wire type: `persist` is one of three words, not any string.
+                let ty = match values.iter().any(|set| set.rust_name == key.ty) {
+                    true => crate::settings::PropertyType::Value {
+                        name: key.ty.clone(),
+                    },
+                    false => crate::settings::PropertyType::parse(&key.ty).with_context(|| {
+                        format!(
+                            "the type of `{}.{}`, which is neither a wire type nor an \
+                             `[[enumeration]]` in annotations.toml",
+                            vardict.name, key.name
+                        )
+                    })?,
+                };
+                let rendered = rust_type(&ty, types);
+                let argument = setter_argument(&ty, &rendered);
+                Ok((key, rendered, ty.is_copy(), argument))
             })
             .collect::<Result<_, anyhow::Error>>()?;
 
         let _ = writeln!(out, "/// {}", vardict.doc);
         let _ = writeln!(
             out,
-            "///\n/// Keys NetworkManager sends that are not listed here are kept in\n\
-             /// [`other`](Self::other), since it documents most of these as carrying\n\
-             /// additional attributes."
+            "///\n/// Keys not listed here are kept in [`other`](field@Self::other), since\n\
+             /// NetworkManager documents most of these as carrying further ones."
         );
         let _ = writeln!(out, "#[derive(Debug, Default, Clone, PartialEq)]");
         let _ = writeln!(out, "pub struct {} {{", vardict.name);
-        for (key, ty, _) in &fields {
+        for (key, ty, _, _) in &fields {
             let _ = writeln!(out, "    /// {}", key.doc);
             let _ = writeln!(out, "    ///");
             let _ = writeln!(out, "    /// `{}`", key.name);
@@ -1700,6 +1775,19 @@ pub fn vardict_module(
             out,
             "    /// Keys with no field of their own.\n    pub other: SettingMap,\n}}\n"
         );
+
+        let idents: Vec<String> = fields
+            .iter()
+            .map(|(key, _, _, _)| field_ident(&key.name))
+            .collect();
+        let setters: Vec<(&str, &str, String)> = fields
+            .iter()
+            .zip(&idents)
+            .map(|((key, _, _, argument), ident)| {
+                (ident.as_str(), key.name.as_str(), argument.clone())
+            })
+            .collect();
+        write_setters(&mut out, &vardict.name, "key", &setters);
 
         let _ = writeln!(out, "impl {} {{", vardict.name);
         let _ = writeln!(
@@ -1718,7 +1806,7 @@ pub fn vardict_module(
              pub fn from_map(map: &SettingMap) -> Result<Self, SettingsError> {{\n        \
              Ok(Self {{"
         );
-        for (key, _, _) in &fields {
+        for (key, _, _, _) in &fields {
             let _ = writeln!(
                 out,
                 "            {}: settings::get(map, \"{}\", \"{}\")?,",
@@ -1739,7 +1827,7 @@ pub fn vardict_module(
              pub fn to_map(&self) -> Result<SettingMap, SettingsError> {{\n        \
              let mut map = SettingMap::new();"
         );
-        for (key, _, is_copy) in &fields {
+        for (key, _, is_copy, _) in &fields {
             let clone = if *is_copy { "" } else { ".clone()" };
             let _ = writeln!(
                 out,
@@ -1808,6 +1896,9 @@ fn field_ident(name: &str) -> String {
 
 /// The signature one of these dictionaries travels as.
 pub const VARDICT_SIGNATURE: &str = "a{sv}";
+
+/// And the signature of a list of them, which is how a property carries several.
+pub const VARDICT_ARRAY_SIGNATURE: &str = "aa{sv}";
 
 #[cfg(test)]
 mod tests {
