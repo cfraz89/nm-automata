@@ -36,7 +36,8 @@ pub trait SecretAgent {
     ///
     /// * `connection_path` - Object path of the connection for which, if secrets for the given 'setting_name' are being requested, the request should be canceled.
     /// * `setting_name` - Setting name for which secrets for this connection were originally being requested.
-    fn cancel_get_secrets(
+    #[zbus(name = "CancelGetSecrets")]
+    fn cancel_get_secrets_path(
         &self,
         connection_path: &SettingsConnectionPath,
         setting_name: &str,
@@ -50,7 +51,8 @@ pub trait SecretAgent {
     ///
     /// * `connection` - Nested settings maps containing the connection properties (sans secrets), for which the agent should delete the secrets from backing storage.
     /// * `connection_path` - Object path of the connection for which the agent should delete secrets from backing storage.
-    fn delete_secrets(
+    #[zbus(name = "DeleteSecrets")]
+    fn delete_secrets_path(
         &self,
         connection: &ConnectionProfile,
         connection_path: &SettingsConnectionPath,
@@ -68,7 +70,8 @@ pub trait SecretAgent {
     /// * `hints` - Array of strings of key names in the requested setting for which NetworkManager thinks a secrets may be required, and/or well-known identifiers and data that may be useful to the client in processing the secrets request. Note that it's not always possible to determine which secret is required, so in some cases no hints may be given. The Agent should return any secrets it has, or that it thinks are required, regardless of what hints NetworkManager sends in this request. Some hints have special prefixes that provide information to the agent; for example, VPN requests may send server-specific messages prefixed with "x-vpn-message:".
     /// * `flags` - Flags which modify the behavior of the secrets request. If true, new secrets are assumed to be invalid or incorrect, and the agent should ask the user for new secrets. If false, existing secrets should be retrieved from storage and returned without interrupting the user.
     /// * `secrets` - Nested settings maps containing secrets. Each setting MUST contain at least the 'name' field, containing the name of the setting, and one or more secrets.
-    fn get_secrets(
+    #[zbus(name = "GetSecrets")]
+    fn get_secrets_path(
         &self,
         connection: &ConnectionProfile,
         connection_path: &SettingsConnectionPath,
@@ -85,7 +88,8 @@ pub trait SecretAgent {
     ///
     /// * `connection` - Nested settings maps containing the entire connection (including secrets), for which the agent should save the secrets to backing storage. This method will not be called when the agent itself is the process creating or updating a connection; in that case the agent is assumed to have already saved those secrets since it had them already.
     /// * `connection_path` - Object path of the connection for which the agent should save secrets to backing storage.
-    fn save_secrets(
+    #[zbus(name = "SaveSecrets")]
+    fn save_secrets_path(
         &self,
         connection: &ConnectionProfile,
         connection_path: &SettingsConnectionPath,
@@ -101,5 +105,62 @@ impl SecretAgentProxy<'_> {
         crate::paths::SecretAgentPath::from(zbus::zvariant::OwnedObjectPath::from(
             self.inner().path().to_owned(),
         ))
+    }
+
+    /// The `CancelGetSecrets` method, taking the objects rather than their paths.
+    ///
+    /// [`cancel_get_secrets_path`](Self::cancel_get_secrets_path) takes the paths themselves.
+    pub async fn cancel_get_secrets(
+        &self,
+        connection_path: impl Into<SettingsConnectionPath>,
+        setting_name: &str,
+    ) -> zbus::Result<()> {
+        self.cancel_get_secrets_path(&connection_path.into(), setting_name)
+            .await
+    }
+
+    /// The `DeleteSecrets` method, taking the objects rather than their paths.
+    ///
+    /// [`delete_secrets_path`](Self::delete_secrets_path) takes the paths themselves.
+    pub async fn delete_secrets(
+        &self,
+        connection: &ConnectionProfile,
+        connection_path: impl Into<SettingsConnectionPath>,
+    ) -> zbus::Result<()> {
+        self.delete_secrets_path(connection, &connection_path.into())
+            .await
+    }
+
+    /// The `GetSecrets` method, taking the objects rather than their paths.
+    ///
+    /// [`get_secrets_path`](Self::get_secrets_path) takes the paths themselves.
+    pub async fn get_secrets(
+        &self,
+        connection: &ConnectionProfile,
+        connection_path: impl Into<SettingsConnectionPath>,
+        setting_name: &str,
+        hints: &[&str],
+        flags: SecretAgentGetSecretsFlags,
+    ) -> zbus::Result<ConnectionProfile> {
+        self.get_secrets_path(
+            connection,
+            &connection_path.into(),
+            setting_name,
+            hints,
+            flags,
+        )
+        .await
+    }
+
+    /// The `SaveSecrets` method, taking the objects rather than their paths.
+    ///
+    /// [`save_secrets_path`](Self::save_secrets_path) takes the paths themselves.
+    pub async fn save_secrets(
+        &self,
+        connection: &ConnectionProfile,
+        connection_path: impl Into<SettingsConnectionPath>,
+    ) -> zbus::Result<()> {
+        self.save_secrets_path(connection, &connection_path.into())
+            .await
     }
 }

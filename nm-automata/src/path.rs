@@ -11,8 +11,8 @@
 //!
 //! # Getting one back out
 //!
-//! Most members hand you the object rather than its path, so a path usually appears when you
-//! need to give one to a member that takes one. Every proxy knows its own:
+//! Mostly you do not have to. A member that takes an object takes the proxy you already have,
+//! and a path where that is what you are holding:
 //!
 //! ```no_run
 //! # use nm_automata::{NetworkManagerProxy, SettingsProxy};
@@ -23,24 +23,21 @@
 //! let device = nm.get_devices().await?.remove(0);
 //! let profile = settings.list_connections().await?.remove(0);
 //!
-//! let active = nm
-//!     .activate_connection(
-//!         &profile.object_path(),
-//!         &device.object_path(),
-//!         &Default::default(),
-//!     )
-//!     .await?;
+//! let active = nm.activate_connection(&profile, &device, None).await?;
 //! # Ok(())
 //! # }
 //! ```
 //!
-//! It is `object_path` rather than `path` because `Device.Path` is a real property — the one
-//! udev calls `ID_PATH`.
+//! Where you do want the path — to keep, to compare, to log — every proxy knows its own, as
+//! `device.object_path()`. It is `object_path` rather than `path` because `Device.Path` is a
+//! real property, the one udev calls `ID_PATH`.
 //!
-//! The `_path` and `_paths` members are the raw form of anything that returns objects:
-//! `get_device_paths` beside `get_devices`. They are rarely what you want, but they are not
-//! merely redundant — a property's change stream is named after them, so watching
-//! `ActiveConnection` means `receive_active_connection_path_changed`.
+//! The `_path` and `_paths` members are the raw form of anything that takes or returns objects:
+//! `get_device_paths` beside `get_devices`, `deactivate_connection_path` beside
+//! `deactivate_connection`. They are rarely what you want — the plain form takes a path just as
+//! readily as the proxy it came from — but they are not merely redundant: a property's change
+//! stream is named after them, so watching `ActiveConnection` means
+//! `receive_active_connection_path_changed`.
 
 /// The path NetworkManager sends where there is no object.
 ///
@@ -68,11 +65,24 @@
 /// # }
 /// ```
 ///
-/// Only those. A method reports failure as an error rather than by handing back `/`, a list
-/// leaves an object out rather than listing `/`, and a member that *takes* a path is untouched:
-/// NetworkManager documents `/` as an argument meaning "no specific object", which is a value
-/// to pass rather than one to read.
+/// Not everything, though. A method reports failure as an error rather than by handing back
+/// `/`, and a list leaves an object out rather than listing one, so neither of those is an
+/// [`Option`].
+///
+/// The same holds in the other direction, where NetworkManager documents `/` as an argument
+/// meaning "no specific object": `activate_connection` takes its specific object as an
+/// [`Option`], and [`None`] is what it sends. An argument with a type of its own is not
+/// optional — you would have nothing to name — so those take [`NULL_OBJECT_PATH`] through
+/// their own `null()` instead, which is what to hand `activate_connection` as the device of a
+/// VPN connection, where NetworkManager ignores it.
 pub const NULL_PATH: &str = "/";
+
+/// [`NULL_PATH`] as a path, for handing to a member that takes one.
+///
+/// The members that take an object mostly take it as [`Option`], where [`None`] is this; this is
+/// for the few that have a typed path of their own, whose `null()` builds one from it.
+pub const NULL_OBJECT_PATH: zbus::zvariant::ObjectPath<'static> =
+    zbus::zvariant::ObjectPath::from_static_str_unchecked(NULL_PATH);
 
 /// A path that knows the proxy it builds.
 pub trait NmPath {
@@ -176,6 +186,21 @@ macro_rules! nm_path {
                     true => None,
                     false => Some(self),
                 }
+            }
+
+            /// The path that names no object, for a member that has to be given one anyway —
+            /// `ActivateConnection` ignores its device for a VPN connection, and this is what
+            /// to hand it.
+            pub fn null() -> Self {
+                Self($crate::path::NULL_OBJECT_PATH.into())
+            }
+        }
+
+        // So that a member taking `impl Into<Self>` accepts a path as readily as the proxy it
+        // came from.
+        impl From<&$name> for $name {
+            fn from(path: &$name) -> Self {
+                path.clone()
             }
         }
 

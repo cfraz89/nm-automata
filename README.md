@@ -89,6 +89,16 @@ are kept in `other` maps, so a read-modify-write against a newer daemon does not
   `add_and_activate_connection()` gives the profile it added and the activation it started, as
   the two objects rather than as two paths.
 
+  It goes in as well as out — a member that takes an object takes the proxy, or a path where
+  that is what you hold, and the one argument NetworkManager documents `/` for is an `Option`:
+
+  ```rust
+  let (added, active) = nm
+      .add_and_activate_connection(&profile, &device, None)
+      .await?;
+  nm.deactivate_connection(&active).await?;
+  ```
+
   Going the other way, every proxy knows its own path — `device.object_path()` gives a
   `DevicePath`, which is what the members that take one expect. The raw members are still there
   under a `_path`/`_paths` name (`get_device_paths`); they are rarely what you want, but a

@@ -100,7 +100,7 @@ pub use generated::types::*;
 pub use generated::vardict::*;
 pub use generated::{NM_VERSION, devices, paths, proxies, types, vardict};
 pub use mac::{AssignedMacAddress, InvalidMacAddress, MacAddress};
-pub use path::{NULL_PATH, NmPath, NmPathSliceExt};
+pub use path::{NULL_OBJECT_PATH, NULL_PATH, NmPath, NmPathSliceExt};
 pub use ssid::Ssid;
 
 /// zbus, re-exported: its [`Connection`](zbus::Connection) is the entry point to every proxy,
