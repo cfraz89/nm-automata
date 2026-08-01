@@ -85,6 +85,10 @@ are kept in `other` maps, so a read-modify-write against a newer daemon does not
   one nullability the binding decides for you; `NULL_PATH`, `is_null()` and `non_null()` are
   there when you are holding the path itself.
 
+  A method handing back several things at once is wrapped the same way:
+  `add_and_activate_connection()` gives the profile it added and the activation it started, as
+  the two objects rather than as two paths.
+
   Going the other way, every proxy knows its own path — `device.object_path()` gives a
   `DevicePath`, which is what the members that take one expect. The raw members are still there
   under a `_path`/`_paths` name (`get_device_paths`); they are rarely what you want, but a

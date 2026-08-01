@@ -336,6 +336,40 @@ pub struct PathAccessor {
     pub description: String,
 }
 
+/// A method with several outputs, as planned before its raw name is settled.
+struct PlannedTuple {
+    member: String,
+    /// One per output: what to bind it to, and the interface it points at where it is a path.
+    outputs: Vec<(String, Option<String>)>,
+    description: String,
+}
+
+/// A method returning several things at once, at least one of them an object path.
+///
+/// `AddAndActivateConnection` hands back the profile it added and the activation it started;
+/// both are paths, and both are more useful as the objects they name.
+#[derive(Debug, Clone)]
+pub struct TupleAccessor {
+    /// The renamed raw member, e.g. `add_and_activate_connection_paths`.
+    pub raw: String,
+    /// The accessor to generate, e.g. `add_and_activate_connection`.
+    pub wrapper: String,
+    /// How the member is described, for the accessor's documentation.
+    pub description: String,
+    /// One per output, in order: what to bind it to, and the interface it points at where it
+    /// is a path.
+    pub outputs: Vec<(String, Option<String>)>,
+}
+
+/// What a member's paths become, planned for one interface.
+#[derive(Debug, Default, Clone)]
+pub struct Accessors {
+    /// Members returning one path, or a list of them.
+    pub single: Vec<PathAccessor>,
+    /// Methods returning a path among several outputs.
+    pub tuples: Vec<TupleAccessor>,
+}
+
 /// The name a path-returning member is moved to: `get_devices` -> `get_device_paths`.
 fn raw_path_name(name: &str, list: bool) -> String {
     if !list {
@@ -352,12 +386,14 @@ fn raw_path_name(name: &str, list: bool) -> String {
 pub fn plan(
     interface: &Interface<'_>,
     objects: &BTreeMap<Site, String>,
-) -> (Vec<Rename>, Vec<PathAccessor>) {
+) -> (Vec<Rename>, Accessors) {
     let mut renames = plan_collisions(interface);
-    let mut accessors = Vec::new();
+    let mut accessors = Accessors::default();
 
     // Read-only path properties, and methods whose single output is a path.
     let mut candidates: Vec<(Site, String, bool, String)> = Vec::new();
+    // And methods with several outputs, one of which is a path.
+    let mut tuples: Vec<PlannedTuple> = Vec::new();
     let mut signals: Vec<String> = Vec::new();
     for property in interface.properties() {
         let name = property.name().to_string();
@@ -395,23 +431,46 @@ pub fn plan(
             .iter()
             .filter(|a| a.direction() == Some(ArgDirection::Out))
             .collect();
-        // A method returning a tuple keeps its raw form: unpicking which element is a path
-        // would change the shape of the return, not just its type.
-        let [output] = outputs.as_slice() else {
-            continue;
-        };
-        let Some(arg_name) = output.name() else {
-            continue;
-        };
-        let signature = output.ty().inner().to_string();
-        if matches!(signature.as_str(), "o" | "ao") {
-            let member = method.name().to_string();
-            candidates.push((
-                Site::Arg(member.clone(), arg_name.to_owned()),
-                member.clone(),
-                signature == "ao",
-                format!("the `{member}` method"),
-            ));
+        let member = method.name().to_string();
+        match outputs.as_slice() {
+            [output] => {
+                let Some(arg_name) = output.name() else {
+                    continue;
+                };
+                let signature = output.ty().inner().to_string();
+                if matches!(signature.as_str(), "o" | "ao") {
+                    candidates.push((
+                        Site::Arg(member.clone(), arg_name.to_owned()),
+                        member.clone(),
+                        signature == "ao",
+                        format!("the `{member}` method"),
+                    ));
+                }
+            }
+            // Several outputs, which are wrapped only if one of them is a path whose target is
+            // known; the rest are handed back as they are.
+            outputs => {
+                let planned: Vec<(String, Option<String>)> = outputs
+                    .iter()
+                    .filter_map(|output| {
+                        let name = output.name()?;
+                        let site = Site::Arg(member.clone(), name.to_owned());
+                        let target = (output.ty().inner().to_string() == crate::objects::PATH)
+                            .then(|| objects.get(&site).cloned())
+                            .flatten();
+                        Some((snake(name), target))
+                    })
+                    .collect();
+                if planned.len() == outputs.len()
+                    && planned.iter().any(|(_, target)| target.is_some())
+                {
+                    tuples.push(PlannedTuple {
+                        description: format!("the `{member}` method"),
+                        member: member.clone(),
+                        outputs: planned,
+                    });
+                }
+            }
         }
     }
 
@@ -443,7 +502,7 @@ pub fn plan(
             Site::Arg(_, arg) => arg.clone(),
             Site::Property(name) => name.clone(),
         });
-        accessors.push(PathAccessor {
+        accessors.single.push(PathAccessor {
             raw,
             wrapper,
             target: target.clone(),
@@ -451,6 +510,38 @@ pub fn plan(
             property: matches!(site, Site::Property(_)),
             signal_arg,
             description,
+        });
+    }
+
+    for PlannedTuple {
+        member,
+        outputs,
+        description,
+    } in tuples
+    {
+        if renames.iter().any(|r| r.member == member) {
+            continue;
+        }
+        let wrapper = snake(&member);
+        let paths = outputs
+            .iter()
+            .filter(|(_, target)| target.is_some())
+            .count();
+        let raw = raw_path_name(&wrapper, paths > 1);
+        let index = renames.len();
+        renames.push(Rename {
+            member: member.clone(),
+            sentinel: format!("nm_rename_{index:03}"),
+            sentinel_type: format!("NmRename{index:03}"),
+            fn_name: raw.clone(),
+            type_name: pascal_case(&raw),
+            kind: "method",
+        });
+        accessors.tuples.push(TupleAccessor {
+            raw,
+            wrapper,
+            description,
+            outputs,
         });
     }
 
@@ -1575,7 +1666,7 @@ pub fn devices_module(
 /// be passed in.
 pub fn path_accessors(
     code: &str,
-    accessors: &[PathAccessor],
+    accessors: &Accessors,
     trait_name: &str,
     module: &str,
     interfaces: &[String],
@@ -1598,7 +1689,7 @@ pub fn path_accessors(
          }}\n",
         path = path_type_name(module)
     );
-    for accessor in accessors {
+    for accessor in &accessors.single {
         if !interfaces.iter().any(|i| i == &accessor.target) {
             continue;
         }
@@ -1695,8 +1786,133 @@ pub fn path_accessors(
             );
         }
     }
+
+    for accessor in &accessors.tuples {
+        // The outputs are typed once, by the generator, in the raw member just written; taking
+        // their Rust types from there rather than deriving them a second time is what keeps the
+        // two in step, as it does for the parameter lists above.
+        let (Some((declaration, forwarded)), Some(returns)) = (
+            parameters(code, &accessor.raw),
+            return_elements(code, &accessor.raw),
+        ) else {
+            continue;
+        };
+        if returns.len() != accessor.outputs.len() {
+            continue;
+        }
+
+        let proxy_for = |target: &str| {
+            let module = crate::codegen::module_name(target);
+            let target_trait = target.rsplit('.').next().unwrap_or(target);
+            format!("crate::proxies::{module}::{target_trait}Proxy<'static>")
+        };
+        // An output whose interface this run did not generate keeps its path.
+        let wrapped: Vec<Option<String>> = accessor
+            .outputs
+            .iter()
+            .map(|(_, target)| {
+                target
+                    .as_ref()
+                    .filter(|target| interfaces.iter().any(|i| i == *target))
+                    .map(|target| proxy_for(target))
+            })
+            .collect();
+        if wrapped.iter().all(Option::is_none) {
+            continue;
+        }
+
+        let returned: Vec<String> = wrapped
+            .iter()
+            .zip(&returns)
+            .map(|(proxy, raw)| proxy.clone().unwrap_or_else(|| raw.clone()))
+            .collect();
+        let bindings: Vec<&str> = accessor
+            .outputs
+            .iter()
+            .map(|(binding, _)| binding.as_str())
+            .collect();
+        let values: Vec<String> = wrapped
+            .iter()
+            .zip(&bindings)
+            .map(|(proxy, binding)| match proxy {
+                Some(_) => {
+                    format!("crate::NmPath::connect(&{binding}, self.inner().connection()).await?")
+                }
+                None => (*binding).to_owned(),
+            })
+            .collect();
+
+        let _ = writeln!(
+            out,
+            "    /// The objects {description} returns.\n    \
+             ///\n    \
+             /// Built on this proxy's own connection. [`{raw}`](Self::{raw}) gives the paths\n    \
+             /// themselves.\n    \
+             pub async fn {wrapper}(&self{declaration}) -> zbus::Result<({returned})> {{\n        \
+             let ({bindings}) = self.{raw}({forwarded}).await?;\n        \
+             Ok(({values}))\n    \
+             }}\n",
+            description = accessor.description,
+            raw = accessor.raw,
+            wrapper = accessor.wrapper,
+            returned = returned.join(", "),
+            bindings = bindings.join(", "),
+            values = values.join(", "),
+        );
+    }
+
     let _ = writeln!(out, "}}\n");
     out
+}
+
+/// The Rust types a generated member returns, one per element of its tuple.
+///
+/// `None` if the member is not there or does not return a tuple, which leaves it unwrapped
+/// rather than generating a call that cannot compile.
+fn return_elements(code: &str, member: &str) -> Option<Vec<String>> {
+    let start = code.find(&format!(" fn {member}("))?;
+    let returns = code[start..].find("-> zbus::Result<")? + start + "-> zbus::Result<".len();
+
+    let mut depth = 1usize;
+    let mut end = returns;
+    for (offset, ch) in code[returns..].char_indices() {
+        match ch {
+            '<' | '(' => depth += 1,
+            '>' | ')' => {
+                depth -= 1;
+                if depth == 0 {
+                    end = returns + offset;
+                    break;
+                }
+            }
+            _ => (),
+        }
+    }
+    let tuple = code[returns..end].trim();
+    let inner = tuple.strip_prefix('(')?.strip_suffix(')')?;
+
+    // Split on the commas between elements, which are the ones at no depth: a `HashMap<String,
+    // OwnedValue>` carries one of its own.
+    let mut elements = Vec::new();
+    let mut depth = 0usize;
+    let mut element = String::new();
+    for ch in inner.chars() {
+        match ch {
+            '<' | '(' | '[' => depth += 1,
+            '>' | ')' | ']' => depth -= 1,
+            ',' if depth == 0 => {
+                elements.push(element.trim().to_owned());
+                element.clear();
+                continue;
+            }
+            _ => (),
+        }
+        element.push(ch);
+    }
+    if !element.trim().is_empty() {
+        elements.push(element.trim().to_owned());
+    }
+    Some(elements)
 }
 
 /// Emit the module of dictionary shapes.
