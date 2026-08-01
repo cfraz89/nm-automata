@@ -28,27 +28,6 @@ use zbus::proxy;
     default_path = "/org/freedesktop/NetworkManager/Settings"
 )]
 pub trait Settings {
-    /// AddConnection2 method
-    ///
-    /// Add a new connection profile. AddConnection2 is an alternative to AddConnection and AddConnectionUnsaved. The new variant can do everything that the older variants could, and more. Its behavior is extensible via extra %flags and %args arguments. The %flags argument accepts the combination of following values, logically or-ed together: 0x1 (to-disk): The connection is persisted to disk. 0x2 (in-memory): The change is only made in memory (without touching an eventual profile on disk). If neither 0x1 nor 0x2 is set, the change is made in memory only, if the connection is already in memory only. 0x20 (block-autoconnect): Blocks auto-connect on the new profile The %args argument accepts the following keys: plugin: The settings plugin the newly added connection will use, such as "keyfile" or "ifcfg-rh". Since 1.38 Either the flags 0x1 (to-disk) or 0x2 (in-memory) must be specified. The effect is whether to behave like AddConnection or AddConnectionUnsaved.
-    ///
-    /// # Arguments
-    ///
-    /// * `settings` - New connection settings, properties, and (optionally) secrets.
-    /// * `flags` - Flags. Unknown flags cause the call to fail.
-    /// * `args` - Optional arguments dictionary, for extentibility. Specifying unknown keys causes the call to fail.
-    /// * `path` - Object path of the new connection that was just added.
-    /// * `result` - Output argument, currently no additional results are returned.
-    fn add_connection2(
-        &self,
-        settings: &ConnectionProfile,
-        flags: u32,
-        args: &AddConnectionArgs,
-    ) -> zbus::Result<(
-        SettingsConnectionPath,
-        std::collections::HashMap<String, zbus::zvariant::OwnedValue>,
-    )>;
-
     /// LoadConnections method
     ///
     /// Loads or reloads the indicated connections from disk. You should call this after making changes directly to an on-disk connection file to make sure that NetworkManager sees the changes. As with AddConnection(), this operation does not necessarily start the network connection. Note that before 1.20, NetworkManager had a bug and this @status value was wrong. It is better to assume success if the method does not return with a D-Bus error. On top of that, you can look at @failures to know whether any of the requested files failed.
@@ -126,6 +105,28 @@ pub trait Settings {
         &self,
         connection: &ConnectionProfile,
     ) -> zbus::Result<SettingsConnectionPath>;
+
+    /// AddConnection2 method
+    ///
+    /// Add a new connection profile. AddConnection2 is an alternative to AddConnection and AddConnectionUnsaved. The new variant can do everything that the older variants could, and more. Its behavior is extensible via extra %flags and %args arguments. The %flags argument accepts the combination of following values, logically or-ed together: 0x1 (to-disk): The connection is persisted to disk. 0x2 (in-memory): The change is only made in memory (without touching an eventual profile on disk). If neither 0x1 nor 0x2 is set, the change is made in memory only, if the connection is already in memory only. 0x20 (block-autoconnect): Blocks auto-connect on the new profile The %args argument accepts the following keys: plugin: The settings plugin the newly added connection will use, such as "keyfile" or "ifcfg-rh". Since 1.38 Either the flags 0x1 (to-disk) or 0x2 (in-memory) must be specified. The effect is whether to behave like AddConnection or AddConnectionUnsaved.
+    ///
+    /// # Arguments
+    ///
+    /// * `settings` - New connection settings, properties, and (optionally) secrets.
+    /// * `flags` - Flags. Unknown flags cause the call to fail.
+    /// * `args` - Optional arguments dictionary, for extentibility. Specifying unknown keys causes the call to fail.
+    /// * `path` - Object path of the new connection that was just added.
+    /// * `result` - Output argument, currently no additional results are returned.
+    #[zbus(name = "AddConnection2")]
+    fn add_connection2_path(
+        &self,
+        settings: &ConnectionProfile,
+        flags: u32,
+        args: &AddConnectionArgs,
+    ) -> zbus::Result<(
+        SettingsConnectionPath,
+        std::collections::HashMap<String, zbus::zvariant::OwnedValue>,
+    )>;
 
     /// NewConnection signal
     ///
@@ -287,5 +288,25 @@ impl SettingsProxy<'_> {
     ) -> zbus::Result<crate::proxies::settings_connection::ConnectionProxy<'static>> {
         let path = self.add_connection_unsaved_path(connection).await?;
         crate::NmPath::connect(&path, self.inner().connection()).await
+    }
+
+    /// The objects the `AddConnection2` method returns.
+    ///
+    /// Built on this proxy's own connection. [`add_connection2_path`](Self::add_connection2_path) gives the paths
+    /// themselves.
+    pub async fn add_connection2(
+        &self,
+        settings: &ConnectionProfile,
+        flags: u32,
+        args: &AddConnectionArgs,
+    ) -> zbus::Result<(
+        crate::proxies::settings_connection::ConnectionProxy<'static>,
+        std::collections::HashMap<String, zbus::zvariant::OwnedValue>,
+    )> {
+        let (path, result) = self.add_connection2_path(settings, flags, args).await?;
+        Ok((
+            crate::NmPath::connect(&path, self.inner().connection()).await?,
+            result,
+        ))
     }
 }

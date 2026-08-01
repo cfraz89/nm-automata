@@ -28,50 +28,6 @@ use zbus::proxy;
     default_path = "/org/freedesktop/NetworkManager"
 )]
 pub trait NetworkManager {
-    /// AddAndActivateConnection method
-    ///
-    /// Adds a new connection using the given details (if any) as a template (automatically filling in missing settings with the capabilities of the given device and specific object), then activate the new connection. Cannot be used for VPN connections at this time. See also AddAndActivateConnection2.
-    ///
-    /// # Arguments
-    ///
-    /// * `connection` - Connection settings and properties; if incomplete missing settings will be automatically completed using the given device and specific object.
-    /// * `device` - The object path of device to be activated using the given connection.
-    /// * `specific_object` - The path of a connection-type-specific object this activation should use. This parameter is currently ignored for wired and mobile broadband connections, and the value of "/" should be used (ie, no specific object). For Wi-Fi connections, pass the object path of a specific AP from the card's scan list, which will be used to complete the details of the newly added connection.
-    /// * `path` - Object path of the new connection that was just added.
-    /// * `active_connection` - The path of the active connection object representing this active connection.
-    fn add_and_activate_connection(
-        &self,
-        connection: &ConnectionProfile,
-        device: &DevicePath,
-        specific_object: &zbus::zvariant::ObjectPath<'_>,
-    ) -> zbus::Result<(SettingsConnectionPath, ConnectionActivePath)>;
-
-    /// AddAndActivateConnection2 method
-    ///
-    /// Adds a new connection using the given details (if any) as a template (automatically filling in missing settings with the capabilities of the given device and specific object), then activate the new connection. Cannot be used for VPN connections at this time. This method extends AddAndActivateConnection to allow passing further parameters. At this time the following options are supported: * persist: A string value of either "disk" (default), "memory" or "volatile". If "memory" is passed, the connection will not be saved to disk. If "volatile" is passed, the connection will not be saved to disk and will be destroyed when disconnected. * bind-activation: Bind the activation lifetime. Set to "dbus-client" to automatically disconnect when the requesting process disappears from the bus. The default of "none" means the connection is kept activated normally.
-    ///
-    /// # Arguments
-    ///
-    /// * `connection` - Connection settings and properties; if incomplete missing settings will be automatically completed using the given device and specific object.
-    /// * `device` - The object path of device to be activated using the given connection.
-    /// * `specific_object` - The path of a connection-type-specific object this activation should use. This parameter is currently ignored for wired and mobile broadband connections, and the value of "/" should be used (ie, no specific object). For Wi-Fi connections, pass the object path of a specific AP from the card's scan list, which will be used to complete the details of the newly added connection.
-    /// * `options` - Further options for the method call.
-    /// * `path` - Object path of the new connection that was just added.
-    /// * `active_connection` - The path of the active connection object representing this active connection.
-    /// * `result` - A dictionary of additional output arguments for future extension. Currently, not additional output arguments are supported.
-    #[allow(clippy::too_many_arguments)]
-    fn add_and_activate_connection2(
-        &self,
-        connection: &ConnectionProfile,
-        device: &DevicePath,
-        specific_object: &zbus::zvariant::ObjectPath<'_>,
-        options: &ActivationOptions,
-    ) -> zbus::Result<(
-        SettingsConnectionPath,
-        ConnectionActivePath,
-        std::collections::HashMap<String, zbus::zvariant::OwnedValue>,
-    )>;
-
     /// CheckConnectivity method
     ///
     /// Re-check the network connectivity state.
@@ -258,6 +214,52 @@ pub trait NetworkManager {
         rollback_timeout: u32,
         flags: CheckpointCreateFlags,
     ) -> zbus::Result<CheckpointPath>;
+
+    /// AddAndActivateConnection method
+    ///
+    /// Adds a new connection using the given details (if any) as a template (automatically filling in missing settings with the capabilities of the given device and specific object), then activate the new connection. Cannot be used for VPN connections at this time. See also AddAndActivateConnection2.
+    ///
+    /// # Arguments
+    ///
+    /// * `connection` - Connection settings and properties; if incomplete missing settings will be automatically completed using the given device and specific object.
+    /// * `device` - The object path of device to be activated using the given connection.
+    /// * `specific_object` - The path of a connection-type-specific object this activation should use. This parameter is currently ignored for wired and mobile broadband connections, and the value of "/" should be used (ie, no specific object). For Wi-Fi connections, pass the object path of a specific AP from the card's scan list, which will be used to complete the details of the newly added connection.
+    /// * `path` - Object path of the new connection that was just added.
+    /// * `active_connection` - The path of the active connection object representing this active connection.
+    #[zbus(name = "AddAndActivateConnection")]
+    fn add_and_activate_connection_paths(
+        &self,
+        connection: &ConnectionProfile,
+        device: &DevicePath,
+        specific_object: &zbus::zvariant::ObjectPath<'_>,
+    ) -> zbus::Result<(SettingsConnectionPath, ConnectionActivePath)>;
+
+    /// AddAndActivateConnection2 method
+    ///
+    /// Adds a new connection using the given details (if any) as a template (automatically filling in missing settings with the capabilities of the given device and specific object), then activate the new connection. Cannot be used for VPN connections at this time. This method extends AddAndActivateConnection to allow passing further parameters. At this time the following options are supported: * persist: A string value of either "disk" (default), "memory" or "volatile". If "memory" is passed, the connection will not be saved to disk. If "volatile" is passed, the connection will not be saved to disk and will be destroyed when disconnected. * bind-activation: Bind the activation lifetime. Set to "dbus-client" to automatically disconnect when the requesting process disappears from the bus. The default of "none" means the connection is kept activated normally.
+    ///
+    /// # Arguments
+    ///
+    /// * `connection` - Connection settings and properties; if incomplete missing settings will be automatically completed using the given device and specific object.
+    /// * `device` - The object path of device to be activated using the given connection.
+    /// * `specific_object` - The path of a connection-type-specific object this activation should use. This parameter is currently ignored for wired and mobile broadband connections, and the value of "/" should be used (ie, no specific object). For Wi-Fi connections, pass the object path of a specific AP from the card's scan list, which will be used to complete the details of the newly added connection.
+    /// * `options` - Further options for the method call.
+    /// * `path` - Object path of the new connection that was just added.
+    /// * `active_connection` - The path of the active connection object representing this active connection.
+    /// * `result` - A dictionary of additional output arguments for future extension. Currently, not additional output arguments are supported.
+    #[zbus(name = "AddAndActivateConnection2")]
+    #[allow(clippy::too_many_arguments)]
+    fn add_and_activate_connection2_paths(
+        &self,
+        connection: &ConnectionProfile,
+        device: &DevicePath,
+        specific_object: &zbus::zvariant::ObjectPath<'_>,
+        options: &ActivationOptions,
+    ) -> zbus::Result<(
+        SettingsConnectionPath,
+        ConnectionActivePath,
+        std::collections::HashMap<String, zbus::zvariant::OwnedValue>,
+    )>;
 
     /// CheckPermissions signal
     ///
@@ -666,5 +668,52 @@ impl NetworkManagerProxy<'_> {
             .checkpoint_create_path(devices, rollback_timeout, flags)
             .await?;
         crate::NmPath::connect(&path, self.inner().connection()).await
+    }
+
+    /// The objects the `AddAndActivateConnection` method returns.
+    ///
+    /// Built on this proxy's own connection. [`add_and_activate_connection_paths`](Self::add_and_activate_connection_paths) gives the paths
+    /// themselves.
+    pub async fn add_and_activate_connection(
+        &self,
+        connection: &ConnectionProfile,
+        device: &DevicePath,
+        specific_object: &zbus::zvariant::ObjectPath<'_>,
+    ) -> zbus::Result<(
+        crate::proxies::settings_connection::ConnectionProxy<'static>,
+        crate::proxies::connection_active::ActiveProxy<'static>,
+    )> {
+        let (path, active_connection) = self
+            .add_and_activate_connection_paths(connection, device, specific_object)
+            .await?;
+        Ok((
+            crate::NmPath::connect(&path, self.inner().connection()).await?,
+            crate::NmPath::connect(&active_connection, self.inner().connection()).await?,
+        ))
+    }
+
+    /// The objects the `AddAndActivateConnection2` method returns.
+    ///
+    /// Built on this proxy's own connection. [`add_and_activate_connection2_paths`](Self::add_and_activate_connection2_paths) gives the paths
+    /// themselves.
+    pub async fn add_and_activate_connection2(
+        &self,
+        connection: &ConnectionProfile,
+        device: &DevicePath,
+        specific_object: &zbus::zvariant::ObjectPath<'_>,
+        options: &ActivationOptions,
+    ) -> zbus::Result<(
+        crate::proxies::settings_connection::ConnectionProxy<'static>,
+        crate::proxies::connection_active::ActiveProxy<'static>,
+        std::collections::HashMap<String, zbus::zvariant::OwnedValue>,
+    )> {
+        let (path, active_connection, result) = self
+            .add_and_activate_connection2_paths(connection, device, specific_object, options)
+            .await?;
+        Ok((
+            crate::NmPath::connect(&path, self.inner().connection()).await?,
+            crate::NmPath::connect(&active_connection, self.inner().connection()).await?,
+            result,
+        ))
     }
 }
