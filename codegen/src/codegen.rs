@@ -185,7 +185,7 @@ pub fn generate(root: &Path) -> Result<BTreeMap<PathBuf, String>> {
     modules.sort_by(|a, b| a.module.cmp(&b.module));
 
     annotations.check_all_applied(&applied)?;
-    check_name_clashes(&types, &value_sets, &modules)?;
+    check_name_clashes(&types, &value_sets, annotations.vardicts(), &modules)?;
 
     let generated = root.join("nm-automata/src/generated");
     let mut files = BTreeMap::new();
@@ -633,6 +633,7 @@ pub fn unescape_doc_comments(code: &str) -> String {
 fn check_name_clashes(
     types: &[Resolved<'_>],
     values: &[values::ValueSet],
+    vardicts: &[overrides::Vardict],
     modules: &[Generated],
 ) -> Result<()> {
     let mut taken: HashSet<String> = HashSet::new();
@@ -684,6 +685,17 @@ fn check_name_clashes(
                  NetworkManager type",
                 set.describe()
             );
+        }
+    }
+
+    // The dictionary shapes are in the same namespace again, being re-exported alongside them.
+    for vardict in vardicts {
+        let name = vardict.name.as_str();
+        if taken.contains(name) {
+            bail!("the `{name}` dictionary shape collides with a generated proxy of the same name");
+        }
+        if !seen.insert(name) {
+            bail!("the `{name}` dictionary shape is already the name of a generated type");
         }
     }
     Ok(())

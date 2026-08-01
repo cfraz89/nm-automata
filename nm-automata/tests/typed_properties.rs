@@ -11,7 +11,8 @@ use std::collections::HashMap;
 use nm_automata::settings::{ProfileMap, SettingMap};
 use nm_automata::{
     ActivationBinding, ActivationOptions, ActivationPersist, AssignedMacAddress, ConnectionProfile,
-    Ipv4Method, Ipv6Method, MacAddress, Ssid, WirelessMode, WirelessSecurityProto, WirelessSetting,
+    Ipv4Method, Ipv6Method, MacAddress, ScanOptions, Ssid, UpdateArgs, WirelessMode,
+    WirelessSecurityProto, WirelessSetting,
 };
 use zbus::zvariant::{OwnedValue, Value};
 
@@ -215,4 +216,28 @@ fn activation_options_travel_as_the_dictionary_networkmanager_reads() {
         <ActivationOptions as zbus::zvariant::Type>::SIGNATURE.to_string(),
         "a{sv}"
     );
+}
+
+/// The scan options carry SSIDs, which are the same byte strings a profile matches against.
+#[test]
+fn scan_options_carry_ssids() {
+    let options = ScanOptions::default().ssids(vec![Ssid::from("home"), Ssid::from(b"caf\xe9")]);
+
+    let map = options.to_map().expect("the options encode");
+    assert_eq!(
+        map["ssids"],
+        value(vec![b"home".to_vec(), b"caf\xe9".to_vec()])
+    );
+    assert_eq!(ScanOptions::from_map(&map).unwrap(), options);
+}
+
+/// `Update2`'s version-id is how a caller catches a concurrent modification.
+#[test]
+fn update_args_carry_a_version_id() {
+    let args = UpdateArgs::default().plugin("keyfile").version_id(42);
+
+    let map = args.to_map().expect("the arguments encode");
+    assert_eq!(map["plugin"], value("keyfile"));
+    assert_eq!(map["version-id"], value(42_u64));
+    assert_eq!(UpdateArgs::from_map(&map).unwrap(), args);
 }

@@ -43,7 +43,7 @@ pub trait Settings {
         &self,
         settings: &ConnectionProfile,
         flags: u32,
-        args: std::collections::HashMap<&str, &zbus::zvariant::Value<'_>>,
+        args: &AddConnectionArgs,
     ) -> zbus::Result<(
         SettingsConnectionPath,
         std::collections::HashMap<String, zbus::zvariant::OwnedValue>,

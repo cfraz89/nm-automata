@@ -108,9 +108,10 @@ are kept in `other` maps, so a read-modify-write against a newer daemon does not
   `Device.Statistics` is on every device — but it is unchecked and documented as such.
 * **The dictionaries are structs too.** `ip4.address_data()` gives `Vec<AddressData>` with
   `address` and `prefix` fields, not a map of variants; likewise routes and the resolver
-  configuration, and the options `add_and_activate_connection2` takes —
-  `ActivationOptions::default().persist(ActivationPersist::Volatile)` rather than a map you
-  assemble by hand. These are the one place NetworkManager describes its keys only in prose, so
+  configuration, and the options and arguments the `*2` methods take —
+  `ActivationOptions::default().persist(ActivationPersist::Volatile)`, or
+  `ScanOptions::default().ssids(vec![Ssid::from("home")])`, rather than a map you assemble by
+  hand. These are the one place NetworkManager describes its keys only in prose, so
   they are written down in `annotations.toml`, checked against the spec: the member must exist
   and must actually carry a dictionary. `Device.LldpNeighbors` is deliberately left as a map —
   it maps LLDP TLV names to values and has no fixed shape.
