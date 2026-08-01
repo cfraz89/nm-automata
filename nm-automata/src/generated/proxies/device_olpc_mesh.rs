@@ -62,8 +62,17 @@ impl OlpcMeshProxy<'_> {
     ///
     /// Built on this proxy's own connection. [`companion_path`](Self::companion_path) gives the paths
     /// themselves.
-    pub async fn companion(&self) -> zbus::Result<crate::proxies::device::DeviceProxy<'static>> {
-        let path = self.companion_path().await?;
-        crate::NmPath::connect(&path, self.inner().connection()).await
+    ///
+    /// [`None`] if the property is [`/`](crate::NULL_PATH), which is how
+    /// NetworkManager says there is no such object.
+    pub async fn companion(
+        &self,
+    ) -> zbus::Result<Option<crate::proxies::device::DeviceProxy<'static>>> {
+        let Some(path) = self.companion_path().await?.non_null() else {
+            return Ok(None);
+        };
+        crate::NmPath::connect(&path, self.inner().connection())
+            .await
+            .map(Some)
     }
 }

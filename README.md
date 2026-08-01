@@ -73,9 +73,17 @@ are kept in `other` maps, so a read-modify-write against a newer daemon does not
 
   ```rust
   for device in nm.get_devices().await? {
-      let active = device.active_connection().await?;
+      if let Some(active) = device.active_connection().await? {
+          println!("{:?}", active.state().await?);
+      }
   }
   ```
+
+  A property pointing at no object — an unassociated Wi-Fi device's `ActiveAccessPoint`, a
+  device with no addresses yet — is `None` rather than a proxy that fails on first use.
+  NetworkManager says it with `/`, which no object of any interface is ever at, so this is the
+  one nullability the binding decides for you; `NULL_PATH`, `is_null()` and `non_null()` are
+  there when you are holding the path itself.
 
   Going the other way, every proxy knows its own path — `device.object_path()` gives a
   `DevicePath`, which is what the members that take one expect. The raw members are still there

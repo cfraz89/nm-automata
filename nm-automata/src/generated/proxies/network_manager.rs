@@ -524,22 +524,36 @@ impl NetworkManagerProxy<'_> {
     ///
     /// Built on this proxy's own connection. [`primary_connection_path`](Self::primary_connection_path) gives the paths
     /// themselves.
+    ///
+    /// [`None`] if the property is [`/`](crate::NULL_PATH), which is how
+    /// NetworkManager says there is no such object.
     pub async fn primary_connection(
         &self,
-    ) -> zbus::Result<crate::proxies::connection_active::ActiveProxy<'static>> {
-        let path = self.primary_connection_path().await?;
-        crate::NmPath::connect(&path, self.inner().connection()).await
+    ) -> zbus::Result<Option<crate::proxies::connection_active::ActiveProxy<'static>>> {
+        let Some(path) = self.primary_connection_path().await?.non_null() else {
+            return Ok(None);
+        };
+        crate::NmPath::connect(&path, self.inner().connection())
+            .await
+            .map(Some)
     }
 
     /// The objects the `ActivatingConnection` property points at.
     ///
     /// Built on this proxy's own connection. [`activating_connection_path`](Self::activating_connection_path) gives the paths
     /// themselves.
+    ///
+    /// [`None`] if the property is [`/`](crate::NULL_PATH), which is how
+    /// NetworkManager says there is no such object.
     pub async fn activating_connection(
         &self,
-    ) -> zbus::Result<crate::proxies::connection_active::ActiveProxy<'static>> {
-        let path = self.activating_connection_path().await?;
-        crate::NmPath::connect(&path, self.inner().connection()).await
+    ) -> zbus::Result<Option<crate::proxies::connection_active::ActiveProxy<'static>>> {
+        let Some(path) = self.activating_connection_path().await?.non_null() else {
+            return Ok(None);
+        };
+        crate::NmPath::connect(&path, self.inner().connection())
+            .await
+            .map(Some)
     }
 
     /// The objects the `DeviceAdded` signal carries, as they arrive.

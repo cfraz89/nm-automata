@@ -68,8 +68,17 @@ impl MacvlanProxy<'_> {
     ///
     /// Built on this proxy's own connection. [`parent_path`](Self::parent_path) gives the paths
     /// themselves.
-    pub async fn parent(&self) -> zbus::Result<crate::proxies::device::DeviceProxy<'static>> {
-        let path = self.parent_path().await?;
-        crate::NmPath::connect(&path, self.inner().connection()).await
+    ///
+    /// [`None`] if the property is [`/`](crate::NULL_PATH), which is how
+    /// NetworkManager says there is no such object.
+    pub async fn parent(
+        &self,
+    ) -> zbus::Result<Option<crate::proxies::device::DeviceProxy<'static>>> {
+        let Some(path) = self.parent_path().await?.non_null() else {
+            return Ok(None);
+        };
+        crate::NmPath::connect(&path, self.inner().connection())
+            .await
+            .map(Some)
     }
 }

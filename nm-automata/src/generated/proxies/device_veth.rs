@@ -50,8 +50,15 @@ impl VethProxy<'_> {
     ///
     /// Built on this proxy's own connection. [`peer_path`](Self::peer_path) gives the paths
     /// themselves.
-    pub async fn peer(&self) -> zbus::Result<crate::proxies::device::DeviceProxy<'static>> {
-        let path = self.peer_path().await?;
-        crate::NmPath::connect(&path, self.inner().connection()).await
+    ///
+    /// [`None`] if the property is [`/`](crate::NULL_PATH), which is how
+    /// NetworkManager says there is no such object.
+    pub async fn peer(&self) -> zbus::Result<Option<crate::proxies::device::DeviceProxy<'static>>> {
+        let Some(path) = self.peer_path().await?.non_null() else {
+            return Ok(None);
+        };
+        crate::NmPath::connect(&path, self.inner().connection())
+            .await
+            .map(Some)
     }
 }
