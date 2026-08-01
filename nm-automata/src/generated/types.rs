@@ -4373,6 +4373,42 @@ nm_enum! {
 }
 
 nm_str_enum! {
+    /// What the lifetime of an activation is tied to.
+    ///
+    /// The values `ActivationBinding` takes, sent over D-Bus as `s`.
+    pub enum ActivationBinding {
+        /// Nothing: the connection stays activated normally. The default.
+        ///
+        /// `none`
+        None = "none",
+        /// The requesting process, disconnecting when it leaves the bus.
+        ///
+        /// `dbus-client`
+        DbusClient = "dbus-client",
+    }
+}
+
+nm_str_enum! {
+    /// How long a connection added by `AddAndActivateConnection2` should last.
+    ///
+    /// The values `ActivationPersist` takes, sent over D-Bus as `s`.
+    pub enum ActivationPersist {
+        /// Save it, as any other profile. The default.
+        ///
+        /// `disk`
+        Disk = "disk",
+        /// Do not save it to disk.
+        ///
+        /// `memory`
+        Memory = "memory",
+        /// Do not save it to disk, and destroy it when it disconnects.
+        ///
+        /// `volatile`
+        Volatile = "volatile",
+    }
+}
+
+nm_str_enum! {
     /// The values `802-11-wireless.band` takes, sent over D-Bus as `s`.
     pub enum WirelessBand {
         /// 5GHz.

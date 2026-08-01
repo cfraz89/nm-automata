@@ -10,8 +10,8 @@ use std::collections::HashMap;
 
 use nm_automata::settings::{ProfileMap, SettingMap};
 use nm_automata::{
-    AssignedMacAddress, ConnectionProfile, Ipv4Method, Ipv6Method, MacAddress, Ssid, WirelessMode,
-    WirelessSecurityProto, WirelessSetting,
+    ActivationBinding, ActivationOptions, ActivationPersist, AssignedMacAddress, ConnectionProfile,
+    Ipv4Method, Ipv6Method, MacAddress, Ssid, WirelessMode, WirelessSecurityProto, WirelessSetting,
 };
 use zbus::zvariant::{OwnedValue, Value};
 
@@ -194,5 +194,25 @@ fn writes_what_networkmanager_expects() {
     assert_eq!(
         wireless["bssid"],
         value(vec![0x4c_u8, 0x79, 0x6e, 0xda, 0x29, 0x47])
+    );
+}
+
+/// The options of `AddAndActivateConnection2` are a dictionary with a shape, not a bag of
+/// variants — and one this crate writes rather than reads, so what goes out has to be right.
+#[test]
+fn activation_options_travel_as_the_dictionary_networkmanager_reads() {
+    let options = ActivationOptions::default()
+        .persist(ActivationPersist::Volatile)
+        .bind_activation(ActivationBinding::DbusClient);
+
+    let map = options.to_map().expect("the options encode");
+    assert_eq!(map["persist"], value("volatile"));
+    assert_eq!(map["bind-activation"], value("dbus-client"));
+
+    assert_eq!(ActivationOptions::from_map(&map).unwrap(), options);
+    // And the signature the method's argument expects.
+    assert_eq!(
+        <ActivationOptions as zbus::zvariant::Type>::SIGNATURE.to_string(),
+        "a{sv}"
     );
 }

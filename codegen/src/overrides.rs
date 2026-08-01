@@ -38,21 +38,91 @@ pub struct Annotations {
     newtype: Vec<Newtype>,
 }
 
-/// The values a settings property takes, where NetworkManager declares no constants for them.
+/// The values a string takes, where NetworkManager declares no constants for them.
 ///
-/// Checked against the settings table: the property must exist and travel as a string, and it
-/// must not be one whose values [`crate::values::derive`] already reads out of the spec.
+/// Either the values of a connection-profile property, named by its `setting` and `property` —
+/// checked against the settings table, which must type it as a string and must not be one whose
+/// values [`crate::values::derive`] already reads out of the spec — or, given a `name` instead,
+/// a type standing on its own, for a [`Vardict`] key to be typed as.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Enumeration {
     /// The setting, as it appears in a profile, e.g. `802-11-wireless`.
-    pub setting: String,
+    #[serde(default)]
+    setting: Option<String>,
     /// The property, e.g. `band`.
-    pub property: String,
+    #[serde(default)]
+    property: Option<String>,
+    /// The type to generate, where the values are not those of a profile property.
+    #[serde(default)]
+    name: Option<String>,
     #[serde(default)]
     pub doc: Option<String>,
     #[serde(default, rename = "value")]
     pub values: Vec<EnumerationValue>,
+}
+
+impl Enumeration {
+    /// The profile property whose values these are, if that is the form it takes.
+    pub fn profile_property(&self) -> Option<(&str, &str)> {
+        Some((self.setting.as_deref()?, self.property.as_deref()?))
+    }
+
+    /// The name of the type to generate, where it is not named after a property.
+    pub fn type_name(&self) -> Option<&str> {
+        self.name.as_deref()
+    }
+
+    /// One naming a connection-profile property, for the tests.
+    #[cfg(test)]
+    pub fn property(setting: &str, property: &str, values: Vec<EnumerationValue>) -> Self {
+        Self {
+            setting: Some(setting.to_owned()),
+            property: Some(property.to_owned()),
+            name: None,
+            doc: None,
+            values,
+        }
+    }
+
+    /// How it reads in an error message.
+    pub fn describe(&self) -> String {
+        match (self.profile_property(), self.type_name()) {
+            (Some((setting, property)), _) => format!("{setting}.{property}"),
+            (_, Some(name)) => name.to_owned(),
+            _ => "an `[[enumeration]]` entry".to_owned(),
+        }
+    }
+
+    /// Fail on an entry that names neither form, or both, or half of one.
+    fn check(&self) -> Result<()> {
+        let named = [
+            ("setting", self.setting.is_some()),
+            ("property", self.property.is_some()),
+            ("name", self.name.is_some()),
+        ];
+        let given: Vec<&str> = named
+            .iter()
+            .filter_map(|(field, given)| given.then_some(*field))
+            .collect();
+        if !matches!(given[..], ["setting", "property"] | ["name"]) {
+            bail!(
+                "an `[[enumeration]]` entry gives {}, but it must name either a profile property \
+                 (`setting` and `property`) or a type of its own (`name`)",
+                match given.is_empty() {
+                    true => "neither".to_owned(),
+                    false => format!("`{}`", given.join("`, `")),
+                }
+            );
+        }
+        if self.values.is_empty() {
+            bail!(
+                "the `[[enumeration]]` entry for `{}` has no values",
+                self.describe()
+            );
+        }
+        Ok(())
+    }
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -206,6 +276,36 @@ impl Annotations {
         &self.enumeration
     }
 
+    /// Fail if a `[[vardict]]` applies to a member the spec does not have, or to one that does
+    /// not carry a dictionary.
+    ///
+    /// `sites` is every member that could, with the signature it has — see
+    /// [`crate::render::dictionary_sites`].
+    pub fn check_vardicts(&self, sites: &[(String, String)]) -> Result<()> {
+        for vardict in &self.vardict {
+            for target in &vardict.applies {
+                let Some((_, signature)) = sites.iter().find(|(member, _)| member == target) else {
+                    bail!(
+                        "annotations.toml gives `{target}` the shape `{}`, but the vendored spec \
+                         has no such member",
+                        vardict.name
+                    );
+                };
+                if !matches!(
+                    signature.as_str(),
+                    crate::render::VARDICT_SIGNATURE | crate::render::VARDICT_ARRAY_SIGNATURE
+                ) {
+                    bail!(
+                        "annotations.toml gives `{target}` the shape `{}`, but it travels as \
+                         `{signature}` rather than as a dictionary",
+                        vardict.name
+                    );
+                }
+            }
+        }
+        Ok(())
+    }
+
     /// The members given one of the crate's own types.
     pub fn newtypes(&self) -> &[Newtype] {
         &self.newtype
@@ -276,6 +376,9 @@ pub fn load(root: &Path) -> Result<Annotations> {
         toml::from_str(&source).with_context(|| format!("parsing {}", path.display()))?;
     for newtype in &annotations.newtype {
         newtype.check()?;
+    }
+    for enumeration in &annotations.enumeration {
+        enumeration.check()?;
     }
     Ok(annotations)
 }

@@ -45,12 +45,23 @@ use crate::settings::{Property, PropertyType, Setting};
 pub struct ValueSet {
     /// The type to generate, e.g. `WirelessMode`.
     pub rust_name: String,
-    /// The setting the property belongs to, e.g. `802-11-wireless`.
-    pub setting: String,
+    /// The setting the property belongs to, e.g. `802-11-wireless`; absent for a set that
+    /// stands on its own, named by `annotations.toml` for a dictionary key to use.
+    pub setting: Option<String>,
     /// The property itself, e.g. `mode`.
-    pub property: String,
+    pub property: Option<String>,
     pub doc: Option<String>,
     pub values: Vec<Value>,
+}
+
+impl ValueSet {
+    /// How the set reads in a message: the property it belongs to, or its own name.
+    pub fn describe(&self) -> String {
+        match (&self.setting, &self.property) {
+            (Some(setting), Some(property)) => format!("{setting}.{property}"),
+            _ => self.rust_name.clone(),
+        }
+    }
 }
 
 /// One value of a [`ValueSet`].
@@ -141,15 +152,17 @@ pub fn derive(constants: &[Constant], settings: &[Setting]) -> Vec<ValueSet> {
             }
             sets.push(ValueSet {
                 rust_name: type_name(setting, property),
-                setting: setting.name.clone(),
-                property: property.name.clone(),
+                setting: Some(setting.name.clone()),
+                property: Some(property.name.clone()),
                 doc: None,
                 values,
             });
         }
     }
 
-    sets.sort_by(|a, b| (&a.setting, &a.property).cmp(&(&b.setting, &b.property)));
+    sets.sort_by(|a, b| {
+        (&a.setting, &a.property, &a.rust_name).cmp(&(&b.setting, &b.property, &b.rust_name))
+    });
     sets
 }
 
@@ -162,32 +175,50 @@ pub fn resolve(
     let mut sets = derived;
 
     for entry in annotated {
-        let property = find(settings, &entry.setting, &entry.property)?;
-        if !matches!(property.ty, PropertyType::Str | PropertyType::StrArray) {
-            bail!(
-                "annotations.toml enumerates the values of `{}.{}`, which the settings table \
-                 does not type as a string",
-                entry.setting,
-                entry.property
-            );
-        }
-        if let Some(existing) = sets
-            .iter()
-            .find(|set| set.setting == entry.setting && set.property == entry.property)
-        {
-            bail!(
-                "annotations.toml enumerates the values of `{}.{}`, which NetworkManager already \
-                 declares constants for — the entry would only repeat {}",
-                entry.setting,
-                entry.property,
-                existing.rust_name
-            );
-        }
+        // Either the values of a profile property, checked against the table, or a type of its
+        // own for a dictionary key — which has nothing in the table to check it against, and is
+        // checked instead by the key that names it having to resolve.
+        let named = match entry.profile_property() {
+            Some((setting_name, property_name)) => {
+                let property = find(settings, setting_name, property_name)?;
+                if !matches!(property.ty, PropertyType::Str | PropertyType::StrArray) {
+                    bail!(
+                        "annotations.toml enumerates the values of `{}`, which the settings \
+                         table does not type as a string",
+                        entry.describe()
+                    );
+                }
+                if let Some(existing) = sets.iter().find(|set| {
+                    set.setting.as_deref() == Some(setting_name)
+                        && set.property.as_deref() == Some(property_name)
+                }) {
+                    bail!(
+                        "annotations.toml enumerates the values of `{}`, which NetworkManager \
+                         already declares constants for — the entry would only repeat {}",
+                        entry.describe(),
+                        existing.rust_name
+                    );
+                }
+                let setting = settings
+                    .iter()
+                    .find(|s| s.name == setting_name)
+                    .expect("`find` returned a property of it");
+                (
+                    type_name(setting, property),
+                    Some(setting_name.to_owned()),
+                    Some(property_name.to_owned()),
+                )
+            }
+            None => (
+                entry
+                    .type_name()
+                    .expect("an entry names one form or the other")
+                    .to_owned(),
+                None,
+                None,
+            ),
+        };
 
-        let setting = settings
-            .iter()
-            .find(|s| s.name == entry.setting)
-            .expect("`find` returned a property of it");
         let values = entry
             .values
             .iter()
@@ -196,10 +227,9 @@ pub fn resolve(
                     (Some(name), _) => name.clone(),
                     (None, Some(derived)) => derived,
                     (None, None) => bail!(
-                        "annotations.toml gives `{}.{}` the value `{}`, which cannot open a Rust \
+                        "annotations.toml gives `{}` the value `{}`, which cannot open a Rust \
                          identifier — it needs a `name` of its own",
-                        entry.setting,
-                        entry.property,
+                        entry.describe(),
                         value.value
                     ),
                 };
@@ -212,10 +242,11 @@ pub fn resolve(
             })
             .collect::<Result<Vec<_>>>()?;
 
+        let (rust_name, setting, property) = named;
         sets.push(ValueSet {
-            rust_name: type_name(setting, property),
-            setting: entry.setting.clone(),
-            property: entry.property.clone(),
+            rust_name,
+            setting,
+            property,
             doc: entry.doc.clone(),
             values,
         });
@@ -224,7 +255,9 @@ pub fn resolve(
     for set in &sets {
         check(set)?;
     }
-    sets.sort_by(|a, b| (&a.setting, &a.property).cmp(&(&b.setting, &b.property)));
+    sets.sort_by(|a, b| {
+        (&a.setting, &a.property, &a.rust_name).cmp(&(&b.setting, &b.property, &b.rust_name))
+    });
     Ok(sets)
 }
 
@@ -320,7 +353,11 @@ fn unknown_newtype(entry: &Newtype) -> anyhow::Error {
 /// Give every enumerated property the type generated for its values.
 pub fn apply(settings: &mut [Setting], sets: &[ValueSet]) -> Result<()> {
     for set in sets {
-        let property = find_mut(settings, &set.setting, &set.property)?;
+        // The standalone ones belong to no property, so there is nothing to retype.
+        let (Some(setting), Some(name)) = (&set.setting, &set.property) else {
+            continue;
+        };
+        let property = find_mut(settings, setting, name)?;
         property.ty = match property.ty {
             PropertyType::StrArray => PropertyType::ValueArray {
                 name: set.rust_name.clone(),
@@ -361,17 +398,15 @@ fn check(set: &ValueSet) -> Result<()> {
         // The macro adds this variant for values from newer daemons.
         if value.rust_name == "Other" {
             bail!(
-                "`{}.{}` has the value `{}`, which collides with the generated `Other`",
-                set.setting,
-                set.property,
+                "`{}` has the value `{}`, which collides with the generated `Other`",
+                set.describe(),
                 value.text
             );
         }
         if seen.contains(&value.rust_name.as_str()) {
             bail!(
-                "`{}.{}` has two values that both generate `{}`",
-                set.setting,
-                set.property,
+                "`{}` has two values that both generate `{}`",
+                set.describe(),
                 value.rust_name
             );
         }
@@ -458,7 +493,7 @@ mod tests {
         let sets = derive(&constants(), &settings());
         assert_eq!(sets.len(), 1);
         assert_eq!(sets[0].rust_name, "WirelessMode");
-        assert_eq!(sets[0].property, "mode");
+        assert_eq!(sets[0].property.as_deref(), Some("mode"));
         let values: Vec<_> = sets[0]
             .values
             .iter()
@@ -476,7 +511,10 @@ mod tests {
         // `mac-address-randomization` extends `mac-address` and is not one of its values; nor
         // is `mac-address` a candidate at all, being a byte array.
         let sets = derive(&constants(), &settings());
-        assert!(sets.iter().all(|set| set.property != "mac-address"));
+        assert!(
+            sets.iter()
+                .all(|set| set.property.as_deref() != Some("mac-address"))
+        );
     }
 
     #[test]
@@ -484,7 +522,10 @@ mod tests {
         // `SETTING_WIRELESS_MODE` must not be read as a value set for `connection.type`, or
         // for any other setting with a similarly-named property.
         let sets = derive(&constants(), &settings());
-        assert!(sets.iter().all(|set| set.setting == "802-11-wireless"));
+        assert!(
+            sets.iter()
+                .all(|set| set.setting.as_deref() == Some("802-11-wireless"))
+        );
     }
 
     #[test]
@@ -525,19 +566,17 @@ mod tests {
         constants.push(constant("SETTING_WIRELESS_BAND_A", "a"));
 
         let sets = derive(&constants, &settings());
-        let band = sets.iter().find(|s| s.property == "band").unwrap();
+        let band = sets
+            .iter()
+            .find(|s| s.property.as_deref() == Some("band"))
+            .unwrap();
         assert_eq!(band.values.len(), 1);
         assert_eq!(band.values[0].text, "a");
     }
 
     #[test]
     fn hand_written_values_cannot_repeat_declared_ones() {
-        let annotated = [Enumeration {
-            setting: "802-11-wireless".to_owned(),
-            property: "mode".to_owned(),
-            doc: None,
-            values: Vec::new(),
-        }];
+        let annotated = [Enumeration::property("802-11-wireless", "mode", Vec::new())];
         let error = resolve(derive(&constants(), &settings()), &annotated, &settings())
             .unwrap_err()
             .to_string();
@@ -546,12 +585,7 @@ mod tests {
 
     #[test]
     fn hand_written_values_must_be_of_a_string_property() {
-        let annotated = [Enumeration {
-            setting: "802-11-wireless".to_owned(),
-            property: "ssid".to_owned(),
-            doc: None,
-            values: Vec::new(),
-        }];
+        let annotated = [Enumeration::property("802-11-wireless", "ssid", Vec::new())];
         assert!(resolve(Vec::new(), &annotated, &settings()).is_err());
     }
 
@@ -634,7 +668,7 @@ mod vendored {
 
         let derived: Vec<String> = super::derive(&constants, &settings)
             .iter()
-            .map(|set| format!("{}.{} -> {}", set.setting, set.property, set.rust_name))
+            .map(|set| format!("{} -> {}", set.describe(), set.rust_name))
             .collect();
         assert_eq!(
             derived,
