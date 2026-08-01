@@ -155,11 +155,18 @@ impl WirelessProxy<'_> {
     ///
     /// Built on this proxy's own connection. [`active_access_point_path`](Self::active_access_point_path) gives the paths
     /// themselves.
+    ///
+    /// [`None`] if the property is [`/`](crate::NULL_PATH), which is how
+    /// NetworkManager says there is no such object.
     pub async fn active_access_point(
         &self,
-    ) -> zbus::Result<crate::proxies::access_point::AccessPointProxy<'static>> {
-        let path = self.active_access_point_path().await?;
-        crate::NmPath::connect(&path, self.inner().connection()).await
+    ) -> zbus::Result<Option<crate::proxies::access_point::AccessPointProxy<'static>>> {
+        let Some(path) = self.active_access_point_path().await?.non_null() else {
+            return Ok(None);
+        };
+        crate::NmPath::connect(&path, self.inner().connection())
+            .await
+            .map(Some)
     }
 
     /// The objects the `AccessPointAdded` signal carries, as they arrive.

@@ -2,7 +2,7 @@
 //!
 //! Run with `cargo run --example devices`.
 
-use nm_automata::{AnyDevice, DeviceState, NetworkManagerProxy};
+use nm_automata::{AnyDevice, NetworkManagerProxy};
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -62,13 +62,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             other => println!("  no specialised interface for {:?}", other.device_type()),
         }
 
-        if state == DeviceState::Activated {
-            let active = device.active_connection().await?;
+        // A property pointing at no object is `None` rather than a proxy that fails on use, so
+        // there is nothing to check the device state for.
+        if let Some(active) = device.active_connection().await? {
             println!("  active connection: {:?}", active.state().await?);
+        }
 
-            // Typed dictionaries: addresses and routes come back with real fields rather
-            // than as maps of variants.
-            let ip4 = device.ip4_config().await?;
+        // Typed dictionaries: addresses and routes come back with real fields rather
+        // than as maps of variants.
+        if let Some(ip4) = device.ip4_config().await? {
             for address in ip4.address_data().await? {
                 println!(
                     "  address {}/{}",

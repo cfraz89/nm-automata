@@ -309,55 +309,90 @@ impl DeviceProxy<'_> {
     ///
     /// Built on this proxy's own connection. [`active_connection_path`](Self::active_connection_path) gives the paths
     /// themselves.
+    ///
+    /// [`None`] if the property is [`/`](crate::NULL_PATH), which is how
+    /// NetworkManager says there is no such object.
     pub async fn active_connection(
         &self,
-    ) -> zbus::Result<crate::proxies::connection_active::ActiveProxy<'static>> {
-        let path = self.active_connection_path().await?;
-        crate::NmPath::connect(&path, self.inner().connection()).await
+    ) -> zbus::Result<Option<crate::proxies::connection_active::ActiveProxy<'static>>> {
+        let Some(path) = self.active_connection_path().await?.non_null() else {
+            return Ok(None);
+        };
+        crate::NmPath::connect(&path, self.inner().connection())
+            .await
+            .map(Some)
     }
 
     /// The objects the `Ip4Config` property points at.
     ///
     /// Built on this proxy's own connection. [`ip4_config_path`](Self::ip4_config_path) gives the paths
     /// themselves.
+    ///
+    /// [`None`] if the property is [`/`](crate::NULL_PATH), which is how
+    /// NetworkManager says there is no such object.
     pub async fn ip4_config(
         &self,
-    ) -> zbus::Result<crate::proxies::ip4_config::IP4ConfigProxy<'static>> {
-        let path = self.ip4_config_path().await?;
-        crate::NmPath::connect(&path, self.inner().connection()).await
+    ) -> zbus::Result<Option<crate::proxies::ip4_config::IP4ConfigProxy<'static>>> {
+        let Some(path) = self.ip4_config_path().await?.non_null() else {
+            return Ok(None);
+        };
+        crate::NmPath::connect(&path, self.inner().connection())
+            .await
+            .map(Some)
     }
 
     /// The objects the `Dhcp4Config` property points at.
     ///
     /// Built on this proxy's own connection. [`dhcp4_config_path`](Self::dhcp4_config_path) gives the paths
     /// themselves.
+    ///
+    /// [`None`] if the property is [`/`](crate::NULL_PATH), which is how
+    /// NetworkManager says there is no such object.
     pub async fn dhcp4_config(
         &self,
-    ) -> zbus::Result<crate::proxies::dhcp4_config::DHCP4ConfigProxy<'static>> {
-        let path = self.dhcp4_config_path().await?;
-        crate::NmPath::connect(&path, self.inner().connection()).await
+    ) -> zbus::Result<Option<crate::proxies::dhcp4_config::DHCP4ConfigProxy<'static>>> {
+        let Some(path) = self.dhcp4_config_path().await?.non_null() else {
+            return Ok(None);
+        };
+        crate::NmPath::connect(&path, self.inner().connection())
+            .await
+            .map(Some)
     }
 
     /// The objects the `Ip6Config` property points at.
     ///
     /// Built on this proxy's own connection. [`ip6_config_path`](Self::ip6_config_path) gives the paths
     /// themselves.
+    ///
+    /// [`None`] if the property is [`/`](crate::NULL_PATH), which is how
+    /// NetworkManager says there is no such object.
     pub async fn ip6_config(
         &self,
-    ) -> zbus::Result<crate::proxies::ip6_config::IP6ConfigProxy<'static>> {
-        let path = self.ip6_config_path().await?;
-        crate::NmPath::connect(&path, self.inner().connection()).await
+    ) -> zbus::Result<Option<crate::proxies::ip6_config::IP6ConfigProxy<'static>>> {
+        let Some(path) = self.ip6_config_path().await?.non_null() else {
+            return Ok(None);
+        };
+        crate::NmPath::connect(&path, self.inner().connection())
+            .await
+            .map(Some)
     }
 
     /// The objects the `Dhcp6Config` property points at.
     ///
     /// Built on this proxy's own connection. [`dhcp6_config_path`](Self::dhcp6_config_path) gives the paths
     /// themselves.
+    ///
+    /// [`None`] if the property is [`/`](crate::NULL_PATH), which is how
+    /// NetworkManager says there is no such object.
     pub async fn dhcp6_config(
         &self,
-    ) -> zbus::Result<crate::proxies::dhcp6_config::DHCP6ConfigProxy<'static>> {
-        let path = self.dhcp6_config_path().await?;
-        crate::NmPath::connect(&path, self.inner().connection()).await
+    ) -> zbus::Result<Option<crate::proxies::dhcp6_config::DHCP6ConfigProxy<'static>>> {
+        let Some(path) = self.dhcp6_config_path().await?.non_null() else {
+            return Ok(None);
+        };
+        crate::NmPath::connect(&path, self.inner().connection())
+            .await
+            .map(Some)
     }
 
     /// The objects the `AvailableConnections` property points at.

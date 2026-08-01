@@ -293,6 +293,8 @@ pub struct PathAccessor {
     pub target: String,
     /// Whether the member returns a list of paths rather than one.
     pub list: bool,
+    /// Whether the member is a property, whose path may be the null path `/`.
+    pub property: bool,
     /// The argument a signal carries, when the member is one.
     pub signal_arg: Option<String>,
     /// How the member is described, for the accessor's documentation.
@@ -411,6 +413,7 @@ pub fn plan(
             wrapper,
             target: target.clone(),
             list,
+            property: matches!(site, Site::Property(_)),
             signal_arg,
             description,
         });
@@ -1518,7 +1521,27 @@ pub fn path_accessors(
             accessor.description,
             raw = accessor.raw
         );
-        if accessor.list {
+        // A property with nothing to point at points at `/`, where there is no object of any
+        // kind — so the accessor says so, rather than handing back a proxy whose every call
+        // would fail. A method returns an error instead of `/`, and a list leaves the object
+        // out rather than listing it, so neither of those needs it.
+        if accessor.property && !accessor.list {
+            let _ = writeln!(
+                out,
+                "    ///\n    \
+                 /// [`None`] if the property is [`/`](crate::NULL_PATH), which is how\n    \
+                 /// NetworkManager says there is no such object.\n    \
+                 pub async fn {}(&self{declaration}) -> zbus::Result<Option<{proxy}>> {{\n        \
+                 let Some(path) = self.{}({forwarded}).await?.non_null() else {{\n            \
+                 return Ok(None);\n        \
+                 }};\n        \
+                 crate::NmPath::connect(&path, self.inner().connection())\n            \
+                 .await\n            \
+                 .map(Some)\n    \
+                 }}\n",
+                accessor.wrapper, accessor.raw
+            );
+        } else if accessor.list {
             let _ = writeln!(
                 out,
                 "    pub async fn {}(&self{declaration}) -> zbus::Result<Vec<{proxy}>> {{\n        \

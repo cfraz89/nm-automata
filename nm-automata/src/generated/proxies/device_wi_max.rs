@@ -131,9 +131,18 @@ impl WiMaxProxy<'_> {
     ///
     /// Built on this proxy's own connection. [`active_nsp_path`](Self::active_nsp_path) gives the paths
     /// themselves.
-    pub async fn active_nsp(&self) -> zbus::Result<crate::proxies::wi_max_nsp::NspProxy<'static>> {
-        let path = self.active_nsp_path().await?;
-        crate::NmPath::connect(&path, self.inner().connection()).await
+    ///
+    /// [`None`] if the property is [`/`](crate::NULL_PATH), which is how
+    /// NetworkManager says there is no such object.
+    pub async fn active_nsp(
+        &self,
+    ) -> zbus::Result<Option<crate::proxies::wi_max_nsp::NspProxy<'static>>> {
+        let Some(path) = self.active_nsp_path().await?.non_null() else {
+            return Ok(None);
+        };
+        crate::NmPath::connect(&path, self.inner().connection())
+            .await
+            .map(Some)
     }
 
     /// The objects the `NspAdded` signal carries, as they arrive.

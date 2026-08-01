@@ -74,17 +74,35 @@ impl HsrProxy<'_> {
     ///
     /// Built on this proxy's own connection. [`port1_path`](Self::port1_path) gives the paths
     /// themselves.
-    pub async fn port1(&self) -> zbus::Result<crate::proxies::device::DeviceProxy<'static>> {
-        let path = self.port1_path().await?;
-        crate::NmPath::connect(&path, self.inner().connection()).await
+    ///
+    /// [`None`] if the property is [`/`](crate::NULL_PATH), which is how
+    /// NetworkManager says there is no such object.
+    pub async fn port1(
+        &self,
+    ) -> zbus::Result<Option<crate::proxies::device::DeviceProxy<'static>>> {
+        let Some(path) = self.port1_path().await?.non_null() else {
+            return Ok(None);
+        };
+        crate::NmPath::connect(&path, self.inner().connection())
+            .await
+            .map(Some)
     }
 
     /// The objects the `Port2` property points at.
     ///
     /// Built on this proxy's own connection. [`port2_path`](Self::port2_path) gives the paths
     /// themselves.
-    pub async fn port2(&self) -> zbus::Result<crate::proxies::device::DeviceProxy<'static>> {
-        let path = self.port2_path().await?;
-        crate::NmPath::connect(&path, self.inner().connection()).await
+    ///
+    /// [`None`] if the property is [`/`](crate::NULL_PATH), which is how
+    /// NetworkManager says there is no such object.
+    pub async fn port2(
+        &self,
+    ) -> zbus::Result<Option<crate::proxies::device::DeviceProxy<'static>>> {
+        let Some(path) = self.port2_path().await?.non_null() else {
+            return Ok(None);
+        };
+        crate::NmPath::connect(&path, self.inner().connection())
+            .await
+            .map(Some)
     }
 }

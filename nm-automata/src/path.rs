@@ -42,6 +42,38 @@
 //! merely redundant — a property's change stream is named after them, so watching
 //! `ActiveConnection` means `receive_active_connection_path_changed`.
 
+/// The path NetworkManager sends where there is no object.
+///
+/// D-Bus has no null, so a property that points at nothing still has to point somewhere. Every
+/// NetworkManager object lives under `/org/freedesktop/NetworkManager`, which leaves the root
+/// path free to mean "none", and that is what it means: a device with no address configuration
+/// reports its `Ip4Config` this way, and so does a Wi-Fi device that is not associated.
+///
+/// # Why this one is decided for you
+///
+/// [`NonEmpty`](crate::NonEmpty) leaves the empty string to the caller, because nothing
+/// upstream says which properties mean absent by it and plenty of them mean something else. A
+/// path is not like that. No object of any interface is at `/`, so a proxy built there could
+/// only fail on its first call — there is no second meaning to lose. So the accessors that turn
+/// a property's path into an object hand back [`None`] instead:
+///
+/// ```no_run
+/// # use nm_automata::WirelessProxy;
+/// # async fn example(wifi: WirelessProxy<'_>) -> zbus::Result<()> {
+/// match wifi.active_access_point().await? {
+///     Some(ap) => println!("associated with {}", ap.ssid().await?),
+///     None => println!("not associated"),
+/// }
+/// # Ok(())
+/// # }
+/// ```
+///
+/// Only those. A method reports failure as an error rather than by handing back `/`, a list
+/// leaves an object out rather than listing `/`, and a member that *takes* a path is untouched:
+/// NetworkManager documents `/` as an argument meaning "no specific object", which is a value
+/// to pass rather than one to read.
+pub const NULL_PATH: &str = "/";
+
 /// A path that knows the proxy it builds.
 pub trait NmPath {
     /// The proxy for an object at this path.
@@ -131,6 +163,20 @@ macro_rules! nm_path {
             pub fn into_object_path(self) -> zbus::zvariant::OwnedObjectPath {
                 self.0
             }
+
+            /// Whether this is [`/`](crate::NULL_PATH), which is how NetworkManager says
+            /// there is no object.
+            pub fn is_null(&self) -> bool {
+                self.0.as_str() == $crate::path::NULL_PATH
+            }
+
+            /// The path, or [`None`] if it is [`/`](Self::is_null).
+            pub fn non_null(self) -> Option<Self> {
+                match self.is_null() {
+                    true => None,
+                    false => Some(self),
+                }
+            }
         }
 
         impl std::ops::Deref for $name {
@@ -204,3 +250,25 @@ macro_rules! nm_path {
 }
 
 pub(crate) use nm_path;
+
+#[cfg(test)]
+mod tests {
+    use crate::{AccessPointPath, NULL_PATH};
+    use zbus::zvariant::{ObjectPath, OwnedObjectPath};
+
+    fn path(text: &str) -> AccessPointPath {
+        AccessPointPath::from(OwnedObjectPath::from(
+            ObjectPath::try_from(text).expect("a valid object path"),
+        ))
+    }
+
+    #[test]
+    fn the_root_path_is_the_absent_one() {
+        assert!(path(NULL_PATH).is_null());
+        assert_eq!(path(NULL_PATH).non_null(), None);
+
+        let real = path("/org/freedesktop/NetworkManager/AccessPoint/1");
+        assert!(!real.is_null());
+        assert_eq!(real.clone().non_null(), Some(real));
+    }
+}
