@@ -35,10 +35,7 @@ pub trait WifiP2P {
     /// # Arguments
     ///
     /// * `options` - Options of find.
-    fn start_find(
-        &self,
-        options: std::collections::HashMap<&str, &zbus::zvariant::Value<'_>>,
-    ) -> zbus::Result<()>;
+    fn start_find(&self, options: &FindOptions) -> zbus::Result<()>;
 
     /// StopFind method
     ///

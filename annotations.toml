@@ -556,3 +556,52 @@ keys = [
     { name = "persist", type = "ActivationPersist", doc = "How long the new connection should last." },
     { name = "bind-activation", type = "ActivationBinding", doc = "What to tie the activation's lifetime to." },
 ]
+
+# The two `options` dictionaries of the scanning methods, whose keys their own documentation
+# spells out. Written rather than read, like `ActivationOptions` above.
+
+[[vardict]]
+name = "ScanOptions"
+doc = "Options for `RequestScan`."
+applies = [
+    "org.freedesktop.NetworkManager.Device.Wireless.RequestScan.options",
+]
+keys = [
+    { name = "ssids", type = "array of Ssid", doc = "Scan for these networks specifically, rather than for whatever is there." },
+]
+
+[[vardict]]
+name = "FindOptions"
+doc = "Options for `StartFind`."
+applies = [
+    "org.freedesktop.NetworkManager.Device.WifiP2P.StartFind.options",
+]
+keys = [
+    { name = "timeout", type = "int32", doc = "How long to search for, between 1 and 600 seconds. Unset, NetworkManager searches for 30." },
+]
+
+# And the `args` dictionaries of the two `*2` settings methods. `version-id` is not given a type
+# where it is documented, but the same value is `t` where `Device.Reapply` and
+# `GetAppliedConnection` take it, and libnm's `nm_remote_connection_get_version_id` returns
+# `guint64`.
+
+[[vardict]]
+name = "AddConnectionArgs"
+doc = "Further arguments for `AddConnection2`."
+applies = [
+    "org.freedesktop.NetworkManager.Settings.AddConnection2.args",
+]
+keys = [
+    { name = "plugin", type = "string", doc = "The settings plugin to store the new profile with, such as `keyfile` or `ifcfg-rh`." },
+]
+
+[[vardict]]
+name = "UpdateArgs"
+doc = "Further arguments for `Update2`."
+applies = [
+    "org.freedesktop.NetworkManager.Settings.Connection.Update2.args",
+]
+keys = [
+    { name = "plugin", type = "string", doc = "The settings plugin to migrate the profile to, such as `keyfile` or `ifcfg-rh`." },
+    { name = "version-id", type = "uint64", doc = "Reject the update unless the profile is still at this version, so that a concurrent modification is caught rather than overwritten. Zero does not check." },
+]

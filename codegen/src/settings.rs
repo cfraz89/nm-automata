@@ -76,6 +76,11 @@ pub enum PropertyType {
     Newtype {
         name: String,
     },
+    /// An array of them, which only a dictionary key is written as: `RequestScan` takes the
+    /// SSIDs to scan for as `aay`.
+    NewtypeArray {
+        name: String,
+    },
     /// `a(ayuay)` — `ipv6.addresses`, kept for compatibility by NetworkManager.
     LegacyIp6Addresses,
     /// `a(ayuayu)` — `ipv6.routes`, likewise.

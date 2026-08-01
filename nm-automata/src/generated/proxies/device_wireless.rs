@@ -35,10 +35,7 @@ pub trait Wireless {
     /// # Arguments
     ///
     /// * `options` - Options of scan. Currently, 'ssids' option with value of "aay" type is supported.
-    fn request_scan(
-        &self,
-        options: std::collections::HashMap<&str, &zbus::zvariant::Value<'_>>,
-    ) -> zbus::Result<()>;
+    fn request_scan(&self, options: &ScanOptions) -> zbus::Result<()>;
 
     /// GetAccessPoints method
     ///
