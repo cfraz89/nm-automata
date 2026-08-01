@@ -910,6 +910,18 @@ fn write_setting_struct(
          pub other: SettingMap,\n}}\n"
     );
 
+    let setters: Vec<(&str, &str, String)> = fields
+        .iter()
+        .map(|(property, ty)| {
+            (
+                property.field_name.as_str(),
+                property.name.as_str(),
+                setter_argument(&property.ty, ty),
+            )
+        })
+        .collect();
+    write_setters(out, &setting.struct_name, "property", &setters);
+
     // The trait implementation: one line per property in each direction.
     let _ = writeln!(out, "impl Setting for {} {{", setting.struct_name);
     let _ = writeln!(out, "    const NAME: &'static str = \"{}\";", setting.name);
@@ -960,6 +972,57 @@ fn write_setting_struct(
     );
 }
 
+/// Emit the setters that fill a struct in without `Some` at every call site.
+///
+/// Each takes and returns the value, so they chain from a `default()`, and each sets the field
+/// of the same name — a method and a field can share one, and anything else would be a second
+/// spelling of a property to remember.
+fn write_setters(
+    out: &mut String,
+    struct_name: &str,
+    kind: &str,
+    setters: &[(&str, &str, String)],
+) {
+    if setters.is_empty() {
+        return;
+    }
+    let _ = writeln!(out, "impl {struct_name} {{");
+    for (field, name, argument) in setters {
+        // `field@` because the method and the field share a name, which rustdoc would
+        // otherwise call an ambiguous link.
+        // Only the ones that take a conversion do one; `Some(value.into())` on a value already
+        // of the right type is a useless conversion, as clippy rightly says.
+        let value = match argument.starts_with("impl Into<") {
+            true => "value.into()",
+            false => "value",
+        };
+        let _ = writeln!(
+            out,
+            "    /// Set [`{field}`](field@Self::{field}), the `{name}` {kind}.\n    \
+             #[must_use]\n    \
+             pub fn {field}(mut self, value: {argument}) -> Self {{\n        \
+             self.{field} = Some({value});\n        \
+             self\n    \
+             }}\n"
+        );
+    }
+    let _ = writeln!(out, "}}\n");
+}
+
+/// What a setter takes: the value itself, or anything that converts into it.
+///
+/// `impl Into` where a conversion is worth having — `ssid("home")`, `id("home wifi")` — and the
+/// plain type everywhere else. Not on the numbers: an integer literal has no type of its own,
+/// so `mtu(1500)` against `impl Into<u32>` would fail to infer one and have to be written
+/// `1500u32`, which is a worse trade than the conversion is worth.
+fn setter_argument(ty: &crate::settings::PropertyType, rust_type: &str) -> String {
+    use crate::settings::PropertyType as P;
+    match ty {
+        P::Str | P::Newtype { .. } => format!("impl Into<{rust_type}>"),
+        _ => rust_type.to_owned(),
+    }
+}
+
 fn write_profile_struct(out: &mut String, settings: &[crate::settings::Setting]) {
     let _ = writeln!(
         out,
@@ -967,9 +1030,9 @@ fn write_profile_struct(out: &mut String, settings: &[crate::settings::Setting])
          ///\n\
          /// Every setting is optional, and so is every property within one: NetworkManager\n\
          /// normalises a profile before validating it, so leaving something out asks it to\n\
-         /// decide. Only [`connection.id`](ConnectionSetting::id) and one base-type setting —\n\
-         /// [`wired`](Self::wired), [`wireless`](Self::wireless), and so on — are required, and\n\
-         /// [`ConnectionProfile::new`] supplies the first.\n\
+         /// decide. Only [`connection.id`](field@ConnectionSetting::id) and one base-type\n\
+         /// setting — [`wired`](field@Self::wired), [`wireless`](field@Self::wireless), and so\n\
+         /// on — are required, and [`ConnectionProfile::new`] supplies the first.\n\
          #[derive(Debug, Default, Clone, PartialEq)]\n\
          pub struct ConnectionProfile {{"
     );
@@ -988,6 +1051,18 @@ fn write_profile_struct(out: &mut String, settings: &[crate::settings::Setting])
          pub other: ProfileMap,\n}}\n"
     );
 
+    let setters: Vec<(&str, &str, String)> = settings
+        .iter()
+        .map(|setting| {
+            (
+                setting.field_name.as_str(),
+                setting.name.as_str(),
+                setting.struct_name.clone(),
+            )
+        })
+        .collect();
+    write_setters(out, "ConnectionProfile", "setting", &setters);
+
     let _ = writeln!(
         out,
         "impl ConnectionProfile {{\n    \
@@ -997,14 +1072,17 @@ fn write_profile_struct(out: &mut String, settings: &[crate::settings::Setting])
          /// which one determines what kind of connection it is:\n    \
          ///\n    \
          /// ```no_run\n    \
-         /// # use nm_automata::{{ConnectionProfile, Ssid, WirelessMode, WirelessSetting}};\n    \
-         /// let mut profile = ConnectionProfile::new(\"home wifi\");\n    \
-         /// profile.wireless = Some(WirelessSetting {{\n    \
-         ///     ssid: Some(Ssid::from(\"my-network\")),\n    \
-         ///     mode: Some(WirelessMode::Infrastructure),\n    \
-         ///     ..Default::default()\n    \
-         /// }});\n    \
+         /// # use nm_automata::{{ConnectionProfile, WirelessMode, WirelessSetting}};\n    \
+         /// let profile = ConnectionProfile::new(\"home wifi\").wireless(\n    \
+         ///     WirelessSetting::default()\n    \
+         ///         .ssid(\"my-network\")\n    \
+         ///         .mode(WirelessMode::Infrastructure),\n    \
+         /// );\n    \
          /// ```\n    \
+         ///\n    \
+         /// Every property and every setting has a setter of its own name, which is the same\n    \
+         /// field written without the `Some`; the structs are plain, so a literal with\n    \
+         /// `..Default::default()` does just as well.\n    \
          pub fn new(id: impl Into<String>) -> Self {{\n        \
          Self {{\n            \
          connection: Some(ConnectionSetting {{\n                \

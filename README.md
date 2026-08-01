@@ -134,6 +134,18 @@ are kept in `other` maps, so a read-modify-write against a newer daemon does not
   fn update(&self, properties: &ConnectionProfile) -> zbus::Result<()>;
   ```
 
+  Every property and setting also has a setter of its own name, so building one does not mean
+  writing `Some` at each field — the structs stay plain, so a literal with
+  `..Default::default()` still works just as well:
+
+  ```rust
+  let profile = ConnectionProfile::new("home wifi").wireless(
+      WirelessSetting::default()
+          .ssid("my-network")
+          .mode(WirelessMode::Infrastructure),
+  );
+  ```
+
   `cargo run --example profiles` reads every profile on the machine through both the typed and
   the raw path and reports any property that differs.
 * **A profile property is typed as what it means, not as what it travels as.** A property whose

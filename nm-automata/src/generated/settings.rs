@@ -295,6 +295,260 @@ pub struct ConnectionSetting {
     pub other: SettingMap,
 }
 
+impl ConnectionSetting {
+    /// Set [`auth_retries`](field@Self::auth_retries), the `auth-retries` property.
+    #[must_use]
+    pub fn auth_retries(mut self, value: i32) -> Self {
+        self.auth_retries = Some(value);
+        self
+    }
+
+    /// Set [`autoconnect`](field@Self::autoconnect), the `autoconnect` property.
+    #[must_use]
+    pub fn autoconnect(mut self, value: bool) -> Self {
+        self.autoconnect = Some(value);
+        self
+    }
+
+    /// Set [`autoconnect_ports`](field@Self::autoconnect_ports), the `autoconnect-ports` property.
+    #[must_use]
+    pub fn autoconnect_ports(mut self, value: i32) -> Self {
+        self.autoconnect_ports = Some(value);
+        self
+    }
+
+    /// Set [`autoconnect_priority`](field@Self::autoconnect_priority), the `autoconnect-priority` property.
+    #[must_use]
+    pub fn autoconnect_priority(mut self, value: i32) -> Self {
+        self.autoconnect_priority = Some(value);
+        self
+    }
+
+    /// Set [`autoconnect_retries`](field@Self::autoconnect_retries), the `autoconnect-retries` property.
+    #[must_use]
+    pub fn autoconnect_retries(mut self, value: i32) -> Self {
+        self.autoconnect_retries = Some(value);
+        self
+    }
+
+    /// Set [`autoconnect_slaves`](field@Self::autoconnect_slaves), the `autoconnect-slaves` property.
+    #[must_use]
+    pub fn autoconnect_slaves(mut self, value: SettingConnectionAutoconnectSlaves) -> Self {
+        self.autoconnect_slaves = Some(value);
+        self
+    }
+
+    /// Set [`controller`](field@Self::controller), the `controller` property.
+    #[must_use]
+    pub fn controller(mut self, value: impl Into<String>) -> Self {
+        self.controller = Some(value.into());
+        self
+    }
+
+    /// Set [`dns_over_tls`](field@Self::dns_over_tls), the `dns-over-tls` property.
+    #[must_use]
+    pub fn dns_over_tls(mut self, value: i32) -> Self {
+        self.dns_over_tls = Some(value);
+        self
+    }
+
+    /// Set [`dnssec`](field@Self::dnssec), the `dnssec` property.
+    #[must_use]
+    pub fn dnssec(mut self, value: i32) -> Self {
+        self.dnssec = Some(value);
+        self
+    }
+
+    /// Set [`down_on_poweroff`](field@Self::down_on_poweroff), the `down-on-poweroff` property.
+    #[must_use]
+    pub fn down_on_poweroff(mut self, value: i32) -> Self {
+        self.down_on_poweroff = Some(value);
+        self
+    }
+
+    /// Set [`gateway_ping_timeout`](field@Self::gateway_ping_timeout), the `gateway-ping-timeout` property.
+    #[must_use]
+    pub fn gateway_ping_timeout(mut self, value: u32) -> Self {
+        self.gateway_ping_timeout = Some(value);
+        self
+    }
+
+    /// Set [`id`](field@Self::id), the `id` property.
+    #[must_use]
+    pub fn id(mut self, value: impl Into<String>) -> Self {
+        self.id = Some(value.into());
+        self
+    }
+
+    /// Set [`interface_name`](field@Self::interface_name), the `interface-name` property.
+    #[must_use]
+    pub fn interface_name(mut self, value: impl Into<String>) -> Self {
+        self.interface_name = Some(value.into());
+        self
+    }
+
+    /// Set [`ip_ping_addresses`](field@Self::ip_ping_addresses), the `ip-ping-addresses` property.
+    #[must_use]
+    pub fn ip_ping_addresses(mut self, value: Vec<String>) -> Self {
+        self.ip_ping_addresses = Some(value);
+        self
+    }
+
+    /// Set [`ip_ping_addresses_require_all`](field@Self::ip_ping_addresses_require_all), the `ip-ping-addresses-require-all` property.
+    #[must_use]
+    pub fn ip_ping_addresses_require_all(mut self, value: i32) -> Self {
+        self.ip_ping_addresses_require_all = Some(value);
+        self
+    }
+
+    /// Set [`ip_ping_timeout`](field@Self::ip_ping_timeout), the `ip-ping-timeout` property.
+    #[must_use]
+    pub fn ip_ping_timeout(mut self, value: u32) -> Self {
+        self.ip_ping_timeout = Some(value);
+        self
+    }
+
+    /// Set [`lldp`](field@Self::lldp), the `lldp` property.
+    #[must_use]
+    pub fn lldp(mut self, value: i32) -> Self {
+        self.lldp = Some(value);
+        self
+    }
+
+    /// Set [`llmnr`](field@Self::llmnr), the `llmnr` property.
+    #[must_use]
+    pub fn llmnr(mut self, value: i32) -> Self {
+        self.llmnr = Some(value);
+        self
+    }
+
+    /// Set [`master`](field@Self::master), the `master` property.
+    #[must_use]
+    pub fn master(mut self, value: impl Into<String>) -> Self {
+        self.master = Some(value.into());
+        self
+    }
+
+    /// Set [`mdns`](field@Self::mdns), the `mdns` property.
+    #[must_use]
+    pub fn mdns(mut self, value: i32) -> Self {
+        self.mdns = Some(value);
+        self
+    }
+
+    /// Set [`metered`](field@Self::metered), the `metered` property.
+    #[must_use]
+    pub fn metered(mut self, value: Metered) -> Self {
+        self.metered = Some(value);
+        self
+    }
+
+    /// Set [`mptcp_flags`](field@Self::mptcp_flags), the `mptcp-flags` property.
+    #[must_use]
+    pub fn mptcp_flags(mut self, value: u32) -> Self {
+        self.mptcp_flags = Some(value);
+        self
+    }
+
+    /// Set [`mud_url`](field@Self::mud_url), the `mud-url` property.
+    #[must_use]
+    pub fn mud_url(mut self, value: impl Into<String>) -> Self {
+        self.mud_url = Some(value.into());
+        self
+    }
+
+    /// Set [`multi_connect`](field@Self::multi_connect), the `multi-connect` property.
+    #[must_use]
+    pub fn multi_connect(mut self, value: i32) -> Self {
+        self.multi_connect = Some(value);
+        self
+    }
+
+    /// Set [`permissions`](field@Self::permissions), the `permissions` property.
+    #[must_use]
+    pub fn permissions(mut self, value: Vec<String>) -> Self {
+        self.permissions = Some(value);
+        self
+    }
+
+    /// Set [`port_type`](field@Self::port_type), the `port-type` property.
+    #[must_use]
+    pub fn port_type(mut self, value: impl Into<String>) -> Self {
+        self.port_type = Some(value.into());
+        self
+    }
+
+    /// Set [`read_only`](field@Self::read_only), the `read-only` property.
+    #[must_use]
+    pub fn read_only(mut self, value: bool) -> Self {
+        self.read_only = Some(value);
+        self
+    }
+
+    /// Set [`secondaries`](field@Self::secondaries), the `secondaries` property.
+    #[must_use]
+    pub fn secondaries(mut self, value: Vec<String>) -> Self {
+        self.secondaries = Some(value);
+        self
+    }
+
+    /// Set [`slave_type`](field@Self::slave_type), the `slave-type` property.
+    #[must_use]
+    pub fn slave_type(mut self, value: impl Into<String>) -> Self {
+        self.slave_type = Some(value.into());
+        self
+    }
+
+    /// Set [`stable_id`](field@Self::stable_id), the `stable-id` property.
+    #[must_use]
+    pub fn stable_id(mut self, value: impl Into<String>) -> Self {
+        self.stable_id = Some(value.into());
+        self
+    }
+
+    /// Set [`timestamp`](field@Self::timestamp), the `timestamp` property.
+    #[must_use]
+    pub fn timestamp(mut self, value: u64) -> Self {
+        self.timestamp = Some(value);
+        self
+    }
+
+    /// Set [`type_`](field@Self::type_), the `type` property.
+    #[must_use]
+    pub fn type_(mut self, value: impl Into<String>) -> Self {
+        self.type_ = Some(value.into());
+        self
+    }
+
+    /// Set [`uuid`](field@Self::uuid), the `uuid` property.
+    #[must_use]
+    pub fn uuid(mut self, value: impl Into<String>) -> Self {
+        self.uuid = Some(value.into());
+        self
+    }
+
+    /// Set [`wait_activation_delay`](field@Self::wait_activation_delay), the `wait-activation-delay` property.
+    #[must_use]
+    pub fn wait_activation_delay(mut self, value: i32) -> Self {
+        self.wait_activation_delay = Some(value);
+        self
+    }
+
+    /// Set [`wait_device_timeout`](field@Self::wait_device_timeout), the `wait-device-timeout` property.
+    #[must_use]
+    pub fn wait_device_timeout(mut self, value: i32) -> Self {
+        self.wait_device_timeout = Some(value);
+        self
+    }
+
+    /// Set [`zone`](field@Self::zone), the `zone` property.
+    #[must_use]
+    pub fn zone(mut self, value: impl Into<String>) -> Self {
+        self.zone = Some(value.into());
+        self
+    }
+}
+
 impl Setting for ConnectionSetting {
     const NAME: &'static str = "connection";
     const PROPERTIES: &'static [&'static str] = &[
@@ -507,6 +761,15 @@ pub struct LowpanSetting {
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
+}
+
+impl LowpanSetting {
+    /// Set [`parent`](field@Self::parent), the `parent` property.
+    #[must_use]
+    pub fn parent(mut self, value: impl Into<String>) -> Self {
+        self.parent = Some(value.into());
+        self
+    }
 }
 
 impl Setting for LowpanSetting {
@@ -776,6 +1039,344 @@ pub struct Ieee8021xSetting {
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
+}
+
+impl Ieee8021xSetting {
+    /// Set [`altsubject_matches`](field@Self::altsubject_matches), the `altsubject-matches` property.
+    #[must_use]
+    pub fn altsubject_matches(mut self, value: Vec<String>) -> Self {
+        self.altsubject_matches = Some(value);
+        self
+    }
+
+    /// Set [`anonymous_identity`](field@Self::anonymous_identity), the `anonymous-identity` property.
+    #[must_use]
+    pub fn anonymous_identity(mut self, value: impl Into<String>) -> Self {
+        self.anonymous_identity = Some(value.into());
+        self
+    }
+
+    /// Set [`auth_timeout`](field@Self::auth_timeout), the `auth-timeout` property.
+    #[must_use]
+    pub fn auth_timeout(mut self, value: i32) -> Self {
+        self.auth_timeout = Some(value);
+        self
+    }
+
+    /// Set [`ca_cert`](field@Self::ca_cert), the `ca-cert` property.
+    #[must_use]
+    pub fn ca_cert(mut self, value: Vec<u8>) -> Self {
+        self.ca_cert = Some(value);
+        self
+    }
+
+    /// Set [`ca_cert_password`](field@Self::ca_cert_password), the `ca-cert-password` property.
+    #[must_use]
+    pub fn ca_cert_password(mut self, value: impl Into<String>) -> Self {
+        self.ca_cert_password = Some(value.into());
+        self
+    }
+
+    /// Set [`ca_cert_password_flags`](field@Self::ca_cert_password_flags), the `ca-cert-password-flags` property.
+    #[must_use]
+    pub fn ca_cert_password_flags(mut self, value: SettingSecretFlags) -> Self {
+        self.ca_cert_password_flags = Some(value);
+        self
+    }
+
+    /// Set [`ca_path`](field@Self::ca_path), the `ca-path` property.
+    #[must_use]
+    pub fn ca_path(mut self, value: impl Into<String>) -> Self {
+        self.ca_path = Some(value.into());
+        self
+    }
+
+    /// Set [`client_cert`](field@Self::client_cert), the `client-cert` property.
+    #[must_use]
+    pub fn client_cert(mut self, value: Vec<u8>) -> Self {
+        self.client_cert = Some(value);
+        self
+    }
+
+    /// Set [`client_cert_password`](field@Self::client_cert_password), the `client-cert-password` property.
+    #[must_use]
+    pub fn client_cert_password(mut self, value: impl Into<String>) -> Self {
+        self.client_cert_password = Some(value.into());
+        self
+    }
+
+    /// Set [`client_cert_password_flags`](field@Self::client_cert_password_flags), the `client-cert-password-flags` property.
+    #[must_use]
+    pub fn client_cert_password_flags(mut self, value: SettingSecretFlags) -> Self {
+        self.client_cert_password_flags = Some(value);
+        self
+    }
+
+    /// Set [`domain_match`](field@Self::domain_match), the `domain-match` property.
+    #[must_use]
+    pub fn domain_match(mut self, value: impl Into<String>) -> Self {
+        self.domain_match = Some(value.into());
+        self
+    }
+
+    /// Set [`domain_suffix_match`](field@Self::domain_suffix_match), the `domain-suffix-match` property.
+    #[must_use]
+    pub fn domain_suffix_match(mut self, value: impl Into<String>) -> Self {
+        self.domain_suffix_match = Some(value.into());
+        self
+    }
+
+    /// Set [`eap`](field@Self::eap), the `eap` property.
+    #[must_use]
+    pub fn eap(mut self, value: Vec<String>) -> Self {
+        self.eap = Some(value);
+        self
+    }
+
+    /// Set [`identity`](field@Self::identity), the `identity` property.
+    #[must_use]
+    pub fn identity(mut self, value: impl Into<String>) -> Self {
+        self.identity = Some(value.into());
+        self
+    }
+
+    /// Set [`openssl_ciphers`](field@Self::openssl_ciphers), the `openssl-ciphers` property.
+    #[must_use]
+    pub fn openssl_ciphers(mut self, value: impl Into<String>) -> Self {
+        self.openssl_ciphers = Some(value.into());
+        self
+    }
+
+    /// Set [`optional`](field@Self::optional), the `optional` property.
+    #[must_use]
+    pub fn optional(mut self, value: bool) -> Self {
+        self.optional = Some(value);
+        self
+    }
+
+    /// Set [`pac_file`](field@Self::pac_file), the `pac-file` property.
+    #[must_use]
+    pub fn pac_file(mut self, value: impl Into<String>) -> Self {
+        self.pac_file = Some(value.into());
+        self
+    }
+
+    /// Set [`password`](field@Self::password), the `password` property.
+    #[must_use]
+    pub fn password(mut self, value: impl Into<String>) -> Self {
+        self.password = Some(value.into());
+        self
+    }
+
+    /// Set [`password_flags`](field@Self::password_flags), the `password-flags` property.
+    #[must_use]
+    pub fn password_flags(mut self, value: SettingSecretFlags) -> Self {
+        self.password_flags = Some(value);
+        self
+    }
+
+    /// Set [`password_raw`](field@Self::password_raw), the `password-raw` property.
+    #[must_use]
+    pub fn password_raw(mut self, value: Vec<u8>) -> Self {
+        self.password_raw = Some(value);
+        self
+    }
+
+    /// Set [`password_raw_flags`](field@Self::password_raw_flags), the `password-raw-flags` property.
+    #[must_use]
+    pub fn password_raw_flags(mut self, value: SettingSecretFlags) -> Self {
+        self.password_raw_flags = Some(value);
+        self
+    }
+
+    /// Set [`phase1_auth_flags`](field@Self::phase1_auth_flags), the `phase1-auth-flags` property.
+    #[must_use]
+    pub fn phase1_auth_flags(mut self, value: u32) -> Self {
+        self.phase1_auth_flags = Some(value);
+        self
+    }
+
+    /// Set [`phase1_fast_provisioning`](field@Self::phase1_fast_provisioning), the `phase1-fast-provisioning` property.
+    #[must_use]
+    pub fn phase1_fast_provisioning(mut self, value: impl Into<String>) -> Self {
+        self.phase1_fast_provisioning = Some(value.into());
+        self
+    }
+
+    /// Set [`phase1_peaplabel`](field@Self::phase1_peaplabel), the `phase1-peaplabel` property.
+    #[must_use]
+    pub fn phase1_peaplabel(mut self, value: impl Into<String>) -> Self {
+        self.phase1_peaplabel = Some(value.into());
+        self
+    }
+
+    /// Set [`phase1_peapver`](field@Self::phase1_peapver), the `phase1-peapver` property.
+    #[must_use]
+    pub fn phase1_peapver(mut self, value: impl Into<String>) -> Self {
+        self.phase1_peapver = Some(value.into());
+        self
+    }
+
+    /// Set [`phase2_altsubject_matches`](field@Self::phase2_altsubject_matches), the `phase2-altsubject-matches` property.
+    #[must_use]
+    pub fn phase2_altsubject_matches(mut self, value: Vec<String>) -> Self {
+        self.phase2_altsubject_matches = Some(value);
+        self
+    }
+
+    /// Set [`phase2_auth`](field@Self::phase2_auth), the `phase2-auth` property.
+    #[must_use]
+    pub fn phase2_auth(mut self, value: impl Into<String>) -> Self {
+        self.phase2_auth = Some(value.into());
+        self
+    }
+
+    /// Set [`phase2_autheap`](field@Self::phase2_autheap), the `phase2-autheap` property.
+    #[must_use]
+    pub fn phase2_autheap(mut self, value: impl Into<String>) -> Self {
+        self.phase2_autheap = Some(value.into());
+        self
+    }
+
+    /// Set [`phase2_ca_cert`](field@Self::phase2_ca_cert), the `phase2-ca-cert` property.
+    #[must_use]
+    pub fn phase2_ca_cert(mut self, value: Vec<u8>) -> Self {
+        self.phase2_ca_cert = Some(value);
+        self
+    }
+
+    /// Set [`phase2_ca_cert_password`](field@Self::phase2_ca_cert_password), the `phase2-ca-cert-password` property.
+    #[must_use]
+    pub fn phase2_ca_cert_password(mut self, value: impl Into<String>) -> Self {
+        self.phase2_ca_cert_password = Some(value.into());
+        self
+    }
+
+    /// Set [`phase2_ca_cert_password_flags`](field@Self::phase2_ca_cert_password_flags), the `phase2-ca-cert-password-flags` property.
+    #[must_use]
+    pub fn phase2_ca_cert_password_flags(mut self, value: SettingSecretFlags) -> Self {
+        self.phase2_ca_cert_password_flags = Some(value);
+        self
+    }
+
+    /// Set [`phase2_ca_path`](field@Self::phase2_ca_path), the `phase2-ca-path` property.
+    #[must_use]
+    pub fn phase2_ca_path(mut self, value: impl Into<String>) -> Self {
+        self.phase2_ca_path = Some(value.into());
+        self
+    }
+
+    /// Set [`phase2_client_cert`](field@Self::phase2_client_cert), the `phase2-client-cert` property.
+    #[must_use]
+    pub fn phase2_client_cert(mut self, value: Vec<u8>) -> Self {
+        self.phase2_client_cert = Some(value);
+        self
+    }
+
+    /// Set [`phase2_client_cert_password`](field@Self::phase2_client_cert_password), the `phase2-client-cert-password` property.
+    #[must_use]
+    pub fn phase2_client_cert_password(mut self, value: impl Into<String>) -> Self {
+        self.phase2_client_cert_password = Some(value.into());
+        self
+    }
+
+    /// Set [`phase2_client_cert_password_flags`](field@Self::phase2_client_cert_password_flags), the `phase2-client-cert-password-flags` property.
+    #[must_use]
+    pub fn phase2_client_cert_password_flags(mut self, value: SettingSecretFlags) -> Self {
+        self.phase2_client_cert_password_flags = Some(value);
+        self
+    }
+
+    /// Set [`phase2_domain_match`](field@Self::phase2_domain_match), the `phase2-domain-match` property.
+    #[must_use]
+    pub fn phase2_domain_match(mut self, value: impl Into<String>) -> Self {
+        self.phase2_domain_match = Some(value.into());
+        self
+    }
+
+    /// Set [`phase2_domain_suffix_match`](field@Self::phase2_domain_suffix_match), the `phase2-domain-suffix-match` property.
+    #[must_use]
+    pub fn phase2_domain_suffix_match(mut self, value: impl Into<String>) -> Self {
+        self.phase2_domain_suffix_match = Some(value.into());
+        self
+    }
+
+    /// Set [`phase2_private_key`](field@Self::phase2_private_key), the `phase2-private-key` property.
+    #[must_use]
+    pub fn phase2_private_key(mut self, value: Vec<u8>) -> Self {
+        self.phase2_private_key = Some(value);
+        self
+    }
+
+    /// Set [`phase2_private_key_password`](field@Self::phase2_private_key_password), the `phase2-private-key-password` property.
+    #[must_use]
+    pub fn phase2_private_key_password(mut self, value: impl Into<String>) -> Self {
+        self.phase2_private_key_password = Some(value.into());
+        self
+    }
+
+    /// Set [`phase2_private_key_password_flags`](field@Self::phase2_private_key_password_flags), the `phase2-private-key-password-flags` property.
+    #[must_use]
+    pub fn phase2_private_key_password_flags(mut self, value: SettingSecretFlags) -> Self {
+        self.phase2_private_key_password_flags = Some(value);
+        self
+    }
+
+    /// Set [`phase2_subject_match`](field@Self::phase2_subject_match), the `phase2-subject-match` property.
+    #[must_use]
+    pub fn phase2_subject_match(mut self, value: impl Into<String>) -> Self {
+        self.phase2_subject_match = Some(value.into());
+        self
+    }
+
+    /// Set [`pin`](field@Self::pin), the `pin` property.
+    #[must_use]
+    pub fn pin(mut self, value: impl Into<String>) -> Self {
+        self.pin = Some(value.into());
+        self
+    }
+
+    /// Set [`pin_flags`](field@Self::pin_flags), the `pin-flags` property.
+    #[must_use]
+    pub fn pin_flags(mut self, value: SettingSecretFlags) -> Self {
+        self.pin_flags = Some(value);
+        self
+    }
+
+    /// Set [`private_key`](field@Self::private_key), the `private-key` property.
+    #[must_use]
+    pub fn private_key(mut self, value: Vec<u8>) -> Self {
+        self.private_key = Some(value);
+        self
+    }
+
+    /// Set [`private_key_password`](field@Self::private_key_password), the `private-key-password` property.
+    #[must_use]
+    pub fn private_key_password(mut self, value: impl Into<String>) -> Self {
+        self.private_key_password = Some(value.into());
+        self
+    }
+
+    /// Set [`private_key_password_flags`](field@Self::private_key_password_flags), the `private-key-password-flags` property.
+    #[must_use]
+    pub fn private_key_password_flags(mut self, value: SettingSecretFlags) -> Self {
+        self.private_key_password_flags = Some(value);
+        self
+    }
+
+    /// Set [`subject_match`](field@Self::subject_match), the `subject-match` property.
+    #[must_use]
+    pub fn subject_match(mut self, value: impl Into<String>) -> Self {
+        self.subject_match = Some(value.into());
+        self
+    }
+
+    /// Set [`system_ca_certs`](field@Self::system_ca_certs), the `system-ca-certs` property.
+    #[must_use]
+    pub fn system_ca_certs(mut self, value: bool) -> Self {
+        self.system_ca_certs = Some(value);
+        self
+    }
 }
 
 impl Setting for Ieee8021xSetting {
@@ -1201,6 +1802,57 @@ pub struct AdslSetting {
     pub other: SettingMap,
 }
 
+impl AdslSetting {
+    /// Set [`encapsulation`](field@Self::encapsulation), the `encapsulation` property.
+    #[must_use]
+    pub fn encapsulation(mut self, value: AdslEncapsulation) -> Self {
+        self.encapsulation = Some(value);
+        self
+    }
+
+    /// Set [`password`](field@Self::password), the `password` property.
+    #[must_use]
+    pub fn password(mut self, value: impl Into<String>) -> Self {
+        self.password = Some(value.into());
+        self
+    }
+
+    /// Set [`password_flags`](field@Self::password_flags), the `password-flags` property.
+    #[must_use]
+    pub fn password_flags(mut self, value: SettingSecretFlags) -> Self {
+        self.password_flags = Some(value);
+        self
+    }
+
+    /// Set [`protocol`](field@Self::protocol), the `protocol` property.
+    #[must_use]
+    pub fn protocol(mut self, value: AdslProtocol) -> Self {
+        self.protocol = Some(value);
+        self
+    }
+
+    /// Set [`username`](field@Self::username), the `username` property.
+    #[must_use]
+    pub fn username(mut self, value: impl Into<String>) -> Self {
+        self.username = Some(value.into());
+        self
+    }
+
+    /// Set [`vci`](field@Self::vci), the `vci` property.
+    #[must_use]
+    pub fn vci(mut self, value: u32) -> Self {
+        self.vci = Some(value);
+        self
+    }
+
+    /// Set [`vpi`](field@Self::vpi), the `vpi` property.
+    #[must_use]
+    pub fn vpi(mut self, value: u32) -> Self {
+        self.vpi = Some(value);
+        self
+    }
+}
+
 impl Setting for AdslSetting {
     const NAME: &'static str = "adsl";
     const PROPERTIES: &'static [&'static str] = &[
@@ -1263,6 +1915,22 @@ pub struct BluetoothSetting {
     pub other: SettingMap,
 }
 
+impl BluetoothSetting {
+    /// Set [`bdaddr`](field@Self::bdaddr), the `bdaddr` property.
+    #[must_use]
+    pub fn bdaddr(mut self, value: impl Into<MacAddress>) -> Self {
+        self.bdaddr = Some(value.into());
+        self
+    }
+
+    /// Set [`type_`](field@Self::type_), the `type` property.
+    #[must_use]
+    pub fn type_(mut self, value: BluetoothType) -> Self {
+        self.type_ = Some(value);
+        self
+    }
+}
+
 impl Setting for BluetoothSetting {
     const NAME: &'static str = "bluetooth";
     const PROPERTIES: &'static [&'static str] = &["bdaddr", "type"];
@@ -1302,6 +1970,22 @@ pub struct BondSetting {
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
+}
+
+impl BondSetting {
+    /// Set [`interface_name`](field@Self::interface_name), the `interface-name` property.
+    #[must_use]
+    pub fn interface_name(mut self, value: impl Into<String>) -> Self {
+        self.interface_name = Some(value.into());
+        self
+    }
+
+    /// Set [`options`](field@Self::options), the `options` property.
+    #[must_use]
+    pub fn options(mut self, value: HashMap<String, String>) -> Self {
+        self.options = Some(value);
+        self
+    }
 }
 
 impl Setting for BondSetting {
@@ -1508,6 +2192,204 @@ pub struct BridgeSetting {
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
+}
+
+impl BridgeSetting {
+    /// Set [`ageing_time`](field@Self::ageing_time), the `ageing-time` property.
+    #[must_use]
+    pub fn ageing_time(mut self, value: u32) -> Self {
+        self.ageing_time = Some(value);
+        self
+    }
+
+    /// Set [`forward_delay`](field@Self::forward_delay), the `forward-delay` property.
+    #[must_use]
+    pub fn forward_delay(mut self, value: u32) -> Self {
+        self.forward_delay = Some(value);
+        self
+    }
+
+    /// Set [`group_address`](field@Self::group_address), the `group-address` property.
+    #[must_use]
+    pub fn group_address(mut self, value: impl Into<MacAddress>) -> Self {
+        self.group_address = Some(value.into());
+        self
+    }
+
+    /// Set [`group_forward_mask`](field@Self::group_forward_mask), the `group-forward-mask` property.
+    #[must_use]
+    pub fn group_forward_mask(mut self, value: u32) -> Self {
+        self.group_forward_mask = Some(value);
+        self
+    }
+
+    /// Set [`hello_time`](field@Self::hello_time), the `hello-time` property.
+    #[must_use]
+    pub fn hello_time(mut self, value: u32) -> Self {
+        self.hello_time = Some(value);
+        self
+    }
+
+    /// Set [`interface_name`](field@Self::interface_name), the `interface-name` property.
+    #[must_use]
+    pub fn interface_name(mut self, value: impl Into<String>) -> Self {
+        self.interface_name = Some(value.into());
+        self
+    }
+
+    /// Set [`mac_address`](field@Self::mac_address), the `mac-address` property.
+    #[must_use]
+    pub fn mac_address(mut self, value: impl Into<MacAddress>) -> Self {
+        self.mac_address = Some(value.into());
+        self
+    }
+
+    /// Set [`max_age`](field@Self::max_age), the `max-age` property.
+    #[must_use]
+    pub fn max_age(mut self, value: u32) -> Self {
+        self.max_age = Some(value);
+        self
+    }
+
+    /// Set [`multicast_hash_max`](field@Self::multicast_hash_max), the `multicast-hash-max` property.
+    #[must_use]
+    pub fn multicast_hash_max(mut self, value: u32) -> Self {
+        self.multicast_hash_max = Some(value);
+        self
+    }
+
+    /// Set [`multicast_last_member_count`](field@Self::multicast_last_member_count), the `multicast-last-member-count` property.
+    #[must_use]
+    pub fn multicast_last_member_count(mut self, value: u32) -> Self {
+        self.multicast_last_member_count = Some(value);
+        self
+    }
+
+    /// Set [`multicast_last_member_interval`](field@Self::multicast_last_member_interval), the `multicast-last-member-interval` property.
+    #[must_use]
+    pub fn multicast_last_member_interval(mut self, value: u64) -> Self {
+        self.multicast_last_member_interval = Some(value);
+        self
+    }
+
+    /// Set [`multicast_membership_interval`](field@Self::multicast_membership_interval), the `multicast-membership-interval` property.
+    #[must_use]
+    pub fn multicast_membership_interval(mut self, value: u64) -> Self {
+        self.multicast_membership_interval = Some(value);
+        self
+    }
+
+    /// Set [`multicast_querier`](field@Self::multicast_querier), the `multicast-querier` property.
+    #[must_use]
+    pub fn multicast_querier(mut self, value: bool) -> Self {
+        self.multicast_querier = Some(value);
+        self
+    }
+
+    /// Set [`multicast_querier_interval`](field@Self::multicast_querier_interval), the `multicast-querier-interval` property.
+    #[must_use]
+    pub fn multicast_querier_interval(mut self, value: u64) -> Self {
+        self.multicast_querier_interval = Some(value);
+        self
+    }
+
+    /// Set [`multicast_query_interval`](field@Self::multicast_query_interval), the `multicast-query-interval` property.
+    #[must_use]
+    pub fn multicast_query_interval(mut self, value: u64) -> Self {
+        self.multicast_query_interval = Some(value);
+        self
+    }
+
+    /// Set [`multicast_query_response_interval`](field@Self::multicast_query_response_interval), the `multicast-query-response-interval` property.
+    #[must_use]
+    pub fn multicast_query_response_interval(mut self, value: u64) -> Self {
+        self.multicast_query_response_interval = Some(value);
+        self
+    }
+
+    /// Set [`multicast_query_use_ifaddr`](field@Self::multicast_query_use_ifaddr), the `multicast-query-use-ifaddr` property.
+    #[must_use]
+    pub fn multicast_query_use_ifaddr(mut self, value: bool) -> Self {
+        self.multicast_query_use_ifaddr = Some(value);
+        self
+    }
+
+    /// Set [`multicast_router`](field@Self::multicast_router), the `multicast-router` property.
+    #[must_use]
+    pub fn multicast_router(mut self, value: impl Into<String>) -> Self {
+        self.multicast_router = Some(value.into());
+        self
+    }
+
+    /// Set [`multicast_snooping`](field@Self::multicast_snooping), the `multicast-snooping` property.
+    #[must_use]
+    pub fn multicast_snooping(mut self, value: bool) -> Self {
+        self.multicast_snooping = Some(value);
+        self
+    }
+
+    /// Set [`multicast_startup_query_count`](field@Self::multicast_startup_query_count), the `multicast-startup-query-count` property.
+    #[must_use]
+    pub fn multicast_startup_query_count(mut self, value: u32) -> Self {
+        self.multicast_startup_query_count = Some(value);
+        self
+    }
+
+    /// Set [`multicast_startup_query_interval`](field@Self::multicast_startup_query_interval), the `multicast-startup-query-interval` property.
+    #[must_use]
+    pub fn multicast_startup_query_interval(mut self, value: u64) -> Self {
+        self.multicast_startup_query_interval = Some(value);
+        self
+    }
+
+    /// Set [`priority_`](field@Self::priority_), the `priority` property.
+    #[must_use]
+    pub fn priority_(mut self, value: u32) -> Self {
+        self.priority_ = Some(value);
+        self
+    }
+
+    /// Set [`stp`](field@Self::stp), the `stp` property.
+    #[must_use]
+    pub fn stp(mut self, value: bool) -> Self {
+        self.stp = Some(value);
+        self
+    }
+
+    /// Set [`vlan_default_pvid`](field@Self::vlan_default_pvid), the `vlan-default-pvid` property.
+    #[must_use]
+    pub fn vlan_default_pvid(mut self, value: u32) -> Self {
+        self.vlan_default_pvid = Some(value);
+        self
+    }
+
+    /// Set [`vlan_filtering`](field@Self::vlan_filtering), the `vlan-filtering` property.
+    #[must_use]
+    pub fn vlan_filtering(mut self, value: bool) -> Self {
+        self.vlan_filtering = Some(value);
+        self
+    }
+
+    /// Set [`vlan_protocol`](field@Self::vlan_protocol), the `vlan-protocol` property.
+    #[must_use]
+    pub fn vlan_protocol(mut self, value: impl Into<String>) -> Self {
+        self.vlan_protocol = Some(value.into());
+        self
+    }
+
+    /// Set [`vlan_stats_enabled`](field@Self::vlan_stats_enabled), the `vlan-stats-enabled` property.
+    #[must_use]
+    pub fn vlan_stats_enabled(mut self, value: bool) -> Self {
+        self.vlan_stats_enabled = Some(value);
+        self
+    }
+
+    /// Set [`vlans`](field@Self::vlans), the `vlans` property.
+    #[must_use]
+    pub fn vlans(mut self, value: Vec<HashMap<String, OwnedValue>>) -> Self {
+        self.vlans = Some(value);
+        self
+    }
 }
 
 impl Setting for BridgeSetting {
@@ -1782,6 +2664,36 @@ pub struct BridgePortSetting {
     pub other: SettingMap,
 }
 
+impl BridgePortSetting {
+    /// Set [`hairpin_mode`](field@Self::hairpin_mode), the `hairpin-mode` property.
+    #[must_use]
+    pub fn hairpin_mode(mut self, value: bool) -> Self {
+        self.hairpin_mode = Some(value);
+        self
+    }
+
+    /// Set [`path_cost`](field@Self::path_cost), the `path-cost` property.
+    #[must_use]
+    pub fn path_cost(mut self, value: u32) -> Self {
+        self.path_cost = Some(value);
+        self
+    }
+
+    /// Set [`priority_`](field@Self::priority_), the `priority` property.
+    #[must_use]
+    pub fn priority_(mut self, value: u32) -> Self {
+        self.priority_ = Some(value);
+        self
+    }
+
+    /// Set [`vlans`](field@Self::vlans), the `vlans` property.
+    #[must_use]
+    pub fn vlans(mut self, value: Vec<HashMap<String, OwnedValue>>) -> Self {
+        self.vlans = Some(value);
+        self
+    }
+}
+
 impl Setting for BridgePortSetting {
     const NAME: &'static str = "bridge-port";
     const PROPERTIES: &'static [&'static str] = &["hairpin-mode", "path-cost", "priority", "vlans"];
@@ -1839,6 +2751,43 @@ pub struct CdmaSetting {
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
+}
+
+impl CdmaSetting {
+    /// Set [`mtu`](field@Self::mtu), the `mtu` property.
+    #[must_use]
+    pub fn mtu(mut self, value: u32) -> Self {
+        self.mtu = Some(value);
+        self
+    }
+
+    /// Set [`number`](field@Self::number), the `number` property.
+    #[must_use]
+    pub fn number(mut self, value: impl Into<String>) -> Self {
+        self.number = Some(value.into());
+        self
+    }
+
+    /// Set [`password`](field@Self::password), the `password` property.
+    #[must_use]
+    pub fn password(mut self, value: impl Into<String>) -> Self {
+        self.password = Some(value.into());
+        self
+    }
+
+    /// Set [`password_flags`](field@Self::password_flags), the `password-flags` property.
+    #[must_use]
+    pub fn password_flags(mut self, value: SettingSecretFlags) -> Self {
+        self.password_flags = Some(value);
+        self
+    }
+
+    /// Set [`username`](field@Self::username), the `username` property.
+    #[must_use]
+    pub fn username(mut self, value: impl Into<String>) -> Self {
+        self.username = Some(value.into());
+        self
+    }
 }
 
 impl Setting for CdmaSetting {
@@ -1955,6 +2904,113 @@ pub struct DcbSetting {
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
+}
+
+impl DcbSetting {
+    /// Set [`app_fcoe_flags`](field@Self::app_fcoe_flags), the `app-fcoe-flags` property.
+    #[must_use]
+    pub fn app_fcoe_flags(mut self, value: SettingDcbFlags) -> Self {
+        self.app_fcoe_flags = Some(value);
+        self
+    }
+
+    /// Set [`app_fcoe_mode`](field@Self::app_fcoe_mode), the `app-fcoe-mode` property.
+    #[must_use]
+    pub fn app_fcoe_mode(mut self, value: impl Into<String>) -> Self {
+        self.app_fcoe_mode = Some(value.into());
+        self
+    }
+
+    /// Set [`app_fcoe_priority`](field@Self::app_fcoe_priority), the `app-fcoe-priority` property.
+    #[must_use]
+    pub fn app_fcoe_priority(mut self, value: i32) -> Self {
+        self.app_fcoe_priority = Some(value);
+        self
+    }
+
+    /// Set [`app_fip_flags`](field@Self::app_fip_flags), the `app-fip-flags` property.
+    #[must_use]
+    pub fn app_fip_flags(mut self, value: SettingDcbFlags) -> Self {
+        self.app_fip_flags = Some(value);
+        self
+    }
+
+    /// Set [`app_fip_priority`](field@Self::app_fip_priority), the `app-fip-priority` property.
+    #[must_use]
+    pub fn app_fip_priority(mut self, value: i32) -> Self {
+        self.app_fip_priority = Some(value);
+        self
+    }
+
+    /// Set [`app_iscsi_flags`](field@Self::app_iscsi_flags), the `app-iscsi-flags` property.
+    #[must_use]
+    pub fn app_iscsi_flags(mut self, value: SettingDcbFlags) -> Self {
+        self.app_iscsi_flags = Some(value);
+        self
+    }
+
+    /// Set [`app_iscsi_priority`](field@Self::app_iscsi_priority), the `app-iscsi-priority` property.
+    #[must_use]
+    pub fn app_iscsi_priority(mut self, value: i32) -> Self {
+        self.app_iscsi_priority = Some(value);
+        self
+    }
+
+    /// Set [`priority_bandwidth`](field@Self::priority_bandwidth), the `priority-bandwidth` property.
+    #[must_use]
+    pub fn priority_bandwidth(mut self, value: Vec<u32>) -> Self {
+        self.priority_bandwidth = Some(value);
+        self
+    }
+
+    /// Set [`priority_flow_control`](field@Self::priority_flow_control), the `priority-flow-control` property.
+    #[must_use]
+    pub fn priority_flow_control(mut self, value: Vec<u32>) -> Self {
+        self.priority_flow_control = Some(value);
+        self
+    }
+
+    /// Set [`priority_flow_control_flags`](field@Self::priority_flow_control_flags), the `priority-flow-control-flags` property.
+    #[must_use]
+    pub fn priority_flow_control_flags(mut self, value: SettingDcbFlags) -> Self {
+        self.priority_flow_control_flags = Some(value);
+        self
+    }
+
+    /// Set [`priority_group_bandwidth`](field@Self::priority_group_bandwidth), the `priority-group-bandwidth` property.
+    #[must_use]
+    pub fn priority_group_bandwidth(mut self, value: Vec<u32>) -> Self {
+        self.priority_group_bandwidth = Some(value);
+        self
+    }
+
+    /// Set [`priority_group_flags`](field@Self::priority_group_flags), the `priority-group-flags` property.
+    #[must_use]
+    pub fn priority_group_flags(mut self, value: SettingDcbFlags) -> Self {
+        self.priority_group_flags = Some(value);
+        self
+    }
+
+    /// Set [`priority_group_id`](field@Self::priority_group_id), the `priority-group-id` property.
+    #[must_use]
+    pub fn priority_group_id(mut self, value: Vec<u32>) -> Self {
+        self.priority_group_id = Some(value);
+        self
+    }
+
+    /// Set [`priority_strict_bandwidth`](field@Self::priority_strict_bandwidth), the `priority-strict-bandwidth` property.
+    #[must_use]
+    pub fn priority_strict_bandwidth(mut self, value: Vec<u32>) -> Self {
+        self.priority_strict_bandwidth = Some(value);
+        self
+    }
+
+    /// Set [`priority_traffic_class`](field@Self::priority_traffic_class), the `priority-traffic-class` property.
+    #[must_use]
+    pub fn priority_traffic_class(mut self, value: Vec<u32>) -> Self {
+        self.priority_traffic_class = Some(value);
+        self
+    }
 }
 
 impl Setting for DcbSetting {
@@ -2105,6 +3161,15 @@ pub struct GenericSetting {
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
+}
+
+impl GenericSetting {
+    /// Set [`device_handler`](field@Self::device_handler), the `device-handler` property.
+    #[must_use]
+    pub fn device_handler(mut self, value: impl Into<String>) -> Self {
+        self.device_handler = Some(value.into());
+        self
+    }
 }
 
 impl Setting for GenericSetting {
@@ -2271,6 +3336,190 @@ pub struct GsmSetting {
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
+}
+
+impl GsmSetting {
+    /// Set [`apn`](field@Self::apn), the `apn` property.
+    #[must_use]
+    pub fn apn(mut self, value: impl Into<String>) -> Self {
+        self.apn = Some(value.into());
+        self
+    }
+
+    /// Set [`auto_config`](field@Self::auto_config), the `auto-config` property.
+    #[must_use]
+    pub fn auto_config(mut self, value: bool) -> Self {
+        self.auto_config = Some(value);
+        self
+    }
+
+    /// Set [`device_id`](field@Self::device_id), the `device-id` property.
+    #[must_use]
+    pub fn device_id(mut self, value: impl Into<String>) -> Self {
+        self.device_id = Some(value.into());
+        self
+    }
+
+    /// Set [`device_uid`](field@Self::device_uid), the `device-uid` property.
+    #[must_use]
+    pub fn device_uid(mut self, value: impl Into<String>) -> Self {
+        self.device_uid = Some(value.into());
+        self
+    }
+
+    /// Set [`home_only`](field@Self::home_only), the `home-only` property.
+    #[must_use]
+    pub fn home_only(mut self, value: bool) -> Self {
+        self.home_only = Some(value);
+        self
+    }
+
+    /// Set [`initial_eps_bearer_apn`](field@Self::initial_eps_bearer_apn), the `initial-eps-bearer-apn` property.
+    #[must_use]
+    pub fn initial_eps_bearer_apn(mut self, value: impl Into<String>) -> Self {
+        self.initial_eps_bearer_apn = Some(value.into());
+        self
+    }
+
+    /// Set [`initial_eps_bearer_configure`](field@Self::initial_eps_bearer_configure), the `initial-eps-bearer-configure` property.
+    #[must_use]
+    pub fn initial_eps_bearer_configure(mut self, value: bool) -> Self {
+        self.initial_eps_bearer_configure = Some(value);
+        self
+    }
+
+    /// Set [`initial_eps_bearer_noauth`](field@Self::initial_eps_bearer_noauth), the `initial-eps-bearer-noauth` property.
+    #[must_use]
+    pub fn initial_eps_bearer_noauth(mut self, value: bool) -> Self {
+        self.initial_eps_bearer_noauth = Some(value);
+        self
+    }
+
+    /// Set [`initial_eps_bearer_password`](field@Self::initial_eps_bearer_password), the `initial-eps-bearer-password` property.
+    #[must_use]
+    pub fn initial_eps_bearer_password(mut self, value: impl Into<String>) -> Self {
+        self.initial_eps_bearer_password = Some(value.into());
+        self
+    }
+
+    /// Set [`initial_eps_bearer_password_flags`](field@Self::initial_eps_bearer_password_flags), the `initial-eps-bearer-password-flags` property.
+    #[must_use]
+    pub fn initial_eps_bearer_password_flags(mut self, value: SettingSecretFlags) -> Self {
+        self.initial_eps_bearer_password_flags = Some(value);
+        self
+    }
+
+    /// Set [`initial_eps_bearer_refuse_chap`](field@Self::initial_eps_bearer_refuse_chap), the `initial-eps-bearer-refuse-chap` property.
+    #[must_use]
+    pub fn initial_eps_bearer_refuse_chap(mut self, value: bool) -> Self {
+        self.initial_eps_bearer_refuse_chap = Some(value);
+        self
+    }
+
+    /// Set [`initial_eps_bearer_refuse_eap`](field@Self::initial_eps_bearer_refuse_eap), the `initial-eps-bearer-refuse-eap` property.
+    #[must_use]
+    pub fn initial_eps_bearer_refuse_eap(mut self, value: bool) -> Self {
+        self.initial_eps_bearer_refuse_eap = Some(value);
+        self
+    }
+
+    /// Set [`initial_eps_bearer_refuse_mschap`](field@Self::initial_eps_bearer_refuse_mschap), the `initial-eps-bearer-refuse-mschap` property.
+    #[must_use]
+    pub fn initial_eps_bearer_refuse_mschap(mut self, value: bool) -> Self {
+        self.initial_eps_bearer_refuse_mschap = Some(value);
+        self
+    }
+
+    /// Set [`initial_eps_bearer_refuse_mschapv2`](field@Self::initial_eps_bearer_refuse_mschapv2), the `initial-eps-bearer-refuse-mschapv2` property.
+    #[must_use]
+    pub fn initial_eps_bearer_refuse_mschapv2(mut self, value: bool) -> Self {
+        self.initial_eps_bearer_refuse_mschapv2 = Some(value);
+        self
+    }
+
+    /// Set [`initial_eps_bearer_refuse_pap`](field@Self::initial_eps_bearer_refuse_pap), the `initial-eps-bearer-refuse-pap` property.
+    #[must_use]
+    pub fn initial_eps_bearer_refuse_pap(mut self, value: bool) -> Self {
+        self.initial_eps_bearer_refuse_pap = Some(value);
+        self
+    }
+
+    /// Set [`initial_eps_bearer_username`](field@Self::initial_eps_bearer_username), the `initial-eps-bearer-username` property.
+    #[must_use]
+    pub fn initial_eps_bearer_username(mut self, value: impl Into<String>) -> Self {
+        self.initial_eps_bearer_username = Some(value.into());
+        self
+    }
+
+    /// Set [`mtu`](field@Self::mtu), the `mtu` property.
+    #[must_use]
+    pub fn mtu(mut self, value: u32) -> Self {
+        self.mtu = Some(value);
+        self
+    }
+
+    /// Set [`network_id`](field@Self::network_id), the `network-id` property.
+    #[must_use]
+    pub fn network_id(mut self, value: impl Into<String>) -> Self {
+        self.network_id = Some(value.into());
+        self
+    }
+
+    /// Set [`number`](field@Self::number), the `number` property.
+    #[must_use]
+    pub fn number(mut self, value: impl Into<String>) -> Self {
+        self.number = Some(value.into());
+        self
+    }
+
+    /// Set [`password`](field@Self::password), the `password` property.
+    #[must_use]
+    pub fn password(mut self, value: impl Into<String>) -> Self {
+        self.password = Some(value.into());
+        self
+    }
+
+    /// Set [`password_flags`](field@Self::password_flags), the `password-flags` property.
+    #[must_use]
+    pub fn password_flags(mut self, value: SettingSecretFlags) -> Self {
+        self.password_flags = Some(value);
+        self
+    }
+
+    /// Set [`pin`](field@Self::pin), the `pin` property.
+    #[must_use]
+    pub fn pin(mut self, value: impl Into<String>) -> Self {
+        self.pin = Some(value.into());
+        self
+    }
+
+    /// Set [`pin_flags`](field@Self::pin_flags), the `pin-flags` property.
+    #[must_use]
+    pub fn pin_flags(mut self, value: SettingSecretFlags) -> Self {
+        self.pin_flags = Some(value);
+        self
+    }
+
+    /// Set [`sim_id`](field@Self::sim_id), the `sim-id` property.
+    #[must_use]
+    pub fn sim_id(mut self, value: impl Into<String>) -> Self {
+        self.sim_id = Some(value.into());
+        self
+    }
+
+    /// Set [`sim_operator_id`](field@Self::sim_operator_id), the `sim-operator-id` property.
+    #[must_use]
+    pub fn sim_operator_id(mut self, value: impl Into<String>) -> Self {
+        self.sim_operator_id = Some(value.into());
+        self
+    }
+
+    /// Set [`username`](field@Self::username), the `username` property.
+    #[must_use]
+    pub fn username(mut self, value: impl Into<String>) -> Self {
+        self.username = Some(value.into());
+        self
+    }
 }
 
 impl Setting for GsmSetting {
@@ -2505,6 +3754,50 @@ pub struct HsrSetting {
     pub other: SettingMap,
 }
 
+impl HsrSetting {
+    /// Set [`interlink`](field@Self::interlink), the `interlink` property.
+    #[must_use]
+    pub fn interlink(mut self, value: impl Into<String>) -> Self {
+        self.interlink = Some(value.into());
+        self
+    }
+
+    /// Set [`multicast_spec`](field@Self::multicast_spec), the `multicast-spec` property.
+    #[must_use]
+    pub fn multicast_spec(mut self, value: u32) -> Self {
+        self.multicast_spec = Some(value);
+        self
+    }
+
+    /// Set [`port1`](field@Self::port1), the `port1` property.
+    #[must_use]
+    pub fn port1(mut self, value: impl Into<String>) -> Self {
+        self.port1 = Some(value.into());
+        self
+    }
+
+    /// Set [`port2`](field@Self::port2), the `port2` property.
+    #[must_use]
+    pub fn port2(mut self, value: impl Into<String>) -> Self {
+        self.port2 = Some(value.into());
+        self
+    }
+
+    /// Set [`protocol_version`](field@Self::protocol_version), the `protocol-version` property.
+    #[must_use]
+    pub fn protocol_version(mut self, value: i32) -> Self {
+        self.protocol_version = Some(value);
+        self
+    }
+
+    /// Set [`prp`](field@Self::prp), the `prp` property.
+    #[must_use]
+    pub fn prp(mut self, value: bool) -> Self {
+        self.prp = Some(value);
+        self
+    }
+}
+
 impl Setting for HsrSetting {
     const NAME: &'static str = "hsr";
     const PROPERTIES: &'static [&'static str] = &[
@@ -2582,6 +3875,43 @@ pub struct InfinibandSetting {
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
+}
+
+impl InfinibandSetting {
+    /// Set [`mac_address`](field@Self::mac_address), the `mac-address` property.
+    #[must_use]
+    pub fn mac_address(mut self, value: impl Into<MacAddress>) -> Self {
+        self.mac_address = Some(value.into());
+        self
+    }
+
+    /// Set [`mtu`](field@Self::mtu), the `mtu` property.
+    #[must_use]
+    pub fn mtu(mut self, value: u32) -> Self {
+        self.mtu = Some(value);
+        self
+    }
+
+    /// Set [`p_key`](field@Self::p_key), the `p-key` property.
+    #[must_use]
+    pub fn p_key(mut self, value: i32) -> Self {
+        self.p_key = Some(value);
+        self
+    }
+
+    /// Set [`parent`](field@Self::parent), the `parent` property.
+    #[must_use]
+    pub fn parent(mut self, value: impl Into<String>) -> Self {
+        self.parent = Some(value.into());
+        self
+    }
+
+    /// Set [`transport_mode`](field@Self::transport_mode), the `transport-mode` property.
+    #[must_use]
+    pub fn transport_mode(mut self, value: impl Into<String>) -> Self {
+        self.transport_mode = Some(value.into());
+        self
+    }
 }
 
 impl Setting for InfinibandSetting {
@@ -2948,6 +4278,295 @@ pub struct Ipv4Setting {
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
+}
+
+impl Ipv4Setting {
+    /// Set [`address_data`](field@Self::address_data), the `address-data` property.
+    #[must_use]
+    pub fn address_data(mut self, value: Vec<HashMap<String, OwnedValue>>) -> Self {
+        self.address_data = Some(value);
+        self
+    }
+
+    /// Set [`addresses`](field@Self::addresses), the `addresses` property.
+    #[must_use]
+    pub fn addresses(mut self, value: Vec<Vec<u32>>) -> Self {
+        self.addresses = Some(value);
+        self
+    }
+
+    /// Set [`auto_route_ext_gw`](field@Self::auto_route_ext_gw), the `auto-route-ext-gw` property.
+    #[must_use]
+    pub fn auto_route_ext_gw(mut self, value: Ternary) -> Self {
+        self.auto_route_ext_gw = Some(value);
+        self
+    }
+
+    /// Set [`clat`](field@Self::clat), the `clat` property.
+    #[must_use]
+    pub fn clat(mut self, value: i32) -> Self {
+        self.clat = Some(value);
+        self
+    }
+
+    /// Set [`dad_timeout`](field@Self::dad_timeout), the `dad-timeout` property.
+    #[must_use]
+    pub fn dad_timeout(mut self, value: i32) -> Self {
+        self.dad_timeout = Some(value);
+        self
+    }
+
+    /// Set [`dhcp_client_id`](field@Self::dhcp_client_id), the `dhcp-client-id` property.
+    #[must_use]
+    pub fn dhcp_client_id(mut self, value: impl Into<String>) -> Self {
+        self.dhcp_client_id = Some(value.into());
+        self
+    }
+
+    /// Set [`dhcp_dscp`](field@Self::dhcp_dscp), the `dhcp-dscp` property.
+    #[must_use]
+    pub fn dhcp_dscp(mut self, value: impl Into<String>) -> Self {
+        self.dhcp_dscp = Some(value.into());
+        self
+    }
+
+    /// Set [`dhcp_fqdn`](field@Self::dhcp_fqdn), the `dhcp-fqdn` property.
+    #[must_use]
+    pub fn dhcp_fqdn(mut self, value: impl Into<String>) -> Self {
+        self.dhcp_fqdn = Some(value.into());
+        self
+    }
+
+    /// Set [`dhcp_hostname`](field@Self::dhcp_hostname), the `dhcp-hostname` property.
+    #[must_use]
+    pub fn dhcp_hostname(mut self, value: impl Into<String>) -> Self {
+        self.dhcp_hostname = Some(value.into());
+        self
+    }
+
+    /// Set [`dhcp_hostname_flags`](field@Self::dhcp_hostname_flags), the `dhcp-hostname-flags` property.
+    #[must_use]
+    pub fn dhcp_hostname_flags(mut self, value: u32) -> Self {
+        self.dhcp_hostname_flags = Some(value);
+        self
+    }
+
+    /// Set [`dhcp_iaid`](field@Self::dhcp_iaid), the `dhcp-iaid` property.
+    #[must_use]
+    pub fn dhcp_iaid(mut self, value: impl Into<String>) -> Self {
+        self.dhcp_iaid = Some(value.into());
+        self
+    }
+
+    /// Set [`dhcp_ipv6_only_preferred`](field@Self::dhcp_ipv6_only_preferred), the `dhcp-ipv6-only-preferred` property.
+    #[must_use]
+    pub fn dhcp_ipv6_only_preferred(mut self, value: i32) -> Self {
+        self.dhcp_ipv6_only_preferred = Some(value);
+        self
+    }
+
+    /// Set [`dhcp_reject_servers`](field@Self::dhcp_reject_servers), the `dhcp-reject-servers` property.
+    #[must_use]
+    pub fn dhcp_reject_servers(mut self, value: Vec<String>) -> Self {
+        self.dhcp_reject_servers = Some(value);
+        self
+    }
+
+    /// Set [`dhcp_send_hostname`](field@Self::dhcp_send_hostname), the `dhcp-send-hostname` property.
+    #[must_use]
+    pub fn dhcp_send_hostname(mut self, value: bool) -> Self {
+        self.dhcp_send_hostname = Some(value);
+        self
+    }
+
+    /// Set [`dhcp_send_hostname_v2`](field@Self::dhcp_send_hostname_v2), the `dhcp-send-hostname-v2` property.
+    #[must_use]
+    pub fn dhcp_send_hostname_v2(mut self, value: i32) -> Self {
+        self.dhcp_send_hostname_v2 = Some(value);
+        self
+    }
+
+    /// Set [`dhcp_send_release`](field@Self::dhcp_send_release), the `dhcp-send-release` property.
+    #[must_use]
+    pub fn dhcp_send_release(mut self, value: Ternary) -> Self {
+        self.dhcp_send_release = Some(value);
+        self
+    }
+
+    /// Set [`dhcp_timeout`](field@Self::dhcp_timeout), the `dhcp-timeout` property.
+    #[must_use]
+    pub fn dhcp_timeout(mut self, value: i32) -> Self {
+        self.dhcp_timeout = Some(value);
+        self
+    }
+
+    /// Set [`dhcp_vendor_class_identifier`](field@Self::dhcp_vendor_class_identifier), the `dhcp-vendor-class-identifier` property.
+    #[must_use]
+    pub fn dhcp_vendor_class_identifier(mut self, value: impl Into<String>) -> Self {
+        self.dhcp_vendor_class_identifier = Some(value.into());
+        self
+    }
+
+    /// Set [`dns`](field@Self::dns), the `dns` property.
+    #[must_use]
+    pub fn dns(mut self, value: Vec<u32>) -> Self {
+        self.dns = Some(value);
+        self
+    }
+
+    /// Set [`dns_data`](field@Self::dns_data), the `dns-data` property.
+    #[must_use]
+    pub fn dns_data(mut self, value: Vec<String>) -> Self {
+        self.dns_data = Some(value);
+        self
+    }
+
+    /// Set [`dns_options`](field@Self::dns_options), the `dns-options` property.
+    #[must_use]
+    pub fn dns_options(mut self, value: Vec<String>) -> Self {
+        self.dns_options = Some(value);
+        self
+    }
+
+    /// Set [`dns_priority`](field@Self::dns_priority), the `dns-priority` property.
+    #[must_use]
+    pub fn dns_priority(mut self, value: i32) -> Self {
+        self.dns_priority = Some(value);
+        self
+    }
+
+    /// Set [`dns_search`](field@Self::dns_search), the `dns-search` property.
+    #[must_use]
+    pub fn dns_search(mut self, value: Vec<String>) -> Self {
+        self.dns_search = Some(value);
+        self
+    }
+
+    /// Set [`forwarding`](field@Self::forwarding), the `forwarding` property.
+    #[must_use]
+    pub fn forwarding(mut self, value: i32) -> Self {
+        self.forwarding = Some(value);
+        self
+    }
+
+    /// Set [`gateway`](field@Self::gateway), the `gateway` property.
+    #[must_use]
+    pub fn gateway(mut self, value: impl Into<String>) -> Self {
+        self.gateway = Some(value.into());
+        self
+    }
+
+    /// Set [`ignore_auto_dns`](field@Self::ignore_auto_dns), the `ignore-auto-dns` property.
+    #[must_use]
+    pub fn ignore_auto_dns(mut self, value: bool) -> Self {
+        self.ignore_auto_dns = Some(value);
+        self
+    }
+
+    /// Set [`ignore_auto_routes`](field@Self::ignore_auto_routes), the `ignore-auto-routes` property.
+    #[must_use]
+    pub fn ignore_auto_routes(mut self, value: bool) -> Self {
+        self.ignore_auto_routes = Some(value);
+        self
+    }
+
+    /// Set [`link_local`](field@Self::link_local), the `link-local` property.
+    #[must_use]
+    pub fn link_local(mut self, value: i32) -> Self {
+        self.link_local = Some(value);
+        self
+    }
+
+    /// Set [`may_fail`](field@Self::may_fail), the `may-fail` property.
+    #[must_use]
+    pub fn may_fail(mut self, value: bool) -> Self {
+        self.may_fail = Some(value);
+        self
+    }
+
+    /// Set [`method`](field@Self::method), the `method` property.
+    #[must_use]
+    pub fn method(mut self, value: Ipv4Method) -> Self {
+        self.method = Some(value);
+        self
+    }
+
+    /// Set [`never_default`](field@Self::never_default), the `never-default` property.
+    #[must_use]
+    pub fn never_default(mut self, value: bool) -> Self {
+        self.never_default = Some(value);
+        self
+    }
+
+    /// Set [`replace_local_rule`](field@Self::replace_local_rule), the `replace-local-rule` property.
+    #[must_use]
+    pub fn replace_local_rule(mut self, value: Ternary) -> Self {
+        self.replace_local_rule = Some(value);
+        self
+    }
+
+    /// Set [`required_timeout`](field@Self::required_timeout), the `required-timeout` property.
+    #[must_use]
+    pub fn required_timeout(mut self, value: i32) -> Self {
+        self.required_timeout = Some(value);
+        self
+    }
+
+    /// Set [`route_data`](field@Self::route_data), the `route-data` property.
+    #[must_use]
+    pub fn route_data(mut self, value: Vec<HashMap<String, OwnedValue>>) -> Self {
+        self.route_data = Some(value);
+        self
+    }
+
+    /// Set [`route_metric`](field@Self::route_metric), the `route-metric` property.
+    #[must_use]
+    pub fn route_metric(mut self, value: i64) -> Self {
+        self.route_metric = Some(value);
+        self
+    }
+
+    /// Set [`route_table`](field@Self::route_table), the `route-table` property.
+    #[must_use]
+    pub fn route_table(mut self, value: u32) -> Self {
+        self.route_table = Some(value);
+        self
+    }
+
+    /// Set [`routed_dns`](field@Self::routed_dns), the `routed-dns` property.
+    #[must_use]
+    pub fn routed_dns(mut self, value: i32) -> Self {
+        self.routed_dns = Some(value);
+        self
+    }
+
+    /// Set [`routes`](field@Self::routes), the `routes` property.
+    #[must_use]
+    pub fn routes(mut self, value: Vec<Vec<u32>>) -> Self {
+        self.routes = Some(value);
+        self
+    }
+
+    /// Set [`routing_rules`](field@Self::routing_rules), the `routing-rules` property.
+    #[must_use]
+    pub fn routing_rules(mut self, value: Vec<HashMap<String, OwnedValue>>) -> Self {
+        self.routing_rules = Some(value);
+        self
+    }
+
+    /// Set [`shared_dhcp_lease_time`](field@Self::shared_dhcp_lease_time), the `shared-dhcp-lease-time` property.
+    #[must_use]
+    pub fn shared_dhcp_lease_time(mut self, value: i32) -> Self {
+        self.shared_dhcp_lease_time = Some(value);
+        self
+    }
+
+    /// Set [`shared_dhcp_range`](field@Self::shared_dhcp_range), the `shared-dhcp-range` property.
+    #[must_use]
+    pub fn shared_dhcp_range(mut self, value: impl Into<String>) -> Self {
+        self.shared_dhcp_range = Some(value.into());
+        self
+    }
 }
 
 impl Setting for Ipv4Setting {
@@ -3538,6 +5157,316 @@ pub struct Ipv6Setting {
     pub other: SettingMap,
 }
 
+impl Ipv6Setting {
+    /// Set [`addr_gen_mode`](field@Self::addr_gen_mode), the `addr-gen-mode` property.
+    #[must_use]
+    pub fn addr_gen_mode(mut self, value: i32) -> Self {
+        self.addr_gen_mode = Some(value);
+        self
+    }
+
+    /// Set [`address_data`](field@Self::address_data), the `address-data` property.
+    #[must_use]
+    pub fn address_data(mut self, value: Vec<HashMap<String, OwnedValue>>) -> Self {
+        self.address_data = Some(value);
+        self
+    }
+
+    /// Set [`addresses`](field@Self::addresses), the `addresses` property.
+    #[must_use]
+    pub fn addresses(mut self, value: Vec<LegacyIp6Address>) -> Self {
+        self.addresses = Some(value);
+        self
+    }
+
+    /// Set [`auto_route_ext_gw`](field@Self::auto_route_ext_gw), the `auto-route-ext-gw` property.
+    #[must_use]
+    pub fn auto_route_ext_gw(mut self, value: Ternary) -> Self {
+        self.auto_route_ext_gw = Some(value);
+        self
+    }
+
+    /// Set [`dad_timeout`](field@Self::dad_timeout), the `dad-timeout` property.
+    #[must_use]
+    pub fn dad_timeout(mut self, value: i32) -> Self {
+        self.dad_timeout = Some(value);
+        self
+    }
+
+    /// Set [`dhcp_dscp`](field@Self::dhcp_dscp), the `dhcp-dscp` property.
+    #[must_use]
+    pub fn dhcp_dscp(mut self, value: impl Into<String>) -> Self {
+        self.dhcp_dscp = Some(value.into());
+        self
+    }
+
+    /// Set [`dhcp_duid`](field@Self::dhcp_duid), the `dhcp-duid` property.
+    #[must_use]
+    pub fn dhcp_duid(mut self, value: impl Into<String>) -> Self {
+        self.dhcp_duid = Some(value.into());
+        self
+    }
+
+    /// Set [`dhcp_hostname`](field@Self::dhcp_hostname), the `dhcp-hostname` property.
+    #[must_use]
+    pub fn dhcp_hostname(mut self, value: impl Into<String>) -> Self {
+        self.dhcp_hostname = Some(value.into());
+        self
+    }
+
+    /// Set [`dhcp_hostname_flags`](field@Self::dhcp_hostname_flags), the `dhcp-hostname-flags` property.
+    #[must_use]
+    pub fn dhcp_hostname_flags(mut self, value: u32) -> Self {
+        self.dhcp_hostname_flags = Some(value);
+        self
+    }
+
+    /// Set [`dhcp_iaid`](field@Self::dhcp_iaid), the `dhcp-iaid` property.
+    #[must_use]
+    pub fn dhcp_iaid(mut self, value: impl Into<String>) -> Self {
+        self.dhcp_iaid = Some(value.into());
+        self
+    }
+
+    /// Set [`dhcp_pd_hint`](field@Self::dhcp_pd_hint), the `dhcp-pd-hint` property.
+    #[must_use]
+    pub fn dhcp_pd_hint(mut self, value: impl Into<String>) -> Self {
+        self.dhcp_pd_hint = Some(value.into());
+        self
+    }
+
+    /// Set [`dhcp_reject_servers`](field@Self::dhcp_reject_servers), the `dhcp-reject-servers` property.
+    #[must_use]
+    pub fn dhcp_reject_servers(mut self, value: Vec<String>) -> Self {
+        self.dhcp_reject_servers = Some(value);
+        self
+    }
+
+    /// Set [`dhcp_send_hostname`](field@Self::dhcp_send_hostname), the `dhcp-send-hostname` property.
+    #[must_use]
+    pub fn dhcp_send_hostname(mut self, value: bool) -> Self {
+        self.dhcp_send_hostname = Some(value);
+        self
+    }
+
+    /// Set [`dhcp_send_hostname_v2`](field@Self::dhcp_send_hostname_v2), the `dhcp-send-hostname-v2` property.
+    #[must_use]
+    pub fn dhcp_send_hostname_v2(mut self, value: i32) -> Self {
+        self.dhcp_send_hostname_v2 = Some(value);
+        self
+    }
+
+    /// Set [`dhcp_send_release`](field@Self::dhcp_send_release), the `dhcp-send-release` property.
+    #[must_use]
+    pub fn dhcp_send_release(mut self, value: Ternary) -> Self {
+        self.dhcp_send_release = Some(value);
+        self
+    }
+
+    /// Set [`dhcp_timeout`](field@Self::dhcp_timeout), the `dhcp-timeout` property.
+    #[must_use]
+    pub fn dhcp_timeout(mut self, value: i32) -> Self {
+        self.dhcp_timeout = Some(value);
+        self
+    }
+
+    /// Set [`dns`](field@Self::dns), the `dns` property.
+    #[must_use]
+    pub fn dns(mut self, value: Vec<Vec<u8>>) -> Self {
+        self.dns = Some(value);
+        self
+    }
+
+    /// Set [`dns_data`](field@Self::dns_data), the `dns-data` property.
+    #[must_use]
+    pub fn dns_data(mut self, value: Vec<String>) -> Self {
+        self.dns_data = Some(value);
+        self
+    }
+
+    /// Set [`dns_options`](field@Self::dns_options), the `dns-options` property.
+    #[must_use]
+    pub fn dns_options(mut self, value: Vec<String>) -> Self {
+        self.dns_options = Some(value);
+        self
+    }
+
+    /// Set [`dns_priority`](field@Self::dns_priority), the `dns-priority` property.
+    #[must_use]
+    pub fn dns_priority(mut self, value: i32) -> Self {
+        self.dns_priority = Some(value);
+        self
+    }
+
+    /// Set [`dns_search`](field@Self::dns_search), the `dns-search` property.
+    #[must_use]
+    pub fn dns_search(mut self, value: Vec<String>) -> Self {
+        self.dns_search = Some(value);
+        self
+    }
+
+    /// Set [`forwarding`](field@Self::forwarding), the `forwarding` property.
+    #[must_use]
+    pub fn forwarding(mut self, value: i32) -> Self {
+        self.forwarding = Some(value);
+        self
+    }
+
+    /// Set [`gateway`](field@Self::gateway), the `gateway` property.
+    #[must_use]
+    pub fn gateway(mut self, value: impl Into<String>) -> Self {
+        self.gateway = Some(value.into());
+        self
+    }
+
+    /// Set [`ignore_auto_dns`](field@Self::ignore_auto_dns), the `ignore-auto-dns` property.
+    #[must_use]
+    pub fn ignore_auto_dns(mut self, value: bool) -> Self {
+        self.ignore_auto_dns = Some(value);
+        self
+    }
+
+    /// Set [`ignore_auto_routes`](field@Self::ignore_auto_routes), the `ignore-auto-routes` property.
+    #[must_use]
+    pub fn ignore_auto_routes(mut self, value: bool) -> Self {
+        self.ignore_auto_routes = Some(value);
+        self
+    }
+
+    /// Set [`ip6_privacy`](field@Self::ip6_privacy), the `ip6-privacy` property.
+    #[must_use]
+    pub fn ip6_privacy(mut self, value: SettingIP6ConfigPrivacy) -> Self {
+        self.ip6_privacy = Some(value);
+        self
+    }
+
+    /// Set [`may_fail`](field@Self::may_fail), the `may-fail` property.
+    #[must_use]
+    pub fn may_fail(mut self, value: bool) -> Self {
+        self.may_fail = Some(value);
+        self
+    }
+
+    /// Set [`method`](field@Self::method), the `method` property.
+    #[must_use]
+    pub fn method(mut self, value: Ipv6Method) -> Self {
+        self.method = Some(value);
+        self
+    }
+
+    /// Set [`mtu`](field@Self::mtu), the `mtu` property.
+    #[must_use]
+    pub fn mtu(mut self, value: u32) -> Self {
+        self.mtu = Some(value);
+        self
+    }
+
+    /// Set [`never_default`](field@Self::never_default), the `never-default` property.
+    #[must_use]
+    pub fn never_default(mut self, value: bool) -> Self {
+        self.never_default = Some(value);
+        self
+    }
+
+    /// Set [`ra_timeout`](field@Self::ra_timeout), the `ra-timeout` property.
+    #[must_use]
+    pub fn ra_timeout(mut self, value: i32) -> Self {
+        self.ra_timeout = Some(value);
+        self
+    }
+
+    /// Set [`replace_local_rule`](field@Self::replace_local_rule), the `replace-local-rule` property.
+    #[must_use]
+    pub fn replace_local_rule(mut self, value: Ternary) -> Self {
+        self.replace_local_rule = Some(value);
+        self
+    }
+
+    /// Set [`required_timeout`](field@Self::required_timeout), the `required-timeout` property.
+    #[must_use]
+    pub fn required_timeout(mut self, value: i32) -> Self {
+        self.required_timeout = Some(value);
+        self
+    }
+
+    /// Set [`route_data`](field@Self::route_data), the `route-data` property.
+    #[must_use]
+    pub fn route_data(mut self, value: Vec<HashMap<String, OwnedValue>>) -> Self {
+        self.route_data = Some(value);
+        self
+    }
+
+    /// Set [`route_metric`](field@Self::route_metric), the `route-metric` property.
+    #[must_use]
+    pub fn route_metric(mut self, value: i64) -> Self {
+        self.route_metric = Some(value);
+        self
+    }
+
+    /// Set [`route_table`](field@Self::route_table), the `route-table` property.
+    #[must_use]
+    pub fn route_table(mut self, value: u32) -> Self {
+        self.route_table = Some(value);
+        self
+    }
+
+    /// Set [`routed_dns`](field@Self::routed_dns), the `routed-dns` property.
+    #[must_use]
+    pub fn routed_dns(mut self, value: i32) -> Self {
+        self.routed_dns = Some(value);
+        self
+    }
+
+    /// Set [`routes`](field@Self::routes), the `routes` property.
+    #[must_use]
+    pub fn routes(mut self, value: Vec<LegacyIp6Route>) -> Self {
+        self.routes = Some(value);
+        self
+    }
+
+    /// Set [`routing_rules`](field@Self::routing_rules), the `routing-rules` property.
+    #[must_use]
+    pub fn routing_rules(mut self, value: Vec<HashMap<String, OwnedValue>>) -> Self {
+        self.routing_rules = Some(value);
+        self
+    }
+
+    /// Set [`shared_dhcp_lease_time`](field@Self::shared_dhcp_lease_time), the `shared-dhcp-lease-time` property.
+    #[must_use]
+    pub fn shared_dhcp_lease_time(mut self, value: i32) -> Self {
+        self.shared_dhcp_lease_time = Some(value);
+        self
+    }
+
+    /// Set [`shared_dhcp_range`](field@Self::shared_dhcp_range), the `shared-dhcp-range` property.
+    #[must_use]
+    pub fn shared_dhcp_range(mut self, value: impl Into<String>) -> Self {
+        self.shared_dhcp_range = Some(value.into());
+        self
+    }
+
+    /// Set [`temp_preferred_lifetime`](field@Self::temp_preferred_lifetime), the `temp-preferred-lifetime` property.
+    #[must_use]
+    pub fn temp_preferred_lifetime(mut self, value: i32) -> Self {
+        self.temp_preferred_lifetime = Some(value);
+        self
+    }
+
+    /// Set [`temp_valid_lifetime`](field@Self::temp_valid_lifetime), the `temp-valid-lifetime` property.
+    #[must_use]
+    pub fn temp_valid_lifetime(mut self, value: i32) -> Self {
+        self.temp_valid_lifetime = Some(value);
+        self
+    }
+
+    /// Set [`token`](field@Self::token), the `token` property.
+    #[must_use]
+    pub fn token(mut self, value: impl Into<String>) -> Self {
+        self.token = Some(value.into());
+        self
+    }
+}
+
 impl Setting for Ipv6Setting {
     const NAME: &'static str = "ipv6";
     const PROPERTIES: &'static [&'static str] = &[
@@ -3867,6 +5796,106 @@ pub struct IpTunnelSetting {
     pub other: SettingMap,
 }
 
+impl IpTunnelSetting {
+    /// Set [`encapsulation_limit`](field@Self::encapsulation_limit), the `encapsulation-limit` property.
+    #[must_use]
+    pub fn encapsulation_limit(mut self, value: u32) -> Self {
+        self.encapsulation_limit = Some(value);
+        self
+    }
+
+    /// Set [`flags`](field@Self::flags), the `flags` property.
+    #[must_use]
+    pub fn flags(mut self, value: u32) -> Self {
+        self.flags = Some(value);
+        self
+    }
+
+    /// Set [`flow_label`](field@Self::flow_label), the `flow-label` property.
+    #[must_use]
+    pub fn flow_label(mut self, value: u32) -> Self {
+        self.flow_label = Some(value);
+        self
+    }
+
+    /// Set [`fwmark`](field@Self::fwmark), the `fwmark` property.
+    #[must_use]
+    pub fn fwmark(mut self, value: u32) -> Self {
+        self.fwmark = Some(value);
+        self
+    }
+
+    /// Set [`input_key`](field@Self::input_key), the `input-key` property.
+    #[must_use]
+    pub fn input_key(mut self, value: impl Into<String>) -> Self {
+        self.input_key = Some(value.into());
+        self
+    }
+
+    /// Set [`local`](field@Self::local), the `local` property.
+    #[must_use]
+    pub fn local(mut self, value: impl Into<String>) -> Self {
+        self.local = Some(value.into());
+        self
+    }
+
+    /// Set [`mode`](field@Self::mode), the `mode` property.
+    #[must_use]
+    pub fn mode(mut self, value: u32) -> Self {
+        self.mode = Some(value);
+        self
+    }
+
+    /// Set [`mtu`](field@Self::mtu), the `mtu` property.
+    #[must_use]
+    pub fn mtu(mut self, value: u32) -> Self {
+        self.mtu = Some(value);
+        self
+    }
+
+    /// Set [`output_key`](field@Self::output_key), the `output-key` property.
+    #[must_use]
+    pub fn output_key(mut self, value: impl Into<String>) -> Self {
+        self.output_key = Some(value.into());
+        self
+    }
+
+    /// Set [`parent`](field@Self::parent), the `parent` property.
+    #[must_use]
+    pub fn parent(mut self, value: impl Into<String>) -> Self {
+        self.parent = Some(value.into());
+        self
+    }
+
+    /// Set [`path_mtu_discovery`](field@Self::path_mtu_discovery), the `path-mtu-discovery` property.
+    #[must_use]
+    pub fn path_mtu_discovery(mut self, value: bool) -> Self {
+        self.path_mtu_discovery = Some(value);
+        self
+    }
+
+    /// Set [`remote`](field@Self::remote), the `remote` property.
+    #[must_use]
+    pub fn remote(mut self, value: impl Into<String>) -> Self {
+        self.remote = Some(value.into());
+        self
+    }
+
+    /// Set [`tos`](field@Self::tos), the `tos` property.
+    #[must_use]
+    pub fn tos(mut self, value: u32) -> Self {
+        self.tos = Some(value);
+        self
+    }
+
+    /// Set [`ttl`](field@Self::ttl), the `ttl` property.
+    #[must_use]
+    pub fn ttl(mut self, value: u32) -> Self {
+        self.ttl = Some(value);
+        self
+    }
+}
+
 impl Setting for IpTunnelSetting {
     const NAME: &'static str = "ip-tunnel";
     const PROPERTIES: &'static [&'static str] = &[
@@ -3969,6 +5998,36 @@ pub struct IpvlanSetting {
     pub other: SettingMap,
 }
 
+impl IpvlanSetting {
+    /// Set [`mode`](field@Self::mode), the `mode` property.
+    #[must_use]
+    pub fn mode(mut self, value: u32) -> Self {
+        self.mode = Some(value);
+        self
+    }
+
+    /// Set [`parent`](field@Self::parent), the `parent` property.
+    #[must_use]
+    pub fn parent(mut self, value: impl Into<String>) -> Self {
+        self.parent = Some(value.into());
+        self
+    }
+
+    /// Set [`private`](field@Self::private), the `private` property.
+    #[must_use]
+    pub fn private(mut self, value: bool) -> Self {
+        self.private = Some(value);
+        self
+    }
+
+    /// Set [`vepa`](field@Self::vepa), the `vepa` property.
+    #[must_use]
+    pub fn vepa(mut self, value: bool) -> Self {
+        self.vepa = Some(value);
+        self
+    }
+}
+
 impl Setting for IpvlanSetting {
     const NAME: &'static str = "ipvlan";
     const PROPERTIES: &'static [&'static str] = &["mode", "parent", "private", "vepa"];
@@ -4064,6 +6123,78 @@ pub struct MacsecSetting {
     pub other: SettingMap,
 }
 
+impl MacsecSetting {
+    /// Set [`encrypt`](field@Self::encrypt), the `encrypt` property.
+    #[must_use]
+    pub fn encrypt(mut self, value: bool) -> Self {
+        self.encrypt = Some(value);
+        self
+    }
+
+    /// Set [`mka_cak`](field@Self::mka_cak), the `mka-cak` property.
+    #[must_use]
+    pub fn mka_cak(mut self, value: impl Into<String>) -> Self {
+        self.mka_cak = Some(value.into());
+        self
+    }
+
+    /// Set [`mka_cak_flags`](field@Self::mka_cak_flags), the `mka-cak-flags` property.
+    #[must_use]
+    pub fn mka_cak_flags(mut self, value: SettingSecretFlags) -> Self {
+        self.mka_cak_flags = Some(value);
+        self
+    }
+
+    /// Set [`mka_ckn`](field@Self::mka_ckn), the `mka-ckn` property.
+    #[must_use]
+    pub fn mka_ckn(mut self, value: impl Into<String>) -> Self {
+        self.mka_ckn = Some(value.into());
+        self
+    }
+
+    /// Set [`mode`](field@Self::mode), the `mode` property.
+    #[must_use]
+    pub fn mode(mut self, value: i32) -> Self {
+        self.mode = Some(value);
+        self
+    }
+
+    /// Set [`offload`](field@Self::offload), the `offload` property.
+    #[must_use]
+    pub fn offload(mut self, value: i32) -> Self {
+        self.offload = Some(value);
+        self
+    }
+
+    /// Set [`parent`](field@Self::parent), the `parent` property.
+    #[must_use]
+    pub fn parent(mut self, value: impl Into<String>) -> Self {
+        self.parent = Some(value.into());
+        self
+    }
+
+    /// Set [`port`](field@Self::port), the `port` property.
+    #[must_use]
+    pub fn port(mut self, value: i32) -> Self {
+        self.port = Some(value);
+        self
+    }
+
+    /// Set [`send_sci`](field@Self::send_sci), the `send-sci` property.
+    #[must_use]
+    pub fn send_sci(mut self, value: bool) -> Self {
+        self.send_sci = Some(value);
+        self
+    }
+
+    /// Set [`validation`](field@Self::validation), the `validation` property.
+    #[must_use]
+    pub fn validation(mut self, value: i32) -> Self {
+        self.validation = Some(value);
+        self
+    }
+}
+
 impl Setting for MacsecSetting {
     const NAME: &'static str = "macsec";
     const PROPERTIES: &'static [&'static str] = &[
@@ -4144,6 +6275,36 @@ pub struct MacvlanSetting {
     pub other: SettingMap,
 }
 
+impl MacvlanSetting {
+    /// Set [`mode`](field@Self::mode), the `mode` property.
+    #[must_use]
+    pub fn mode(mut self, value: u32) -> Self {
+        self.mode = Some(value);
+        self
+    }
+
+    /// Set [`parent`](field@Self::parent), the `parent` property.
+    #[must_use]
+    pub fn parent(mut self, value: impl Into<String>) -> Self {
+        self.parent = Some(value.into());
+        self
+    }
+
+    /// Set [`promiscuous`](field@Self::promiscuous), the `promiscuous` property.
+    #[must_use]
+    pub fn promiscuous(mut self, value: bool) -> Self {
+        self.promiscuous = Some(value);
+        self
+    }
+
+    /// Set [`tap`](field@Self::tap), the `tap` property.
+    #[must_use]
+    pub fn tap(mut self, value: bool) -> Self {
+        self.tap = Some(value);
+        self
+    }
+}
+
 impl Setting for MacvlanSetting {
     const NAME: &'static str = "macvlan";
     const PROPERTIES: &'static [&'static str] = &["mode", "parent", "promiscuous", "tap"];
@@ -4209,6 +6370,36 @@ pub struct MatchSetting {
     pub other: SettingMap,
 }
 
+impl MatchSetting {
+    /// Set [`driver`](field@Self::driver), the `driver` property.
+    #[must_use]
+    pub fn driver(mut self, value: Vec<String>) -> Self {
+        self.driver = Some(value);
+        self
+    }
+
+    /// Set [`interface_name`](field@Self::interface_name), the `interface-name` property.
+    #[must_use]
+    pub fn interface_name(mut self, value: Vec<String>) -> Self {
+        self.interface_name = Some(value);
+        self
+    }
+
+    /// Set [`kernel_command_line`](field@Self::kernel_command_line), the `kernel-command-line` property.
+    #[must_use]
+    pub fn kernel_command_line(mut self, value: Vec<String>) -> Self {
+        self.kernel_command_line = Some(value);
+        self
+    }
+
+    /// Set [`path`](field@Self::path), the `path` property.
+    #[must_use]
+    pub fn path(mut self, value: Vec<String>) -> Self {
+        self.path = Some(value);
+        self
+    }
+}
+
 impl Setting for MatchSetting {
     const NAME: &'static str = "match";
     const PROPERTIES: &'static [&'static str] =
@@ -4269,6 +6460,29 @@ pub struct OlpcMeshSetting {
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
+}
+
+impl OlpcMeshSetting {
+    /// Set [`channel`](field@Self::channel), the `channel` property.
+    #[must_use]
+    pub fn channel(mut self, value: u32) -> Self {
+        self.channel = Some(value);
+        self
+    }
+
+    /// Set [`dhcp_anycast_address`](field@Self::dhcp_anycast_address), the `dhcp-anycast-address` property.
+    #[must_use]
+    pub fn dhcp_anycast_address(mut self, value: impl Into<MacAddress>) -> Self {
+        self.dhcp_anycast_address = Some(value.into());
+        self
+    }
+
+    /// Set [`ssid`](field@Self::ssid), the `ssid` property.
+    #[must_use]
+    pub fn ssid(mut self, value: impl Into<Ssid>) -> Self {
+        self.ssid = Some(value.into());
+        self
+    }
 }
 
 impl Setting for OlpcMeshSetting {
@@ -4333,6 +6547,43 @@ pub struct OvsBridgeSetting {
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
+}
+
+impl OvsBridgeSetting {
+    /// Set [`datapath_type`](field@Self::datapath_type), the `datapath-type` property.
+    #[must_use]
+    pub fn datapath_type(mut self, value: impl Into<String>) -> Self {
+        self.datapath_type = Some(value.into());
+        self
+    }
+
+    /// Set [`fail_mode`](field@Self::fail_mode), the `fail-mode` property.
+    #[must_use]
+    pub fn fail_mode(mut self, value: impl Into<String>) -> Self {
+        self.fail_mode = Some(value.into());
+        self
+    }
+
+    /// Set [`mcast_snooping_enable`](field@Self::mcast_snooping_enable), the `mcast-snooping-enable` property.
+    #[must_use]
+    pub fn mcast_snooping_enable(mut self, value: bool) -> Self {
+        self.mcast_snooping_enable = Some(value);
+        self
+    }
+
+    /// Set [`rstp_enable`](field@Self::rstp_enable), the `rstp-enable` property.
+    #[must_use]
+    pub fn rstp_enable(mut self, value: bool) -> Self {
+        self.rstp_enable = Some(value);
+        self
+    }
+
+    /// Set [`stp_enable`](field@Self::stp_enable), the `stp-enable` property.
+    #[must_use]
+    pub fn stp_enable(mut self, value: bool) -> Self {
+        self.stp_enable = Some(value);
+        self
+    }
 }
 
 impl Setting for OvsBridgeSetting {
@@ -4416,6 +6667,43 @@ pub struct OvsDpdkSetting {
     pub other: SettingMap,
 }
 
+impl OvsDpdkSetting {
+    /// Set [`devargs`](field@Self::devargs), the `devargs` property.
+    #[must_use]
+    pub fn devargs(mut self, value: impl Into<String>) -> Self {
+        self.devargs = Some(value.into());
+        self
+    }
+
+    /// Set [`lsc_interrupt`](field@Self::lsc_interrupt), the `lsc-interrupt` property.
+    #[must_use]
+    pub fn lsc_interrupt(mut self, value: i32) -> Self {
+        self.lsc_interrupt = Some(value);
+        self
+    }
+
+    /// Set [`n_rxq`](field@Self::n_rxq), the `n-rxq` property.
+    #[must_use]
+    pub fn n_rxq(mut self, value: u32) -> Self {
+        self.n_rxq = Some(value);
+        self
+    }
+
+    /// Set [`n_rxq_desc`](field@Self::n_rxq_desc), the `n-rxq-desc` property.
+    #[must_use]
+    pub fn n_rxq_desc(mut self, value: u32) -> Self {
+        self.n_rxq_desc = Some(value);
+        self
+    }
+
+    /// Set [`n_txq_desc`](field@Self::n_txq_desc), the `n-txq-desc` property.
+    #[must_use]
+    pub fn n_txq_desc(mut self, value: u32) -> Self {
+        self.n_txq_desc = Some(value);
+        self
+    }
+}
+
 impl Setting for OvsDpdkSetting {
     const NAME: &'static str = "ovs-dpdk";
     const PROPERTIES: &'static [&'static str] = &[
@@ -4469,6 +6757,22 @@ pub struct OvsInterfaceSetting {
     pub other: SettingMap,
 }
 
+impl OvsInterfaceSetting {
+    /// Set [`ofport_request`](field@Self::ofport_request), the `ofport-request` property.
+    #[must_use]
+    pub fn ofport_request(mut self, value: u32) -> Self {
+        self.ofport_request = Some(value);
+        self
+    }
+
+    /// Set [`type_`](field@Self::type_), the `type` property.
+    #[must_use]
+    pub fn type_(mut self, value: impl Into<String>) -> Self {
+        self.type_ = Some(value.into());
+        self
+    }
+}
+
 impl Setting for OvsInterfaceSetting {
     const NAME: &'static str = "ovs-interface";
     const PROPERTIES: &'static [&'static str] = &["ofport-request", "type"];
@@ -4502,6 +6806,15 @@ pub struct OvsPatchSetting {
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
+}
+
+impl OvsPatchSetting {
+    /// Set [`peer`](field@Self::peer), the `peer` property.
+    #[must_use]
+    pub fn peer(mut self, value: impl Into<String>) -> Self {
+        self.peer = Some(value.into());
+        self
+    }
 }
 
 impl Setting for OvsPatchSetting {
@@ -4567,6 +6880,57 @@ pub struct OvsPortSetting {
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
+}
+
+impl OvsPortSetting {
+    /// Set [`bond_downdelay`](field@Self::bond_downdelay), the `bond-downdelay` property.
+    #[must_use]
+    pub fn bond_downdelay(mut self, value: u32) -> Self {
+        self.bond_downdelay = Some(value);
+        self
+    }
+
+    /// Set [`bond_mode`](field@Self::bond_mode), the `bond-mode` property.
+    #[must_use]
+    pub fn bond_mode(mut self, value: impl Into<String>) -> Self {
+        self.bond_mode = Some(value.into());
+        self
+    }
+
+    /// Set [`bond_updelay`](field@Self::bond_updelay), the `bond-updelay` property.
+    #[must_use]
+    pub fn bond_updelay(mut self, value: u32) -> Self {
+        self.bond_updelay = Some(value);
+        self
+    }
+
+    /// Set [`lacp`](field@Self::lacp), the `lacp` property.
+    #[must_use]
+    pub fn lacp(mut self, value: impl Into<String>) -> Self {
+        self.lacp = Some(value.into());
+        self
+    }
+
+    /// Set [`tag`](field@Self::tag), the `tag` property.
+    #[must_use]
+    pub fn tag(mut self, value: u32) -> Self {
+        self.tag = Some(value);
+        self
+    }
+
+    /// Set [`trunks`](field@Self::trunks), the `trunks` property.
+    #[must_use]
+    pub fn trunks(mut self, value: Vec<HashMap<String, OwnedValue>>) -> Self {
+        self.trunks = Some(value);
+        self
+    }
+
+    /// Set [`vlan_mode`](field@Self::vlan_mode), the `vlan-mode` property.
+    #[must_use]
+    pub fn vlan_mode(mut self, value: impl Into<String>) -> Self {
+        self.vlan_mode = Some(value.into());
+        self
+    }
 }
 
 impl Setting for OvsPortSetting {
@@ -4726,6 +7090,134 @@ pub struct PppSetting {
     pub other: SettingMap,
 }
 
+impl PppSetting {
+    /// Set [`baud`](field@Self::baud), the `baud` property.
+    #[must_use]
+    pub fn baud(mut self, value: u32) -> Self {
+        self.baud = Some(value);
+        self
+    }
+
+    /// Set [`crtscts`](field@Self::crtscts), the `crtscts` property.
+    #[must_use]
+    pub fn crtscts(mut self, value: bool) -> Self {
+        self.crtscts = Some(value);
+        self
+    }
+
+    /// Set [`lcp_echo_failure`](field@Self::lcp_echo_failure), the `lcp-echo-failure` property.
+    #[must_use]
+    pub fn lcp_echo_failure(mut self, value: u32) -> Self {
+        self.lcp_echo_failure = Some(value);
+        self
+    }
+
+    /// Set [`lcp_echo_interval`](field@Self::lcp_echo_interval), the `lcp-echo-interval` property.
+    #[must_use]
+    pub fn lcp_echo_interval(mut self, value: u32) -> Self {
+        self.lcp_echo_interval = Some(value);
+        self
+    }
+
+    /// Set [`mppe_stateful`](field@Self::mppe_stateful), the `mppe-stateful` property.
+    #[must_use]
+    pub fn mppe_stateful(mut self, value: bool) -> Self {
+        self.mppe_stateful = Some(value);
+        self
+    }
+
+    /// Set [`mru`](field@Self::mru), the `mru` property.
+    #[must_use]
+    pub fn mru(mut self, value: u32) -> Self {
+        self.mru = Some(value);
+        self
+    }
+
+    /// Set [`mtu`](field@Self::mtu), the `mtu` property.
+    #[must_use]
+    pub fn mtu(mut self, value: u32) -> Self {
+        self.mtu = Some(value);
+        self
+    }
+
+    /// Set [`no_vj_comp`](field@Self::no_vj_comp), the `no-vj-comp` property.
+    #[must_use]
+    pub fn no_vj_comp(mut self, value: bool) -> Self {
+        self.no_vj_comp = Some(value);
+        self
+    }
+
+    /// Set [`noauth`](field@Self::noauth), the `noauth` property.
+    #[must_use]
+    pub fn noauth(mut self, value: bool) -> Self {
+        self.noauth = Some(value);
+        self
+    }
+
+    /// Set [`nobsdcomp`](field@Self::nobsdcomp), the `nobsdcomp` property.
+    #[must_use]
+    pub fn nobsdcomp(mut self, value: bool) -> Self {
+        self.nobsdcomp = Some(value);
+        self
+    }
+
+    /// Set [`nodeflate`](field@Self::nodeflate), the `nodeflate` property.
+    #[must_use]
+    pub fn nodeflate(mut self, value: bool) -> Self {
+        self.nodeflate = Some(value);
+        self
+    }
+
+    /// Set [`refuse_chap`](field@Self::refuse_chap), the `refuse-chap` property.
+    #[must_use]
+    pub fn refuse_chap(mut self, value: bool) -> Self {
+        self.refuse_chap = Some(value);
+        self
+    }
+
+    /// Set [`refuse_eap`](field@Self::refuse_eap), the `refuse-eap` property.
+    #[must_use]
+    pub fn refuse_eap(mut self, value: bool) -> Self {
+        self.refuse_eap = Some(value);
+        self
+    }
+
+    /// Set [`refuse_mschap`](field@Self::refuse_mschap), the `refuse-mschap` property.
+    #[must_use]
+    pub fn refuse_mschap(mut self, value: bool) -> Self {
+        self.refuse_mschap = Some(value);
+        self
+    }
+
+    /// Set [`refuse_mschapv2`](field@Self::refuse_mschapv2), the `refuse-mschapv2` property.
+    #[must_use]
+    pub fn refuse_mschapv2(mut self, value: bool) -> Self {
+        self.refuse_mschapv2 = Some(value);
+        self
+    }
+
+    /// Set [`refuse_pap`](field@Self::refuse_pap), the `refuse-pap` property.
+    #[must_use]
+    pub fn refuse_pap(mut self, value: bool) -> Self {
+        self.refuse_pap = Some(value);
+        self
+    }
+
+    /// Set [`require_mppe`](field@Self::require_mppe), the `require-mppe` property.
+    #[must_use]
+    pub fn require_mppe(mut self, value: bool) -> Self {
+        self.require_mppe = Some(value);
+        self
+    }
+
+    /// Set [`require_mppe_128`](field@Self::require_mppe_128), the `require-mppe-128` property.
+    #[must_use]
+    pub fn require_mppe_128(mut self, value: bool) -> Self {
+        self.require_mppe_128 = Some(value);
+        self
+    }
+}
+
 impl Setting for PppSetting {
     const NAME: &'static str = "ppp";
     const PROPERTIES: &'static [&'static str] = &[
@@ -4850,6 +7342,43 @@ pub struct PppoeSetting {
     pub other: SettingMap,
 }
 
+impl PppoeSetting {
+    /// Set [`parent`](field@Self::parent), the `parent` property.
+    #[must_use]
+    pub fn parent(mut self, value: impl Into<String>) -> Self {
+        self.parent = Some(value.into());
+        self
+    }
+
+    /// Set [`password`](field@Self::password), the `password` property.
+    #[must_use]
+    pub fn password(mut self, value: impl Into<String>) -> Self {
+        self.password = Some(value.into());
+        self
+    }
+
+    /// Set [`password_flags`](field@Self::password_flags), the `password-flags` property.
+    #[must_use]
+    pub fn password_flags(mut self, value: SettingSecretFlags) -> Self {
+        self.password_flags = Some(value);
+        self
+    }
+
+    /// Set [`service`](field@Self::service), the `service` property.
+    #[must_use]
+    pub fn service(mut self, value: impl Into<String>) -> Self {
+        self.service = Some(value.into());
+        self
+    }
+
+    /// Set [`username`](field@Self::username), the `username` property.
+    #[must_use]
+    pub fn username(mut self, value: impl Into<String>) -> Self {
+        self.username = Some(value.into());
+        self
+    }
+}
+
 impl Setting for PppoeSetting {
     const NAME: &'static str = "pppoe";
     const PROPERTIES: &'static [&'static str] = &[
@@ -4911,6 +7440,36 @@ pub struct ProxySetting {
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
+}
+
+impl ProxySetting {
+    /// Set [`browser_only`](field@Self::browser_only), the `browser-only` property.
+    #[must_use]
+    pub fn browser_only(mut self, value: bool) -> Self {
+        self.browser_only = Some(value);
+        self
+    }
+
+    /// Set [`method`](field@Self::method), the `method` property.
+    #[must_use]
+    pub fn method(mut self, value: i32) -> Self {
+        self.method = Some(value);
+        self
+    }
+
+    /// Set [`pac_script`](field@Self::pac_script), the `pac-script` property.
+    #[must_use]
+    pub fn pac_script(mut self, value: impl Into<String>) -> Self {
+        self.pac_script = Some(value.into());
+        self
+    }
+
+    /// Set [`pac_url`](field@Self::pac_url), the `pac-url` property.
+    #[must_use]
+    pub fn pac_url(mut self, value: impl Into<String>) -> Self {
+        self.pac_url = Some(value.into());
+        self
+    }
 }
 
 impl Setting for ProxySetting {
@@ -4977,6 +7536,43 @@ pub struct SerialSetting {
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
+}
+
+impl SerialSetting {
+    /// Set [`baud`](field@Self::baud), the `baud` property.
+    #[must_use]
+    pub fn baud(mut self, value: u32) -> Self {
+        self.baud = Some(value);
+        self
+    }
+
+    /// Set [`bits`](field@Self::bits), the `bits` property.
+    #[must_use]
+    pub fn bits(mut self, value: u32) -> Self {
+        self.bits = Some(value);
+        self
+    }
+
+    /// Set [`parity`](field@Self::parity), the `parity` property.
+    #[must_use]
+    pub fn parity(mut self, value: u8) -> Self {
+        self.parity = Some(value);
+        self
+    }
+
+    /// Set [`send_delay`](field@Self::send_delay), the `send-delay` property.
+    #[must_use]
+    pub fn send_delay(mut self, value: u64) -> Self {
+        self.send_delay = Some(value);
+        self
+    }
+
+    /// Set [`stopbits`](field@Self::stopbits), the `stopbits` property.
+    #[must_use]
+    pub fn stopbits(mut self, value: u32) -> Self {
+        self.stopbits = Some(value);
+        self
+    }
 }
 
 impl Setting for SerialSetting {
@@ -5095,6 +7691,57 @@ pub struct SriovSetting {
     pub other: SettingMap,
 }
 
+impl SriovSetting {
+    /// Set [`autoprobe_drivers`](field@Self::autoprobe_drivers), the `autoprobe-drivers` property.
+    #[must_use]
+    pub fn autoprobe_drivers(mut self, value: Ternary) -> Self {
+        self.autoprobe_drivers = Some(value);
+        self
+    }
+
+    /// Set [`eswitch_encap_mode`](field@Self::eswitch_encap_mode), the `eswitch-encap-mode` property.
+    #[must_use]
+    pub fn eswitch_encap_mode(mut self, value: i32) -> Self {
+        self.eswitch_encap_mode = Some(value);
+        self
+    }
+
+    /// Set [`eswitch_inline_mode`](field@Self::eswitch_inline_mode), the `eswitch-inline-mode` property.
+    #[must_use]
+    pub fn eswitch_inline_mode(mut self, value: i32) -> Self {
+        self.eswitch_inline_mode = Some(value);
+        self
+    }
+
+    /// Set [`eswitch_mode`](field@Self::eswitch_mode), the `eswitch-mode` property.
+    #[must_use]
+    pub fn eswitch_mode(mut self, value: i32) -> Self {
+        self.eswitch_mode = Some(value);
+        self
+    }
+
+    /// Set [`preserve_on_down`](field@Self::preserve_on_down), the `preserve-on-down` property.
+    #[must_use]
+    pub fn preserve_on_down(mut self, value: i32) -> Self {
+        self.preserve_on_down = Some(value);
+        self
+    }
+
+    /// Set [`total_vfs`](field@Self::total_vfs), the `total-vfs` property.
+    #[must_use]
+    pub fn total_vfs(mut self, value: u32) -> Self {
+        self.total_vfs = Some(value);
+        self
+    }
+
+    /// Set [`vfs`](field@Self::vfs), the `vfs` property.
+    #[must_use]
+    pub fn vfs(mut self, value: Vec<HashMap<String, OwnedValue>>) -> Self {
+        self.vfs = Some(value);
+        self
+    }
+}
+
 impl Setting for SriovSetting {
     const NAME: &'static str = "sriov";
     const PROPERTIES: &'static [&'static str] = &[
@@ -5178,6 +7825,22 @@ pub struct TcSetting {
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
+}
+
+impl TcSetting {
+    /// Set [`qdiscs`](field@Self::qdiscs), the `qdiscs` property.
+    #[must_use]
+    pub fn qdiscs(mut self, value: Vec<HashMap<String, OwnedValue>>) -> Self {
+        self.qdiscs = Some(value);
+        self
+    }
+
+    /// Set [`tfilters`](field@Self::tfilters), the `tfilters` property.
+    #[must_use]
+    pub fn tfilters(mut self, value: Vec<HashMap<String, OwnedValue>>) -> Self {
+        self.tfilters = Some(value);
+        self
+    }
 }
 
 impl Setting for TcSetting {
@@ -5295,6 +7958,127 @@ pub struct TeamSetting {
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
+}
+
+impl TeamSetting {
+    /// Set [`config`](field@Self::config), the `config` property.
+    #[must_use]
+    pub fn config(mut self, value: impl Into<String>) -> Self {
+        self.config = Some(value.into());
+        self
+    }
+
+    /// Set [`interface_name`](field@Self::interface_name), the `interface-name` property.
+    #[must_use]
+    pub fn interface_name(mut self, value: impl Into<String>) -> Self {
+        self.interface_name = Some(value.into());
+        self
+    }
+
+    /// Set [`link_watchers`](field@Self::link_watchers), the `link-watchers` property.
+    #[must_use]
+    pub fn link_watchers(mut self, value: Vec<HashMap<String, OwnedValue>>) -> Self {
+        self.link_watchers = Some(value);
+        self
+    }
+
+    /// Set [`mcast_rejoin_count`](field@Self::mcast_rejoin_count), the `mcast-rejoin-count` property.
+    #[must_use]
+    pub fn mcast_rejoin_count(mut self, value: i32) -> Self {
+        self.mcast_rejoin_count = Some(value);
+        self
+    }
+
+    /// Set [`mcast_rejoin_interval`](field@Self::mcast_rejoin_interval), the `mcast-rejoin-interval` property.
+    #[must_use]
+    pub fn mcast_rejoin_interval(mut self, value: i32) -> Self {
+        self.mcast_rejoin_interval = Some(value);
+        self
+    }
+
+    /// Set [`notify_peers_count`](field@Self::notify_peers_count), the `notify-peers-count` property.
+    #[must_use]
+    pub fn notify_peers_count(mut self, value: i32) -> Self {
+        self.notify_peers_count = Some(value);
+        self
+    }
+
+    /// Set [`notify_peers_interval`](field@Self::notify_peers_interval), the `notify-peers-interval` property.
+    #[must_use]
+    pub fn notify_peers_interval(mut self, value: i32) -> Self {
+        self.notify_peers_interval = Some(value);
+        self
+    }
+
+    /// Set [`runner`](field@Self::runner), the `runner` property.
+    #[must_use]
+    pub fn runner(mut self, value: TeamRunner) -> Self {
+        self.runner = Some(value);
+        self
+    }
+
+    /// Set [`runner_active`](field@Self::runner_active), the `runner-active` property.
+    #[must_use]
+    pub fn runner_active(mut self, value: bool) -> Self {
+        self.runner_active = Some(value);
+        self
+    }
+
+    /// Set [`runner_agg_select_policy`](field@Self::runner_agg_select_policy), the `runner-agg-select-policy` property.
+    #[must_use]
+    pub fn runner_agg_select_policy(mut self, value: TeamRunnerAggSelectPolicy) -> Self {
+        self.runner_agg_select_policy = Some(value);
+        self
+    }
+
+    /// Set [`runner_fast_rate`](field@Self::runner_fast_rate), the `runner-fast-rate` property.
+    #[must_use]
+    pub fn runner_fast_rate(mut self, value: bool) -> Self {
+        self.runner_fast_rate = Some(value);
+        self
+    }
+
+    /// Set [`runner_hwaddr_policy`](field@Self::runner_hwaddr_policy), the `runner-hwaddr-policy` property.
+    #[must_use]
+    pub fn runner_hwaddr_policy(mut self, value: TeamRunnerHwaddrPolicy) -> Self {
+        self.runner_hwaddr_policy = Some(value);
+        self
+    }
+
+    /// Set [`runner_min_ports`](field@Self::runner_min_ports), the `runner-min-ports` property.
+    #[must_use]
+    pub fn runner_min_ports(mut self, value: i32) -> Self {
+        self.runner_min_ports = Some(value);
+        self
+    }
+
+    /// Set [`runner_sys_prio`](field@Self::runner_sys_prio), the `runner-sys-prio` property.
+    #[must_use]
+    pub fn runner_sys_prio(mut self, value: i32) -> Self {
+        self.runner_sys_prio = Some(value);
+        self
+    }
+
+    /// Set [`runner_tx_balancer`](field@Self::runner_tx_balancer), the `runner-tx-balancer` property.
+    #[must_use]
+    pub fn runner_tx_balancer(mut self, value: impl Into<String>) -> Self {
+        self.runner_tx_balancer = Some(value.into());
+        self
+    }
+
+    /// Set [`runner_tx_balancer_interval`](field@Self::runner_tx_balancer_interval), the `runner-tx-balancer-interval` property.
+    #[must_use]
+    pub fn runner_tx_balancer_interval(mut self, value: i32) -> Self {
+        self.runner_tx_balancer_interval = Some(value);
+        self
+    }
+
+    /// Set [`runner_tx_hash`](field@Self::runner_tx_hash), the `runner-tx-hash` property.
+    #[must_use]
+    pub fn runner_tx_hash(mut self, value: Vec<String>) -> Self {
+        self.runner_tx_hash = Some(value);
+        self
+    }
 }
 
 impl Setting for TeamSetting {
@@ -5488,6 +8272,57 @@ pub struct TeamPortSetting {
     pub other: SettingMap,
 }
 
+impl TeamPortSetting {
+    /// Set [`config`](field@Self::config), the `config` property.
+    #[must_use]
+    pub fn config(mut self, value: impl Into<String>) -> Self {
+        self.config = Some(value.into());
+        self
+    }
+
+    /// Set [`lacp_key`](field@Self::lacp_key), the `lacp-key` property.
+    #[must_use]
+    pub fn lacp_key(mut self, value: i32) -> Self {
+        self.lacp_key = Some(value);
+        self
+    }
+
+    /// Set [`lacp_prio`](field@Self::lacp_prio), the `lacp-prio` property.
+    #[must_use]
+    pub fn lacp_prio(mut self, value: i32) -> Self {
+        self.lacp_prio = Some(value);
+        self
+    }
+
+    /// Set [`link_watchers`](field@Self::link_watchers), the `link-watchers` property.
+    #[must_use]
+    pub fn link_watchers(mut self, value: Vec<HashMap<String, OwnedValue>>) -> Self {
+        self.link_watchers = Some(value);
+        self
+    }
+
+    /// Set [`prio`](field@Self::prio), the `prio` property.
+    #[must_use]
+    pub fn prio(mut self, value: i32) -> Self {
+        self.prio = Some(value);
+        self
+    }
+
+    /// Set [`queue_id`](field@Self::queue_id), the `queue-id` property.
+    #[must_use]
+    pub fn queue_id(mut self, value: i32) -> Self {
+        self.queue_id = Some(value);
+        self
+    }
+
+    /// Set [`sticky`](field@Self::sticky), the `sticky` property.
+    #[must_use]
+    pub fn sticky(mut self, value: bool) -> Self {
+        self.sticky = Some(value);
+        self
+    }
+}
+
 impl Setting for TeamPortSetting {
     const NAME: &'static str = "team-port";
     const PROPERTIES: &'static [&'static str] = &[
@@ -5574,6 +8409,50 @@ pub struct TunSetting {
     pub other: SettingMap,
 }
 
+impl TunSetting {
+    /// Set [`group`](field@Self::group), the `group` property.
+    #[must_use]
+    pub fn group(mut self, value: impl Into<String>) -> Self {
+        self.group = Some(value.into());
+        self
+    }
+
+    /// Set [`mode`](field@Self::mode), the `mode` property.
+    #[must_use]
+    pub fn mode(mut self, value: u32) -> Self {
+        self.mode = Some(value);
+        self
+    }
+
+    /// Set [`multi_queue`](field@Self::multi_queue), the `multi-queue` property.
+    #[must_use]
+    pub fn multi_queue(mut self, value: bool) -> Self {
+        self.multi_queue = Some(value);
+        self
+    }
+
+    /// Set [`owner`](field@Self::owner), the `owner` property.
+    #[must_use]
+    pub fn owner(mut self, value: impl Into<String>) -> Self {
+        self.owner = Some(value.into());
+        self
+    }
+
+    /// Set [`pi`](field@Self::pi), the `pi` property.
+    #[must_use]
+    pub fn pi(mut self, value: bool) -> Self {
+        self.pi = Some(value);
+        self
+    }
+
+    /// Set [`vnet_hdr`](field@Self::vnet_hdr), the `vnet-hdr` property.
+    #[must_use]
+    pub fn vnet_hdr(mut self, value: bool) -> Self {
+        self.vnet_hdr = Some(value);
+        self
+    }
+}
+
 impl Setting for TunSetting {
     const NAME: &'static str = "tun";
     const PROPERTIES: &'static [&'static str] =
@@ -5618,6 +8497,15 @@ pub struct UserSetting {
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
+}
+
+impl UserSetting {
+    /// Set [`data`](field@Self::data), the `data` property.
+    #[must_use]
+    pub fn data(mut self, value: HashMap<String, String>) -> Self {
+        self.data = Some(value);
+        self
+    }
 }
 
 impl Setting for UserSetting {
@@ -5683,6 +8571,57 @@ pub struct VlanSetting {
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
+}
+
+impl VlanSetting {
+    /// Set [`egress_priority_map`](field@Self::egress_priority_map), the `egress-priority-map` property.
+    #[must_use]
+    pub fn egress_priority_map(mut self, value: Vec<String>) -> Self {
+        self.egress_priority_map = Some(value);
+        self
+    }
+
+    /// Set [`flags`](field@Self::flags), the `flags` property.
+    #[must_use]
+    pub fn flags(mut self, value: VlanFlags) -> Self {
+        self.flags = Some(value);
+        self
+    }
+
+    /// Set [`id`](field@Self::id), the `id` property.
+    #[must_use]
+    pub fn id(mut self, value: u32) -> Self {
+        self.id = Some(value);
+        self
+    }
+
+    /// Set [`ingress_priority_map`](field@Self::ingress_priority_map), the `ingress-priority-map` property.
+    #[must_use]
+    pub fn ingress_priority_map(mut self, value: Vec<String>) -> Self {
+        self.ingress_priority_map = Some(value);
+        self
+    }
+
+    /// Set [`interface_name`](field@Self::interface_name), the `interface-name` property.
+    #[must_use]
+    pub fn interface_name(mut self, value: impl Into<String>) -> Self {
+        self.interface_name = Some(value.into());
+        self
+    }
+
+    /// Set [`parent`](field@Self::parent), the `parent` property.
+    #[must_use]
+    pub fn parent(mut self, value: impl Into<String>) -> Self {
+        self.parent = Some(value.into());
+        self
+    }
+
+    /// Set [`protocol`](field@Self::protocol), the `protocol` property.
+    #[must_use]
+    pub fn protocol(mut self, value: impl Into<String>) -> Self {
+        self.protocol = Some(value.into());
+        self
+    }
 }
 
 impl Setting for VlanSetting {
@@ -5781,6 +8720,50 @@ pub struct VpnSetting {
     pub other: SettingMap,
 }
 
+impl VpnSetting {
+    /// Set [`data`](field@Self::data), the `data` property.
+    #[must_use]
+    pub fn data(mut self, value: HashMap<String, String>) -> Self {
+        self.data = Some(value);
+        self
+    }
+
+    /// Set [`persistent`](field@Self::persistent), the `persistent` property.
+    #[must_use]
+    pub fn persistent(mut self, value: bool) -> Self {
+        self.persistent = Some(value);
+        self
+    }
+
+    /// Set [`secrets`](field@Self::secrets), the `secrets` property.
+    #[must_use]
+    pub fn secrets(mut self, value: HashMap<String, String>) -> Self {
+        self.secrets = Some(value);
+        self
+    }
+
+    /// Set [`service_type`](field@Self::service_type), the `service-type` property.
+    #[must_use]
+    pub fn service_type(mut self, value: impl Into<String>) -> Self {
+        self.service_type = Some(value.into());
+        self
+    }
+
+    /// Set [`timeout`](field@Self::timeout), the `timeout` property.
+    #[must_use]
+    pub fn timeout(mut self, value: u32) -> Self {
+        self.timeout = Some(value);
+        self
+    }
+
+    /// Set [`user_name`](field@Self::user_name), the `user-name` property.
+    #[must_use]
+    pub fn user_name(mut self, value: impl Into<String>) -> Self {
+        self.user_name = Some(value.into());
+        self
+    }
+}
+
 impl Setting for VpnSetting {
     const NAME: &'static str = "vpn";
     const PROPERTIES: &'static [&'static str] = &[
@@ -5836,6 +8819,15 @@ pub struct VrfSetting {
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
+}
+
+impl VrfSetting {
+    /// Set [`table`](field@Self::table), the `table` property.
+    #[must_use]
+    pub fn table(mut self, value: u32) -> Self {
+        self.table = Some(value);
+        self
+    }
 }
 
 impl Setting for VrfSetting {
@@ -5957,6 +8949,120 @@ pub struct VxlanSetting {
     pub other: SettingMap,
 }
 
+impl VxlanSetting {
+    /// Set [`ageing`](field@Self::ageing), the `ageing` property.
+    #[must_use]
+    pub fn ageing(mut self, value: u32) -> Self {
+        self.ageing = Some(value);
+        self
+    }
+
+    /// Set [`destination_port`](field@Self::destination_port), the `destination-port` property.
+    #[must_use]
+    pub fn destination_port(mut self, value: u32) -> Self {
+        self.destination_port = Some(value);
+        self
+    }
+
+    /// Set [`id`](field@Self::id), the `id` property.
+    #[must_use]
+    pub fn id(mut self, value: u32) -> Self {
+        self.id = Some(value);
+        self
+    }
+
+    /// Set [`l2_miss`](field@Self::l2_miss), the `l2-miss` property.
+    #[must_use]
+    pub fn l2_miss(mut self, value: bool) -> Self {
+        self.l2_miss = Some(value);
+        self
+    }
+
+    /// Set [`l3_miss`](field@Self::l3_miss), the `l3-miss` property.
+    #[must_use]
+    pub fn l3_miss(mut self, value: bool) -> Self {
+        self.l3_miss = Some(value);
+        self
+    }
+
+    /// Set [`learning`](field@Self::learning), the `learning` property.
+    #[must_use]
+    pub fn learning(mut self, value: bool) -> Self {
+        self.learning = Some(value);
+        self
+    }
+
+    /// Set [`limit`](field@Self::limit), the `limit` property.
+    #[must_use]
+    pub fn limit(mut self, value: u32) -> Self {
+        self.limit = Some(value);
+        self
+    }
+
+    /// Set [`local`](field@Self::local), the `local` property.
+    #[must_use]
+    pub fn local(mut self, value: impl Into<String>) -> Self {
+        self.local = Some(value.into());
+        self
+    }
+
+    /// Set [`parent`](field@Self::parent), the `parent` property.
+    #[must_use]
+    pub fn parent(mut self, value: impl Into<String>) -> Self {
+        self.parent = Some(value.into());
+        self
+    }
+
+    /// Set [`proxy`](field@Self::proxy), the `proxy` property.
+    #[must_use]
+    pub fn proxy(mut self, value: bool) -> Self {
+        self.proxy = Some(value);
+        self
+    }
+
+    /// Set [`remote`](field@Self::remote), the `remote` property.
+    #[must_use]
+    pub fn remote(mut self, value: impl Into<String>) -> Self {
+        self.remote = Some(value.into());
+        self
+    }
+
+    /// Set [`rsc`](field@Self::rsc), the `rsc` property.
+    #[must_use]
+    pub fn rsc(mut self, value: bool) -> Self {
+        self.rsc = Some(value);
+        self
+    }
+
+    /// Set [`source_port_max`](field@Self::source_port_max), the `source-port-max` property.
+    #[must_use]
+    pub fn source_port_max(mut self, value: u32) -> Self {
+        self.source_port_max = Some(value);
+        self
+    }
+
+    /// Set [`source_port_min`](field@Self::source_port_min), the `source-port-min` property.
+    #[must_use]
+    pub fn source_port_min(mut self, value: u32) -> Self {
+        self.source_port_min = Some(value);
+        self
+    }
+
+    /// Set [`tos`](field@Self::tos), the `tos` property.
+    #[must_use]
+    pub fn tos(mut self, value: u32) -> Self {
+        self.tos = Some(value);
+        self
+    }
+
+    /// Set [`ttl`](field@Self::ttl), the `ttl` property.
+    #[must_use]
+    pub fn ttl(mut self, value: u32) -> Self {
+        self.ttl = Some(value);
+        self
+    }
+}
+
 impl Setting for VxlanSetting {
     const NAME: &'static str = "vxlan";
     const PROPERTIES: &'static [&'static str] = &[
@@ -6066,6 +9172,29 @@ pub struct WifiP2pSetting {
     pub other: SettingMap,
 }
 
+impl WifiP2pSetting {
+    /// Set [`peer`](field@Self::peer), the `peer` property.
+    #[must_use]
+    pub fn peer(mut self, value: impl Into<String>) -> Self {
+        self.peer = Some(value.into());
+        self
+    }
+
+    /// Set [`wfd_ies`](field@Self::wfd_ies), the `wfd-ies` property.
+    #[must_use]
+    pub fn wfd_ies(mut self, value: Vec<u8>) -> Self {
+        self.wfd_ies = Some(value);
+        self
+    }
+
+    /// Set [`wps_method`](field@Self::wps_method), the `wps-method` property.
+    #[must_use]
+    pub fn wps_method(mut self, value: u32) -> Self {
+        self.wps_method = Some(value);
+        self
+    }
+}
+
 impl Setting for WifiP2pSetting {
     const NAME: &'static str = "wifi-p2p";
     const PROPERTIES: &'static [&'static str] = &["peer", "wfd-ies", "wps-method"];
@@ -6105,6 +9234,22 @@ pub struct WimaxSetting {
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
+}
+
+impl WimaxSetting {
+    /// Set [`mac_address`](field@Self::mac_address), the `mac-address` property.
+    #[must_use]
+    pub fn mac_address(mut self, value: impl Into<MacAddress>) -> Self {
+        self.mac_address = Some(value.into());
+        self
+    }
+
+    /// Set [`network_name`](field@Self::network_name), the `network-name` property.
+    #[must_use]
+    pub fn network_name(mut self, value: impl Into<String>) -> Self {
+        self.network_name = Some(value.into());
+        self
+    }
 }
 
 impl Setting for WimaxSetting {
@@ -6236,6 +9381,127 @@ pub struct WiredSetting {
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
+}
+
+impl WiredSetting {
+    /// Set [`accept_all_mac_addresses`](field@Self::accept_all_mac_addresses), the `accept-all-mac-addresses` property.
+    #[must_use]
+    pub fn accept_all_mac_addresses(mut self, value: Ternary) -> Self {
+        self.accept_all_mac_addresses = Some(value);
+        self
+    }
+
+    /// Set [`assigned_mac_address`](field@Self::assigned_mac_address), the `assigned-mac-address` property.
+    #[must_use]
+    pub fn assigned_mac_address(mut self, value: impl Into<AssignedMacAddress>) -> Self {
+        self.assigned_mac_address = Some(value.into());
+        self
+    }
+
+    /// Set [`auto_negotiate`](field@Self::auto_negotiate), the `auto-negotiate` property.
+    #[must_use]
+    pub fn auto_negotiate(mut self, value: bool) -> Self {
+        self.auto_negotiate = Some(value);
+        self
+    }
+
+    /// Set [`cloned_mac_address`](field@Self::cloned_mac_address), the `cloned-mac-address` property.
+    #[must_use]
+    pub fn cloned_mac_address(mut self, value: impl Into<MacAddress>) -> Self {
+        self.cloned_mac_address = Some(value.into());
+        self
+    }
+
+    /// Set [`duplex`](field@Self::duplex), the `duplex` property.
+    #[must_use]
+    pub fn duplex(mut self, value: impl Into<String>) -> Self {
+        self.duplex = Some(value.into());
+        self
+    }
+
+    /// Set [`generate_mac_address_mask`](field@Self::generate_mac_address_mask), the `generate-mac-address-mask` property.
+    #[must_use]
+    pub fn generate_mac_address_mask(mut self, value: impl Into<String>) -> Self {
+        self.generate_mac_address_mask = Some(value.into());
+        self
+    }
+
+    /// Set [`mac_address`](field@Self::mac_address), the `mac-address` property.
+    #[must_use]
+    pub fn mac_address(mut self, value: impl Into<MacAddress>) -> Self {
+        self.mac_address = Some(value.into());
+        self
+    }
+
+    /// Set [`mac_address_blacklist`](field@Self::mac_address_blacklist), the `mac-address-blacklist` property.
+    #[must_use]
+    pub fn mac_address_blacklist(mut self, value: Vec<String>) -> Self {
+        self.mac_address_blacklist = Some(value);
+        self
+    }
+
+    /// Set [`mac_address_denylist`](field@Self::mac_address_denylist), the `mac-address-denylist` property.
+    #[must_use]
+    pub fn mac_address_denylist(mut self, value: Vec<String>) -> Self {
+        self.mac_address_denylist = Some(value);
+        self
+    }
+
+    /// Set [`mtu`](field@Self::mtu), the `mtu` property.
+    #[must_use]
+    pub fn mtu(mut self, value: u32) -> Self {
+        self.mtu = Some(value);
+        self
+    }
+
+    /// Set [`port`](field@Self::port), the `port` property.
+    #[must_use]
+    pub fn port(mut self, value: impl Into<String>) -> Self {
+        self.port = Some(value.into());
+        self
+    }
+
+    /// Set [`s390_nettype`](field@Self::s390_nettype), the `s390-nettype` property.
+    #[must_use]
+    pub fn s390_nettype(mut self, value: impl Into<String>) -> Self {
+        self.s390_nettype = Some(value.into());
+        self
+    }
+
+    /// Set [`s390_options`](field@Self::s390_options), the `s390-options` property.
+    #[must_use]
+    pub fn s390_options(mut self, value: HashMap<String, String>) -> Self {
+        self.s390_options = Some(value);
+        self
+    }
+
+    /// Set [`s390_subchannels`](field@Self::s390_subchannels), the `s390-subchannels` property.
+    #[must_use]
+    pub fn s390_subchannels(mut self, value: Vec<String>) -> Self {
+        self.s390_subchannels = Some(value);
+        self
+    }
+
+    /// Set [`speed`](field@Self::speed), the `speed` property.
+    #[must_use]
+    pub fn speed(mut self, value: u32) -> Self {
+        self.speed = Some(value);
+        self
+    }
+
+    /// Set [`wake_on_lan`](field@Self::wake_on_lan), the `wake-on-lan` property.
+    #[must_use]
+    pub fn wake_on_lan(mut self, value: u32) -> Self {
+        self.wake_on_lan = Some(value);
+        self
+    }
+
+    /// Set [`wake_on_lan_password`](field@Self::wake_on_lan_password), the `wake-on-lan-password` property.
+    #[must_use]
+    pub fn wake_on_lan_password(mut self, value: impl Into<String>) -> Self {
+        self.wake_on_lan_password = Some(value.into());
+        self
+    }
 }
 
 impl Setting for WiredSetting {
@@ -6430,6 +9696,71 @@ pub struct WireguardSetting {
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
+}
+
+impl WireguardSetting {
+    /// Set [`fwmark`](field@Self::fwmark), the `fwmark` property.
+    #[must_use]
+    pub fn fwmark(mut self, value: u32) -> Self {
+        self.fwmark = Some(value);
+        self
+    }
+
+    /// Set [`ip4_auto_default_route`](field@Self::ip4_auto_default_route), the `ip4-auto-default-route` property.
+    #[must_use]
+    pub fn ip4_auto_default_route(mut self, value: Ternary) -> Self {
+        self.ip4_auto_default_route = Some(value);
+        self
+    }
+
+    /// Set [`ip6_auto_default_route`](field@Self::ip6_auto_default_route), the `ip6-auto-default-route` property.
+    #[must_use]
+    pub fn ip6_auto_default_route(mut self, value: Ternary) -> Self {
+        self.ip6_auto_default_route = Some(value);
+        self
+    }
+
+    /// Set [`listen_port`](field@Self::listen_port), the `listen-port` property.
+    #[must_use]
+    pub fn listen_port(mut self, value: u32) -> Self {
+        self.listen_port = Some(value);
+        self
+    }
+
+    /// Set [`mtu`](field@Self::mtu), the `mtu` property.
+    #[must_use]
+    pub fn mtu(mut self, value: u32) -> Self {
+        self.mtu = Some(value);
+        self
+    }
+
+    /// Set [`peer_routes`](field@Self::peer_routes), the `peer-routes` property.
+    #[must_use]
+    pub fn peer_routes(mut self, value: bool) -> Self {
+        self.peer_routes = Some(value);
+        self
+    }
+
+    /// Set [`peers`](field@Self::peers), the `peers` property.
+    #[must_use]
+    pub fn peers(mut self, value: Vec<HashMap<String, OwnedValue>>) -> Self {
+        self.peers = Some(value);
+        self
+    }
+
+    /// Set [`private_key`](field@Self::private_key), the `private-key` property.
+    #[must_use]
+    pub fn private_key(mut self, value: impl Into<String>) -> Self {
+        self.private_key = Some(value.into());
+        self
+    }
+
+    /// Set [`private_key_flags`](field@Self::private_key_flags), the `private-key-flags` property.
+    #[must_use]
+    pub fn private_key_flags(mut self, value: SettingSecretFlags) -> Self {
+        self.private_key_flags = Some(value);
+        self
+    }
 }
 
 impl Setting for WireguardSetting {
@@ -6639,6 +9970,155 @@ pub struct WirelessSetting {
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
+}
+
+impl WirelessSetting {
+    /// Set [`ap_isolation`](field@Self::ap_isolation), the `ap-isolation` property.
+    #[must_use]
+    pub fn ap_isolation(mut self, value: Ternary) -> Self {
+        self.ap_isolation = Some(value);
+        self
+    }
+
+    /// Set [`assigned_mac_address`](field@Self::assigned_mac_address), the `assigned-mac-address` property.
+    #[must_use]
+    pub fn assigned_mac_address(mut self, value: impl Into<AssignedMacAddress>) -> Self {
+        self.assigned_mac_address = Some(value.into());
+        self
+    }
+
+    /// Set [`band`](field@Self::band), the `band` property.
+    #[must_use]
+    pub fn band(mut self, value: WirelessBand) -> Self {
+        self.band = Some(value);
+        self
+    }
+
+    /// Set [`bssid`](field@Self::bssid), the `bssid` property.
+    #[must_use]
+    pub fn bssid(mut self, value: impl Into<MacAddress>) -> Self {
+        self.bssid = Some(value.into());
+        self
+    }
+
+    /// Set [`channel`](field@Self::channel), the `channel` property.
+    #[must_use]
+    pub fn channel(mut self, value: u32) -> Self {
+        self.channel = Some(value);
+        self
+    }
+
+    /// Set [`channel_width`](field@Self::channel_width), the `channel-width` property.
+    #[must_use]
+    pub fn channel_width(mut self, value: i32) -> Self {
+        self.channel_width = Some(value);
+        self
+    }
+
+    /// Set [`cloned_mac_address`](field@Self::cloned_mac_address), the `cloned-mac-address` property.
+    #[must_use]
+    pub fn cloned_mac_address(mut self, value: impl Into<MacAddress>) -> Self {
+        self.cloned_mac_address = Some(value.into());
+        self
+    }
+
+    /// Set [`generate_mac_address_mask`](field@Self::generate_mac_address_mask), the `generate-mac-address-mask` property.
+    #[must_use]
+    pub fn generate_mac_address_mask(mut self, value: impl Into<String>) -> Self {
+        self.generate_mac_address_mask = Some(value.into());
+        self
+    }
+
+    /// Set [`hidden`](field@Self::hidden), the `hidden` property.
+    #[must_use]
+    pub fn hidden(mut self, value: bool) -> Self {
+        self.hidden = Some(value);
+        self
+    }
+
+    /// Set [`mac_address`](field@Self::mac_address), the `mac-address` property.
+    #[must_use]
+    pub fn mac_address(mut self, value: impl Into<MacAddress>) -> Self {
+        self.mac_address = Some(value.into());
+        self
+    }
+
+    /// Set [`mac_address_blacklist`](field@Self::mac_address_blacklist), the `mac-address-blacklist` property.
+    #[must_use]
+    pub fn mac_address_blacklist(mut self, value: Vec<String>) -> Self {
+        self.mac_address_blacklist = Some(value);
+        self
+    }
+
+    /// Set [`mac_address_denylist`](field@Self::mac_address_denylist), the `mac-address-denylist` property.
+    #[must_use]
+    pub fn mac_address_denylist(mut self, value: Vec<String>) -> Self {
+        self.mac_address_denylist = Some(value);
+        self
+    }
+
+    /// Set [`mac_address_randomization`](field@Self::mac_address_randomization), the `mac-address-randomization` property.
+    #[must_use]
+    pub fn mac_address_randomization(mut self, value: u32) -> Self {
+        self.mac_address_randomization = Some(value);
+        self
+    }
+
+    /// Set [`mode`](field@Self::mode), the `mode` property.
+    #[must_use]
+    pub fn mode(mut self, value: WirelessMode) -> Self {
+        self.mode = Some(value);
+        self
+    }
+
+    /// Set [`mtu`](field@Self::mtu), the `mtu` property.
+    #[must_use]
+    pub fn mtu(mut self, value: u32) -> Self {
+        self.mtu = Some(value);
+        self
+    }
+
+    /// Set [`powersave`](field@Self::powersave), the `powersave` property.
+    #[must_use]
+    pub fn powersave(mut self, value: u32) -> Self {
+        self.powersave = Some(value);
+        self
+    }
+
+    /// Set [`rate`](field@Self::rate), the `rate` property.
+    #[must_use]
+    pub fn rate(mut self, value: u32) -> Self {
+        self.rate = Some(value);
+        self
+    }
+
+    /// Set [`seen_bssids`](field@Self::seen_bssids), the `seen-bssids` property.
+    #[must_use]
+    pub fn seen_bssids(mut self, value: Vec<String>) -> Self {
+        self.seen_bssids = Some(value);
+        self
+    }
+
+    /// Set [`ssid`](field@Self::ssid), the `ssid` property.
+    #[must_use]
+    pub fn ssid(mut self, value: impl Into<Ssid>) -> Self {
+        self.ssid = Some(value.into());
+        self
+    }
+
+    /// Set [`tx_power`](field@Self::tx_power), the `tx-power` property.
+    #[must_use]
+    pub fn tx_power(mut self, value: u32) -> Self {
+        self.tx_power = Some(value);
+        self
+    }
+
+    /// Set [`wake_on_wlan`](field@Self::wake_on_wlan), the `wake-on-wlan` property.
+    #[must_use]
+    pub fn wake_on_wlan(mut self, value: u32) -> Self {
+        self.wake_on_wlan = Some(value);
+        self
+    }
 }
 
 impl Setting for WirelessSetting {
@@ -6874,6 +10354,148 @@ pub struct WirelessSecuritySetting {
     pub other: SettingMap,
 }
 
+impl WirelessSecuritySetting {
+    /// Set [`auth_alg`](field@Self::auth_alg), the `auth-alg` property.
+    #[must_use]
+    pub fn auth_alg(mut self, value: WirelessSecurityAuthAlg) -> Self {
+        self.auth_alg = Some(value);
+        self
+    }
+
+    /// Set [`fils`](field@Self::fils), the `fils` property.
+    #[must_use]
+    pub fn fils(mut self, value: i32) -> Self {
+        self.fils = Some(value);
+        self
+    }
+
+    /// Set [`group`](field@Self::group), the `group` property.
+    #[must_use]
+    pub fn group(mut self, value: Vec<WirelessSecurityGroup>) -> Self {
+        self.group = Some(value);
+        self
+    }
+
+    /// Set [`key_mgmt`](field@Self::key_mgmt), the `key-mgmt` property.
+    #[must_use]
+    pub fn key_mgmt(mut self, value: WirelessSecurityKeyMgmt) -> Self {
+        self.key_mgmt = Some(value);
+        self
+    }
+
+    /// Set [`leap_password`](field@Self::leap_password), the `leap-password` property.
+    #[must_use]
+    pub fn leap_password(mut self, value: impl Into<String>) -> Self {
+        self.leap_password = Some(value.into());
+        self
+    }
+
+    /// Set [`leap_password_flags`](field@Self::leap_password_flags), the `leap-password-flags` property.
+    #[must_use]
+    pub fn leap_password_flags(mut self, value: SettingSecretFlags) -> Self {
+        self.leap_password_flags = Some(value);
+        self
+    }
+
+    /// Set [`leap_username`](field@Self::leap_username), the `leap-username` property.
+    #[must_use]
+    pub fn leap_username(mut self, value: impl Into<String>) -> Self {
+        self.leap_username = Some(value.into());
+        self
+    }
+
+    /// Set [`pairwise`](field@Self::pairwise), the `pairwise` property.
+    #[must_use]
+    pub fn pairwise(mut self, value: Vec<WirelessSecurityPairwise>) -> Self {
+        self.pairwise = Some(value);
+        self
+    }
+
+    /// Set [`pmf`](field@Self::pmf), the `pmf` property.
+    #[must_use]
+    pub fn pmf(mut self, value: i32) -> Self {
+        self.pmf = Some(value);
+        self
+    }
+
+    /// Set [`proto`](field@Self::proto), the `proto` property.
+    #[must_use]
+    pub fn proto(mut self, value: Vec<WirelessSecurityProto>) -> Self {
+        self.proto = Some(value);
+        self
+    }
+
+    /// Set [`psk`](field@Self::psk), the `psk` property.
+    #[must_use]
+    pub fn psk(mut self, value: impl Into<String>) -> Self {
+        self.psk = Some(value.into());
+        self
+    }
+
+    /// Set [`psk_flags`](field@Self::psk_flags), the `psk-flags` property.
+    #[must_use]
+    pub fn psk_flags(mut self, value: SettingSecretFlags) -> Self {
+        self.psk_flags = Some(value);
+        self
+    }
+
+    /// Set [`wep_key_flags`](field@Self::wep_key_flags), the `wep-key-flags` property.
+    #[must_use]
+    pub fn wep_key_flags(mut self, value: SettingSecretFlags) -> Self {
+        self.wep_key_flags = Some(value);
+        self
+    }
+
+    /// Set [`wep_key_type`](field@Self::wep_key_type), the `wep-key-type` property.
+    #[must_use]
+    pub fn wep_key_type(mut self, value: WepKeyType) -> Self {
+        self.wep_key_type = Some(value);
+        self
+    }
+
+    /// Set [`wep_key0`](field@Self::wep_key0), the `wep-key0` property.
+    #[must_use]
+    pub fn wep_key0(mut self, value: impl Into<String>) -> Self {
+        self.wep_key0 = Some(value.into());
+        self
+    }
+
+    /// Set [`wep_key1`](field@Self::wep_key1), the `wep-key1` property.
+    #[must_use]
+    pub fn wep_key1(mut self, value: impl Into<String>) -> Self {
+        self.wep_key1 = Some(value.into());
+        self
+    }
+
+    /// Set [`wep_key2`](field@Self::wep_key2), the `wep-key2` property.
+    #[must_use]
+    pub fn wep_key2(mut self, value: impl Into<String>) -> Self {
+        self.wep_key2 = Some(value.into());
+        self
+    }
+
+    /// Set [`wep_key3`](field@Self::wep_key3), the `wep-key3` property.
+    #[must_use]
+    pub fn wep_key3(mut self, value: impl Into<String>) -> Self {
+        self.wep_key3 = Some(value.into());
+        self
+    }
+
+    /// Set [`wep_tx_keyidx`](field@Self::wep_tx_keyidx), the `wep-tx-keyidx` property.
+    #[must_use]
+    pub fn wep_tx_keyidx(mut self, value: u32) -> Self {
+        self.wep_tx_keyidx = Some(value);
+        self
+    }
+
+    /// Set [`wps_method`](field@Self::wps_method), the `wps-method` property.
+    #[must_use]
+    pub fn wps_method(mut self, value: u32) -> Self {
+        self.wps_method = Some(value);
+        self
+    }
+}
+
 impl Setting for WirelessSecuritySetting {
     const NAME: &'static str = "802-11-wireless-security";
     const PROPERTIES: &'static [&'static str] = &[
@@ -7005,6 +10627,43 @@ pub struct WpanSetting {
     pub other: SettingMap,
 }
 
+impl WpanSetting {
+    /// Set [`channel`](field@Self::channel), the `channel` property.
+    #[must_use]
+    pub fn channel(mut self, value: i32) -> Self {
+        self.channel = Some(value);
+        self
+    }
+
+    /// Set [`mac_address`](field@Self::mac_address), the `mac-address` property.
+    #[must_use]
+    pub fn mac_address(mut self, value: impl Into<String>) -> Self {
+        self.mac_address = Some(value.into());
+        self
+    }
+
+    /// Set [`page`](field@Self::page), the `page` property.
+    #[must_use]
+    pub fn page(mut self, value: i32) -> Self {
+        self.page = Some(value);
+        self
+    }
+
+    /// Set [`pan_id`](field@Self::pan_id), the `pan-id` property.
+    #[must_use]
+    pub fn pan_id(mut self, value: u32) -> Self {
+        self.pan_id = Some(value);
+        self
+    }
+
+    /// Set [`short_address`](field@Self::short_address), the `short-address` property.
+    #[must_use]
+    pub fn short_address(mut self, value: u32) -> Self {
+        self.short_address = Some(value);
+        self
+    }
+}
+
 impl Setting for WpanSetting {
     const NAME: &'static str = "wpan";
     const PROPERTIES: &'static [&'static str] =
@@ -7058,6 +10717,22 @@ pub struct BondPortSetting {
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
+}
+
+impl BondPortSetting {
+    /// Set [`prio`](field@Self::prio), the `prio` property.
+    #[must_use]
+    pub fn prio(mut self, value: i32) -> Self {
+        self.prio = Some(value);
+        self
+    }
+
+    /// Set [`queue_id`](field@Self::queue_id), the `queue-id` property.
+    #[must_use]
+    pub fn queue_id(mut self, value: u32) -> Self {
+        self.queue_id = Some(value);
+        self
+    }
 }
 
 impl Setting for BondPortSetting {
@@ -7125,6 +10800,50 @@ pub struct GeneveSetting {
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
+}
+
+impl GeneveSetting {
+    /// Set [`destination_port`](field@Self::destination_port), the `destination-port` property.
+    #[must_use]
+    pub fn destination_port(mut self, value: u32) -> Self {
+        self.destination_port = Some(value);
+        self
+    }
+
+    /// Set [`df`](field@Self::df), the `df` property.
+    #[must_use]
+    pub fn df(mut self, value: i32) -> Self {
+        self.df = Some(value);
+        self
+    }
+
+    /// Set [`id`](field@Self::id), the `id` property.
+    #[must_use]
+    pub fn id(mut self, value: u32) -> Self {
+        self.id = Some(value);
+        self
+    }
+
+    /// Set [`remote`](field@Self::remote), the `remote` property.
+    #[must_use]
+    pub fn remote(mut self, value: impl Into<String>) -> Self {
+        self.remote = Some(value.into());
+        self
+    }
+
+    /// Set [`tos`](field@Self::tos), the `tos` property.
+    #[must_use]
+    pub fn tos(mut self, value: u32) -> Self {
+        self.tos = Some(value);
+        self
+    }
+
+    /// Set [`ttl`](field@Self::ttl), the `ttl` property.
+    #[must_use]
+    pub fn ttl(mut self, value: i32) -> Self {
+        self.ttl = Some(value);
+        self
+    }
 }
 
 impl Setting for GeneveSetting {
@@ -7208,6 +10927,36 @@ pub struct HostnameSetting {
     pub other: SettingMap,
 }
 
+impl HostnameSetting {
+    /// Set [`from_dhcp`](field@Self::from_dhcp), the `from-dhcp` property.
+    #[must_use]
+    pub fn from_dhcp(mut self, value: Ternary) -> Self {
+        self.from_dhcp = Some(value);
+        self
+    }
+
+    /// Set [`from_dns_lookup`](field@Self::from_dns_lookup), the `from-dns-lookup` property.
+    #[must_use]
+    pub fn from_dns_lookup(mut self, value: Ternary) -> Self {
+        self.from_dns_lookup = Some(value);
+        self
+    }
+
+    /// Set [`only_from_default`](field@Self::only_from_default), the `only-from-default` property.
+    #[must_use]
+    pub fn only_from_default(mut self, value: Ternary) -> Self {
+        self.only_from_default = Some(value);
+        self
+    }
+
+    /// Set [`priority_`](field@Self::priority_), the `priority` property.
+    #[must_use]
+    pub fn priority_(mut self, value: i32) -> Self {
+        self.priority_ = Some(value);
+        self
+    }
+}
+
 impl Setting for HostnameSetting {
     const NAME: &'static str = "hostname";
     const PROPERTIES: &'static [&'static str] = &[
@@ -7282,6 +11031,36 @@ pub struct LinkSetting {
     pub other: SettingMap,
 }
 
+impl LinkSetting {
+    /// Set [`gro_max_size`](field@Self::gro_max_size), the `gro-max-size` property.
+    #[must_use]
+    pub fn gro_max_size(mut self, value: i64) -> Self {
+        self.gro_max_size = Some(value);
+        self
+    }
+
+    /// Set [`gso_max_segments`](field@Self::gso_max_segments), the `gso-max-segments` property.
+    #[must_use]
+    pub fn gso_max_segments(mut self, value: i64) -> Self {
+        self.gso_max_segments = Some(value);
+        self
+    }
+
+    /// Set [`gso_max_size`](field@Self::gso_max_size), the `gso-max-size` property.
+    #[must_use]
+    pub fn gso_max_size(mut self, value: i64) -> Self {
+        self.gso_max_size = Some(value);
+        self
+    }
+
+    /// Set [`tx_queue_length`](field@Self::tx_queue_length), the `tx-queue-length` property.
+    #[must_use]
+    pub fn tx_queue_length(mut self, value: i64) -> Self {
+        self.tx_queue_length = Some(value);
+        self
+    }
+}
+
 impl Setting for LinkSetting {
     const NAME: &'static str = "link";
     const PROPERTIES: &'static [&'static str] = &[
@@ -7338,6 +11117,15 @@ pub struct LoopbackSetting {
     pub other: SettingMap,
 }
 
+impl LoopbackSetting {
+    /// Set [`mtu`](field@Self::mtu), the `mtu` property.
+    #[must_use]
+    pub fn mtu(mut self, value: u32) -> Self {
+        self.mtu = Some(value);
+        self
+    }
+}
+
 impl Setting for LoopbackSetting {
     const NAME: &'static str = "loopback";
     const PROPERTIES: &'static [&'static str] = &["mtu"];
@@ -7371,6 +11159,15 @@ pub struct OvsExternalIdsSetting {
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
     pub other: SettingMap,
+}
+
+impl OvsExternalIdsSetting {
+    /// Set [`data`](field@Self::data), the `data` property.
+    #[must_use]
+    pub fn data(mut self, value: HashMap<String, String>) -> Self {
+        self.data = Some(value);
+        self
+    }
 }
 
 impl Setting for OvsExternalIdsSetting {
@@ -7408,6 +11205,15 @@ pub struct OvsOtherConfigSetting {
     pub other: SettingMap,
 }
 
+impl OvsOtherConfigSetting {
+    /// Set [`data`](field@Self::data), the `data` property.
+    #[must_use]
+    pub fn data(mut self, value: HashMap<String, String>) -> Self {
+        self.data = Some(value);
+        self
+    }
+}
+
 impl Setting for OvsOtherConfigSetting {
     const NAME: &'static str = "ovs-other-config";
     const PROPERTIES: &'static [&'static str] = &["data"];
@@ -7443,6 +11249,15 @@ pub struct PrefixDelegationSetting {
     pub other: SettingMap,
 }
 
+impl PrefixDelegationSetting {
+    /// Set [`subnet_id`](field@Self::subnet_id), the `subnet-id` property.
+    #[must_use]
+    pub fn subnet_id(mut self, value: i64) -> Self {
+        self.subnet_id = Some(value);
+        self
+    }
+}
+
 impl Setting for PrefixDelegationSetting {
     const NAME: &'static str = "prefix-delegation";
     const PROPERTIES: &'static [&'static str] = &["subnet-id"];
@@ -7476,6 +11291,15 @@ pub struct VethSetting {
     pub other: SettingMap,
 }
 
+impl VethSetting {
+    /// Set [`peer`](field@Self::peer), the `peer` property.
+    #[must_use]
+    pub fn peer(mut self, value: impl Into<String>) -> Self {
+        self.peer = Some(value.into());
+        self
+    }
+}
+
 impl Setting for VethSetting {
     const NAME: &'static str = "veth";
     const PROPERTIES: &'static [&'static str] = &["peer"];
@@ -7499,9 +11323,9 @@ impl Setting for VethSetting {
 ///
 /// Every setting is optional, and so is every property within one: NetworkManager
 /// normalises a profile before validating it, so leaving something out asks it to
-/// decide. Only [`connection.id`](ConnectionSetting::id) and one base-type setting —
-/// [`wired`](Self::wired), [`wireless`](Self::wireless), and so on — are required, and
-/// [`ConnectionProfile::new`] supplies the first.
+/// decide. Only [`connection.id`](field@ConnectionSetting::id) and one base-type
+/// setting — [`wired`](field@Self::wired), [`wireless`](field@Self::wireless), and so
+/// on — are required, and [`ConnectionProfile::new`] supplies the first.
 #[derive(Debug, Default, Clone, PartialEq)]
 pub struct ConnectionProfile {
     /// The `connection` setting.
@@ -7624,20 +11448,424 @@ pub struct ConnectionProfile {
 }
 
 impl ConnectionProfile {
+    /// Set [`connection`](field@Self::connection), the `connection` setting.
+    #[must_use]
+    pub fn connection(mut self, value: ConnectionSetting) -> Self {
+        self.connection = Some(value);
+        self
+    }
+
+    /// Set [`lowpan`](field@Self::lowpan), the `6lowpan` setting.
+    #[must_use]
+    pub fn lowpan(mut self, value: LowpanSetting) -> Self {
+        self.lowpan = Some(value);
+        self
+    }
+
+    /// Set [`ieee8021x`](field@Self::ieee8021x), the `802-1x` setting.
+    #[must_use]
+    pub fn ieee8021x(mut self, value: Ieee8021xSetting) -> Self {
+        self.ieee8021x = Some(value);
+        self
+    }
+
+    /// Set [`adsl`](field@Self::adsl), the `adsl` setting.
+    #[must_use]
+    pub fn adsl(mut self, value: AdslSetting) -> Self {
+        self.adsl = Some(value);
+        self
+    }
+
+    /// Set [`bluetooth`](field@Self::bluetooth), the `bluetooth` setting.
+    #[must_use]
+    pub fn bluetooth(mut self, value: BluetoothSetting) -> Self {
+        self.bluetooth = Some(value);
+        self
+    }
+
+    /// Set [`bond`](field@Self::bond), the `bond` setting.
+    #[must_use]
+    pub fn bond(mut self, value: BondSetting) -> Self {
+        self.bond = Some(value);
+        self
+    }
+
+    /// Set [`bridge`](field@Self::bridge), the `bridge` setting.
+    #[must_use]
+    pub fn bridge(mut self, value: BridgeSetting) -> Self {
+        self.bridge = Some(value);
+        self
+    }
+
+    /// Set [`bridge_port`](field@Self::bridge_port), the `bridge-port` setting.
+    #[must_use]
+    pub fn bridge_port(mut self, value: BridgePortSetting) -> Self {
+        self.bridge_port = Some(value);
+        self
+    }
+
+    /// Set [`cdma`](field@Self::cdma), the `cdma` setting.
+    #[must_use]
+    pub fn cdma(mut self, value: CdmaSetting) -> Self {
+        self.cdma = Some(value);
+        self
+    }
+
+    /// Set [`dcb`](field@Self::dcb), the `dcb` setting.
+    #[must_use]
+    pub fn dcb(mut self, value: DcbSetting) -> Self {
+        self.dcb = Some(value);
+        self
+    }
+
+    /// Set [`generic`](field@Self::generic), the `generic` setting.
+    #[must_use]
+    pub fn generic(mut self, value: GenericSetting) -> Self {
+        self.generic = Some(value);
+        self
+    }
+
+    /// Set [`gsm`](field@Self::gsm), the `gsm` setting.
+    #[must_use]
+    pub fn gsm(mut self, value: GsmSetting) -> Self {
+        self.gsm = Some(value);
+        self
+    }
+
+    /// Set [`hsr`](field@Self::hsr), the `hsr` setting.
+    #[must_use]
+    pub fn hsr(mut self, value: HsrSetting) -> Self {
+        self.hsr = Some(value);
+        self
+    }
+
+    /// Set [`infiniband`](field@Self::infiniband), the `infiniband` setting.
+    #[must_use]
+    pub fn infiniband(mut self, value: InfinibandSetting) -> Self {
+        self.infiniband = Some(value);
+        self
+    }
+
+    /// Set [`ipv4`](field@Self::ipv4), the `ipv4` setting.
+    #[must_use]
+    pub fn ipv4(mut self, value: Ipv4Setting) -> Self {
+        self.ipv4 = Some(value);
+        self
+    }
+
+    /// Set [`ipv6`](field@Self::ipv6), the `ipv6` setting.
+    #[must_use]
+    pub fn ipv6(mut self, value: Ipv6Setting) -> Self {
+        self.ipv6 = Some(value);
+        self
+    }
+
+    /// Set [`ip_tunnel`](field@Self::ip_tunnel), the `ip-tunnel` setting.
+    #[must_use]
+    pub fn ip_tunnel(mut self, value: IpTunnelSetting) -> Self {
+        self.ip_tunnel = Some(value);
+        self
+    }
+
+    /// Set [`ipvlan`](field@Self::ipvlan), the `ipvlan` setting.
+    #[must_use]
+    pub fn ipvlan(mut self, value: IpvlanSetting) -> Self {
+        self.ipvlan = Some(value);
+        self
+    }
+
+    /// Set [`macsec`](field@Self::macsec), the `macsec` setting.
+    #[must_use]
+    pub fn macsec(mut self, value: MacsecSetting) -> Self {
+        self.macsec = Some(value);
+        self
+    }
+
+    /// Set [`macvlan`](field@Self::macvlan), the `macvlan` setting.
+    #[must_use]
+    pub fn macvlan(mut self, value: MacvlanSetting) -> Self {
+        self.macvlan = Some(value);
+        self
+    }
+
+    /// Set [`match_`](field@Self::match_), the `match` setting.
+    #[must_use]
+    pub fn match_(mut self, value: MatchSetting) -> Self {
+        self.match_ = Some(value);
+        self
+    }
+
+    /// Set [`olpc_mesh`](field@Self::olpc_mesh), the `802-11-olpc-mesh` setting.
+    #[must_use]
+    pub fn olpc_mesh(mut self, value: OlpcMeshSetting) -> Self {
+        self.olpc_mesh = Some(value);
+        self
+    }
+
+    /// Set [`ovs_bridge`](field@Self::ovs_bridge), the `ovs-bridge` setting.
+    #[must_use]
+    pub fn ovs_bridge(mut self, value: OvsBridgeSetting) -> Self {
+        self.ovs_bridge = Some(value);
+        self
+    }
+
+    /// Set [`ovs_dpdk`](field@Self::ovs_dpdk), the `ovs-dpdk` setting.
+    #[must_use]
+    pub fn ovs_dpdk(mut self, value: OvsDpdkSetting) -> Self {
+        self.ovs_dpdk = Some(value);
+        self
+    }
+
+    /// Set [`ovs_interface`](field@Self::ovs_interface), the `ovs-interface` setting.
+    #[must_use]
+    pub fn ovs_interface(mut self, value: OvsInterfaceSetting) -> Self {
+        self.ovs_interface = Some(value);
+        self
+    }
+
+    /// Set [`ovs_patch`](field@Self::ovs_patch), the `ovs-patch` setting.
+    #[must_use]
+    pub fn ovs_patch(mut self, value: OvsPatchSetting) -> Self {
+        self.ovs_patch = Some(value);
+        self
+    }
+
+    /// Set [`ovs_port`](field@Self::ovs_port), the `ovs-port` setting.
+    #[must_use]
+    pub fn ovs_port(mut self, value: OvsPortSetting) -> Self {
+        self.ovs_port = Some(value);
+        self
+    }
+
+    /// Set [`ppp`](field@Self::ppp), the `ppp` setting.
+    #[must_use]
+    pub fn ppp(mut self, value: PppSetting) -> Self {
+        self.ppp = Some(value);
+        self
+    }
+
+    /// Set [`pppoe`](field@Self::pppoe), the `pppoe` setting.
+    #[must_use]
+    pub fn pppoe(mut self, value: PppoeSetting) -> Self {
+        self.pppoe = Some(value);
+        self
+    }
+
+    /// Set [`proxy`](field@Self::proxy), the `proxy` setting.
+    #[must_use]
+    pub fn proxy(mut self, value: ProxySetting) -> Self {
+        self.proxy = Some(value);
+        self
+    }
+
+    /// Set [`serial`](field@Self::serial), the `serial` setting.
+    #[must_use]
+    pub fn serial(mut self, value: SerialSetting) -> Self {
+        self.serial = Some(value);
+        self
+    }
+
+    /// Set [`sriov`](field@Self::sriov), the `sriov` setting.
+    #[must_use]
+    pub fn sriov(mut self, value: SriovSetting) -> Self {
+        self.sriov = Some(value);
+        self
+    }
+
+    /// Set [`tc`](field@Self::tc), the `tc` setting.
+    #[must_use]
+    pub fn tc(mut self, value: TcSetting) -> Self {
+        self.tc = Some(value);
+        self
+    }
+
+    /// Set [`team`](field@Self::team), the `team` setting.
+    #[must_use]
+    pub fn team(mut self, value: TeamSetting) -> Self {
+        self.team = Some(value);
+        self
+    }
+
+    /// Set [`team_port`](field@Self::team_port), the `team-port` setting.
+    #[must_use]
+    pub fn team_port(mut self, value: TeamPortSetting) -> Self {
+        self.team_port = Some(value);
+        self
+    }
+
+    /// Set [`tun`](field@Self::tun), the `tun` setting.
+    #[must_use]
+    pub fn tun(mut self, value: TunSetting) -> Self {
+        self.tun = Some(value);
+        self
+    }
+
+    /// Set [`user`](field@Self::user), the `user` setting.
+    #[must_use]
+    pub fn user(mut self, value: UserSetting) -> Self {
+        self.user = Some(value);
+        self
+    }
+
+    /// Set [`vlan`](field@Self::vlan), the `vlan` setting.
+    #[must_use]
+    pub fn vlan(mut self, value: VlanSetting) -> Self {
+        self.vlan = Some(value);
+        self
+    }
+
+    /// Set [`vpn`](field@Self::vpn), the `vpn` setting.
+    #[must_use]
+    pub fn vpn(mut self, value: VpnSetting) -> Self {
+        self.vpn = Some(value);
+        self
+    }
+
+    /// Set [`vrf`](field@Self::vrf), the `vrf` setting.
+    #[must_use]
+    pub fn vrf(mut self, value: VrfSetting) -> Self {
+        self.vrf = Some(value);
+        self
+    }
+
+    /// Set [`vxlan`](field@Self::vxlan), the `vxlan` setting.
+    #[must_use]
+    pub fn vxlan(mut self, value: VxlanSetting) -> Self {
+        self.vxlan = Some(value);
+        self
+    }
+
+    /// Set [`wifi_p2p`](field@Self::wifi_p2p), the `wifi-p2p` setting.
+    #[must_use]
+    pub fn wifi_p2p(mut self, value: WifiP2pSetting) -> Self {
+        self.wifi_p2p = Some(value);
+        self
+    }
+
+    /// Set [`wimax`](field@Self::wimax), the `wimax` setting.
+    #[must_use]
+    pub fn wimax(mut self, value: WimaxSetting) -> Self {
+        self.wimax = Some(value);
+        self
+    }
+
+    /// Set [`wired`](field@Self::wired), the `802-3-ethernet` setting.
+    #[must_use]
+    pub fn wired(mut self, value: WiredSetting) -> Self {
+        self.wired = Some(value);
+        self
+    }
+
+    /// Set [`wireguard`](field@Self::wireguard), the `wireguard` setting.
+    #[must_use]
+    pub fn wireguard(mut self, value: WireguardSetting) -> Self {
+        self.wireguard = Some(value);
+        self
+    }
+
+    /// Set [`wireless`](field@Self::wireless), the `802-11-wireless` setting.
+    #[must_use]
+    pub fn wireless(mut self, value: WirelessSetting) -> Self {
+        self.wireless = Some(value);
+        self
+    }
+
+    /// Set [`wireless_security`](field@Self::wireless_security), the `802-11-wireless-security` setting.
+    #[must_use]
+    pub fn wireless_security(mut self, value: WirelessSecuritySetting) -> Self {
+        self.wireless_security = Some(value);
+        self
+    }
+
+    /// Set [`wpan`](field@Self::wpan), the `wpan` setting.
+    #[must_use]
+    pub fn wpan(mut self, value: WpanSetting) -> Self {
+        self.wpan = Some(value);
+        self
+    }
+
+    /// Set [`bond_port`](field@Self::bond_port), the `bond-port` setting.
+    #[must_use]
+    pub fn bond_port(mut self, value: BondPortSetting) -> Self {
+        self.bond_port = Some(value);
+        self
+    }
+
+    /// Set [`geneve`](field@Self::geneve), the `geneve` setting.
+    #[must_use]
+    pub fn geneve(mut self, value: GeneveSetting) -> Self {
+        self.geneve = Some(value);
+        self
+    }
+
+    /// Set [`hostname`](field@Self::hostname), the `hostname` setting.
+    #[must_use]
+    pub fn hostname(mut self, value: HostnameSetting) -> Self {
+        self.hostname = Some(value);
+        self
+    }
+
+    /// Set [`link`](field@Self::link), the `link` setting.
+    #[must_use]
+    pub fn link(mut self, value: LinkSetting) -> Self {
+        self.link = Some(value);
+        self
+    }
+
+    /// Set [`loopback`](field@Self::loopback), the `loopback` setting.
+    #[must_use]
+    pub fn loopback(mut self, value: LoopbackSetting) -> Self {
+        self.loopback = Some(value);
+        self
+    }
+
+    /// Set [`ovs_external_ids`](field@Self::ovs_external_ids), the `ovs-external-ids` setting.
+    #[must_use]
+    pub fn ovs_external_ids(mut self, value: OvsExternalIdsSetting) -> Self {
+        self.ovs_external_ids = Some(value);
+        self
+    }
+
+    /// Set [`ovs_other_config`](field@Self::ovs_other_config), the `ovs-other-config` setting.
+    #[must_use]
+    pub fn ovs_other_config(mut self, value: OvsOtherConfigSetting) -> Self {
+        self.ovs_other_config = Some(value);
+        self
+    }
+
+    /// Set [`prefix_delegation`](field@Self::prefix_delegation), the `prefix-delegation` setting.
+    #[must_use]
+    pub fn prefix_delegation(mut self, value: PrefixDelegationSetting) -> Self {
+        self.prefix_delegation = Some(value);
+        self
+    }
+
+    /// Set [`veth`](field@Self::veth), the `veth` setting.
+    #[must_use]
+    pub fn veth(mut self, value: VethSetting) -> Self {
+        self.veth = Some(value);
+        self
+    }
+}
+
+impl ConnectionProfile {
     /// A profile with the identifier NetworkManager requires.
     ///
     /// A base-type setting still has to be filled in for the profile to be accepted —
     /// which one determines what kind of connection it is:
     ///
     /// ```no_run
-    /// # use nm_automata::{ConnectionProfile, Ssid, WirelessMode, WirelessSetting};
-    /// let mut profile = ConnectionProfile::new("home wifi");
-    /// profile.wireless = Some(WirelessSetting {
-    ///     ssid: Some(Ssid::from("my-network")),
-    ///     mode: Some(WirelessMode::Infrastructure),
-    ///     ..Default::default()
-    /// });
+    /// # use nm_automata::{ConnectionProfile, WirelessMode, WirelessSetting};
+    /// let profile = ConnectionProfile::new("home wifi").wireless(
+    ///     WirelessSetting::default()
+    ///         .ssid("my-network")
+    ///         .mode(WirelessMode::Infrastructure),
+    /// );
     /// ```
+    ///
+    /// Every property and every setting has a setter of its own name, which is the same
+    /// field written without the `Some`; the structs are plain, so a literal with
+    /// `..Default::default()` does just as well.
     pub fn new(id: impl Into<String>) -> Self {
         Self {
             connection: Some(ConnectionSetting {
