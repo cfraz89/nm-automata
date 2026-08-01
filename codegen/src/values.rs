@@ -90,34 +90,42 @@ pub fn derive(constants: &[Constant], settings: &[Setting]) -> Vec<ValueSet> {
             .filter(|constant| constant.name.starts_with(&format!("{prefix}_")))
             .collect();
 
-        // The constants that name a property whose values could be enumerated at all.
-        let properties: Vec<(&Constant, &Property)> = of_setting
+        // What every property of this setting would be called as a constant. A constant with one
+        // of these names names the property itself, whether or not NetworkManager declares it
+        // under this prefix — `method` belongs to the shared `NMSettingIPConfig`, so it is
+        // `NM_SETTING_IP_CONFIG_METHOD` while its values are `NM_SETTING_IP4_CONFIG_METHOD_*`.
+        let named: Vec<(String, &Property)> = setting
+            .properties
             .iter()
-            .filter_map(|constant| {
-                let property = setting
-                    .properties
-                    .iter()
-                    .find(|p| p.name == constant.value)?;
+            .map(|property| (format!("{prefix}_{}", screaming(&property.name)), property))
+            .collect();
+
+        // The properties whose values could be enumerated at all.
+        let properties: Vec<&(String, &Property)> = named
+            .iter()
+            .filter(|(_, property)| {
                 matches!(property.ty, PropertyType::Str | PropertyType::StrArray)
-                    .then_some((*constant, property))
             })
             .collect();
 
-        for (constant, property) in &properties {
-            let base = format!("{}_", constant.name);
+        for (name, property) in &properties {
+            let base = format!("{name}_");
             let values: Vec<Value> = of_setting
                 .iter()
+                // A constant that names a property is a property, not a value: this is what
+                // tells `NM_SETTING_WIRELESS_MAC_ADDRESS_RANDOMIZATION` from a value of
+                // `mac-address`, while leaving `..._METHOD_LINK_LOCAL` a value of `method`
+                // even though `link-local` is also a property of `ipv4`.
+                .filter(|candidate| !named.iter().any(|(other, _)| *other == candidate.name))
                 // The longest match wins, so that `SETTING_TEAM_RUNNER_HWADDR_POLICY_BY_ACTIVE`
                 // is a value of `runner-hwaddr-policy` and not one of `runner`.
                 .filter(|candidate| {
                     candidate.name.starts_with(&base)
                         && properties.iter().all(|(other, _)| {
-                            other.name.len() <= constant.name.len()
-                                || !candidate.name.starts_with(&format!("{}_", other.name))
+                            other.len() <= name.len()
+                                || !candidate.name.starts_with(&format!("{other}_"))
                         })
                 })
-                // A constant whose value is another property of the same setting is a property.
-                .filter(|candidate| !setting.properties.iter().any(|p| p.name == candidate.value))
                 .map(|candidate| Value {
                     rust_name: variant_name(&candidate.value).unwrap_or_else(|| {
                         crate::render::pascal_case(&candidate.name[base.len()..])
@@ -334,6 +342,11 @@ fn type_name(setting: &Setting, property: &Property) -> String {
     )
 }
 
+/// `mac-address` -> `MAC_ADDRESS`: a property name as NetworkManager spells it in a constant.
+fn screaming(property: &str) -> String {
+    property.replace('-', "_").to_ascii_uppercase()
+}
+
 /// The variant a value becomes, or `None` if it cannot open a Rust identifier.
 fn variant_name(value: &str) -> Option<String> {
     let name = crate::render::pascal_case(&value.replace(['-', '.', ' '], "_"));
@@ -475,6 +488,36 @@ mod tests {
     }
 
     #[test]
+    fn reads_values_of_a_property_declared_by_a_shared_base_class() {
+        // `method` belongs to `NMSettingIPConfig`, which both address families derive from, so
+        // the constant naming the property is `NM_SETTING_IP_CONFIG_METHOD` while its values
+        // are `NM_SETTING_IP4_CONFIG_METHOD_*`. Anchoring on what the property *would* be
+        // called under this setting's prefix is what finds them.
+        let table = r#"<nm-setting-docs>
+          <setting name="ipv4" description="IPv4" name_upper="IP4_CONFIG">
+            <property name="method" type="string"/>
+            <property name="link-local" type="int32"/>
+          </setting>
+        </nm-setting-docs>"#;
+        let settings = crate::settings::parse(table, &[]).unwrap();
+        let constants = [
+            constant("SETTING_IP4_CONFIG_SETTING_NAME", "ipv4"),
+            constant("SETTING_IP4_CONFIG_METHOD_AUTO", "auto"),
+            // A value whose text is also the name of another property of the same setting: it
+            // is the constant's name that says which it is, not its value.
+            constant("SETTING_IP4_CONFIG_METHOD_LINK_LOCAL", "link-local"),
+            // And the property itself, under this prefix, which must not become a value.
+            constant("SETTING_IP4_CONFIG_LINK_LOCAL", "link-local"),
+        ];
+
+        let sets = derive(&constants, &settings);
+        assert_eq!(sets.len(), 1);
+        assert_eq!(sets[0].rust_name, "Ipv4Method");
+        let values: Vec<_> = sets[0].values.iter().map(|v| v.text.as_str()).collect();
+        assert_eq!(values, ["auto", "link-local"]);
+    }
+
+    #[test]
     fn takes_the_longest_property_a_value_extends() {
         let mut constants = constants();
         constants.push(constant("SETTING_WIRELESS_MODE_BAND", "should-not-happen"));
@@ -600,6 +643,8 @@ mod vendored {
                 "adsl.encapsulation -> AdslEncapsulation",
                 "adsl.protocol -> AdslProtocol",
                 "bluetooth.type -> BluetoothType",
+                "ipv4.method -> Ipv4Method",
+                "ipv6.method -> Ipv6Method",
                 "team.runner -> TeamRunner",
                 "team.runner-agg-select-policy -> TeamRunnerAggSelectPolicy",
                 "team.runner-hwaddr-policy -> TeamRunnerHwaddrPolicy",

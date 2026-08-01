@@ -137,9 +137,10 @@ are kept in `other` maps, so a read-modify-write against a newer daemon does not
   `cargo run --example profiles` reads every profile on the machine through both the typed and
   the raw path and reports any property that differs.
 * **A profile property is typed as what it means, not as what it travels as.** A property whose
-  values are a fixed set of strings is an enumeration of them — `WirelessMode::Infrastructure`,
-  not `"infrastructure"` — and NetworkManager declares most of those sets as constants, so they
-  are read out of the spec like everything else; the handful it documents only in prose
+  values are a fixed set of strings is an enumeration of them — `Ipv4Method::Auto` and
+  `WirelessMode::Infrastructure`, not `"auto"` and `"infrastructure"` — and NetworkManager
+  declares most of those sets as constants, so they are read out of the spec like everything
+  else; the handful it documents only in prose
   (`802-11-wireless.band`, the Wi-Fi security ciphers) are in `annotations.toml`, checked
   against the settings table. An SSID is an `Ssid` rather than a `Vec<u8>`, since 802.11 defines
   it as octets and not as text — `AccessPoint.Ssid` on the proxy side too, since it is the same

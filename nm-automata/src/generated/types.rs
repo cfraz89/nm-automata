@@ -4548,6 +4548,87 @@ nm_str_enum! {
 }
 
 nm_str_enum! {
+    /// The values `ipv4.method` takes, sent over D-Bus as `s`.
+    pub enum Ipv4Method {
+        /// IPv4 configuration should be automatically determined via a method appropriate
+        /// for the hardware interface, ie DHCP or PPP or some other device-specific
+        /// manner.
+        ///
+        /// `NM_SETTING_IP4_CONFIG_METHOD_AUTO`
+        Auto = "auto",
+        /// This connection does not use or require IPv4 address and it should be disabled.
+        ///
+        /// `NM_SETTING_IP4_CONFIG_METHOD_DISABLED`
+        Disabled = "disabled",
+        /// IPv4 configuration should be automatically configured for link-local-only
+        /// operation.
+        ///
+        /// `NM_SETTING_IP4_CONFIG_METHOD_LINK_LOCAL`
+        LinkLocal = "link-local",
+        /// All necessary IPv4 configuration (addresses, prefix, DNS, etc) is specified
+        /// in the setting's properties.
+        ///
+        /// `NM_SETTING_IP4_CONFIG_METHOD_MANUAL`
+        Manual = "manual",
+        /// This connection specifies configuration that allows other computers to
+        /// connect through it to the default network (usually the Internet).  The
+        /// connection's interface will be assigned a private address, and a DHCP server,
+        /// caching DNS server, and Network Address Translation (NAT) functionality will
+        /// be started on this connection's interface to allow other devices to connect
+        /// through that interface to the default network.
+        ///
+        /// `NM_SETTING_IP4_CONFIG_METHOD_SHARED`
+        Shared = "shared",
+    }
+}
+
+nm_str_enum! {
+    /// The values `ipv6.method` takes, sent over D-Bus as `s`.
+    pub enum Ipv6Method {
+        /// IPv6 configuration should be automatically determined via a method appropriate
+        /// for the hardware interface, ie router advertisements, DHCP, or PPP or some
+        /// other device-specific manner.
+        ///
+        /// `NM_SETTING_IP6_CONFIG_METHOD_AUTO`
+        Auto = "auto",
+        /// IPv6 configuration should be automatically determined via DHCPv6 only and
+        /// router advertisements should be ignored.
+        ///
+        /// `NM_SETTING_IP6_CONFIG_METHOD_DHCP`
+        Dhcp = "dhcp",
+        /// IPv6 is disabled for the connection.
+        ///
+        /// `NM_SETTING_IP6_CONFIG_METHOD_DISABLED`
+        Disabled = "disabled",
+        /// IPv6 is not required or is handled by some other mechanism, and NetworkManager
+        /// should not configure IPv6 for this connection.
+        ///
+        /// `NM_SETTING_IP6_CONFIG_METHOD_IGNORE`
+        Ignore = "ignore",
+        /// IPv6 configuration should be automatically configured for link-local-only
+        /// operation.
+        ///
+        /// `NM_SETTING_IP6_CONFIG_METHOD_LINK_LOCAL`
+        LinkLocal = "link-local",
+        /// All necessary IPv6 configuration (addresses, prefix, DNS, etc) is specified
+        /// in the setting's properties.
+        ///
+        /// `NM_SETTING_IP6_CONFIG_METHOD_MANUAL`
+        Manual = "manual",
+        /// This connection specifies configuration that allows other computers to
+        /// connect through it to the default network (usually the Internet).  The
+        /// connection's interface will be assigned a private address, and router
+        /// advertisements, a caching DNS server, and Network Address Translation (NAT)
+        /// functionality will be started on this connection's interface to allow other
+        /// devices to connect through that interface to the default network. (not yet
+        /// supported for IPv6)
+        ///
+        /// `NM_SETTING_IP6_CONFIG_METHOD_SHARED`
+        Shared = "shared",
+    }
+}
+
+nm_str_enum! {
     /// The values `team.runner` takes, sent over D-Bus as `s`.
     pub enum TeamRunner {
         /// `NM_SETTING_TEAM_RUNNER_ACTIVEBACKUP`
