@@ -324,6 +324,8 @@ pub struct PathAccessor {
     pub raw: String,
     /// The accessor to generate, e.g. `get_devices`.
     pub wrapper: String,
+    /// The object-path arguments it takes, which the accessor takes as objects.
+    pub inputs: Vec<InputPath>,
     /// The interface objects at those paths implement.
     pub target: String,
     /// Whether the member returns a list of paths rather than one.
@@ -334,6 +336,19 @@ pub struct PathAccessor {
     pub signal_arg: Option<String>,
     /// How the member is described, for the accessor's documentation.
     pub description: String,
+}
+
+/// An object-path argument of a method, as the accessor beside it takes it.
+#[derive(Debug, Clone)]
+pub struct InputPath {
+    /// The parameter, as `zbus_xmlgen` names it, e.g. `device`.
+    pub name: String,
+    /// The interface at the other end, where the spec settles which it is. `None` is
+    /// `specific_object`, which is an access point for Wi-Fi and an active connection for VPN,
+    /// and so is taken as a bare path or as none at all.
+    pub target: Option<String>,
+    /// Whether the argument is a list of paths.
+    pub list: bool,
 }
 
 /// A method with several outputs, as planned before its raw name is settled.
@@ -354,11 +369,26 @@ pub struct TupleAccessor {
     pub raw: String,
     /// The accessor to generate, e.g. `add_and_activate_connection`.
     pub wrapper: String,
+    /// The object-path arguments it takes, which the accessor takes as objects.
+    pub inputs: Vec<InputPath>,
     /// How the member is described, for the accessor's documentation.
     pub description: String,
     /// One per output, in order: what to bind it to, and the interface it points at where it
     /// is a path.
     pub outputs: Vec<(String, Option<String>)>,
+}
+
+/// A method that takes an object path and returns nothing that is one.
+#[derive(Debug, Clone)]
+pub struct InputAccessor {
+    /// The renamed raw member, e.g. `deactivate_connection_path`.
+    pub raw: String,
+    /// The accessor to generate, e.g. `deactivate_connection`.
+    pub wrapper: String,
+    /// How the member is described, for the accessor's documentation.
+    pub description: String,
+    /// The object-path arguments it takes.
+    pub inputs: Vec<InputPath>,
 }
 
 /// What a member's paths become, planned for one interface.
@@ -368,6 +398,8 @@ pub struct Accessors {
     pub single: Vec<PathAccessor>,
     /// Methods returning a path among several outputs.
     pub tuples: Vec<TupleAccessor>,
+    /// Methods that only take them.
+    pub inputs: Vec<InputAccessor>,
 }
 
 /// The name a path-returning member is moved to: `get_devices` -> `get_device_paths`.
@@ -423,6 +455,35 @@ pub fn plan(
             format!("the `{member}` signal"),
         ));
         signals.push(member);
+    }
+
+    // What each method takes as an object path, which its accessor takes as an object.
+    let mut method_inputs: BTreeMap<String, Vec<InputPath>> = BTreeMap::new();
+    for method in interface.methods() {
+        let member = method.name().to_string();
+        let inputs: Vec<InputPath> = method
+            .args()
+            .iter()
+            .filter(|a| a.direction() != Some(ArgDirection::Out))
+            .filter_map(|arg| {
+                let name = arg.name()?;
+                let signature = arg.ty().inner().to_string();
+                let list = match signature.as_str() {
+                    crate::objects::PATH => false,
+                    crate::objects::PATH_ARRAY => true,
+                    _ => return None,
+                };
+                let site = Site::Arg(member.clone(), name.to_owned());
+                Some(InputPath {
+                    name: snake(name),
+                    target: objects.get(&site).cloned(),
+                    list,
+                })
+            })
+            .collect();
+        if !inputs.is_empty() {
+            method_inputs.insert(member, inputs);
+        }
     }
 
     for method in interface.methods() {
@@ -503,6 +564,7 @@ pub fn plan(
             Site::Property(name) => name.clone(),
         });
         accessors.single.push(PathAccessor {
+            inputs: method_inputs.get(&member).cloned().unwrap_or_default(),
             raw,
             wrapper,
             target: target.clone(),
@@ -538,6 +600,7 @@ pub fn plan(
             kind: "method",
         });
         accessors.tuples.push(TupleAccessor {
+            inputs: method_inputs.get(&member).cloned().unwrap_or_default(),
             raw,
             wrapper,
             description,
@@ -545,7 +608,123 @@ pub fn plan(
         });
     }
 
+    // The methods that take a path and return nothing that is one. They are wrapped for their
+    // arguments alone, so the raw member moves aside as it does for the rest.
+    for (member, inputs) in &method_inputs {
+        if renames.iter().any(|rename| rename.member == *member)
+            || !inputs.iter().any(|input| input.target.is_some())
+        {
+            continue;
+        }
+        let wrapper = snake(member);
+        let raw = raw_path_name(&wrapper, inputs.iter().any(|input| input.list));
+        let index = renames.len();
+        renames.push(Rename {
+            member: member.clone(),
+            sentinel: format!("nm_rename_{index:03}"),
+            sentinel_type: format!("NmRename{index:03}"),
+            fn_name: raw.clone(),
+            type_name: pascal_case(&raw),
+            kind: "method",
+        });
+        accessors.inputs.push(InputAccessor {
+            raw,
+            wrapper,
+            description: format!("the `{member}` method"),
+            inputs: inputs.clone(),
+        });
+    }
+
     (renames, accessors)
+}
+
+/// Rewrite a raw member's parameter list so that its object paths are taken as objects.
+///
+/// The parameters are read back out of the signature just generated for the raw member, so the
+/// two cannot describe different arguments; only the path ones are rewritten, and the rest are
+/// passed straight through.
+fn converted_parameters(
+    declaration: &str,
+    inputs: &[InputPath],
+    interfaces: &[String],
+) -> (String, String) {
+    let mut parameters = Vec::new();
+    let mut forwarded = Vec::new();
+
+    for parameter in split_parameters(declaration) {
+        let name = parameter.split(':').next().unwrap_or_default().trim();
+        let input = inputs
+            .iter()
+            .find(|input| input.name == name)
+            .filter(|input| match &input.target {
+                // An interface this run did not generate has no path type to take.
+                Some(target) => interfaces.iter().any(|i| i == target),
+                None => !input.list,
+            });
+
+        let Some(input) = input else {
+            parameters.push(parameter.to_owned());
+            forwarded.push(name.to_owned());
+            continue;
+        };
+
+        match &input.target {
+            Some(target) => {
+                let path = path_type_name(&crate::codegen::module_name(target));
+                match input.list {
+                    true => {
+                        parameters.push(format!(
+                            "{name}: impl IntoIterator<Item = impl Into<{path}>>"
+                        ));
+                        forwarded.push(format!(
+                            "&{name}.into_iter().map(Into::into).collect::<Vec<_>>()"
+                        ));
+                    }
+                    false => {
+                        parameters.push(format!("{name}: impl Into<{path}>"));
+                        forwarded.push(format!("&{name}.into()"));
+                    }
+                }
+            }
+            // Which kind of object it is depends on the connection being activated, so it stays
+            // a bare path — but `/` means none, and that is worth saying.
+            None => {
+                parameters.push(format!("{name}: Option<&zbus::zvariant::ObjectPath<'_>>"));
+                forwarded.push(format!("{name}.unwrap_or(&crate::path::NULL_OBJECT_PATH)"));
+            }
+        }
+    }
+
+    let declaration = match parameters.is_empty() {
+        true => String::new(),
+        false => format!(", {}", parameters.join(", ")),
+    };
+    (declaration, forwarded.join(", "))
+}
+
+/// Split a parameter list on the commas between parameters, ignoring those within a type.
+fn split_parameters(declaration: &str) -> Vec<&str> {
+    let mut out = Vec::new();
+    let mut depth = 0usize;
+    let mut start = 0usize;
+    let trimmed = declaration.trim_start().trim_start_matches(',');
+
+    for (offset, ch) in trimmed.char_indices() {
+        match ch {
+            '<' | '(' | '[' => depth += 1,
+            '>' | ')' | ']' => depth = depth.saturating_sub(1),
+            ',' if depth == 0 => {
+                out.push(trimmed[start..offset].trim());
+                start = offset + 1;
+            }
+            _ => (),
+        }
+    }
+    let last = trimmed[start..].trim();
+    if !last.is_empty() {
+        out.push(last);
+    }
+    out
 }
 
 fn plan_collisions(interface: &Interface<'_>) -> Vec<Rename> {
@@ -1464,6 +1643,13 @@ pub fn paths_module(
              async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {{\n        \
              crate::ObjectPathExt::proxy(self.as_object_path(), connection).await\n    \
              }}\n\
+             }}\n\
+             \n\
+             /// So that a member taking one of these takes the proxy just as readily.\n\
+             impl From<&crate::proxies::{module}::{trait_name}Proxy<'_>> for {path_name} {{\n    \
+             fn from(proxy: &crate::proxies::{module}::{trait_name}Proxy<'_>) -> Self {{\n        \
+             proxy.object_path()\n    \
+             }}\n\
              }}\n",
             module = module.module,
             trait_name = module.trait_name,
@@ -1733,9 +1919,11 @@ pub fn path_accessors(
 
         // The raw member may take arguments; rather than work out their Rust types a second
         // time, its parameter list is taken from the signature just generated for it.
-        let Some((declaration, forwarded)) = parameters(code, &accessor.raw) else {
+        let Some((declaration, _)) = parameters(code, &accessor.raw) else {
             continue;
         };
+        let (declaration, forwarded) =
+            converted_parameters(&declaration, &accessor.inputs, interfaces);
 
         let _ = writeln!(
             out,
@@ -1791,12 +1979,14 @@ pub fn path_accessors(
         // The outputs are typed once, by the generator, in the raw member just written; taking
         // their Rust types from there rather than deriving them a second time is what keeps the
         // two in step, as it does for the parameter lists above.
-        let (Some((declaration, forwarded)), Some(returns)) = (
+        let (Some((declaration, _)), Some(returns)) = (
             parameters(code, &accessor.raw),
             return_elements(code, &accessor.raw),
         ) else {
             continue;
         };
+        let (declaration, forwarded) =
+            converted_parameters(&declaration, &accessor.inputs, interfaces);
         if returns.len() != accessor.outputs.len() {
             continue;
         }
@@ -1861,8 +2051,53 @@ pub fn path_accessors(
         );
     }
 
+    for accessor in &accessors.inputs {
+        let (Some((declaration, _)), Some(returns)) = (
+            parameters(code, &accessor.raw),
+            return_type(code, &accessor.raw),
+        ) else {
+            continue;
+        };
+        let (declaration, forwarded) =
+            converted_parameters(&declaration, &accessor.inputs, interfaces);
+        // Nothing was converted, so the accessor would only repeat the member it calls.
+        if forwarded == declaration {
+            continue;
+        }
+
+        let _ = writeln!(
+            out,
+            "    /// {description}, taking the objects rather than their paths.\n    \
+             ///\n    \
+             /// [`{raw}`](Self::{raw}) takes the paths themselves.\n    \
+             pub async fn {wrapper}(&self{declaration}) -> {returns} {{\n        \
+             self.{raw}({forwarded}).await\n    \
+             }}\n",
+            description = upper_first(&accessor.description),
+            raw = accessor.raw,
+            wrapper = accessor.wrapper,
+        );
+    }
+
     let _ = writeln!(out, "}}\n");
     out
+}
+
+/// `the `X` method` -> `The `X` method`, for a sentence that starts with one.
+fn upper_first(text: &str) -> String {
+    let mut chars = text.chars();
+    match chars.next() {
+        Some(first) => first.to_uppercase().collect::<String>() + chars.as_str(),
+        None => text.to_owned(),
+    }
+}
+
+/// The whole of what a generated member returns, `zbus::Result<..>` and all.
+fn return_type(code: &str, member: &str) -> Option<String> {
+    let start = code.find(&format!(" fn {member}("))?;
+    let arrow = code[start..].find("-> ")? + start + "-> ".len();
+    let end = code[arrow..].find(';')? + arrow;
+    Some(code[arrow..end].trim().to_owned())
 }
 
 /// The Rust types a generated member returns, one per element of its tuple.

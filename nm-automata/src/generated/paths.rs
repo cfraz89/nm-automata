@@ -19,6 +19,13 @@ impl crate::path::NmPath for AccessPointPath {
     }
 }
 
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::access_point::AccessPointProxy<'_>> for AccessPointPath {
+    fn from(proxy: &crate::proxies::access_point::AccessPointProxy<'_>) -> Self {
+        proxy.object_path()
+    }
+}
+
 nm_path! {
     /// The path of an object implementing `org.freedesktop.NetworkManager.AgentManager`.
     pub struct AgentManagerPath: "org.freedesktop.NetworkManager.AgentManager";
@@ -30,6 +37,13 @@ impl crate::path::NmPath for AgentManagerPath {
 
     async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
         crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::agent_manager::AgentManagerProxy<'_>> for AgentManagerPath {
+    fn from(proxy: &crate::proxies::agent_manager::AgentManagerProxy<'_>) -> Self {
+        proxy.object_path()
     }
 }
 
@@ -47,6 +61,13 @@ impl crate::path::NmPath for CheckpointPath {
     }
 }
 
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::checkpoint::CheckpointProxy<'_>> for CheckpointPath {
+    fn from(proxy: &crate::proxies::checkpoint::CheckpointProxy<'_>) -> Self {
+        proxy.object_path()
+    }
+}
+
 nm_path! {
     /// The path of an object implementing `org.freedesktop.NetworkManager.Connection.Active`.
     pub struct ConnectionActivePath: "org.freedesktop.NetworkManager.Connection.Active";
@@ -58,6 +79,13 @@ impl crate::path::NmPath for ConnectionActivePath {
 
     async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
         crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::connection_active::ActiveProxy<'_>> for ConnectionActivePath {
+    fn from(proxy: &crate::proxies::connection_active::ActiveProxy<'_>) -> Self {
+        proxy.object_path()
     }
 }
 
@@ -75,6 +103,13 @@ impl crate::path::NmPath for DevicePath {
     }
 }
 
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device::DeviceProxy<'_>> for DevicePath {
+    fn from(proxy: &crate::proxies::device::DeviceProxy<'_>) -> Self {
+        proxy.object_path()
+    }
+}
+
 nm_path! {
     /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Adsl`.
     pub struct DeviceAdslPath: "org.freedesktop.NetworkManager.Device.Adsl";
@@ -86,6 +121,13 @@ impl crate::path::NmPath for DeviceAdslPath {
 
     async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
         crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_adsl::AdslProxy<'_>> for DeviceAdslPath {
+    fn from(proxy: &crate::proxies::device_adsl::AdslProxy<'_>) -> Self {
+        proxy.object_path()
     }
 }
 
@@ -103,6 +145,13 @@ impl crate::path::NmPath for DeviceBluetoothPath {
     }
 }
 
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_bluetooth::BluetoothProxy<'_>> for DeviceBluetoothPath {
+    fn from(proxy: &crate::proxies::device_bluetooth::BluetoothProxy<'_>) -> Self {
+        proxy.object_path()
+    }
+}
+
 nm_path! {
     /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Bond`.
     pub struct DeviceBondPath: "org.freedesktop.NetworkManager.Device.Bond";
@@ -114,6 +163,13 @@ impl crate::path::NmPath for DeviceBondPath {
 
     async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
         crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_bond::BondProxy<'_>> for DeviceBondPath {
+    fn from(proxy: &crate::proxies::device_bond::BondProxy<'_>) -> Self {
+        proxy.object_path()
     }
 }
 
@@ -131,6 +187,13 @@ impl crate::path::NmPath for DeviceBridgePath {
     }
 }
 
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_bridge::BridgeProxy<'_>> for DeviceBridgePath {
+    fn from(proxy: &crate::proxies::device_bridge::BridgeProxy<'_>) -> Self {
+        proxy.object_path()
+    }
+}
+
 nm_path! {
     /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Dummy`.
     pub struct DeviceDummyPath: "org.freedesktop.NetworkManager.Device.Dummy";
@@ -142,6 +205,13 @@ impl crate::path::NmPath for DeviceDummyPath {
 
     async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
         crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_dummy::DummyProxy<'_>> for DeviceDummyPath {
+    fn from(proxy: &crate::proxies::device_dummy::DummyProxy<'_>) -> Self {
+        proxy.object_path()
     }
 }
 
@@ -159,6 +229,13 @@ impl crate::path::NmPath for DeviceGenericPath {
     }
 }
 
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_generic::GenericProxy<'_>> for DeviceGenericPath {
+    fn from(proxy: &crate::proxies::device_generic::GenericProxy<'_>) -> Self {
+        proxy.object_path()
+    }
+}
+
 nm_path! {
     /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Geneve`.
     pub struct DeviceGenevePath: "org.freedesktop.NetworkManager.Device.Geneve";
@@ -170,6 +247,13 @@ impl crate::path::NmPath for DeviceGenevePath {
 
     async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
         crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_geneve::GeneveProxy<'_>> for DeviceGenevePath {
+    fn from(proxy: &crate::proxies::device_geneve::GeneveProxy<'_>) -> Self {
+        proxy.object_path()
     }
 }
 
@@ -187,6 +271,13 @@ impl crate::path::NmPath for DeviceHsrPath {
     }
 }
 
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_hsr::HsrProxy<'_>> for DeviceHsrPath {
+    fn from(proxy: &crate::proxies::device_hsr::HsrProxy<'_>) -> Self {
+        proxy.object_path()
+    }
+}
+
 nm_path! {
     /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Infiniband`.
     pub struct DeviceInfinibandPath: "org.freedesktop.NetworkManager.Device.Infiniband";
@@ -198,6 +289,13 @@ impl crate::path::NmPath for DeviceInfinibandPath {
 
     async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
         crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_infiniband::InfinibandProxy<'_>> for DeviceInfinibandPath {
+    fn from(proxy: &crate::proxies::device_infiniband::InfinibandProxy<'_>) -> Self {
+        proxy.object_path()
     }
 }
 
@@ -215,6 +313,13 @@ impl crate::path::NmPath for DeviceIpTunnelPath {
     }
 }
 
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_ip_tunnel::IPTunnelProxy<'_>> for DeviceIpTunnelPath {
+    fn from(proxy: &crate::proxies::device_ip_tunnel::IPTunnelProxy<'_>) -> Self {
+        proxy.object_path()
+    }
+}
+
 nm_path! {
     /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Ipvlan`.
     pub struct DeviceIpvlanPath: "org.freedesktop.NetworkManager.Device.Ipvlan";
@@ -226,6 +331,13 @@ impl crate::path::NmPath for DeviceIpvlanPath {
 
     async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
         crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_ipvlan::IpvlanProxy<'_>> for DeviceIpvlanPath {
+    fn from(proxy: &crate::proxies::device_ipvlan::IpvlanProxy<'_>) -> Self {
+        proxy.object_path()
     }
 }
 
@@ -243,6 +355,13 @@ impl crate::path::NmPath for DeviceLoopbackPath {
     }
 }
 
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_loopback::LoopbackProxy<'_>> for DeviceLoopbackPath {
+    fn from(proxy: &crate::proxies::device_loopback::LoopbackProxy<'_>) -> Self {
+        proxy.object_path()
+    }
+}
+
 nm_path! {
     /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Lowpan`.
     pub struct DeviceLowpanPath: "org.freedesktop.NetworkManager.Device.Lowpan";
@@ -254,6 +373,13 @@ impl crate::path::NmPath for DeviceLowpanPath {
 
     async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
         crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_lowpan::LowpanProxy<'_>> for DeviceLowpanPath {
+    fn from(proxy: &crate::proxies::device_lowpan::LowpanProxy<'_>) -> Self {
+        proxy.object_path()
     }
 }
 
@@ -271,6 +397,13 @@ impl crate::path::NmPath for DeviceMacsecPath {
     }
 }
 
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_macsec::MacsecProxy<'_>> for DeviceMacsecPath {
+    fn from(proxy: &crate::proxies::device_macsec::MacsecProxy<'_>) -> Self {
+        proxy.object_path()
+    }
+}
+
 nm_path! {
     /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Macvlan`.
     pub struct DeviceMacvlanPath: "org.freedesktop.NetworkManager.Device.Macvlan";
@@ -282,6 +415,13 @@ impl crate::path::NmPath for DeviceMacvlanPath {
 
     async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
         crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_macvlan::MacvlanProxy<'_>> for DeviceMacvlanPath {
+    fn from(proxy: &crate::proxies::device_macvlan::MacvlanProxy<'_>) -> Self {
+        proxy.object_path()
     }
 }
 
@@ -299,6 +439,13 @@ impl crate::path::NmPath for DeviceModemPath {
     }
 }
 
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_modem::ModemProxy<'_>> for DeviceModemPath {
+    fn from(proxy: &crate::proxies::device_modem::ModemProxy<'_>) -> Self {
+        proxy.object_path()
+    }
+}
+
 nm_path! {
     /// The path of an object implementing `org.freedesktop.NetworkManager.Device.OlpcMesh`.
     pub struct DeviceOlpcMeshPath: "org.freedesktop.NetworkManager.Device.OlpcMesh";
@@ -310,6 +457,13 @@ impl crate::path::NmPath for DeviceOlpcMeshPath {
 
     async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
         crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_olpc_mesh::OlpcMeshProxy<'_>> for DeviceOlpcMeshPath {
+    fn from(proxy: &crate::proxies::device_olpc_mesh::OlpcMeshProxy<'_>) -> Self {
+        proxy.object_path()
     }
 }
 
@@ -327,6 +481,13 @@ impl crate::path::NmPath for DeviceOvsBridgePath {
     }
 }
 
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_ovs_bridge::OvsBridgeProxy<'_>> for DeviceOvsBridgePath {
+    fn from(proxy: &crate::proxies::device_ovs_bridge::OvsBridgeProxy<'_>) -> Self {
+        proxy.object_path()
+    }
+}
+
 nm_path! {
     /// The path of an object implementing `org.freedesktop.NetworkManager.Device.OvsInterface`.
     pub struct DeviceOvsInterfacePath: "org.freedesktop.NetworkManager.Device.OvsInterface";
@@ -338,6 +499,13 @@ impl crate::path::NmPath for DeviceOvsInterfacePath {
 
     async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
         crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_ovs_interface::OvsInterfaceProxy<'_>> for DeviceOvsInterfacePath {
+    fn from(proxy: &crate::proxies::device_ovs_interface::OvsInterfaceProxy<'_>) -> Self {
+        proxy.object_path()
     }
 }
 
@@ -355,6 +523,13 @@ impl crate::path::NmPath for DeviceOvsPortPath {
     }
 }
 
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_ovs_port::OvsPortProxy<'_>> for DeviceOvsPortPath {
+    fn from(proxy: &crate::proxies::device_ovs_port::OvsPortProxy<'_>) -> Self {
+        proxy.object_path()
+    }
+}
+
 nm_path! {
     /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Ppp`.
     pub struct DevicePppPath: "org.freedesktop.NetworkManager.Device.Ppp";
@@ -366,6 +541,13 @@ impl crate::path::NmPath for DevicePppPath {
 
     async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
         crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_ppp::PppProxy<'_>> for DevicePppPath {
+    fn from(proxy: &crate::proxies::device_ppp::PppProxy<'_>) -> Self {
+        proxy.object_path()
     }
 }
 
@@ -383,6 +565,13 @@ impl crate::path::NmPath for DeviceStatisticsPath {
     }
 }
 
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_statistics::StatisticsProxy<'_>> for DeviceStatisticsPath {
+    fn from(proxy: &crate::proxies::device_statistics::StatisticsProxy<'_>) -> Self {
+        proxy.object_path()
+    }
+}
+
 nm_path! {
     /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Team`.
     pub struct DeviceTeamPath: "org.freedesktop.NetworkManager.Device.Team";
@@ -394,6 +583,13 @@ impl crate::path::NmPath for DeviceTeamPath {
 
     async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
         crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_team::TeamProxy<'_>> for DeviceTeamPath {
+    fn from(proxy: &crate::proxies::device_team::TeamProxy<'_>) -> Self {
+        proxy.object_path()
     }
 }
 
@@ -411,6 +607,13 @@ impl crate::path::NmPath for DeviceTunPath {
     }
 }
 
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_tun::TunProxy<'_>> for DeviceTunPath {
+    fn from(proxy: &crate::proxies::device_tun::TunProxy<'_>) -> Self {
+        proxy.object_path()
+    }
+}
+
 nm_path! {
     /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Veth`.
     pub struct DeviceVethPath: "org.freedesktop.NetworkManager.Device.Veth";
@@ -422,6 +625,13 @@ impl crate::path::NmPath for DeviceVethPath {
 
     async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
         crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_veth::VethProxy<'_>> for DeviceVethPath {
+    fn from(proxy: &crate::proxies::device_veth::VethProxy<'_>) -> Self {
+        proxy.object_path()
     }
 }
 
@@ -439,6 +649,13 @@ impl crate::path::NmPath for DeviceVlanPath {
     }
 }
 
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_vlan::VlanProxy<'_>> for DeviceVlanPath {
+    fn from(proxy: &crate::proxies::device_vlan::VlanProxy<'_>) -> Self {
+        proxy.object_path()
+    }
+}
+
 nm_path! {
     /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Vrf`.
     pub struct DeviceVrfPath: "org.freedesktop.NetworkManager.Device.Vrf";
@@ -450,6 +667,13 @@ impl crate::path::NmPath for DeviceVrfPath {
 
     async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
         crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_vrf::VrfProxy<'_>> for DeviceVrfPath {
+    fn from(proxy: &crate::proxies::device_vrf::VrfProxy<'_>) -> Self {
+        proxy.object_path()
     }
 }
 
@@ -467,6 +691,13 @@ impl crate::path::NmPath for DeviceVxlanPath {
     }
 }
 
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_vxlan::VxlanProxy<'_>> for DeviceVxlanPath {
+    fn from(proxy: &crate::proxies::device_vxlan::VxlanProxy<'_>) -> Self {
+        proxy.object_path()
+    }
+}
+
 nm_path! {
     /// The path of an object implementing `org.freedesktop.NetworkManager.Device.WiMax`.
     pub struct DeviceWiMaxPath: "org.freedesktop.NetworkManager.Device.WiMax";
@@ -478,6 +709,13 @@ impl crate::path::NmPath for DeviceWiMaxPath {
 
     async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
         crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_wi_max::WiMaxProxy<'_>> for DeviceWiMaxPath {
+    fn from(proxy: &crate::proxies::device_wi_max::WiMaxProxy<'_>) -> Self {
+        proxy.object_path()
     }
 }
 
@@ -495,6 +733,13 @@ impl crate::path::NmPath for DeviceWifiP2pPath {
     }
 }
 
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_wifi_p2p::WifiP2PProxy<'_>> for DeviceWifiP2pPath {
+    fn from(proxy: &crate::proxies::device_wifi_p2p::WifiP2PProxy<'_>) -> Self {
+        proxy.object_path()
+    }
+}
+
 nm_path! {
     /// The path of an object implementing `org.freedesktop.NetworkManager.Device.WireGuard`.
     pub struct DeviceWireGuardPath: "org.freedesktop.NetworkManager.Device.WireGuard";
@@ -506,6 +751,13 @@ impl crate::path::NmPath for DeviceWireGuardPath {
 
     async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
         crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_wire_guard::WireGuardProxy<'_>> for DeviceWireGuardPath {
+    fn from(proxy: &crate::proxies::device_wire_guard::WireGuardProxy<'_>) -> Self {
+        proxy.object_path()
     }
 }
 
@@ -523,6 +775,13 @@ impl crate::path::NmPath for DeviceWiredPath {
     }
 }
 
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_wired::WiredProxy<'_>> for DeviceWiredPath {
+    fn from(proxy: &crate::proxies::device_wired::WiredProxy<'_>) -> Self {
+        proxy.object_path()
+    }
+}
+
 nm_path! {
     /// The path of an object implementing `org.freedesktop.NetworkManager.Device.Wireless`.
     pub struct DeviceWirelessPath: "org.freedesktop.NetworkManager.Device.Wireless";
@@ -534,6 +793,13 @@ impl crate::path::NmPath for DeviceWirelessPath {
 
     async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
         crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_wireless::WirelessProxy<'_>> for DeviceWirelessPath {
+    fn from(proxy: &crate::proxies::device_wireless::WirelessProxy<'_>) -> Self {
+        proxy.object_path()
     }
 }
 
@@ -551,6 +817,13 @@ impl crate::path::NmPath for DeviceWpanPath {
     }
 }
 
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::device_wpan::WpanProxy<'_>> for DeviceWpanPath {
+    fn from(proxy: &crate::proxies::device_wpan::WpanProxy<'_>) -> Self {
+        proxy.object_path()
+    }
+}
+
 nm_path! {
     /// The path of an object implementing `org.freedesktop.NetworkManager.DHCP4Config`.
     pub struct Dhcp4ConfigPath: "org.freedesktop.NetworkManager.DHCP4Config";
@@ -562,6 +835,13 @@ impl crate::path::NmPath for Dhcp4ConfigPath {
 
     async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
         crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::dhcp4_config::DHCP4ConfigProxy<'_>> for Dhcp4ConfigPath {
+    fn from(proxy: &crate::proxies::dhcp4_config::DHCP4ConfigProxy<'_>) -> Self {
+        proxy.object_path()
     }
 }
 
@@ -579,6 +859,13 @@ impl crate::path::NmPath for Dhcp6ConfigPath {
     }
 }
 
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::dhcp6_config::DHCP6ConfigProxy<'_>> for Dhcp6ConfigPath {
+    fn from(proxy: &crate::proxies::dhcp6_config::DHCP6ConfigProxy<'_>) -> Self {
+        proxy.object_path()
+    }
+}
+
 nm_path! {
     /// The path of an object implementing `org.freedesktop.NetworkManager.DnsManager`.
     pub struct DnsManagerPath: "org.freedesktop.NetworkManager.DnsManager";
@@ -590,6 +877,13 @@ impl crate::path::NmPath for DnsManagerPath {
 
     async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
         crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::dns_manager::DnsManagerProxy<'_>> for DnsManagerPath {
+    fn from(proxy: &crate::proxies::dns_manager::DnsManagerProxy<'_>) -> Self {
+        proxy.object_path()
     }
 }
 
@@ -607,6 +901,13 @@ impl crate::path::NmPath for Ip4ConfigPath {
     }
 }
 
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::ip4_config::IP4ConfigProxy<'_>> for Ip4ConfigPath {
+    fn from(proxy: &crate::proxies::ip4_config::IP4ConfigProxy<'_>) -> Self {
+        proxy.object_path()
+    }
+}
+
 nm_path! {
     /// The path of an object implementing `org.freedesktop.NetworkManager.IP6Config`.
     pub struct Ip6ConfigPath: "org.freedesktop.NetworkManager.IP6Config";
@@ -618,6 +919,13 @@ impl crate::path::NmPath for Ip6ConfigPath {
 
     async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
         crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::ip6_config::IP6ConfigProxy<'_>> for Ip6ConfigPath {
+    fn from(proxy: &crate::proxies::ip6_config::IP6ConfigProxy<'_>) -> Self {
+        proxy.object_path()
     }
 }
 
@@ -635,6 +943,13 @@ impl crate::path::NmPath for NetworkManagerPath {
     }
 }
 
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::network_manager::NetworkManagerProxy<'_>> for NetworkManagerPath {
+    fn from(proxy: &crate::proxies::network_manager::NetworkManagerProxy<'_>) -> Self {
+        proxy.object_path()
+    }
+}
+
 nm_path! {
     /// The path of an object implementing `org.freedesktop.NetworkManager.PPP`.
     pub struct PppPath: "org.freedesktop.NetworkManager.PPP";
@@ -646,6 +961,13 @@ impl crate::path::NmPath for PppPath {
 
     async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
         crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::ppp::PPPProxy<'_>> for PppPath {
+    fn from(proxy: &crate::proxies::ppp::PPPProxy<'_>) -> Self {
+        proxy.object_path()
     }
 }
 
@@ -663,6 +985,13 @@ impl crate::path::NmPath for SecretAgentPath {
     }
 }
 
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::secret_agent::SecretAgentProxy<'_>> for SecretAgentPath {
+    fn from(proxy: &crate::proxies::secret_agent::SecretAgentProxy<'_>) -> Self {
+        proxy.object_path()
+    }
+}
+
 nm_path! {
     /// The path of an object implementing `org.freedesktop.NetworkManager.Settings`.
     pub struct SettingsPath: "org.freedesktop.NetworkManager.Settings";
@@ -674,6 +1003,13 @@ impl crate::path::NmPath for SettingsPath {
 
     async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
         crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::settings::SettingsProxy<'_>> for SettingsPath {
+    fn from(proxy: &crate::proxies::settings::SettingsProxy<'_>) -> Self {
+        proxy.object_path()
     }
 }
 
@@ -691,6 +1027,13 @@ impl crate::path::NmPath for SettingsConnectionPath {
     }
 }
 
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::settings_connection::ConnectionProxy<'_>> for SettingsConnectionPath {
+    fn from(proxy: &crate::proxies::settings_connection::ConnectionProxy<'_>) -> Self {
+        proxy.object_path()
+    }
+}
+
 nm_path! {
     /// The path of an object implementing `org.freedesktop.NetworkManager.VPN.Connection`.
     pub struct VpnConnectionPath: "org.freedesktop.NetworkManager.VPN.Connection";
@@ -702,6 +1045,13 @@ impl crate::path::NmPath for VpnConnectionPath {
 
     async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
         crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::vpn_connection::ConnectionProxy<'_>> for VpnConnectionPath {
+    fn from(proxy: &crate::proxies::vpn_connection::ConnectionProxy<'_>) -> Self {
+        proxy.object_path()
     }
 }
 
@@ -719,6 +1069,13 @@ impl crate::path::NmPath for VpnPluginPath {
     }
 }
 
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::vpn_plugin::PluginProxy<'_>> for VpnPluginPath {
+    fn from(proxy: &crate::proxies::vpn_plugin::PluginProxy<'_>) -> Self {
+        proxy.object_path()
+    }
+}
+
 nm_path! {
     /// The path of an object implementing `org.freedesktop.NetworkManager.WiMax.Nsp`.
     pub struct WiMaxNspPath: "org.freedesktop.NetworkManager.WiMax.Nsp";
@@ -733,6 +1090,13 @@ impl crate::path::NmPath for WiMaxNspPath {
     }
 }
 
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::wi_max_nsp::NspProxy<'_>> for WiMaxNspPath {
+    fn from(proxy: &crate::proxies::wi_max_nsp::NspProxy<'_>) -> Self {
+        proxy.object_path()
+    }
+}
+
 nm_path! {
     /// The path of an object implementing `org.freedesktop.NetworkManager.WifiP2PPeer`.
     pub struct WifiP2pPeerPath: "org.freedesktop.NetworkManager.WifiP2PPeer";
@@ -744,5 +1108,12 @@ impl crate::path::NmPath for WifiP2pPeerPath {
 
     async fn connect(&self, connection: &zbus::Connection) -> zbus::Result<Self::Proxy> {
         crate::ObjectPathExt::proxy(self.as_object_path(), connection).await
+    }
+}
+
+/// So that a member taking one of these takes the proxy just as readily.
+impl From<&crate::proxies::wifi_p2p_peer::WifiP2PPeerProxy<'_>> for WifiP2pPeerPath {
+    fn from(proxy: &crate::proxies::wifi_p2p_peer::WifiP2PPeerProxy<'_>) -> Self {
+        proxy.object_path()
     }
 }

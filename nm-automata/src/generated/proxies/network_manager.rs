@@ -37,51 +37,6 @@ pub trait NetworkManager {
     /// * `connectivity` - The current connectivity state.
     fn check_connectivity(&self) -> zbus::Result<ConnectivityState>;
 
-    /// CheckpointAdjustRollbackTimeout method
-    ///
-    /// Reset the timeout for rollback for the checkpoint. Note that the added seconds start counting from now, not "Created" timestamp or the previous expiration time. Note that the "Created" property of the checkpoint will stay unchanged by this call. However, the "RollbackTimeout" will be recalculated to give the approximate new expiration time. The new "RollbackTimeout" property will be approximate up to one second precision, which is the accuracy of the property.
-    ///
-    /// # Arguments
-    ///
-    /// * `checkpoint` - The checkpoint to be rolled back.
-    /// * `add_timeout` - Number of seconds from now in which the timeout will expire. Set to 0 to disable the timeout.
-    fn checkpoint_adjust_rollback_timeout(
-        &self,
-        checkpoint: &CheckpointPath,
-        add_timeout: u32,
-    ) -> zbus::Result<()>;
-
-    /// CheckpointDestroy method
-    ///
-    /// Destroy a previously created checkpoint.
-    ///
-    /// # Arguments
-    ///
-    /// * `checkpoint` - The checkpoint to be destroyed. Set to empty to cancel all pending checkpoints.
-    fn checkpoint_destroy(&self, checkpoint: &CheckpointPath) -> zbus::Result<()>;
-
-    /// CheckpointRollback method
-    ///
-    /// Rollback a checkpoint before the timeout is reached.
-    ///
-    /// # Arguments
-    ///
-    /// * `checkpoint` - The checkpoint to be rolled back.
-    /// * `result` - On return, a dictionary of devices and results. Devices are represented by their original D-Bus path; each result is a RollbackResult.
-    fn checkpoint_rollback(
-        &self,
-        checkpoint: &CheckpointPath,
-    ) -> zbus::Result<std::collections::HashMap<String, u32>>;
-
-    /// DeactivateConnection method
-    ///
-    /// Deactivate an active connection.
-    ///
-    /// # Arguments
-    ///
-    /// * `active_connection` - The currently active connection to deactivate.
-    fn deactivate_connection(&self, active_connection: &ConnectionActivePath) -> zbus::Result<()>;
-
     /// Enable method
     ///
     /// Control whether overall networking is enabled or disabled. When disabled, all interfaces that NM manages are deactivated. When enabled, all managed interfaces are re-enabled and available to be activated. This command should be used by clients that provide to users the ability to enable/disable all networking.
@@ -260,6 +215,58 @@ pub trait NetworkManager {
         ConnectionActivePath,
         std::collections::HashMap<String, zbus::zvariant::OwnedValue>,
     )>;
+
+    /// CheckpointAdjustRollbackTimeout method
+    ///
+    /// Reset the timeout for rollback for the checkpoint. Note that the added seconds start counting from now, not "Created" timestamp or the previous expiration time. Note that the "Created" property of the checkpoint will stay unchanged by this call. However, the "RollbackTimeout" will be recalculated to give the approximate new expiration time. The new "RollbackTimeout" property will be approximate up to one second precision, which is the accuracy of the property.
+    ///
+    /// # Arguments
+    ///
+    /// * `checkpoint` - The checkpoint to be rolled back.
+    /// * `add_timeout` - Number of seconds from now in which the timeout will expire. Set to 0 to disable the timeout.
+    #[zbus(name = "CheckpointAdjustRollbackTimeout")]
+    fn checkpoint_adjust_rollback_timeout_path(
+        &self,
+        checkpoint: &CheckpointPath,
+        add_timeout: u32,
+    ) -> zbus::Result<()>;
+
+    /// CheckpointDestroy method
+    ///
+    /// Destroy a previously created checkpoint.
+    ///
+    /// # Arguments
+    ///
+    /// * `checkpoint` - The checkpoint to be destroyed. Set to empty to cancel all pending checkpoints.
+    #[zbus(name = "CheckpointDestroy")]
+    fn checkpoint_destroy_path(&self, checkpoint: &CheckpointPath) -> zbus::Result<()>;
+
+    /// CheckpointRollback method
+    ///
+    /// Rollback a checkpoint before the timeout is reached.
+    ///
+    /// # Arguments
+    ///
+    /// * `checkpoint` - The checkpoint to be rolled back.
+    /// * `result` - On return, a dictionary of devices and results. Devices are represented by their original D-Bus path; each result is a RollbackResult.
+    #[zbus(name = "CheckpointRollback")]
+    fn checkpoint_rollback_path(
+        &self,
+        checkpoint: &CheckpointPath,
+    ) -> zbus::Result<std::collections::HashMap<String, u32>>;
+
+    /// DeactivateConnection method
+    ///
+    /// Deactivate an active connection.
+    ///
+    /// # Arguments
+    ///
+    /// * `active_connection` - The currently active connection to deactivate.
+    #[zbus(name = "DeactivateConnection")]
+    fn deactivate_connection_path(
+        &self,
+        active_connection: &ConnectionActivePath,
+    ) -> zbus::Result<()>;
 
     /// CheckPermissions signal
     ///
@@ -644,12 +651,16 @@ impl NetworkManagerProxy<'_> {
     /// themselves.
     pub async fn activate_connection(
         &self,
-        connection: &SettingsConnectionPath,
-        device: &DevicePath,
-        specific_object: &zbus::zvariant::ObjectPath<'_>,
+        connection: impl Into<SettingsConnectionPath>,
+        device: impl Into<DevicePath>,
+        specific_object: Option<&zbus::zvariant::ObjectPath<'_>>,
     ) -> zbus::Result<crate::proxies::connection_active::ActiveProxy<'static>> {
         let path = self
-            .activate_connection_path(connection, device, specific_object)
+            .activate_connection_path(
+                &connection.into(),
+                &device.into(),
+                specific_object.unwrap_or(&crate::path::NULL_OBJECT_PATH),
+            )
             .await?;
         crate::NmPath::connect(&path, self.inner().connection()).await
     }
@@ -660,12 +671,16 @@ impl NetworkManagerProxy<'_> {
     /// themselves.
     pub async fn checkpoint_create(
         &self,
-        devices: &[DevicePath],
+        devices: impl IntoIterator<Item = impl Into<DevicePath>>,
         rollback_timeout: u32,
         flags: CheckpointCreateFlags,
     ) -> zbus::Result<crate::proxies::checkpoint::CheckpointProxy<'static>> {
         let path = self
-            .checkpoint_create_path(devices, rollback_timeout, flags)
+            .checkpoint_create_path(
+                &devices.into_iter().map(Into::into).collect::<Vec<_>>(),
+                rollback_timeout,
+                flags,
+            )
             .await?;
         crate::NmPath::connect(&path, self.inner().connection()).await
     }
@@ -677,14 +692,18 @@ impl NetworkManagerProxy<'_> {
     pub async fn add_and_activate_connection(
         &self,
         connection: &ConnectionProfile,
-        device: &DevicePath,
-        specific_object: &zbus::zvariant::ObjectPath<'_>,
+        device: impl Into<DevicePath>,
+        specific_object: Option<&zbus::zvariant::ObjectPath<'_>>,
     ) -> zbus::Result<(
         crate::proxies::settings_connection::ConnectionProxy<'static>,
         crate::proxies::connection_active::ActiveProxy<'static>,
     )> {
         let (path, active_connection) = self
-            .add_and_activate_connection_paths(connection, device, specific_object)
+            .add_and_activate_connection_paths(
+                connection,
+                &device.into(),
+                specific_object.unwrap_or(&crate::path::NULL_OBJECT_PATH),
+            )
             .await?;
         Ok((
             crate::NmPath::connect(&path, self.inner().connection()).await?,
@@ -699,8 +718,8 @@ impl NetworkManagerProxy<'_> {
     pub async fn add_and_activate_connection2(
         &self,
         connection: &ConnectionProfile,
-        device: &DevicePath,
-        specific_object: &zbus::zvariant::ObjectPath<'_>,
+        device: impl Into<DevicePath>,
+        specific_object: Option<&zbus::zvariant::ObjectPath<'_>>,
         options: &ActivationOptions,
     ) -> zbus::Result<(
         crate::proxies::settings_connection::ConnectionProxy<'static>,
@@ -708,12 +727,60 @@ impl NetworkManagerProxy<'_> {
         std::collections::HashMap<String, zbus::zvariant::OwnedValue>,
     )> {
         let (path, active_connection, result) = self
-            .add_and_activate_connection2_paths(connection, device, specific_object, options)
+            .add_and_activate_connection2_paths(
+                connection,
+                &device.into(),
+                specific_object.unwrap_or(&crate::path::NULL_OBJECT_PATH),
+                options,
+            )
             .await?;
         Ok((
             crate::NmPath::connect(&path, self.inner().connection()).await?,
             crate::NmPath::connect(&active_connection, self.inner().connection()).await?,
             result,
         ))
+    }
+
+    /// The `CheckpointAdjustRollbackTimeout` method, taking the objects rather than their paths.
+    ///
+    /// [`checkpoint_adjust_rollback_timeout_path`](Self::checkpoint_adjust_rollback_timeout_path) takes the paths themselves.
+    pub async fn checkpoint_adjust_rollback_timeout(
+        &self,
+        checkpoint: impl Into<CheckpointPath>,
+        add_timeout: u32,
+    ) -> zbus::Result<()> {
+        self.checkpoint_adjust_rollback_timeout_path(&checkpoint.into(), add_timeout)
+            .await
+    }
+
+    /// The `CheckpointDestroy` method, taking the objects rather than their paths.
+    ///
+    /// [`checkpoint_destroy_path`](Self::checkpoint_destroy_path) takes the paths themselves.
+    pub async fn checkpoint_destroy(
+        &self,
+        checkpoint: impl Into<CheckpointPath>,
+    ) -> zbus::Result<()> {
+        self.checkpoint_destroy_path(&checkpoint.into()).await
+    }
+
+    /// The `CheckpointRollback` method, taking the objects rather than their paths.
+    ///
+    /// [`checkpoint_rollback_path`](Self::checkpoint_rollback_path) takes the paths themselves.
+    pub async fn checkpoint_rollback(
+        &self,
+        checkpoint: impl Into<CheckpointPath>,
+    ) -> zbus::Result<std::collections::HashMap<String, u32>> {
+        self.checkpoint_rollback_path(&checkpoint.into()).await
+    }
+
+    /// The `DeactivateConnection` method, taking the objects rather than their paths.
+    ///
+    /// [`deactivate_connection_path`](Self::deactivate_connection_path) takes the paths themselves.
+    pub async fn deactivate_connection(
+        &self,
+        active_connection: impl Into<ConnectionActivePath>,
+    ) -> zbus::Result<()> {
+        self.deactivate_connection_path(&active_connection.into())
+            .await
     }
 }
