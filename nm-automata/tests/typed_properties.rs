@@ -10,8 +10,8 @@ use std::collections::HashMap;
 
 use nm_automata::settings::{ProfileMap, SettingMap};
 use nm_automata::{
-    AssignedMacAddress, ConnectionProfile, MacAddress, Ssid, WirelessMode, WirelessSecurityProto,
-    WirelessSetting,
+    AssignedMacAddress, ConnectionProfile, Ipv4Method, Ipv6Method, MacAddress, Ssid, WirelessMode,
+    WirelessSecurityProto, WirelessSetting,
 };
 use zbus::zvariant::{OwnedValue, Value};
 
@@ -106,6 +106,33 @@ fn keeps_the_elements_of_a_list_it_only_half_knows() {
     assert_eq!(
         written["802-11-wireless-security"]["proto"],
         value(vec!["rsn".to_owned(), "wpa4".to_owned()])
+    );
+}
+
+/// The two address families enumerate their `method` separately, because they differ.
+#[test]
+fn each_address_family_has_its_own_methods() {
+    let profile = |setting: &str, method: &'static str| {
+        ConnectionProfile::from_map(&HashMap::from([(
+            setting.to_owned(),
+            SettingMap::from([("method".to_owned(), value(method))]),
+        )]))
+        .expect("the profile decodes")
+    };
+
+    assert_eq!(
+        profile("ipv4", "link-local").ipv4.and_then(|ip| ip.method),
+        Some(Ipv4Method::LinkLocal)
+    );
+    // `ignore` and `dhcp` are IPv6 only; NetworkManager rejects either on an IPv4 setting, and
+    // the two being separate types is what says so.
+    assert_eq!(
+        profile("ipv6", "ignore").ipv6.and_then(|ip| ip.method),
+        Some(Ipv6Method::Ignore)
+    );
+    assert_eq!(
+        profile("ipv4", "ignore").ipv4.and_then(|ip| ip.method),
+        Some(Ipv4Method::Other("ignore".to_owned()))
     );
 }
 

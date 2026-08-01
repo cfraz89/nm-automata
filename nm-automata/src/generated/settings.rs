@@ -2871,7 +2871,7 @@ pub struct Ipv4Setting {
     /// For IPv4 method "shared", the IP subnet can be configured by adding one manual IPv4 address or otherwise 10.42.x.0/24 is chosen. Note that the shared method must be configured on the interface which shares the internet to a subnet, not on the uplink which is shared.
     ///
     /// `method`
-    pub method: Option<String>,
+    pub method: Option<Ipv4Method>,
     /// If TRUE, this connection will never be the default connection for this IP type, meaning it will never be assigned the default route by NetworkManager.
     ///
     /// `never-default`
@@ -3423,7 +3423,7 @@ pub struct Ipv6Setting {
     /// For IPv4 method "shared", the IP subnet can be configured by adding one manual IPv4 address or otherwise 10.42.x.0/24 is chosen. Note that the shared method must be configured on the interface which shares the internet to a subnet, not on the uplink which is shared.
     ///
     /// `method`
-    pub method: Option<String>,
+    pub method: Option<Ipv6Method>,
     /// Maximum transmission unit size, in bytes. If zero (the default), the MTU is set automatically from router advertisements or is left equal to the link-layer MTU. If greater than the link-layer MTU, or greater than zero but less than the minimum IPv6 MTU of 1280, this value has no effect.
     ///
     /// `mtu`

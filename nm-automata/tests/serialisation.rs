@@ -8,7 +8,8 @@
 //! is not stable between instances, so this is the property that keeps them in line.
 
 use nm_automata::{
-    AddressData, ConnectionProfile, Ipv4Setting, Ssid, WirelessBand, WirelessMode, WirelessSetting,
+    AddressData, ConnectionProfile, Ipv4Method, Ipv4Setting, Ssid, WirelessBand, WirelessMode,
+    WirelessSetting,
 };
 use zbus::zvariant::{LE, serialized::Context, serialized_size, to_bytes};
 
@@ -23,7 +24,7 @@ fn profile() -> ConnectionProfile {
         ..Default::default()
     });
     profile.ipv4 = Some(Ipv4Setting {
-        method: Some("auto".into()),
+        method: Some(Ipv4Method::Auto),
         ..Default::default()
     });
     profile
