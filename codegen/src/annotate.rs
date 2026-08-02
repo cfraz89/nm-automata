@@ -15,8 +15,8 @@
 //! <property name="State" type="u" access="read"/>
 //! ```
 //!
-//! This module lifts those comments back out, so that [`crate::render`] can put them into the
-//! XML as Telepathy annotations that `zbus_xmlgen` understands.
+//! This module lifts those comments back out, so that [`crate::render::resolved_names`] can
+//! tell [`crate::proxy`] what each member really carries.
 
 use std::collections::{BTreeMap, HashSet};
 

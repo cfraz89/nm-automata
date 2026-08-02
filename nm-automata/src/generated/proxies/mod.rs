@@ -9,7 +9,6 @@
 //! them directly. Every other object is found at runtime; build proxies for those with
 //! [`ObjectPathExt::proxy`](crate::ObjectPathExt::proxy) or
 //! [`ProxyExt::cast`](crate::ProxyExt::cast).
-
 pub mod access_point;
 pub mod agent_manager;
 pub mod checkpoint;
@@ -63,247 +62,246 @@ pub mod vpn_connection;
 pub mod vpn_plugin;
 pub mod wi_max_nsp;
 pub mod wifi_p2p_peer;
-
 #[doc(inline)]
-pub use access_point::AccessPointProxy;
+pub use access_point::AccessPointProxy as AccessPointProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use access_point::AccessPointProxyBlocking;
+pub use access_point::AccessPointProxyBlocking as AccessPointProxyBlocking;
 #[doc(inline)]
-pub use agent_manager::AgentManagerProxy;
+pub use agent_manager::AgentManagerProxy as AgentManagerProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use agent_manager::AgentManagerProxyBlocking;
+pub use agent_manager::AgentManagerProxyBlocking as AgentManagerProxyBlocking;
 #[doc(inline)]
-pub use checkpoint::CheckpointProxy;
+pub use checkpoint::CheckpointProxy as CheckpointProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use checkpoint::CheckpointProxyBlocking;
+pub use checkpoint::CheckpointProxyBlocking as CheckpointProxyBlocking;
 #[doc(inline)]
-pub use connection_active::ActiveProxy;
+pub use connection_active::ActiveProxy as ActiveProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use connection_active::ActiveProxyBlocking;
+pub use connection_active::ActiveProxyBlocking as ActiveProxyBlocking;
 #[doc(inline)]
-pub use device::DeviceProxy;
+pub use device::DeviceProxy as DeviceProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device::DeviceProxyBlocking;
+pub use device::DeviceProxyBlocking as DeviceProxyBlocking;
 #[doc(inline)]
-pub use device_adsl::AdslProxy;
+pub use device_adsl::AdslProxy as AdslProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_adsl::AdslProxyBlocking;
+pub use device_adsl::AdslProxyBlocking as AdslProxyBlocking;
 #[doc(inline)]
-pub use device_bluetooth::BluetoothProxy;
+pub use device_bluetooth::BluetoothProxy as BluetoothProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_bluetooth::BluetoothProxyBlocking;
+pub use device_bluetooth::BluetoothProxyBlocking as BluetoothProxyBlocking;
 #[doc(inline)]
-pub use device_bond::BondProxy;
+pub use device_bond::BondProxy as BondProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_bond::BondProxyBlocking;
+pub use device_bond::BondProxyBlocking as BondProxyBlocking;
 #[doc(inline)]
-pub use device_bridge::BridgeProxy;
+pub use device_bridge::BridgeProxy as BridgeProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_bridge::BridgeProxyBlocking;
+pub use device_bridge::BridgeProxyBlocking as BridgeProxyBlocking;
 #[doc(inline)]
-pub use device_dummy::DummyProxy;
+pub use device_dummy::DummyProxy as DummyProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_dummy::DummyProxyBlocking;
+pub use device_dummy::DummyProxyBlocking as DummyProxyBlocking;
 #[doc(inline)]
-pub use device_generic::GenericProxy;
+pub use device_generic::GenericProxy as GenericProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_generic::GenericProxyBlocking;
+pub use device_generic::GenericProxyBlocking as GenericProxyBlocking;
 #[doc(inline)]
-pub use device_geneve::GeneveProxy;
+pub use device_geneve::GeneveProxy as GeneveProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_geneve::GeneveProxyBlocking;
+pub use device_geneve::GeneveProxyBlocking as GeneveProxyBlocking;
 #[doc(inline)]
-pub use device_hsr::HsrProxy;
+pub use device_hsr::HsrProxy as HsrProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_hsr::HsrProxyBlocking;
+pub use device_hsr::HsrProxyBlocking as HsrProxyBlocking;
 #[doc(inline)]
-pub use device_infiniband::InfinibandProxy;
+pub use device_infiniband::InfinibandProxy as InfinibandProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_infiniband::InfinibandProxyBlocking;
+pub use device_infiniband::InfinibandProxyBlocking as InfinibandProxyBlocking;
 #[doc(inline)]
-pub use device_ip_tunnel::IPTunnelProxy;
+pub use device_ip_tunnel::IPTunnelProxy as IPTunnelProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_ip_tunnel::IPTunnelProxyBlocking;
+pub use device_ip_tunnel::IPTunnelProxyBlocking as IPTunnelProxyBlocking;
 #[doc(inline)]
-pub use device_ipvlan::IpvlanProxy;
+pub use device_ipvlan::IpvlanProxy as IpvlanProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_ipvlan::IpvlanProxyBlocking;
+pub use device_ipvlan::IpvlanProxyBlocking as IpvlanProxyBlocking;
 #[doc(inline)]
-pub use device_loopback::LoopbackProxy;
+pub use device_loopback::LoopbackProxy as LoopbackProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_loopback::LoopbackProxyBlocking;
+pub use device_loopback::LoopbackProxyBlocking as LoopbackProxyBlocking;
 #[doc(inline)]
-pub use device_lowpan::LowpanProxy;
+pub use device_lowpan::LowpanProxy as LowpanProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_lowpan::LowpanProxyBlocking;
+pub use device_lowpan::LowpanProxyBlocking as LowpanProxyBlocking;
 #[doc(inline)]
-pub use device_macsec::MacsecProxy;
+pub use device_macsec::MacsecProxy as MacsecProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_macsec::MacsecProxyBlocking;
+pub use device_macsec::MacsecProxyBlocking as MacsecProxyBlocking;
 #[doc(inline)]
-pub use device_macvlan::MacvlanProxy;
+pub use device_macvlan::MacvlanProxy as MacvlanProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_macvlan::MacvlanProxyBlocking;
+pub use device_macvlan::MacvlanProxyBlocking as MacvlanProxyBlocking;
 #[doc(inline)]
-pub use device_modem::ModemProxy;
+pub use device_modem::ModemProxy as ModemProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_modem::ModemProxyBlocking;
+pub use device_modem::ModemProxyBlocking as ModemProxyBlocking;
 #[doc(inline)]
-pub use device_olpc_mesh::OlpcMeshProxy;
+pub use device_olpc_mesh::OlpcMeshProxy as OlpcMeshProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_olpc_mesh::OlpcMeshProxyBlocking;
+pub use device_olpc_mesh::OlpcMeshProxyBlocking as OlpcMeshProxyBlocking;
 #[doc(inline)]
-pub use device_ovs_bridge::OvsBridgeProxy;
+pub use device_ovs_bridge::OvsBridgeProxy as OvsBridgeProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_ovs_bridge::OvsBridgeProxyBlocking;
+pub use device_ovs_bridge::OvsBridgeProxyBlocking as OvsBridgeProxyBlocking;
 #[doc(inline)]
-pub use device_ovs_interface::OvsInterfaceProxy;
+pub use device_ovs_interface::OvsInterfaceProxy as OvsInterfaceProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_ovs_interface::OvsInterfaceProxyBlocking;
+pub use device_ovs_interface::OvsInterfaceProxyBlocking as OvsInterfaceProxyBlocking;
 #[doc(inline)]
-pub use device_ovs_port::OvsPortProxy;
+pub use device_ovs_port::OvsPortProxy as OvsPortProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_ovs_port::OvsPortProxyBlocking;
+pub use device_ovs_port::OvsPortProxyBlocking as OvsPortProxyBlocking;
 #[doc(inline)]
-pub use device_ppp::PppProxy;
+pub use device_ppp::PppProxy as PppProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_ppp::PppProxyBlocking;
+pub use device_ppp::PppProxyBlocking as PppProxyBlocking;
 #[doc(inline)]
-pub use device_statistics::StatisticsProxy;
+pub use device_statistics::StatisticsProxy as StatisticsProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_statistics::StatisticsProxyBlocking;
+pub use device_statistics::StatisticsProxyBlocking as StatisticsProxyBlocking;
 #[doc(inline)]
-pub use device_team::TeamProxy;
+pub use device_team::TeamProxy as TeamProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_team::TeamProxyBlocking;
+pub use device_team::TeamProxyBlocking as TeamProxyBlocking;
 #[doc(inline)]
-pub use device_tun::TunProxy;
+pub use device_tun::TunProxy as TunProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_tun::TunProxyBlocking;
+pub use device_tun::TunProxyBlocking as TunProxyBlocking;
 #[doc(inline)]
-pub use device_veth::VethProxy;
+pub use device_veth::VethProxy as VethProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_veth::VethProxyBlocking;
+pub use device_veth::VethProxyBlocking as VethProxyBlocking;
 #[doc(inline)]
-pub use device_vlan::VlanProxy;
+pub use device_vlan::VlanProxy as VlanProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_vlan::VlanProxyBlocking;
+pub use device_vlan::VlanProxyBlocking as VlanProxyBlocking;
 #[doc(inline)]
-pub use device_vrf::VrfProxy;
+pub use device_vrf::VrfProxy as VrfProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_vrf::VrfProxyBlocking;
+pub use device_vrf::VrfProxyBlocking as VrfProxyBlocking;
 #[doc(inline)]
-pub use device_vxlan::VxlanProxy;
+pub use device_vxlan::VxlanProxy as VxlanProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_vxlan::VxlanProxyBlocking;
+pub use device_vxlan::VxlanProxyBlocking as VxlanProxyBlocking;
 #[doc(inline)]
-pub use device_wi_max::WiMaxProxy;
+pub use device_wi_max::WiMaxProxy as WiMaxProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_wi_max::WiMaxProxyBlocking;
+pub use device_wi_max::WiMaxProxyBlocking as WiMaxProxyBlocking;
 #[doc(inline)]
-pub use device_wifi_p2p::WifiP2PProxy;
+pub use device_wifi_p2p::WifiP2PProxy as WifiP2PProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_wifi_p2p::WifiP2PProxyBlocking;
+pub use device_wifi_p2p::WifiP2PProxyBlocking as WifiP2PProxyBlocking;
 #[doc(inline)]
-pub use device_wire_guard::WireGuardProxy;
+pub use device_wire_guard::WireGuardProxy as WireGuardProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_wire_guard::WireGuardProxyBlocking;
+pub use device_wire_guard::WireGuardProxyBlocking as WireGuardProxyBlocking;
 #[doc(inline)]
-pub use device_wired::WiredProxy;
+pub use device_wired::WiredProxy as WiredProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_wired::WiredProxyBlocking;
+pub use device_wired::WiredProxyBlocking as WiredProxyBlocking;
 #[doc(inline)]
-pub use device_wireless::WirelessProxy;
+pub use device_wireless::WirelessProxy as WirelessProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_wireless::WirelessProxyBlocking;
+pub use device_wireless::WirelessProxyBlocking as WirelessProxyBlocking;
 #[doc(inline)]
-pub use device_wpan::WpanProxy;
+pub use device_wpan::WpanProxy as WpanProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use device_wpan::WpanProxyBlocking;
+pub use device_wpan::WpanProxyBlocking as WpanProxyBlocking;
 #[doc(inline)]
-pub use dhcp4_config::DHCP4ConfigProxy;
+pub use dhcp4_config::DHCP4ConfigProxy as DHCP4ConfigProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use dhcp4_config::DHCP4ConfigProxyBlocking;
+pub use dhcp4_config::DHCP4ConfigProxyBlocking as DHCP4ConfigProxyBlocking;
 #[doc(inline)]
-pub use dhcp6_config::DHCP6ConfigProxy;
+pub use dhcp6_config::DHCP6ConfigProxy as DHCP6ConfigProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use dhcp6_config::DHCP6ConfigProxyBlocking;
+pub use dhcp6_config::DHCP6ConfigProxyBlocking as DHCP6ConfigProxyBlocking;
 #[doc(inline)]
-pub use dns_manager::DnsManagerProxy;
+pub use dns_manager::DnsManagerProxy as DnsManagerProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use dns_manager::DnsManagerProxyBlocking;
+pub use dns_manager::DnsManagerProxyBlocking as DnsManagerProxyBlocking;
 #[doc(inline)]
-pub use ip4_config::IP4ConfigProxy;
+pub use ip4_config::IP4ConfigProxy as IP4ConfigProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use ip4_config::IP4ConfigProxyBlocking;
+pub use ip4_config::IP4ConfigProxyBlocking as IP4ConfigProxyBlocking;
 #[doc(inline)]
-pub use ip6_config::IP6ConfigProxy;
+pub use ip6_config::IP6ConfigProxy as IP6ConfigProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use ip6_config::IP6ConfigProxyBlocking;
+pub use ip6_config::IP6ConfigProxyBlocking as IP6ConfigProxyBlocking;
 #[doc(inline)]
-pub use network_manager::NetworkManagerProxy;
+pub use network_manager::NetworkManagerProxy as NetworkManagerProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use network_manager::NetworkManagerProxyBlocking;
+pub use network_manager::NetworkManagerProxyBlocking as NetworkManagerProxyBlocking;
 #[doc(inline)]
-pub use ppp::PPPProxy;
+pub use ppp::PPPProxy as PPPProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use ppp::PPPProxyBlocking;
+pub use ppp::PPPProxyBlocking as PPPProxyBlocking;
 #[doc(inline)]
-pub use secret_agent::SecretAgentProxy;
+pub use secret_agent::SecretAgentProxy as SecretAgentProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use secret_agent::SecretAgentProxyBlocking;
+pub use secret_agent::SecretAgentProxyBlocking as SecretAgentProxyBlocking;
 #[doc(inline)]
-pub use settings::SettingsProxy;
+pub use settings::SettingsProxy as SettingsProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use settings::SettingsProxyBlocking;
+pub use settings::SettingsProxyBlocking as SettingsProxyBlocking;
 #[doc(inline)]
 pub use settings_connection::ConnectionProxy as SettingsConnectionProxy;
 #[cfg(feature = "blocking-api")]
@@ -315,17 +313,17 @@ pub use vpn_connection::ConnectionProxy as VpnConnectionProxy;
 #[doc(inline)]
 pub use vpn_connection::ConnectionProxyBlocking as VpnConnectionProxyBlocking;
 #[doc(inline)]
-pub use vpn_plugin::PluginProxy;
+pub use vpn_plugin::PluginProxy as PluginProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use vpn_plugin::PluginProxyBlocking;
+pub use vpn_plugin::PluginProxyBlocking as PluginProxyBlocking;
 #[doc(inline)]
-pub use wi_max_nsp::NspProxy;
+pub use wi_max_nsp::NspProxy as NspProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use wi_max_nsp::NspProxyBlocking;
+pub use wi_max_nsp::NspProxyBlocking as NspProxyBlocking;
 #[doc(inline)]
-pub use wifi_p2p_peer::WifiP2PPeerProxy;
+pub use wifi_p2p_peer::WifiP2PPeerProxy as WifiP2PPeerProxy;
 #[cfg(feature = "blocking-api")]
 #[doc(inline)]
-pub use wifi_p2p_peer::WifiP2PPeerProxyBlocking;
+pub use wifi_p2p_peer::WifiP2PPeerProxyBlocking as WifiP2PPeerProxyBlocking;

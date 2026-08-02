@@ -1,8 +1,8 @@
 # nm-automata task runner. `just --list` shows everything.
 #
-# The generator lives in `codegen/` and stays Rust: it drives `zbus_xmlgen` and parses the
-# introspection XML with `zbus_xml`, both of which it uses as libraries. These recipes are
-# how it is invoked, and how the steps around it are composed.
+# The generator lives in `codegen/` and stays Rust: it parses the introspection XML with
+# `zbus_xml` and emits Rust with `syn` and `quote`, all of which it uses as libraries. These
+# recipes are how it is invoked, and how the steps around it are composed.
 
 set shell := ["bash", "-euo", "pipefail", "-c"]
 
