@@ -20,6 +20,8 @@
 
 use std::collections::{BTreeMap, HashSet};
 
+use anyhow::{Context, Result};
+
 #[derive(Debug, Default)]
 pub struct Docs {
     pub interfaces: BTreeMap<String, InterfaceDocs>,
@@ -72,69 +74,64 @@ impl TypeRef {
 ///
 /// `known_types` gates which words are accepted as type references, so prose that happens to
 /// mention a name cannot invent an annotation.
-pub fn extract(xml: &str, known_types: &HashSet<String>) -> Docs {
+pub fn extract(xml: &str, known_types: &HashSet<String>) -> Result<Docs> {
+    let document = roxmltree::Document::parse(xml).context("parsing the introspection XML")?;
     let mut docs = Docs::default();
-    let mut interface: Option<String> = None;
 
-    for (comment, element) in comments_with_subject(xml) {
-        let Some((tag, name)) = element else { continue };
-        match tag {
+    for comment in document.descendants().filter(roxmltree::Node::is_comment) {
+        let Some(subject) = documented_element(comment) else {
+            continue;
+        };
+        let Some(name) = subject.attribute("name") else {
+            continue;
+        };
+        let text = comment.text().unwrap_or_default();
+
+        match subject.tag_name().name() {
             "interface" => {
-                let entry = docs.interfaces.entry(name.clone()).or_default();
-                entry.doc = interface_doc(&comment);
-                interface = Some(name);
+                docs.interfaces.entry(name.to_owned()).or_default().doc = interface_doc(text);
             }
             "property" | "method" | "signal" => {
-                let Some(iface) = interface.as_ref() else {
+                // The interface is the one the member sits in, rather than whichever was
+                // documented most recently: an interface without a comment of its own would
+                // otherwise hand its members to the interface before it.
+                let Some(interface) = subject
+                    .parent()
+                    .filter(|parent| parent.has_tag_name("interface"))
+                    .and_then(|parent| parent.attribute("name"))
+                else {
                     continue;
                 };
-                let member = parse_member(&comment, known_types);
                 docs.interfaces
-                    .entry(iface.clone())
+                    .entry(interface.to_owned())
                     .or_default()
                     .members
-                    .insert(name, member);
+                    .insert(name.to_owned(), parse_member(text, known_types));
             }
             _ => {}
         }
     }
 
-    docs
+    Ok(docs)
 }
 
-/// Every XML comment paired with the element it documents, when it directly precedes one.
-fn comments_with_subject(xml: &str) -> Vec<(String, Option<(&str, String)>)> {
-    let mut out = Vec::new();
-    let mut cursor = 0;
-
-    while let Some(offset) = xml[cursor..].find("<!--") {
-        let start = cursor + offset;
-        let Some(len) = xml[start..].find("-->") else {
-            break;
-        };
-        let end = start + len;
-        let comment = xml[start + 4..end].to_owned();
-        cursor = end + 3;
-
-        let rest = xml[cursor..].trim_start();
-        let subject = rest.strip_prefix('<').and_then(|rest| {
-            let tag = rest
-                .split(|c: char| c.is_whitespace() || c == '>' || c == '/')
-                .next()?;
-            let element_end = rest.find('>')?;
-            attribute(&rest[..element_end], "name").map(|name| (tag, name))
-        });
-        out.push((comment, subject));
+/// The element a comment documents: the next one along, if nothing but whitespace separates
+/// them.
+///
+/// A comment that is followed by anything else — another comment, text, the end of its parent —
+/// documents nothing, and is left alone rather than attached to whatever comes next.
+fn documented_element<'a, 'input>(
+    comment: roxmltree::Node<'a, 'input>,
+) -> Option<roxmltree::Node<'a, 'input>> {
+    let mut next = comment.next_sibling();
+    while let Some(node) = next {
+        if node.is_text() && node.text().is_some_and(|text| text.trim().is_empty()) {
+            next = node.next_sibling();
+            continue;
+        }
+        return node.is_element().then_some(node);
     }
-
-    out
-}
-
-fn attribute(tag: &str, name: &str) -> Option<String> {
-    let needle = format!("{name}=\"");
-    let start = tag.find(&needle)? + needle.len();
-    let len = tag[start..].find('"')?;
-    Some(tag[start..start + len].to_owned())
+    None
 }
 
 /// An interface comment opens with the interface name and a `@short_description:` entry.
@@ -456,7 +453,7 @@ mod tests {
 
     #[test]
     fn reads_property_types_and_prose() {
-        let docs = extract(XML, &known());
+        let docs = extract(XML, &known()).unwrap();
         let iface = &docs.interfaces["org.freedesktop.NetworkManager.Device"];
         assert_eq!(iface.doc.as_deref(), Some("Device."));
 
@@ -473,14 +470,14 @@ mod tests {
 
     #[test]
     fn leaves_ambiguous_references_alone() {
-        let docs = extract(XML, &known());
+        let docs = extract(XML, &known()).unwrap();
         let iface = &docs.interfaces["org.freedesktop.NetworkManager.Device"];
         assert!(iface.members["StateReason"].returns.is_none());
     }
 
     #[test]
     fn reads_argument_types_and_skips_metadata() {
-        let docs = extract(XML, &known());
+        let docs = extract(XML, &known()).unwrap();
         let method =
             &docs.interfaces["org.freedesktop.NetworkManager.Device"].members["SetManaged"];
         assert_eq!(method.doc.as_deref(), Some("Set the managed state."));
@@ -492,5 +489,77 @@ mod tests {
             Some("NMDeviceManaged")
         );
         assert_eq!(managed.doc.as_deref(), Some("Whether it is managed."));
+    }
+
+    /// A member belongs to the interface it sits in, not to the last one documented.
+    ///
+    /// Every interface NetworkManager ships has a comment of its own, so nothing in the
+    /// vendored spec tells these two rules apart — which is exactly why it is worth pinning.
+    #[test]
+    fn gives_a_member_to_the_interface_it_sits_in() {
+        const TWO: &str = r#"
+<node name="/">
+  <!--
+      org.freedesktop.NetworkManager.Device:
+      @short_description: Device.
+  -->
+  <interface name="org.freedesktop.NetworkManager.Device">
+    <!--
+        State:
+
+        The current state of the device.
+    -->
+    <property name="State" type="u" access="read"/>
+  </interface>
+  <interface name="org.freedesktop.NetworkManager.Undocumented">
+    <!--
+        Other:
+
+        Something else entirely.
+    -->
+    <property name="Other" type="u" access="read"/>
+  </interface>
+</node>
+"#;
+        let docs = extract(TWO, &known()).unwrap();
+        let device = &docs.interfaces["org.freedesktop.NetworkManager.Device"];
+        assert!(device.members.contains_key("State"));
+        assert!(!device.members.contains_key("Other"));
+
+        let other = &docs.interfaces["org.freedesktop.NetworkManager.Undocumented"];
+        assert_eq!(
+            other.members["Other"].doc.as_deref(),
+            Some("Something else entirely.")
+        );
+        assert!(other.doc.is_none());
+    }
+
+    /// A comment followed by another comment documents nothing.
+    #[test]
+    fn leaves_a_comment_with_no_element_after_it_alone() {
+        const STRAY: &str = r#"
+<node name="/">
+  <!--
+      org.freedesktop.NetworkManager.Device:
+      @short_description: Device.
+  -->
+  <interface name="org.freedesktop.NetworkManager.Device">
+    <!-- A note about what follows, documenting nothing. -->
+    <!--
+        State:
+
+        The current state of the device.
+    -->
+    <property name="State" type="u" access="read"/>
+  </interface>
+</node>
+"#;
+        let docs = extract(STRAY, &known()).unwrap();
+        let iface = &docs.interfaces["org.freedesktop.NetworkManager.Device"];
+        assert_eq!(iface.members.len(), 1);
+        assert_eq!(
+            iface.members["State"].doc.as_deref(),
+            Some("The current state of the device.")
+        );
     }
 }

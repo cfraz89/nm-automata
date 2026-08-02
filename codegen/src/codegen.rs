@@ -73,7 +73,7 @@ pub fn generate(root: &Path) -> Result<BTreeMap<PathBuf, String>> {
         .map(|(name, xml)| {
             let node = Node::try_from(xml.as_str())
                 .with_context(|| format!("parsing spec/introspection/{name}"))?;
-            let mut docs = annotate::extract(xml, &known);
+            let mut docs = annotate::extract(xml, &known)?;
             annotations.apply(&mut docs, &known)?;
             Ok((name.clone(), node, docs))
         })
