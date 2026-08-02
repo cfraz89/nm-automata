@@ -17,6 +17,7 @@ mod fetch;
 mod gir;
 mod objects;
 mod overrides;
+mod proxy;
 mod render;
 mod settings;
 mod values;

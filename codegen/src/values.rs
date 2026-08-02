@@ -305,9 +305,8 @@ pub fn apply_newtypes(settings: &mut [Setting], newtypes: &[Newtype]) -> Result<
 /// Check the entries that name an interface member against the introspection data.
 ///
 /// The member has to exist and to travel as what the type reads. Without this an entry that no
-/// longer matches would simply stop applying: `zbus_xmlgen` ignores a `tp:type` whose signature
-/// disagrees with the member's, which is what keeps a wrong one from generating code that
-/// cannot decode.
+/// longer matches would simply stop applying: a wrapper whose signature disagrees with the
+/// member's is dropped rather than generating code that cannot decode.
 pub fn check_member_newtypes(
     newtypes: &[Newtype],
     interfaces: &[(String, String, String)],

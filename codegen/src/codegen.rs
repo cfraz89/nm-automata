@@ -1,19 +1,20 @@
 //! Turning the vendored spec into `nm-automata/src/generated/`.
 //!
-//! The flow is: read the spec, recover the annotations NetworkManager keeps in comments, write
-//! them back as Telepathy XML, and hand that to `zbus_xmlgen`. The proxies come out of the
-//! generator; the enumerations and flag sets are emitted here, because `zbus_xmlgen` writes a
-//! copy of every referenced type into every file that mentions it and has no notion of bit
-//! sets at all.
+//! The flow is: read the spec, recover the annotations NetworkManager keeps in comments, and
+//! emit Rust from both. [`crate::proxy`] writes the `#[proxy]` traits and [`crate::render`]
+//! everything around them — the enumerations, flag sets, typed paths, dictionary shapes and
+//! connection profiles the traits exchange.
+//!
+//! Every file is emitted as a token stream and printed with `prettyplease`, which means a
+//! module that does not parse is caught here rather than by the crate that has to compile it.
 
 use std::collections::{BTreeMap, HashSet};
 use std::fmt::Write as _;
 use std::path::{Path, PathBuf};
-use std::process::{Command, Stdio};
 
 use anyhow::{Context, Result, bail};
-use zbus::names::BusName;
-use zbus::zvariant::ObjectPath;
+use proc_macro2::TokenStream;
+use quote::{format_ident, quote};
 use zbus_xml::Node;
 
 use crate::annotate::{self, Docs};
@@ -21,6 +22,7 @@ use crate::fetch;
 use crate::gir::{self, TypeDef};
 use crate::objects;
 use crate::overrides;
+use crate::proxy;
 use crate::render::{self, Resolved};
 use crate::settings;
 use crate::values;
@@ -116,30 +118,12 @@ pub fn generate(root: &Path) -> Result<BTreeMap<PathBuf, String>> {
         .map(|r| (r.def.c_name.clone(), r.clone()))
         .collect();
 
-    // Keeping the augmented XML around makes it possible to see exactly what the generator
-    // was fed when a binding looks wrong.
-    let debug_dir = root.join("target/nm-automata-augmented");
-    std::fs::create_dir_all(&debug_dir).ok();
-
     let mut modules: Vec<Generated> = Vec::new();
     // Which annotations actually landed, so that a stale entry in `annotations.toml` is an
     // error rather than a silent no-op.
     let mut applied: HashSet<(String, String)> = HashSet::new();
 
-    for (name, node, docs) in &parsed {
-        let augmented = render::augmented_xml(
-            node,
-            docs,
-            &by_c_name,
-            &object_targets,
-            annotations.vardicts(),
-            &member_newtypes,
-        );
-        std::fs::write(debug_dir.join(name), &augmented).ok();
-
-        let augmented_node = Node::try_from(augmented.as_str())
-            .with_context(|| format!("re-reading the augmented {name}"))?;
-
+    for (_, node, docs) in &parsed {
         for interface in node.interfaces() {
             for (site, _) in render::interface_candidates(interface, docs) {
                 let member = match site {
@@ -150,35 +134,43 @@ pub fn generate(root: &Path) -> Result<BTreeMap<PathBuf, String>> {
             }
         }
 
-        for interface in augmented_node.interfaces() {
+        for interface in node.interfaces() {
             let iface_name = interface.name().to_string();
-            // The renames were planned against the original interface, before its colliding
-            // members were written out under sentinel names.
             let empty = BTreeMap::new();
             let sites = object_targets.get(&iface_name).unwrap_or(&empty);
-            let (renames, accessors) = node
-                .interfaces()
-                .iter()
-                .find(|original| original.name() == interface.name())
-                .map(|original| render::plan(original, sites))
-                .unwrap_or_default();
+            let (renames, accessors) = render::plan(interface, sites);
 
-            let code = interface_code(interface, augmented_node.telepathy_types())
-                .with_context(|| format!("generating a proxy for {iface_name}"))?;
-            let mut code = apply_renames(&code, &renames);
-            let accessor_code = render::path_accessors(
-                &code,
+            let named = render::resolved_names(
+                interface,
+                docs,
+                &by_c_name,
+                &object_targets,
+                annotations.vardicts(),
+                &member_newtypes,
+            );
+            let emitted = proxy::Proxy {
+                interface,
+                docs: docs.interfaces.get(&iface_name),
+                named: &named,
+                renames: &renames,
+                service: SERVICE,
+                default_path: &default_path(&iface_name),
+            }
+            .emit();
+
+            let accessors = render::path_accessors(
+                &emitted.members,
                 &accessors,
                 trait_name(&iface_name),
                 &module_name(&iface_name),
                 &interface_names,
             );
-            code.push_str(&accessor_code);
+            let code = emitted.tokens;
             modules.push(Generated {
                 module: module_name(&iface_name),
                 trait_name: trait_name(&iface_name).to_owned(),
                 interface: iface_name,
-                code,
+                code: quote! { #code #accessors },
             });
         }
     }
@@ -198,25 +190,26 @@ pub fn generate(root: &Path) -> Result<BTreeMap<PathBuf, String>> {
     for module in &modules {
         files.insert(
             generated.join(format!("proxies/{}.rs", module.module)),
-            rustfmt(&proxy_module(module, &wrappers, &nm_version))?,
+            print_tokens(proxy_module(module, &wrappers, &nm_version), &module.module)?,
         );
     }
     files.insert(
         generated.join("proxies/mod.rs"),
-        rustfmt(&proxies_mod(&modules, &nm_version))?,
+        print(&proxies_mod(&modules, &nm_version), "proxies/mod.rs")?,
     );
     files.insert(
         generated.join("types.rs"),
-        rustfmt(&render::types_module(&types, &value_sets, &nm_version))?,
+        print(
+            &render::types_module(&types, &value_sets, &nm_version),
+            "types.rs",
+        )?,
     );
     files.insert(
         generated.join("vardict.rs"),
-        rustfmt(&render::vardict_module(
-            annotations.vardicts(),
-            &by_c_name,
-            &value_sets,
-            &nm_version,
-        )?)?,
+        print(
+            &render::vardict_module(annotations.vardicts(), &by_c_name, &value_sets, &nm_version)?,
+            "vardict.rs",
+        )?,
     );
     files.insert(generated.join("devices.rs"), {
         let device_type = defs
@@ -224,30 +217,29 @@ pub fn generate(root: &Path) -> Result<BTreeMap<PathBuf, String>> {
             .find(|d| d.c_name == "NMDeviceType")
             .context("the introspection data has no NMDeviceType")?;
         let interfaces = device_interfaces(&defs, &modules, &annotations.device_interfaces())?;
-        rustfmt(&render::devices_module(
-            device_type,
-            &interfaces,
-            &modules,
-            &nm_version,
-        ))?
+        print(
+            &render::devices_module(device_type, &interfaces, &modules, &nm_version),
+            "devices.rs",
+        )?
     });
     files.insert(
         generated.join("paths.rs"),
-        rustfmt(&render::paths_module(
-            &object_targets,
-            &modules,
-            &nm_version,
-        ))?,
+        print(
+            &render::paths_module(&object_targets, &modules, &nm_version),
+            "paths.rs",
+        )?,
     );
     files.insert(
         generated.join("settings.rs"),
-        rustfmt(&render::settings_module(
-            &profile_settings,
-            &by_c_name,
-            &nm_version,
-        ))?,
+        print(
+            &render::settings_module(&profile_settings, &by_c_name, &nm_version),
+            "settings.rs",
+        )?,
     );
-    files.insert(generated.join("mod.rs"), rustfmt(&mod_module(&nm_version))?);
+    files.insert(
+        generated.join("mod.rs"),
+        print(&mod_module(&nm_version), "mod.rs")?,
+    );
 
     Ok(files)
 }
@@ -258,9 +250,10 @@ pub struct Generated {
     pub module: String,
     /// The D-Bus interface it proxies.
     pub interface: String,
-    /// The trait name `zbus_xmlgen` derives from the interface, e.g. `Wireless`.
+    /// The trait name derived from the interface, e.g. `Wireless`.
     pub trait_name: String,
-    code: String,
+    /// The trait itself, and the accessors written beside it.
+    code: TokenStream,
 }
 
 /// Read every file in `dir` with the given extension, sorted by name so that generation is
@@ -345,26 +338,6 @@ fn resolve_types<'a>(
         .collect()
 }
 
-/// Generate the proxy for one interface, without the copy of the shared type definitions that
-/// `zbus_xmlgen` prepends — those live in `types.rs`, emitted once.
-fn interface_code(
-    interface: &zbus_xml::Interface<'_>,
-    node_types: &[zbus_xml::telepathy::TypeDef],
-) -> Result<String> {
-    let service = BusName::try_from(SERVICE)?;
-    let path = default_path(interface.name().as_str());
-    let path = ObjectPath::try_from(path.as_str())?;
-
-    let code = zbus_xmlgen::CodeGenerator::new()
-        .with_service(Some(&service))
-        .with_path(Some(&path))
-        .with_node_types(node_types)
-        .with_format(false)
-        .interface_code(interface)?;
-
-    Ok(strip_type_defs(&code).to_owned())
-}
-
 /// D-Bus objects that expose an interface exactly once live at the path its name spells out:
 /// `org.freedesktop.NetworkManager.Settings` at `/org/freedesktop/NetworkManager/Settings`.
 ///
@@ -373,50 +346,6 @@ fn interface_code(
 /// runtime instead.
 fn default_path(interface: &str) -> String {
     format!("/{}", interface.replace('.', "/"))
-}
-
-/// Put the members generated under a sentinel name back under their real one.
-///
-/// The sentinel — `nm_rename_0` — was chosen so that `zbus_xmlgen` always writes the
-/// D-Bus name out as an attribute (its snake and Pascal forms differ), and so that it appears
-/// nowhere else in the generated source. Restoring the attribute and then replacing what is
-/// left renames the Rust items without touching the wire.
-fn apply_renames(code: &str, renames: &[render::Rename]) -> String {
-    let mut code = code.to_owned();
-    for rename in renames {
-        code = code
-            // The doc comment `zbus_xmlgen` writes above the member names it by hand.
-            .replace(
-                &format!("/// {} {}", rename.sentinel, rename.kind),
-                &format!("/// {} {}", rename.member, rename.kind),
-            )
-            // The D-Bus name, which must go back to what NetworkManager actually calls it.
-            .replace(
-                &format!("name = \"{}\"", rename.sentinel),
-                &format!("name = \"{}\"", rename.member),
-            )
-            // Everything remaining is a Rust identifier derived from the sentinel.
-            .replace(&rename.sentinel_type, &rename.type_name)
-            .replace(&rename.sentinel, &rename.fn_name);
-    }
-    code
-}
-
-/// Cut everything before the proxy trait: `zbus_xmlgen` writes the type definitions an
-/// interface references ahead of it, and would repeat them for every interface.
-fn strip_type_defs(code: &str) -> &str {
-    let Some(offset) = code.find("#[proxy(") else {
-        return code;
-    };
-    // The trait's own doc comment sits directly above the attribute.
-    let mut start = offset;
-    for line in code[..offset].lines().rev() {
-        if !line.trim_start().starts_with("///") {
-            break;
-        }
-        start -= line.len() + 1;
-    }
-    &code[start..]
 }
 
 /// Which interface each device type implies, by the type's introspection name.
@@ -484,44 +413,53 @@ pub fn module_name(interface: &str) -> String {
     tail.split('.').map(to_snake).collect::<Vec<_>>().join("_")
 }
 
-/// The trait name `zbus_xmlgen` gives an interface: its last dot-separated segment.
+/// The trait name an interface gets: its last dot-separated segment.
 fn trait_name(interface: &str) -> &str {
     interface.rsplit('.').next().unwrap_or(interface)
 }
 
-fn proxy_module(module: &Generated, wrappers: &[&str], nm_version: &str) -> String {
+fn proxy_module(module: &Generated, wrappers: &[&str], nm_version: &str) -> TokenStream {
+    let wrappers: Vec<syn::Ident> = wrappers.iter().map(|ty| format_ident!("{ty}")).collect();
     let wrappers = match wrappers.is_empty() {
-        true => String::new(),
-        false => format!(
-            "#[allow(unused_imports)]\nuse crate::{{{}}};\n",
-            wrappers.join(", ")
-        ),
+        true => TokenStream::new(),
+        false => quote! {
+            #[allow(unused_imports)]
+            use crate::{#(#wrappers),*};
+        },
     };
 
-    let mut out = String::new();
-    let _ = writeln!(
-        out,
-        "//! Proxy for `{}`.\n\
-         //!\n\
-         //! Generated by `just generate` from the introspection XML of NetworkManager\n\
-         //! {nm_version}. Do not edit.\n\
-         \n\
-         #![allow(\n    clippy::too_many_arguments,\n    clippy::type_complexity,\n    \
-         rustdoc::invalid_html_tags\n)]\n\n\
-         #[allow(unused_imports)]\n\
-         use crate::generated::paths::*;\n\
-         #[allow(unused_imports)]\n\
-         use crate::generated::vardict::*;\n\
-         #[allow(unused_imports)]\n\
-         use crate::generated::settings::ConnectionProfile;\n\
-         #[allow(unused_imports)]\n\
-         use crate::generated::types::*;\n\
-         {wrappers}\
-         use zbus::proxy;\n",
-        module.interface
-    );
-    out.push_str(&module.code);
-    unescape_doc_comments(&out)
+    let header = [
+        format!(" Proxy for `{}`.", module.interface),
+        String::new(),
+        format!(
+            " Generated by `just generate` from the introspection XML of NetworkManager \
+             {nm_version}. Do not edit."
+        ),
+    ];
+    let code = &module.code;
+
+    quote! {
+        #(#![doc = #header])*
+
+        #![allow(
+            clippy::too_many_arguments,
+            clippy::type_complexity,
+            rustdoc::invalid_html_tags
+        )]
+
+        #[allow(unused_imports)]
+        use crate::generated::paths::*;
+        #[allow(unused_imports)]
+        use crate::generated::vardict::*;
+        #[allow(unused_imports)]
+        use crate::generated::settings::ConnectionProfile;
+        #[allow(unused_imports)]
+        use crate::generated::types::*;
+        #wrappers
+        use zbus::proxy;
+
+        #code
+    }
 }
 
 /// The module that ties the per-interface proxies together and lifts their names to the crate
@@ -722,28 +660,58 @@ fn to_snake(name: &str) -> String {
     out
 }
 
-fn rustfmt(code: &str) -> Result<String> {
-    let mut child = match Command::new("rustfmt")
-        .args(["--edition", "2024", "--emit", "stdout"])
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .stderr(Stdio::null())
-        .spawn()
-    {
-        Ok(child) => child,
-        // Formatting is a nicety; a missing rustfmt should not block regeneration.
-        Err(_) => return Ok(code.to_owned()),
-    };
+/// Print a generated module, having checked that it is Rust at all.
+///
+/// `rustfmt` used to do this, as a separate process that might not be installed and whose
+/// failure had to be shrugged off. `prettyplease` prints a parsed syntax tree instead, so a
+/// module that does not parse fails here — naming the file — rather than in the crate that has
+/// to compile it.
+fn print_tokens(tokens: TokenStream, what: &str) -> Result<String> {
+    let file = syn::parse2(tokens)
+        .with_context(|| format!("the generated {what} is not valid Rust"))?;
+    Ok(space_items(&prettyplease::unparse(&file)))
+}
 
-    {
-        use std::io::Write as _;
-        let stdin = child.stdin.as_mut().expect("stdin was piped");
-        stdin.write_all(code.as_bytes())?;
+/// The same, for the modules still emitted as text.
+///
+/// A module whose items are macro invocations — `types.rs` and `paths.rs`, which are lists of
+/// `nm_enum!`/`nm_flags!` and of path newtypes — is written as it was emitted. `prettyplease`
+/// only knows the grammar of what it can parse, and a macro body is an opaque token stream to
+/// it: printing one flattens the invocation onto ragged lines and turns every `///` inside it
+/// into `#[doc = "…"]`. Those emitters lay their own output out, so there is nothing to gain by
+/// running it through. It is still parsed here, which is what catches a module that is not Rust.
+fn print(code: &str, what: &str) -> Result<String> {
+    let file =
+        syn::parse_file(code).with_context(|| format!("the generated {what} is not valid Rust"))?;
+    if file.items.iter().any(|item| matches!(item, syn::Item::Macro(_))) {
+        return Ok(format!("{}\n", code.trim_end()));
     }
+    Ok(space_items(&prettyplease::unparse(&file)))
+}
 
-    let output = child.wait_with_output()?;
-    if !output.status.success() {
-        return Ok(code.to_owned());
+/// Put a blank line back between documented items.
+///
+/// `prettyplease` emits none at all, which reads as a wall in a file of a hundred enumerations.
+/// Blank lines are whitespace, so the worst this can do is look odd: it inserts one before a
+/// doc comment that follows something other than an attribute, another doc comment, or the
+/// opening of a block.
+fn space_items(code: &str) -> String {
+    let mut out = String::with_capacity(code.len() + code.len() / 16);
+    let mut previous = "";
+    for line in code.lines() {
+        let trimmed = line.trim_start();
+        let starts_item = trimmed.starts_with("///");
+        let continues = previous.is_empty()
+            || previous.starts_with("///")
+            || previous.starts_with("//!")
+            || previous.starts_with("#[")
+            || previous.ends_with('{');
+        if starts_item && !continues {
+            out.push('\n');
+        }
+        out.push_str(line);
+        out.push('\n');
+        previous = trimmed;
     }
-    Ok(String::from_utf8(output.stdout)?)
+    out
 }

@@ -201,19 +201,41 @@ cannot drift apart.
 
 ## How generation works
 
-`zbus_xmlgen` writes the proxies, but NetworkManager's introspection XML on its own would only
-produce integers and undocumented methods. The generator in `codegen/` bridges that gap:
+NetworkManager's introspection XML on its own would only produce integers and undocumented
+methods. The generator in `codegen/` bridges that gap:
 
 1. `codegen/src/gir.rs` reads `NM-1.0.gir`: every `<enumeration>` and `<bitfield>`, with values
    and documentation already resolved by the introspection scanner.
 2. `codegen/src/annotate.rs` recovers the type references and documentation from the XML
    comments — `Returns: NMDeviceState`, `@managed: (NMDeviceManaged) …`.
-3. `codegen/src/render.rs` writes both back into the XML as Telepathy `tp:` annotations, which
-   `zbus_xmlgen` does understand, and emits the types as `nm_enum!`/`nm_flags!` invocations.
-4. `codegen/src/codegen.rs` runs the generator per interface and assembles the result.
+3. `codegen/src/proxy.rs` emits the `#[proxy]` trait for each interface, typing every member
+   from its D-Bus signature and from what step 2 recovered.
+4. `codegen/src/render.rs` emits everything the traits exchange — the enumerations and flag
+   sets as `nm_enum!`/`nm_flags!` invocations, the typed object paths, the dictionary shapes and
+   the connection profiles — plus the accessors that turn a member's paths into proxies.
+5. `codegen/src/codegen.rs` assembles the result and prints it with `prettyplease`.
 
-It stays a Rust crate rather than becoming shell recipes because it uses `zbus_xml` and
-`zbus_xmlgen` as libraries; `just` is what invokes it.
+It stays a Rust crate rather than becoming shell recipes because it uses `zbus_xml`, `syn` and
+`quote` as libraries; `just` is what invokes it.
+
+### Why the proxy generator is our own
+
+`zbus_xmlgen` does this job, but its interface is a string of Rust source in and out. The
+accessors in step 4 call the members from step 3, so they need those members' parameter lists
+and return types — which a string is the one shape you cannot get them from. Reading them back
+out meant parsing the generated source, and feeding the recovered annotations *in* meant
+re-encoding them as Telepathy XML for the generator to decode again.
+
+Owning the emitter collapses both: there is one mapping from D-Bus signature to Rust type, it
+runs once per member, and the accessor beside a member is built from the same `MemberSig`. The
+signature mapping in `codegen/src/proxy.rs` is ported from `zbus_xmlgen`, whose version of it is
+private, and the comments explaining its awkward corners came with it.
+
+One deliberate difference: every member states its D-Bus name in `#[zbus(name = "…")]` rather
+than leaving it to be derived from the Rust identifier. The derivation lives in `zbus_macros`,
+and matching it would mean keeping a copy of its case conversion in step with a crate that has
+no reason to announce a change. Saying the name outright costs a line per member and cannot
+drift.
 
 ### Why two of the three inputs are built rather than fetched
 
@@ -233,9 +255,6 @@ about thirty properties travel as something other than their GObject type — `i
 array of strings to GObject and an array of packed integers on the wire, and every MAC address
 is a string to GObject and a byte array on D-Bus. Taking NetworkManager's merged answer avoids
 having to reconcile that, and getting it wrong would corrupt profiles rather than fail loudly.
-
-The augmented XML is written to `target/nm-automata-augmented/` on every run, so what the generator
-was fed is always inspectable.
 
 Two details worth knowing:
 
