@@ -1858,14 +1858,14 @@ pub struct AdslSetting {
     /// `username`
     pub username: Option<String>,
 
-    /// VCI of ADSL connection
+    /// The virtual channel identifier (VCI) of the ATM permanent virtual circuit (PVC) that carries the ADSL connection.
     ///
     /// `vci`
     ///
     /// Unset, NetworkManager uses `0`.
     pub vci: Option<u32>,
 
-    /// VPI of ADSL connection
+    /// The virtual path identifier (VPI) of the ATM permanent virtual circuit (PVC) that carries the ADSL connection.
     ///
     /// `vpi`
     ///
@@ -9431,12 +9431,26 @@ pub struct WifiP2pSetting {
 
     /// Flags indicating which mode of WPS is to be used.
     ///
-    /// There's little point in changing the default setting as NetworkManager will automatically determine the best method to use.
+    /// With the default setting, the push-button method (0x4 (pbc)) is used. For the PIN method there are two directions: set this to 0x8 (pin) to enter the code that the peer displays (for example a display-capable Miracast sink), or to 0x10 (pin-display) to instead show a code that the user enters on the peer. Either way the code is the "wps-pin" property. 0x10 (pin-display) is not supported by the IWD backend.
     ///
     /// `wps-method`
     ///
     /// Unset, NetworkManager uses `0`.
     pub wps_method: Option<u32>,
+
+    /// The WPS PIN used by the PIN methods of the "wps-method" property. With 0x8 (pin) it is the code that the peer (for example a display-capable Miracast sink) generates and displays, and that the user then enters on this machine. With 0x10 (pin-display) it is the code that the user enters on the peer instead; whoever provides the code is expected to show it: a client that sets it in the profile, or otherwise the secret agent that is asked for it, which may simply make one up.
+    ///
+    /// When the PIN is not set, NetworkManager asks a secret agent for it; if enrollment then fails, it asks again for a new one. The code is normally used only once, in which case saving it is pointless: set the "wps-pin-flags" property to 0x2 (not-saved) so that the user is asked every time.
+    ///
+    /// `wps-pin`
+    pub wps_pin: Option<String>,
+
+    /// Flags indicating how to handle the "wps-pin" property.
+    ///
+    /// `wps-pin-flags`
+    ///
+    /// Unset, NetworkManager uses `0`.
+    pub wps_pin_flags: Option<SettingSecretFlags>,
 
     /// Properties of this setting that this binding has no field for, kept so that
     /// reading a profile and writing it back does not drop them.
@@ -9463,15 +9477,37 @@ impl WifiP2pSetting {
         self.wps_method = Some(value);
         self
     }
+
+    /// Set [`wps_pin`](field@Self::wps_pin), the `wps-pin` property.
+    #[must_use]
+    pub fn wps_pin(mut self, value: impl Into<String>) -> Self {
+        self.wps_pin = Some(value.into());
+        self
+    }
+
+    /// Set [`wps_pin_flags`](field@Self::wps_pin_flags), the `wps-pin-flags` property.
+    #[must_use]
+    pub fn wps_pin_flags(mut self, value: SettingSecretFlags) -> Self {
+        self.wps_pin_flags = Some(value);
+        self
+    }
 }
 impl Setting for WifiP2pSetting {
     const NAME: &'static str = "wifi-p2p";
-    const PROPERTIES: &'static [&'static str] = &["peer", "wfd-ies", "wps-method"];
+    const PROPERTIES: &'static [&'static str] = &[
+        "peer",
+        "wfd-ies",
+        "wps-method",
+        "wps-pin",
+        "wps-pin-flags",
+    ];
     fn from_map(map: &SettingMap) -> Result<Self, SettingsError> {
         Ok(Self {
             peer: settings::get(map, Self::NAME, "peer")?,
             wfd_ies: settings::get(map, Self::NAME, "wfd-ies")?,
             wps_method: settings::get(map, Self::NAME, "wps-method")?,
+            wps_pin: settings::get(map, Self::NAME, "wps-pin")?,
+            wps_pin_flags: settings::get(map, Self::NAME, "wps-pin-flags")?,
             other: settings::unknown(map, Self::NAME, Self::PROPERTIES)?,
         })
     }
@@ -9480,6 +9516,8 @@ impl Setting for WifiP2pSetting {
         settings::set(&mut map, Self::NAME, "peer", self.peer.clone())?;
         settings::set(&mut map, Self::NAME, "wfd-ies", self.wfd_ies.clone())?;
         settings::set(&mut map, Self::NAME, "wps-method", self.wps_method)?;
+        settings::set(&mut map, Self::NAME, "wps-pin", self.wps_pin.clone())?;
+        settings::set(&mut map, Self::NAME, "wps-pin-flags", self.wps_pin_flags)?;
         settings::merge_unknown(&mut map, Self::NAME, &self.other)?;
         Ok(map)
     }
@@ -10173,6 +10211,34 @@ pub struct WirelessSetting {
     /// `cloned-mac-address`
     pub cloned_mac_address: Option<MacAddress>,
 
+    /// If TRUE, forces EHT (802.11be) off when associating with this network. Use this if the access point advertises EHT support in its beacon but omits it from the (re)association response, which some drivers treat as a mode downgrade and disconnect over.
+    ///
+    /// `disable-eht`
+    ///
+    /// Unset, NetworkManager uses `FALSE`.
+    pub disable_eht: Option<bool>,
+
+    /// If TRUE, forces HE (802.11ax) off when associating with this network. Use this if the access point advertises HE support in its beacon but omits it from the (re)association response, which some drivers treat as a mode downgrade and disconnect over.
+    ///
+    /// `disable-he`
+    ///
+    /// Unset, NetworkManager uses `FALSE`.
+    pub disable_he: Option<bool>,
+
+    /// If TRUE, forces HT (802.11n) off when associating with this network. Use this if the access point advertises HT support in its beacon but omits it from the (re)association response, which some drivers treat as a mode downgrade and disconnect over.
+    ///
+    /// `disable-ht`
+    ///
+    /// Unset, NetworkManager uses `FALSE`.
+    pub disable_ht: Option<bool>,
+
+    /// If TRUE, forces VHT (802.11ac) off when associating with this network. Use this if the access point advertises VHT support in its beacon but omits it from the (re)association response, which some drivers treat as a mode downgrade and disconnect over.
+    ///
+    /// `disable-vht`
+    ///
+    /// Unset, NetworkManager uses `FALSE`.
+    pub disable_vht: Option<bool>,
+
     /// With "cloned-mac-address" setting "random" or "stable", by default all bits of the MAC address are scrambled and a locally-administered, unicast MAC address is created. This property allows one to specify that certain bits are fixed. Note that the least significant bit of the first MAC address will always be unset to create a unicast MAC address.
     ///
     /// If the property is NULL, it is eligible to be overwritten by a default connection setting. If the value is still NULL or an empty string, the default is to create a locally-administered, unicast MAC address.
@@ -10327,6 +10393,34 @@ impl WirelessSetting {
         self
     }
 
+    /// Set [`disable_eht`](field@Self::disable_eht), the `disable-eht` property.
+    #[must_use]
+    pub fn disable_eht(mut self, value: bool) -> Self {
+        self.disable_eht = Some(value);
+        self
+    }
+
+    /// Set [`disable_he`](field@Self::disable_he), the `disable-he` property.
+    #[must_use]
+    pub fn disable_he(mut self, value: bool) -> Self {
+        self.disable_he = Some(value);
+        self
+    }
+
+    /// Set [`disable_ht`](field@Self::disable_ht), the `disable-ht` property.
+    #[must_use]
+    pub fn disable_ht(mut self, value: bool) -> Self {
+        self.disable_ht = Some(value);
+        self
+    }
+
+    /// Set [`disable_vht`](field@Self::disable_vht), the `disable-vht` property.
+    #[must_use]
+    pub fn disable_vht(mut self, value: bool) -> Self {
+        self.disable_vht = Some(value);
+        self
+    }
+
     /// Set [`generate_mac_address_mask`](field@Self::generate_mac_address_mask), the `generate-mac-address-mask` property.
     #[must_use]
     pub fn generate_mac_address_mask(mut self, value: impl Into<String>) -> Self {
@@ -10435,6 +10529,10 @@ impl Setting for WirelessSetting {
         "channel",
         "channel-width",
         "cloned-mac-address",
+        "disable-eht",
+        "disable-he",
+        "disable-ht",
+        "disable-vht",
         "generate-mac-address-mask",
         "hidden",
         "mac-address",
@@ -10463,6 +10561,10 @@ impl Setting for WirelessSetting {
             channel: settings::get(map, Self::NAME, "channel")?,
             channel_width: settings::get(map, Self::NAME, "channel-width")?,
             cloned_mac_address: settings::get(map, Self::NAME, "cloned-mac-address")?,
+            disable_eht: settings::get(map, Self::NAME, "disable-eht")?,
+            disable_he: settings::get(map, Self::NAME, "disable-he")?,
+            disable_ht: settings::get(map, Self::NAME, "disable-ht")?,
+            disable_vht: settings::get(map, Self::NAME, "disable-vht")?,
             generate_mac_address_mask: settings::get(
                 map,
                 Self::NAME,
@@ -10515,6 +10617,10 @@ impl Setting for WirelessSetting {
             "cloned-mac-address",
             self.cloned_mac_address.clone(),
         )?;
+        settings::set(&mut map, Self::NAME, "disable-eht", self.disable_eht)?;
+        settings::set(&mut map, Self::NAME, "disable-he", self.disable_he)?;
+        settings::set(&mut map, Self::NAME, "disable-ht", self.disable_ht)?;
+        settings::set(&mut map, Self::NAME, "disable-vht", self.disable_vht)?;
         settings::set(
             &mut map,
             Self::NAME,

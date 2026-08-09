@@ -10627,6 +10627,16 @@ and some #NMSetting8021x operations.</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="DEPRECATED_IN_1_60_FOR"
+                    c:identifier="NM_DEPRECATED_IN_1_60_FOR"
+                    introspectable="0">
+      <source-position filename="src/libnm-core-public/nm-version.h"
+                       line="472"/>
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="DEPRECATED_IN_1_6_FOR"
                     c:identifier="NM_DEPRECATED_IN_1_6_FOR"
                     introspectable="0">
@@ -29767,7 +29777,7 @@ is compiled against.</doc>
                        line="17"/>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MICRO_VERSION" value="0" c:type="NM_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="2" c:type="NM_MICRO_VERSION">
       <doc xml:space="preserve"
            filename="src/libnm-core-public/nm-version-macros.h"
            line="27">Evaluates to the micro version number of NetworkManager which this source
@@ -29776,7 +29786,7 @@ compiled against.</doc>
                        line="33"/>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MINOR_VERSION" value="58" c:type="NM_MINOR_VERSION">
+    <constant name="MINOR_VERSION" value="59" c:type="NM_MINOR_VERSION">
       <doc xml:space="preserve"
            filename="src/libnm-core-public/nm-version-macros.h"
            line="19">Evaluates to the minor version number of NetworkManager which this source
@@ -37248,6 +37258,20 @@ supported for IPv6)</doc>
                        line="37"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
+    <constant name="SETTING_WIFI_P2P_WPS_PIN"
+              value="wps-pin"
+              c:type="NM_SETTING_WIFI_P2P_WPS_PIN">
+      <source-position filename="src/libnm-core-public/nm-setting-wifi-p2p.h"
+                       line="39"/>
+      <type name="utf8" c:type="gchar*"/>
+    </constant>
+    <constant name="SETTING_WIFI_P2P_WPS_PIN_FLAGS"
+              value="wps-pin-flags"
+              c:type="NM_SETTING_WIFI_P2P_WPS_PIN_FLAGS">
+      <source-position filename="src/libnm-core-public/nm-setting-wifi-p2p.h"
+                       line="40"/>
+      <type name="utf8" c:type="gchar*"/>
+    </constant>
     <function-macro name="SETTING_WIMAX"
                     c:identifier="NM_SETTING_WIMAX"
                     introspectable="0">
@@ -37610,6 +37634,34 @@ supported for IPv6)</doc>
                        line="84"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
+    <constant name="SETTING_WIRELESS_DISABLE_EHT"
+              value="disable-eht"
+              c:type="NM_SETTING_WIRELESS_DISABLE_EHT">
+      <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
+                       line="99"/>
+      <type name="utf8" c:type="gchar*"/>
+    </constant>
+    <constant name="SETTING_WIRELESS_DISABLE_HE"
+              value="disable-he"
+              c:type="NM_SETTING_WIRELESS_DISABLE_HE">
+      <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
+                       line="98"/>
+      <type name="utf8" c:type="gchar*"/>
+    </constant>
+    <constant name="SETTING_WIRELESS_DISABLE_HT"
+              value="disable-ht"
+              c:type="NM_SETTING_WIRELESS_DISABLE_HT">
+      <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
+                       line="96"/>
+      <type name="utf8" c:type="gchar*"/>
+    </constant>
+    <constant name="SETTING_WIRELESS_DISABLE_VHT"
+              value="disable-vht"
+              c:type="NM_SETTING_WIRELESS_DISABLE_VHT">
+      <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
+                       line="97"/>
+      <type name="utf8" c:type="gchar*"/>
+    </constant>
     <constant name="SETTING_WIRELESS_GENERATE_MAC_ADDRESS_MASK"
               value="generate-mac-address-mask"
               c:type="NM_SETTING_WIRELESS_GENERATE_MAC_ADDRESS_MASK">
@@ -37674,9 +37726,9 @@ supported for IPv6)</doc>
               c:type="NM_SETTING_WIRELESS_MODE_ADHOC">
       <doc xml:space="preserve"
            filename="src/libnm-core-public/nm-setting-wireless.h"
-           line="97">Indicates Ad-Hoc mode where no access point is expected to be present.</doc>
+           line="101">Indicates Ad-Hoc mode where no access point is expected to be present.</doc>
       <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                       line="102"/>
+                       line="106"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="SETTING_WIRELESS_MODE_AP"
@@ -37684,10 +37736,10 @@ supported for IPv6)</doc>
               c:type="NM_SETTING_WIRELESS_MODE_AP">
       <doc xml:space="preserve"
            filename="src/libnm-core-public/nm-setting-wireless.h"
-           line="104">Indicates AP/master mode where the wireless device is started as an access
+           line="108">Indicates AP/master mode where the wireless device is started as an access
 point/hotspot.</doc>
       <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                       line="110"/>
+                       line="114"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="SETTING_WIRELESS_MODE_INFRA"
@@ -37695,10 +37747,10 @@ point/hotspot.</doc>
               c:type="NM_SETTING_WIRELESS_MODE_INFRA">
       <doc xml:space="preserve"
            filename="src/libnm-core-public/nm-setting-wireless.h"
-           line="112">Indicates infrastructure mode where an access point is expected to be present
+           line="116">Indicates infrastructure mode where an access point is expected to be present
 for this connection.</doc>
       <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                       line="118"/>
+                       line="122"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="SETTING_WIRELESS_MODE_MESH"
@@ -37707,9 +37759,9 @@ for this connection.</doc>
               version="1.20">
       <doc xml:space="preserve"
            filename="src/libnm-core-public/nm-setting-wireless.h"
-           line="120">Indicates that the connection should create a mesh point.</doc>
+           line="124">Indicates that the connection should create a mesh point.</doc>
       <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                       line="127"/>
+                       line="131"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="SETTING_WIRELESS_MTU"
@@ -37747,7 +37799,7 @@ for this connection.</doc>
               value="auth-alg"
               c:type="NM_SETTING_WIRELESS_SECURITY_AUTH_ALG">
       <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                       line="138"/>
+                       line="143"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <function-macro name="SETTING_WIRELESS_SECURITY_CLASS"
@@ -37764,7 +37816,7 @@ for this connection.</doc>
               value="fils"
               c:type="NM_SETTING_WIRELESS_SECURITY_FILS">
       <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                       line="155"/>
+                       line="160"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <function-macro name="SETTING_WIRELESS_SECURITY_GET_CLASS"
@@ -37781,70 +37833,70 @@ for this connection.</doc>
               value="group"
               c:type="NM_SETTING_WIRELESS_SECURITY_GROUP">
       <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                       line="141"/>
+                       line="146"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="SETTING_WIRELESS_SECURITY_KEY_MGMT"
               value="key-mgmt"
               c:type="NM_SETTING_WIRELESS_SECURITY_KEY_MGMT">
       <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                       line="136"/>
+                       line="141"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="SETTING_WIRELESS_SECURITY_LEAP_PASSWORD"
               value="leap-password"
               c:type="NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD">
       <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                       line="152"/>
+                       line="157"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="SETTING_WIRELESS_SECURITY_LEAP_PASSWORD_FLAGS"
               value="leap-password-flags"
               c:type="NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD_FLAGS">
       <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                       line="153"/>
+                       line="158"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="SETTING_WIRELESS_SECURITY_LEAP_USERNAME"
               value="leap-username"
               c:type="NM_SETTING_WIRELESS_SECURITY_LEAP_USERNAME">
       <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                       line="143"/>
+                       line="148"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="SETTING_WIRELESS_SECURITY_PAIRWISE"
               value="pairwise"
               c:type="NM_SETTING_WIRELESS_SECURITY_PAIRWISE">
       <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                       line="140"/>
+                       line="145"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="SETTING_WIRELESS_SECURITY_PMF"
               value="pmf"
               c:type="NM_SETTING_WIRELESS_SECURITY_PMF">
       <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                       line="142"/>
+                       line="147"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="SETTING_WIRELESS_SECURITY_PROTO"
               value="proto"
               c:type="NM_SETTING_WIRELESS_SECURITY_PROTO">
       <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                       line="139"/>
+                       line="144"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="SETTING_WIRELESS_SECURITY_PSK"
               value="psk"
               c:type="NM_SETTING_WIRELESS_SECURITY_PSK">
       <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                       line="150"/>
+                       line="155"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="SETTING_WIRELESS_SECURITY_PSK_FLAGS"
               value="psk-flags"
               c:type="NM_SETTING_WIRELESS_SECURITY_PSK_FLAGS">
       <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                       line="151"/>
+                       line="156"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="SETTING_WIRELESS_SECURITY_SETTING_NAME"
@@ -37858,56 +37910,56 @@ for this connection.</doc>
               value="wep-key0"
               c:type="NM_SETTING_WIRELESS_SECURITY_WEP_KEY0">
       <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                       line="144"/>
+                       line="149"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="SETTING_WIRELESS_SECURITY_WEP_KEY1"
               value="wep-key1"
               c:type="NM_SETTING_WIRELESS_SECURITY_WEP_KEY1">
       <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                       line="145"/>
+                       line="150"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="SETTING_WIRELESS_SECURITY_WEP_KEY2"
               value="wep-key2"
               c:type="NM_SETTING_WIRELESS_SECURITY_WEP_KEY2">
       <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                       line="146"/>
+                       line="151"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="SETTING_WIRELESS_SECURITY_WEP_KEY3"
               value="wep-key3"
               c:type="NM_SETTING_WIRELESS_SECURITY_WEP_KEY3">
       <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                       line="147"/>
+                       line="152"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="SETTING_WIRELESS_SECURITY_WEP_KEY_FLAGS"
               value="wep-key-flags"
               c:type="NM_SETTING_WIRELESS_SECURITY_WEP_KEY_FLAGS">
       <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                       line="148"/>
+                       line="153"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="SETTING_WIRELESS_SECURITY_WEP_KEY_TYPE"
               value="wep-key-type"
               c:type="NM_SETTING_WIRELESS_SECURITY_WEP_KEY_TYPE">
       <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                       line="149"/>
+                       line="154"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="SETTING_WIRELESS_SECURITY_WEP_TX_KEYIDX"
               value="wep-tx-keyidx"
               c:type="NM_SETTING_WIRELESS_SECURITY_WEP_TX_KEYIDX">
       <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                       line="137"/>
+                       line="142"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="SETTING_WIRELESS_SECURITY_WPS_METHOD"
               value="wps-method"
               c:type="NM_SETTING_WIRELESS_SECURITY_WPS_METHOD">
       <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                       line="154"/>
+                       line="159"/>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="SETTING_WIRELESS_SEEN_BSSIDS"
@@ -43995,7 +44047,8 @@ URI of an object on a PKCS#11 token</doc>
                 default-value="0">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-adsl.c"
-             line="361">VCI of ADSL connection</doc>
+             line="362">The virtual channel identifier (VCI) of the ATM permanent virtual circuit
+(PVC) that carries the ADSL connection.</doc>
         <type name="guint" c:type="guint"/>
       </property>
       <property name="vpi"
@@ -44005,7 +44058,8 @@ URI of an object on a PKCS#11 token</doc>
                 default-value="0">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-adsl.c"
-             line="345">VPI of ADSL connection</doc>
+             line="345">The virtual path identifier (VPI) of the ATM permanent virtual circuit
+(PVC) that carries the ADSL connection.</doc>
         <type name="guint" c:type="guint"/>
       </property>
     </class>
@@ -51566,7 +51620,7 @@ property.</doc>
                 default-value="-1">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-ip4-config.c"
-             line="1412">Controls the CLAT (Customer-side translator) functionality. CLAT is used to implement the
+             line="1413">Controls the CLAT (Customer-side translator) functionality. CLAT is used to implement the
 client part of 464XLAT (RFC 6877), an architecture that provides IPv4 connectivity to hosts
 on IPv6-only networks.
 
@@ -51647,7 +51701,7 @@ cannot be set at the same time.</doc>
                 default-value="-1">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-ip4-config.c"
-             line="1373">Controls the "IPv6-Only Preferred" DHCPv4 option (option 108 - RFC 8925).
+             line="1374">Controls the "IPv6-Only Preferred" DHCPv4 option (option 108 - RFC 8925).
 
 When set to %NM_SETTING_IP4_DHCP_IPV6_ONLY_PREFERRED_YES, the host adds the
 option to the parameter request list; if the DHCP server sends the option back,
@@ -64818,19 +64872,19 @@ tunnel endpoint.</doc>
            filename="src/libnm-core-impl/nm-setting-wifi-p2p.c"
            line="25">Wi-Fi P2P Settings</doc>
       <source-position filename="src/libnm-core-public/nm-setting-wifi-p2p.h"
-                       line="40"/>
+                       line="42"/>
       <constructor name="new"
                    c:identifier="nm_setting_wifi_p2p_new"
                    version="1.16">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wifi-p2p.c"
-             line="155">Creates a new #NMSettingWifiP2P object with default values.</doc>
+             line="220">Creates a new #NMSettingWifiP2P object with default values.</doc>
         <source-position filename="src/libnm-core-public/nm-setting-wifi-p2p.h"
-                         line="46"/>
+                         line="48"/>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wifi-p2p.c"
-               line="160">the new empty #NMSettingWifiP2P object</doc>
+               line="225">the new empty #NMSettingWifiP2P object</doc>
           <type name="Setting" c:type="NMSetting*"/>
         </return-value>
       </constructor>
@@ -64839,18 +64893,18 @@ tunnel endpoint.</doc>
               glib:get-property="peer"
               version="1.16">
         <source-position filename="src/libnm-core-public/nm-setting-wifi-p2p.h"
-                         line="49"/>
+                         line="51"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wifi-p2p.c"
-               line="63">the #NMSettingWifiP2P:peer property of the setting</doc>
+               line="69">the #NMSettingWifiP2P:peer property of the setting</doc>
           <type name="utf8" c:type="const char*"/>
         </return-value>
         <parameters>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wifi-p2p.c"
-                 line="61">the #NMSettingWifiP2P</doc>
+                 line="67">the #NMSettingWifiP2P</doc>
             <type name="SettingWifiP2P" c:type="NMSettingWifiP2P*"/>
           </instance-parameter>
         </parameters>
@@ -64860,18 +64914,18 @@ tunnel endpoint.</doc>
               glib:get-property="wfd-ies"
               version="1.16">
         <source-position filename="src/libnm-core-public/nm-setting-wifi-p2p.h"
-                         line="55"/>
+                         line="57"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wifi-p2p.c"
-               line="96">the #NMSettingWiFiP2P:wfd-ies property of the setting</doc>
+               line="102">the #NMSettingWiFiP2P:wfd-ies property of the setting</doc>
           <type name="GLib.Bytes" c:type="GBytes*"/>
         </return-value>
         <parameters>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wifi-p2p.c"
-                 line="94">the #NMSettingWiFiP2P</doc>
+                 line="100">the #NMSettingWiFiP2P</doc>
             <type name="SettingWifiP2P" c:type="NMSettingWifiP2P*"/>
           </instance-parameter>
         </parameters>
@@ -64881,11 +64935,11 @@ tunnel endpoint.</doc>
               glib:get-property="wps-method"
               version="1.16">
         <source-position filename="src/libnm-core-public/nm-setting-wifi-p2p.h"
-                         line="52"/>
+                         line="54"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wifi-p2p.c"
-               line="79">the #NMSettingWifiP2P:wps-method property of the setting</doc>
+               line="85">the #NMSettingWifiP2P:wps-method property of the setting</doc>
           <type name="SettingWirelessSecurityWpsMethod"
                 c:type="NMSettingWirelessSecurityWpsMethod"/>
         </return-value>
@@ -64893,7 +64947,50 @@ tunnel endpoint.</doc>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wifi-p2p.c"
-                 line="77">the #NMSettingWifiP2P</doc>
+                 line="83">the #NMSettingWifiP2P</doc>
+            <type name="SettingWifiP2P" c:type="NMSettingWifiP2P*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_wps_pin"
+              c:identifier="nm_setting_wifi_p2p_get_wps_pin"
+              glib:get-property="wps-pin"
+              version="1.60">
+        <source-position filename="src/libnm-core-public/nm-setting-wifi-p2p.h"
+                         line="60"/>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve"
+               filename="src/libnm-core-impl/nm-setting-wifi-p2p.c"
+               line="118">the #NMSettingWifiP2P:wps-pin property of the setting</doc>
+          <type name="utf8" c:type="const char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="setting" transfer-ownership="none">
+            <doc xml:space="preserve"
+                 filename="src/libnm-core-impl/nm-setting-wifi-p2p.c"
+                 line="116">the #NMSettingWifiP2P</doc>
+            <type name="SettingWifiP2P" c:type="NMSettingWifiP2P*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_wps_pin_flags"
+              c:identifier="nm_setting_wifi_p2p_get_wps_pin_flags"
+              glib:get-property="wps-pin-flags"
+              version="1.60">
+        <source-position filename="src/libnm-core-public/nm-setting-wifi-p2p.h"
+                         line="63"/>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve"
+               filename="src/libnm-core-impl/nm-setting-wifi-p2p.c"
+               line="134">the #NMSettingSecretFlags pertaining to the
+#NMSettingWifiP2P:wps-pin</doc>
+          <type name="SettingSecretFlags" c:type="NMSettingSecretFlags"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="setting" transfer-ownership="none">
+            <doc xml:space="preserve"
+                 filename="src/libnm-core-impl/nm-setting-wifi-p2p.c"
+                 line="132">the #NMSettingWifiP2P</doc>
             <type name="SettingWifiP2P" c:type="NMSettingWifiP2P*"/>
           </instance-parameter>
         </parameters>
@@ -64906,7 +65003,7 @@ tunnel endpoint.</doc>
                 default-value="NULL">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wifi-p2p.c"
-             line="182">The P2P device that should be connected to. Currently, this is the only
+             line="248">The P2P device that should be connected to. Currently, this is the only
 way to create or join a group.</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
@@ -64917,7 +65014,7 @@ way to create or join a group.</doc>
                 getter="get_wfd_ies">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wifi-p2p.c"
-             line="228">The Wi-Fi Display (WFD) Information Elements (IEs) to set.
+             line="302">The Wi-Fi Display (WFD) Information Elements (IEs) to set.
 
 Wi-Fi Display requires a protocol specific information element to be
 set in certain Wi-Fi frames. These can be specified here for the
@@ -64933,11 +65030,56 @@ This setting is only useful when implementing a Wi-Fi Display client.</doc>
                 default-value="0">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wifi-p2p.c"
-             line="207">Flags indicating which mode of WPS is to be used.
+             line="273">Flags indicating which mode of WPS is to be used.
 
-There's little point in changing the default setting as NetworkManager will
-automatically determine the best method to use.</doc>
+With the default setting, the push-button method
+(%NM_SETTING_WIRELESS_SECURITY_WPS_METHOD_PBC) is used. For the PIN
+method there are two directions: set this to
+%NM_SETTING_WIRELESS_SECURITY_WPS_METHOD_PIN to enter the code that
+the peer displays (for example a display-capable Miracast sink), or to
+%NM_SETTING_WIRELESS_SECURITY_WPS_METHOD_PIN_DISPLAY to instead show a
+code that the user enters on the peer. Either way the code is the
+#NMSettingWifiP2P:wps-pin property.
+%NM_SETTING_WIRELESS_SECURITY_WPS_METHOD_PIN_DISPLAY is not supported
+by the IWD backend.</doc>
         <type name="guint" c:type="guint"/>
+      </property>
+      <property name="wps-pin"
+                version="1.60"
+                writable="1"
+                transfer-ownership="none"
+                getter="get_wps_pin"
+                default-value="NULL">
+        <doc xml:space="preserve"
+             filename="src/libnm-core-impl/nm-setting-wifi-p2p.c"
+             line="322">The WPS PIN used by the PIN methods of the #NMSettingWifiP2P:wps-method
+property. With %NM_SETTING_WIRELESS_SECURITY_WPS_METHOD_PIN it is the
+code that the peer (for example a display-capable Miracast sink)
+generates and displays, and that the user then enters on this machine.
+With %NM_SETTING_WIRELESS_SECURITY_WPS_METHOD_PIN_DISPLAY it is the
+code that the user enters on the peer instead; whoever provides the
+code is expected to show it: a client that sets it in the profile, or
+otherwise the secret agent that is asked for it, which may simply make
+one up.
+
+When the PIN is not set, NetworkManager asks a secret agent for it; if
+enrollment then fails, it asks again for a new one. The code is normally
+used only once, in which case saving it is pointless: set the
+#NMSettingWifiP2P:wps-pin-flags property to
+%NM_SETTING_SECRET_FLAG_NOT_SAVED so that the user is asked every
+time.</doc>
+        <type name="utf8" c:type="gchar*"/>
+      </property>
+      <property name="wps-pin-flags"
+                version="1.60"
+                writable="1"
+                transfer-ownership="none"
+                getter="get_wps_pin_flags"
+                default-value="NM_SETTING_SECRET_FLAG_NONE">
+        <doc xml:space="preserve"
+             filename="src/libnm-core-impl/nm-setting-wifi-p2p.c"
+             line="353">Flags indicating how to handle the #NMSettingWifiP2P:wps-pin property.</doc>
+        <type name="SettingSecretFlags"/>
       </property>
     </class>
     <record name="SettingWifiP2PClass"
@@ -64946,7 +65088,7 @@ automatically determine the best method to use.</doc>
             opaque="1"
             glib:is-gtype-struct-for="SettingWifiP2P">
       <source-position filename="src/libnm-core-public/nm-setting-wifi-p2p.h"
-                       line="40"/>
+                       line="42"/>
     </record>
     <class name="SettingWimax"
            c:symbol-prefix="setting_wimax"
@@ -66881,19 +67023,19 @@ are supported by all devices.</doc>
            glib:type-struct="SettingWirelessClass">
       <doc xml:space="preserve"
            filename="src/libnm-core-impl/nm-setting-wireless.c"
-           line="72">Wi-Fi Settings</doc>
+           line="80">Wi-Fi Settings</doc>
       <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                       line="167"/>
+                       line="171"/>
       <constructor name="new" c:identifier="nm_setting_wireless_new">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="1549">Creates a new #NMSettingWireless object with default values.</doc>
+             line="1613">Creates a new #NMSettingWireless object with default values.</doc>
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="171"/>
+                         line="175"/>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="1554">the new empty #NMSettingWireless object</doc>
+               line="1618">the new empty #NMSettingWireless object</doc>
           <type name="Setting" c:type="NMSetting*"/>
         </return-value>
       </constructor>
@@ -66903,14 +67045,14 @@ are supported by all devices.</doc>
               deprecated-version="1.48.">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="694">Adds a new MAC address to the #NMSettingWireless:mac-address-denylist property.</doc>
+             line="703">Adds a new MAC address to the #NMSettingWireless:mac-address-denylist property.</doc>
         <doc-deprecated xml:space="preserve">Use nm_setting_wireless_add_mac_denylist_item() instead.</doc-deprecated>
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="198"/>
+                         line="202"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="701">%TRUE if the MAC address was added; %FALSE if the MAC address
+               line="710">%TRUE if the MAC address was added; %FALSE if the MAC address
 is invalid or was already present</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
@@ -66918,13 +67060,13 @@ is invalid or was already present</doc>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="696">the #NMSettingWireless</doc>
+                 line="705">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
           <parameter name="mac" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="697">the MAC address string (hex-digits-and-colons notation) to denylist</doc>
+                 line="706">the MAC address string (hex-digits-and-colons notation) to denylist</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
         </parameters>
@@ -66934,13 +67076,13 @@ is invalid or was already present</doc>
               version="1.48">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="521">Adds a new MAC address to the #NMSettingWireless:mac-address-denylist property.</doc>
+             line="530">Adds a new MAC address to the #NMSettingWireless:mac-address-denylist property.</doc>
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="210"/>
+                         line="214"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="528">%TRUE if the MAC address was added; %FALSE if the MAC address
+               line="537">%TRUE if the MAC address was added; %FALSE if the MAC address
 is invalid or was already present</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
@@ -66948,13 +67090,13 @@ is invalid or was already present</doc>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="523">the #NMSettingWireless</doc>
+                 line="532">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
           <parameter name="mac" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="524">the MAC address string (hex-digits-and-colons notation) to denylist</doc>
+                 line="533">the MAC address string (hex-digits-and-colons notation) to denylist</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
         </parameters>
@@ -66963,29 +67105,29 @@ is invalid or was already present</doc>
               c:identifier="nm_setting_wireless_add_seen_bssid">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="820">Adds a new Wi-Fi AP's BSSID to the previously seen BSSID list of the setting.
+             line="885">Adds a new Wi-Fi AP's BSSID to the previously seen BSSID list of the setting.
 NetworkManager now tracks previously seen BSSIDs internally so this function
 no longer has much use. Actually, changes you make using this function will
 not be preserved.</doc>
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="225"/>
+                         line="233"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="830">%TRUE if @bssid was already known, %FALSE if not</doc>
+               line="895">%TRUE if @bssid was already known, %FALSE if not</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="822">the #NMSettingWireless</doc>
+                 line="887">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
           <parameter name="bssid" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="823">the new BSSID to add to the list</doc>
+                 line="888">the new BSSID to add to the list</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
         </parameters>
@@ -66994,18 +67136,18 @@ not be preserved.</doc>
               c:identifier="nm_setting_wireless_ap_security_compatible">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="109">Given a #NMSettingWireless and an optional #NMSettingWirelessSecurity,
+             line="117">Given a #NMSettingWireless and an optional #NMSettingWirelessSecurity,
 determine if the configuration given by the settings is compatible with
 the security of an access point using that access point's capability flags
 and mode.  Useful for clients that wish to filter a set of connections
 against a set of access points and determine which connections are
 compatible with which access points.</doc>
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="230"/>
+                         line="238"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="127">%TRUE if the given settings are compatible with the access point's
+               line="135">%TRUE if the given settings are compatible with the access point's
 security flags and mode, %FALSE if they are not.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
@@ -67013,40 +67155,40 @@ security flags and mode, %FALSE if they are not.</doc>
           <instance-parameter name="s_wireless" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="111">a #NMSettingWireless</doc>
+                 line="119">a #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
           <parameter name="s_wireless_sec" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="112">a #NMSettingWirelessSecurity or %NULL</doc>
+                 line="120">a #NMSettingWirelessSecurity or %NULL</doc>
             <type name="SettingWirelessSecurity"
                   c:type="NMSettingWirelessSecurity*"/>
           </parameter>
           <parameter name="ap_flags" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="113">the %NM80211ApFlags of the given access point</doc>
+                 line="121">the %NM80211ApFlags of the given access point</doc>
             <type name="80211ApFlags" c:type="NM80211ApFlags"/>
           </parameter>
           <parameter name="ap_wpa" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="114">the %NM80211ApSecurityFlags of the given access point's WPA
+                 line="122">the %NM80211ApSecurityFlags of the given access point's WPA
 capabilities</doc>
             <type name="80211ApSecurityFlags" c:type="NM80211ApSecurityFlags"/>
           </parameter>
           <parameter name="ap_rsn" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="116">the %NM80211ApSecurityFlags of the given access point's WPA2/RSN
+                 line="124">the %NM80211ApSecurityFlags of the given access point's WPA2/RSN
 capabilities</doc>
             <type name="80211ApSecurityFlags" c:type="NM80211ApSecurityFlags"/>
           </parameter>
           <parameter name="ap_mode" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="118">the 802.11 mode of the AP, either Ad-Hoc or Infrastructure</doc>
+                 line="126">the 802.11 mode of the AP, either Ad-Hoc or Infrastructure</doc>
             <type name="80211Mode" c:type="NM80211Mode"/>
           </parameter>
         </parameters>
@@ -67057,10 +67199,10 @@ capabilities</doc>
               deprecated-version="1.48.">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="745">Removes all denylisted MAC addresses.</doc>
+             line="754">Removes all denylisted MAC addresses.</doc>
         <doc-deprecated xml:space="preserve">Use nm_setting_wireless_clear_mac_denylist_items() instead.</doc-deprecated>
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="205"/>
+                         line="209"/>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -67068,7 +67210,7 @@ capabilities</doc>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="747">the #NMSettingWireless</doc>
+                 line="756">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
         </parameters>
@@ -67078,9 +67220,9 @@ capabilities</doc>
               version="1.48">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="631">Removes all denylisted MAC addresses.</doc>
+             line="640">Removes all denylisted MAC addresses.</doc>
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="214"/>
+                         line="218"/>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -67088,7 +67230,7 @@ capabilities</doc>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="633">the #NMSettingWireless</doc>
+                 line="642">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
         </parameters>
@@ -67098,18 +67240,18 @@ capabilities</doc>
               glib:get-property="ap-isolation"
               version="1.28">
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="241"/>
+                         line="249"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="1005">the #NMSettingWireless:ap-isolation property of the setting</doc>
+               line="1070">the #NMSettingWireless:ap-isolation property of the setting</doc>
           <type name="Ternary" c:type="NMTernary"/>
         </return-value>
         <parameters>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="1003">the #NMSettingWireless</doc>
+                 line="1068">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
         </parameters>
@@ -67118,18 +67260,18 @@ capabilities</doc>
               c:identifier="nm_setting_wireless_get_band"
               glib:get-property="band">
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="175"/>
+                         line="179"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="353">the #NMSettingWireless:band property of the setting</doc>
+               line="362">the #NMSettingWireless:band property of the setting</doc>
           <type name="utf8" c:type="const char*"/>
         </return-value>
         <parameters>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="351">the #NMSettingWireless</doc>
+                 line="360">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
         </parameters>
@@ -67138,18 +67280,18 @@ capabilities</doc>
               c:identifier="nm_setting_wireless_get_bssid"
               glib:get-property="bssid">
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="177"/>
+                         line="181"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="381">the #NMSettingWireless:bssid property of the setting</doc>
+               line="390">the #NMSettingWireless:bssid property of the setting</doc>
           <type name="utf8" c:type="const char*"/>
         </return-value>
         <parameters>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="379">the #NMSettingWireless</doc>
+                 line="388">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
         </parameters>
@@ -67158,18 +67300,18 @@ capabilities</doc>
               c:identifier="nm_setting_wireless_get_channel"
               glib:get-property="channel">
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="176"/>
+                         line="180"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="367">the #NMSettingWireless:channel property of the setting</doc>
+               line="376">the #NMSettingWireless:channel property of the setting</doc>
           <type name="guint32" c:type="guint32"/>
         </return-value>
         <parameters>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="365">the #NMSettingWireless</doc>
+                 line="374">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
         </parameters>
@@ -67180,13 +67322,13 @@ capabilities</doc>
               version="1.50">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="1017">Returns the #NMSettingWireless:channel-width property.</doc>
+             line="1082">Returns the #NMSettingWireless:channel-width property.</doc>
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="244"/>
+                         line="252"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="1023">the channel width</doc>
+               line="1088">the channel width</doc>
           <type name="SettingWirelessChannelWidth"
                 c:type="NMSettingWirelessChannelWidth"/>
         </return-value>
@@ -67194,7 +67336,7 @@ capabilities</doc>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="1019">the #NMSettingWireless</doc>
+                 line="1084">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
         </parameters>
@@ -67203,18 +67345,98 @@ capabilities</doc>
               c:identifier="nm_setting_wireless_get_cloned_mac_address"
               glib:get-property="cloned-mac-address">
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="186"/>
+                         line="190"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="441">the #NMSettingWireless:cloned-mac-address property of the setting</doc>
+               line="450">the #NMSettingWireless:cloned-mac-address property of the setting</doc>
           <type name="utf8" c:type="const char*"/>
         </return-value>
         <parameters>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="439">the #NMSettingWireless</doc>
+                 line="448">the #NMSettingWireless</doc>
+            <type name="SettingWireless" c:type="NMSettingWireless*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_disable_eht"
+              c:identifier="nm_setting_wireless_get_disable_eht"
+              glib:get-property="disable-eht">
+        <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
+                         line="225"/>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve"
+               filename="src/libnm-core-impl/nm-setting-wireless.c"
+               line="842">the #NMSettingWireless:disable-eht property of the setting</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="setting" transfer-ownership="none">
+            <doc xml:space="preserve"
+                 filename="src/libnm-core-impl/nm-setting-wireless.c"
+                 line="840">the #NMSettingWireless</doc>
+            <type name="SettingWireless" c:type="NMSettingWireless*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_disable_he"
+              c:identifier="nm_setting_wireless_get_disable_he"
+              glib:get-property="disable-he">
+        <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
+                         line="224"/>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve"
+               filename="src/libnm-core-impl/nm-setting-wireless.c"
+               line="828">the #NMSettingWireless:disable-he property of the setting</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="setting" transfer-ownership="none">
+            <doc xml:space="preserve"
+                 filename="src/libnm-core-impl/nm-setting-wireless.c"
+                 line="826">the #NMSettingWireless</doc>
+            <type name="SettingWireless" c:type="NMSettingWireless*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_disable_ht"
+              c:identifier="nm_setting_wireless_get_disable_ht"
+              glib:get-property="disable-ht">
+        <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
+                         line="222"/>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve"
+               filename="src/libnm-core-impl/nm-setting-wireless.c"
+               line="800">the #NMSettingWireless:disable-ht property of the setting</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="setting" transfer-ownership="none">
+            <doc xml:space="preserve"
+                 filename="src/libnm-core-impl/nm-setting-wireless.c"
+                 line="798">the #NMSettingWireless</doc>
+            <type name="SettingWireless" c:type="NMSettingWireless*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_disable_vht"
+              c:identifier="nm_setting_wireless_get_disable_vht"
+              glib:get-property="disable-vht">
+        <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
+                         line="223"/>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve"
+               filename="src/libnm-core-impl/nm-setting-wireless.c"
+               line="814">the #NMSettingWireless:disable-vht property of the setting</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="setting" transfer-ownership="none">
+            <doc xml:space="preserve"
+                 filename="src/libnm-core-impl/nm-setting-wireless.c"
+                 line="812">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
         </parameters>
@@ -67224,18 +67446,18 @@ capabilities</doc>
               glib:get-property="generate-mac-address-mask"
               version="1.4">
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="189"/>
+                         line="193"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="455">the #NMSettingWireless:generate-mac-address-mask property of the setting</doc>
+               line="464">the #NMSettingWireless:generate-mac-address-mask property of the setting</doc>
           <type name="utf8" c:type="const char*"/>
         </return-value>
         <parameters>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="453">the #NMSettingWireless</doc>
+                 line="462">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
         </parameters>
@@ -67244,18 +67466,18 @@ capabilities</doc>
               c:identifier="nm_setting_wireless_get_hidden"
               glib:get-property="hidden">
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="217"/>
+                         line="221"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="777">the #NMSettingWireless:hidden property of the setting</doc>
+               line="786">the #NMSettingWireless:hidden property of the setting</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="775">the #NMSettingWireless</doc>
+                 line="784">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
         </parameters>
@@ -67264,18 +67486,18 @@ capabilities</doc>
               c:identifier="nm_setting_wireless_get_mac_address"
               glib:get-property="mac-address">
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="185"/>
+                         line="189"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="427">the #NMSettingWireless:mac-address property of the setting</doc>
+               line="436">the #NMSettingWireless:mac-address property of the setting</doc>
           <type name="utf8" c:type="const char*"/>
         </return-value>
         <parameters>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="425">the #NMSettingWireless</doc>
+                 line="434">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
         </parameters>
@@ -67287,11 +67509,11 @@ capabilities</doc>
               deprecated-version="1.48.">
         <doc-deprecated xml:space="preserve">Use nm_setting_wireless_get_mac_address_denylist() instead.</doc-deprecated>
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="192"/>
+                         line="196"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="652">the #NMSettingWireless:mac-address-blacklist property of the setting</doc>
+               line="661">the #NMSettingWireless:mac-address-blacklist property of the setting</doc>
           <array c:type="const char* const*">
             <type name="utf8"/>
           </array>
@@ -67300,7 +67522,7 @@ capabilities</doc>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="650">the #NMSettingWireless</doc>
+                 line="659">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
         </parameters>
@@ -67310,11 +67532,11 @@ capabilities</doc>
               glib:get-property="mac-address-denylist"
               version="1.48">
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="207"/>
+                         line="211"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="471">the #NMSettingWireless:mac-address-denylist property of the setting</doc>
+               line="480">the #NMSettingWireless:mac-address-denylist property of the setting</doc>
           <array c:type="const char* const*">
             <type name="utf8"/>
           </array>
@@ -67323,7 +67545,7 @@ capabilities</doc>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="469">the #NMSettingWireless</doc>
+                 line="478">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
         </parameters>
@@ -67333,11 +67555,11 @@ capabilities</doc>
               glib:get-property="mac-address-randomization"
               version="1.2">
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="223"/>
+                         line="231"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="807">the #NMSettingWireless:mac-address-randomization property of the
+               line="872">the #NMSettingWireless:mac-address-randomization property of the
 setting</doc>
           <type name="SettingMacRandomization"
                 c:type="NMSettingMacRandomization"/>
@@ -67346,7 +67568,7 @@ setting</doc>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="805">the #NMSettingWireless</doc>
+                 line="870">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
         </parameters>
@@ -67357,14 +67579,14 @@ setting</doc>
               deprecated-version="1.48.">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="676">Since 1.46, access at index "len" is allowed and returns NULL.</doc>
+             line="685">Since 1.46, access at index "len" is allowed and returns NULL.</doc>
         <doc-deprecated xml:space="preserve">Use nm_setting_wireless_get_mac_denylist_item() instead.</doc-deprecated>
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="196"/>
+                         line="200"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="683">the denylisted MAC address string (hex-digits-and-colons notation)
+               line="692">the denylisted MAC address string (hex-digits-and-colons notation)
 at index @idx</doc>
           <type name="utf8" c:type="const char*"/>
         </return-value>
@@ -67372,13 +67594,13 @@ at index @idx</doc>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="678">the #NMSettingWireless</doc>
+                 line="687">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
           <parameter name="idx" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="679">the zero-based index of the MAC address entry</doc>
+                 line="688">the zero-based index of the MAC address entry</doc>
             <type name="guint32" c:type="guint32"/>
           </parameter>
         </parameters>
@@ -67387,11 +67609,11 @@ at index @idx</doc>
               c:identifier="nm_setting_wireless_get_mac_denylist_item"
               version="1.48">
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="209"/>
+                         line="213"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="506">the denylisted MAC address string (hex-digits-and-colons notation)
+               line="515">the denylisted MAC address string (hex-digits-and-colons notation)
 at index @idx</doc>
           <type name="utf8" c:type="const char*"/>
         </return-value>
@@ -67399,13 +67621,13 @@ at index @idx</doc>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="503">the #NMSettingWireless</doc>
+                 line="512">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
           <parameter name="idx" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="504">the zero-based index of the MAC address entry</doc>
+                 line="513">the zero-based index of the MAC address entry</doc>
             <type name="guint32" c:type="guint32"/>
           </parameter>
         </parameters>
@@ -67414,18 +67636,18 @@ at index @idx</doc>
               c:identifier="nm_setting_wireless_get_mode"
               glib:get-property="mode">
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="174"/>
+                         line="178"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="339">the #NMSettingWireless:mode property of the setting</doc>
+               line="348">the #NMSettingWireless:mode property of the setting</doc>
           <type name="utf8" c:type="const char*"/>
         </return-value>
         <parameters>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="337">the #NMSettingWireless</doc>
+                 line="346">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
         </parameters>
@@ -67434,18 +67656,18 @@ at index @idx</doc>
               c:identifier="nm_setting_wireless_get_mtu"
               glib:get-property="mtu">
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="216"/>
+                         line="220"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="763">the #NMSettingWireless:mtu property of the setting</doc>
+               line="772">the #NMSettingWireless:mtu property of the setting</doc>
           <type name="guint32" c:type="guint32"/>
         </return-value>
         <parameters>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="761">the #NMSettingWireless</doc>
+                 line="770">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
         </parameters>
@@ -67456,18 +67678,18 @@ at index @idx</doc>
               deprecated-version="1.48.">
         <doc-deprecated xml:space="preserve">Use nm_setting_wireless_get_num_mac_denylist_items() instead.</doc-deprecated>
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="194"/>
+                         line="198"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="666">the number of blacklist MAC addresses</doc>
+               line="675">the number of blacklist MAC addresses</doc>
           <type name="guint32" c:type="guint32"/>
         </return-value>
         <parameters>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="664">the #NMSettingWireless</doc>
+                 line="673">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
         </parameters>
@@ -67476,18 +67698,18 @@ at index @idx</doc>
               c:identifier="nm_setting_wireless_get_num_mac_denylist_items"
               version="1.48">
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="208"/>
+                         line="212"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="489">the number of denylisted MAC addresses</doc>
+               line="498">the number of denylisted MAC addresses</doc>
           <type name="guint32" c:type="guint32"/>
         </return-value>
         <parameters>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="487">the #NMSettingWireless</doc>
+                 line="496">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
         </parameters>
@@ -67495,18 +67717,18 @@ at index @idx</doc>
       <method name="get_num_seen_bssids"
               c:identifier="nm_setting_wireless_get_num_seen_bssids">
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="227"/>
+                         line="235"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="861">the number of BSSIDs in the previously seen BSSID list</doc>
+               line="926">the number of BSSIDs in the previously seen BSSID list</doc>
           <type name="guint32" c:type="guint32"/>
         </return-value>
         <parameters>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="859">the #NMSettingWireless</doc>
+                 line="924">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
         </parameters>
@@ -67516,18 +67738,18 @@ at index @idx</doc>
               glib:get-property="powersave"
               version="1.2">
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="219"/>
+                         line="227"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="791">the #NMSettingWireless:powersave property of the setting</doc>
+               line="856">the #NMSettingWireless:powersave property of the setting</doc>
           <type name="guint32" c:type="guint32"/>
         </return-value>
         <parameters>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="789">the #NMSettingWireless</doc>
+                 line="854">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
         </parameters>
@@ -67539,18 +67761,18 @@ at index @idx</doc>
               deprecated-version="1.44">
         <doc-deprecated xml:space="preserve">This setting is not implemented and has no effect.</doc-deprecated>
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="180"/>
+                         line="184"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="395">the #NMSettingWireless:rate property of the setting</doc>
+               line="404">the #NMSettingWireless:rate property of the setting</doc>
           <type name="guint32" c:type="guint32"/>
         </return-value>
         <parameters>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="393">the #NMSettingWireless</doc>
+                 line="402">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
         </parameters>
@@ -67558,24 +67780,24 @@ at index @idx</doc>
       <method name="get_seen_bssid"
               c:identifier="nm_setting_wireless_get_seen_bssid">
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="228"/>
+                         line="236"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="880">the BSSID at index @i</doc>
+               line="945">the BSSID at index @i</doc>
           <type name="utf8" c:type="const char*"/>
         </return-value>
         <parameters>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="877">the #NMSettingWireless</doc>
+                 line="942">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
           <parameter name="i" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="878">index of a BSSID in the previously seen BSSID list</doc>
+                 line="943">index of a BSSID in the previously seen BSSID list</doc>
             <type name="guint32" c:type="guint32"/>
           </parameter>
         </parameters>
@@ -67584,18 +67806,18 @@ at index @idx</doc>
               c:identifier="nm_setting_wireless_get_ssid"
               glib:get-property="ssid">
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="173"/>
+                         line="177"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="325">the #NMSettingWireless:ssid property of the setting</doc>
+               line="334">the #NMSettingWireless:ssid property of the setting</doc>
           <type name="GLib.Bytes" c:type="GBytes*"/>
         </return-value>
         <parameters>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="323">the #NMSettingWireless</doc>
+                 line="332">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
         </parameters>
@@ -67607,18 +67829,18 @@ at index @idx</doc>
               deprecated-version="1.44">
         <doc-deprecated xml:space="preserve">This setting is not implemented and has no effect.</doc-deprecated>
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="183"/>
+                         line="187"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="411">the #NMSettingWireless:tx-power property of the setting</doc>
+               line="420">the #NMSettingWireless:tx-power property of the setting</doc>
           <type name="guint32" c:type="guint32"/>
         </return-value>
         <parameters>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="409">the #NMSettingWireless</doc>
+                 line="418">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
         </parameters>
@@ -67629,13 +67851,13 @@ at index @idx</doc>
               version="1.12">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="1447">Returns the Wake-on-WLAN options enabled for the connection</doc>
+             line="1511">Returns the Wake-on-WLAN options enabled for the connection</doc>
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="238"/>
+                         line="246"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="1453">the Wake-on-WLAN options</doc>
+               line="1517">the Wake-on-WLAN options</doc>
           <type name="SettingWirelessWakeOnWLan"
                 c:type="NMSettingWirelessWakeOnWLan"/>
         </return-value>
@@ -67643,7 +67865,7 @@ at index @idx</doc>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="1449">the #NMSettingWireless</doc>
+                 line="1513">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
         </parameters>
@@ -67654,10 +67876,10 @@ at index @idx</doc>
               deprecated-version="1.48.">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="712">Removes the MAC address at index @idx from the denylist.</doc>
+             line="721">Removes the MAC address at index @idx from the denylist.</doc>
         <doc-deprecated xml:space="preserve">Use nm_setting_wireless_remove_mac_denylist_item() instead.</doc-deprecated>
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="200"/>
+                         line="204"/>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -67665,13 +67887,13 @@ at index @idx</doc>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="714">the #NMSettingWireless</doc>
+                 line="723">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
           <parameter name="idx" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="715">index number of the MAC address</doc>
+                 line="724">index number of the MAC address</doc>
             <type name="guint32" c:type="guint32"/>
           </parameter>
         </parameters>
@@ -67682,27 +67904,27 @@ at index @idx</doc>
               deprecated-version="1.48.">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="727">Removes the MAC address @mac from the denylist.</doc>
+             line="736">Removes the MAC address @mac from the denylist.</doc>
         <doc-deprecated xml:space="preserve">Use nm_setting_wireless_remove_mac_denylist_item_by_value() instead.</doc-deprecated>
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="202"/>
+                         line="206"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="735">%TRUE if the MAC address was found and removed; %FALSE if it was not.</doc>
+               line="744">%TRUE if the MAC address was found and removed; %FALSE if it was not.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="729">the #NMSettingWireless</doc>
+                 line="738">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
           <parameter name="mac" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="730">the MAC address string (hex-digits-and-colons notation) to remove from
+                 line="739">the MAC address string (hex-digits-and-colons notation) to remove from
 the denylist</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
@@ -67713,9 +67935,9 @@ the denylist</doc>
               version="1.48">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="562">Removes the MAC address at index @idx from the denylist.</doc>
+             line="571">Removes the MAC address at index @idx from the denylist.</doc>
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="211"/>
+                         line="215"/>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -67723,13 +67945,13 @@ the denylist</doc>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="564">the #NMSettingWireless</doc>
+                 line="573">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
           <parameter name="idx" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="565">index number of the MAC address</doc>
+                 line="574">index number of the MAC address</doc>
             <type name="guint32" c:type="guint32"/>
           </parameter>
         </parameters>
@@ -67739,26 +67961,26 @@ the denylist</doc>
               version="1.48">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="589">Removes the MAC address @mac from the denylist.</doc>
+             line="598">Removes the MAC address @mac from the denylist.</doc>
         <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                         line="212"/>
+                         line="216"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless.c"
-               line="597">%TRUE if the MAC address was found and removed; %FALSE if it was not.</doc>
+               line="606">%TRUE if the MAC address was found and removed; %FALSE if it was not.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="setting" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="591">the #NMSettingWireless</doc>
+                 line="600">the #NMSettingWireless</doc>
             <type name="SettingWireless" c:type="NMSettingWireless*"/>
           </instance-parameter>
           <parameter name="mac" transfer-ownership="none">
             <doc xml:space="preserve"
                  filename="src/libnm-core-impl/nm-setting-wireless.c"
-                 line="592">the MAC address string (hex-digits-and-colons notation) to remove from
+                 line="601">the MAC address string (hex-digits-and-colons notation) to remove from
 the denylist</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
@@ -67772,7 +67994,7 @@ the denylist</doc>
                 default-value="NM_TERNARY_DEFAULT">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="2210">Configures AP isolation, which prevents communication between
+             line="2374">Configures AP isolation, which prevents communication between
 wireless devices connected to this AP. This property can be set
 to a value different from %NM_TERNARY_DEFAULT only when the
 interface is configured in AP mode.
@@ -67797,7 +68019,7 @@ case the global default is unspecified it is assumed to be
                 default-value="NULL">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="1636">802.11 frequency band of the network.  One of "a" for 5GHz,
+             line="1700">802.11 frequency band of the network.  One of "a" for 5GHz,
 "bg" for 2.4GHz or "6GHz".  This will lock associations to the
 Wi-Fi network to the specific band, i.e. if "a" is specified,
 the device will not associate with the same network in the
@@ -67813,7 +68035,7 @@ and may not work with all drivers.</doc>
                 default-value="NULL">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="1691">If specified, directs the device to only associate with the given access
+             line="1755">If specified, directs the device to only associate with the given access
 point.  This capability is highly driver dependent and not supported by
 all devices.  Note: this property does not control the BSSID used when
 creating an Ad-Hoc network and is unlikely to in the future.
@@ -67830,7 +68052,7 @@ point for the SSID.</doc>
                 default-value="0">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="1665">Wireless channel to use for the Wi-Fi connection.  The device will only
+             line="1729">Wireless channel to use for the Wi-Fi connection.  The device will only
 join (or create for Ad-Hoc networks) a Wi-Fi network on the specified
 channel.  Because channel numbers overlap between bands, this property
 also requires the "band" property to be set.</doc>
@@ -67844,7 +68066,7 @@ also requires the "band" property to be set.</doc>
                 default-value="0">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="2248">Specifies width of the wireless channel in Access Point (AP) mode.
+             line="2412">Specifies width of the wireless channel in Access Point (AP) mode.
 
 When set to %NM_SETTING_WIRELESS_CHANNEL_WIDTH_AUTO (the default), the
 channel width is automatically determined. At the moment, this means that
@@ -67866,7 +68088,7 @@ in AP mode.</doc>
                 default-value="NULL">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="1803">If specified, request that the device use this MAC address instead.
+             line="1867">If specified, request that the device use this MAC address instead.
 This is known as MAC cloning or spoofing.
 
 Beside explicitly specifying a MAC address, the special values "preserve", "permanent",
@@ -67887,6 +68109,58 @@ On D-Bus, this field is expressed as "assigned-mac-address" or the deprecated
 "cloned-mac-address".</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
+      <property name="disable-eht"
+                writable="1"
+                transfer-ownership="none"
+                getter="get_disable_eht"
+                default-value="FALSE">
+        <doc xml:space="preserve"
+             filename="src/libnm-core-impl/nm-setting-wireless.c"
+             line="2243">If %TRUE, forces EHT (802.11be) off when associating with this network.
+Use this if the access point advertises EHT support in its beacon but
+omits it from the (re)association response, which some drivers treat
+as a mode downgrade and disconnect over.</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <property name="disable-he"
+                writable="1"
+                transfer-ownership="none"
+                getter="get_disable_he"
+                default-value="FALSE">
+        <doc xml:space="preserve"
+             filename="src/libnm-core-impl/nm-setting-wireless.c"
+             line="2218">If %TRUE, forces HE (802.11ax) off when associating with this network.
+Use this if the access point advertises HE support in its beacon but
+omits it from the (re)association response, which some drivers treat
+as a mode downgrade and disconnect over.</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <property name="disable-ht"
+                writable="1"
+                transfer-ownership="none"
+                getter="get_disable_ht"
+                default-value="FALSE">
+        <doc xml:space="preserve"
+             filename="src/libnm-core-impl/nm-setting-wireless.c"
+             line="2168">If %TRUE, forces HT (802.11n) off when associating with this network.
+Use this if the access point advertises HT support in its beacon but
+omits it from the (re)association response, which some drivers treat
+as a mode downgrade and disconnect over.</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <property name="disable-vht"
+                writable="1"
+                transfer-ownership="none"
+                getter="get_disable_vht"
+                default-value="FALSE">
+        <doc xml:space="preserve"
+             filename="src/libnm-core-impl/nm-setting-wireless.c"
+             line="2193">If %TRUE, forces VHT (802.11ac) off when associating with this network.
+Use this if the access point advertises VHT support in its beacon but
+omits it from the (re)association response, which some drivers treat
+as a mode downgrade and disconnect over.</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
       <property name="generate-mac-address-mask"
                 writable="1"
                 transfer-ownership="none"
@@ -67894,7 +68168,7 @@ On D-Bus, this field is expressed as "assigned-mac-address" or the deprecated
                 default-value="NULL">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="1883">With #NMSettingWireless:cloned-mac-address setting "random" or "stable",
+             line="1947">With #NMSettingWireless:cloned-mac-address setting "random" or "stable",
 by default all bits of the MAC address are scrambled and a locally-administered,
 unicast MAC address is created. This property allows one to specify that certain bits
 are fixed. Note that the least significant bit of the first MAC address will
@@ -67931,7 +68205,7 @@ administered.</doc>
                 default-value="FALSE">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="2071">If %TRUE, indicates that the network is a non-broadcasting network that
+             line="2135">If %TRUE, indicates that the network is a non-broadcasting network that
 hides its SSID. This works both in infrastructure and AP mode.
 
 In infrastructure mode, various workarounds are used for a more reliable
@@ -67953,7 +68227,7 @@ probe-scans are distinctly recognizable on the air.</doc>
                 default-value="NULL">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="1769">If specified, this connection will only apply to the Wi-Fi device whose
+             line="1833">If specified, this connection will only apply to the Wi-Fi device whose
 permanent MAC address matches. This property does not change the MAC
 address of the device (i.e. MAC spoofing).</doc>
         <type name="utf8" c:type="gchar*"/>
@@ -67964,7 +68238,7 @@ address of the device (i.e. MAC spoofing).</doc>
                 getter="get_mac_address_blacklist">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="1931">A list of permanent MAC addresses of Wi-Fi devices to which this
+             line="1995">A list of permanent MAC addresses of Wi-Fi devices to which this
 connection should never apply.  Each MAC address should be given in the
 standard hex-digits-and-colons notation (eg "00:11:22:33:44:55").</doc>
         <array>
@@ -67977,7 +68251,7 @@ standard hex-digits-and-colons notation (eg "00:11:22:33:44:55").</doc>
                 getter="get_mac_address_denylist">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="1971">A list of permanent MAC addresses of Wi-Fi devices to which this
+             line="2035">A list of permanent MAC addresses of Wi-Fi devices to which this
 connection should never apply.  Each MAC address should be given in the
 standard hex-digits-and-colons notation (eg "00:11:22:33:44:55").</doc>
         <array>
@@ -67994,7 +68268,7 @@ standard hex-digits-and-colons notation (eg "00:11:22:33:44:55").</doc>
                 default-value="0">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="2134">One of %NM_SETTING_MAC_RANDOMIZATION_DEFAULT (never randomize unless
+             line="2298">One of %NM_SETTING_MAC_RANDOMIZATION_DEFAULT (never randomize unless
 the user has set a global default to randomize and the supplicant
 supports randomization),  %NM_SETTING_MAC_RANDOMIZATION_NEVER (never
 randomize the MAC address), or %NM_SETTING_MAC_RANDOMIZATION_ALWAYS
@@ -68009,7 +68283,7 @@ randomize the MAC address), or %NM_SETTING_MAC_RANDOMIZATION_ALWAYS
                 default-value="NULL">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="1614">Wi-Fi network mode; one of "infrastructure", "mesh", "adhoc" or "ap".  If blank,
+             line="1678">Wi-Fi network mode; one of "infrastructure", "mesh", "adhoc" or "ap".  If blank,
 infrastructure is assumed.</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
@@ -68020,7 +68294,7 @@ infrastructure is assumed.</doc>
                 default-value="0">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="2048">If non-zero, only transmit packets of the specified size or smaller,
+             line="2112">If non-zero, only transmit packets of the specified size or smaller,
 breaking larger packets up into multiple Ethernet frames.</doc>
         <type name="guint" c:type="guint"/>
       </property>
@@ -68032,7 +68306,7 @@ breaking larger packets up into multiple Ethernet frames.</doc>
                 default-value="0">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="2104">One of %NM_SETTING_WIRELESS_POWERSAVE_DISABLE (disable Wi-Fi power
+             line="2268">One of %NM_SETTING_WIRELESS_POWERSAVE_DISABLE (disable Wi-Fi power
 saving), %NM_SETTING_WIRELESS_POWERSAVE_ENABLE (enable Wi-Fi power
 saving), %NM_SETTING_WIRELESS_POWERSAVE_IGNORE (don't touch currently
 configure setting) or %NM_SETTING_WIRELESS_POWERSAVE_DEFAULT (use the
@@ -68048,14 +68322,14 @@ globally configured value). All other values are reserved.</doc>
                 default-value="0">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="1719">This property is not implemented and has no effect.</doc>
+             line="1783">This property is not implemented and has no effect.</doc>
         <doc-deprecated xml:space="preserve">This property is not implemented and has no effect.</doc-deprecated>
         <type name="guint" c:type="guint"/>
       </property>
       <property name="seen-bssids" writable="1" transfer-ownership="none">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="2013">A list of BSSIDs (each BSSID formatted as a MAC address like
+             line="2077">A list of BSSIDs (each BSSID formatted as a MAC address like
 "00:11:22:33:44:55") that have been detected as part of the Wi-Fi
 network.  NetworkManager internally tracks previously seen BSSIDs. The
 property is only meant for reading and reflects the BSSID list of
@@ -68075,7 +68349,7 @@ in "/var/lib/NetworkManager/seen-bssids" file.</doc>
                 getter="get_ssid">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="1587">SSID of the Wi-Fi network. Must be specified.</doc>
+             line="1651">SSID of the Wi-Fi network. Must be specified.</doc>
         <type name="GLib.Bytes"/>
       </property>
       <property name="tx-power"
@@ -68087,7 +68361,7 @@ in "/var/lib/NetworkManager/seen-bssids" file.</doc>
                 default-value="0">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="1744">This property is not implemented and has no effect.</doc>
+             line="1808">This property is not implemented and has no effect.</doc>
         <doc-deprecated xml:space="preserve">This property is not implemented and has no effect.</doc-deprecated>
         <type name="guint" c:type="guint"/>
       </property>
@@ -68099,7 +68373,7 @@ in "/var/lib/NetworkManager/seen-bssids" file.</doc>
                 default-value="1">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless.c"
-             line="2181">The #NMSettingWirelessWakeOnWLan options to enable. Not all devices support all options.
+             line="2345">The #NMSettingWirelessWakeOnWLan options to enable. Not all devices support all options.
 May be any combination of %NM_SETTING_WIRELESS_WAKE_ON_WLAN_ANY,
 %NM_SETTING_WIRELESS_WAKE_ON_WLAN_DISCONNECT,
 %NM_SETTING_WIRELESS_WAKE_ON_WLAN_MAGIC,
@@ -68121,7 +68395,7 @@ NetworkManager).</doc>
                  c:type="NMSettingWirelessChannelWidth">
       <doc xml:space="preserve"
            filename="src/libnm-core-public/nm-setting-wireless.h"
-           line="149">Indicates the wireless channel width.</doc>
+           line="153">Indicates the wireless channel width.</doc>
       <member name="auto"
               value="0"
               c:identifier="NM_SETTING_WIRELESS_CHANNEL_WIDTH_AUTO"
@@ -68129,7 +68403,7 @@ NetworkManager).</doc>
               glib:name="NM_SETTING_WIRELESS_CHANNEL_WIDTH_AUTO">
         <doc xml:space="preserve"
              filename="src/libnm-core-public/nm-setting-wireless.h"
-             line="151">automatically determine the width</doc>
+             line="155">automatically determine the width</doc>
       </member>
       <member name="20mhz"
               value="20"
@@ -68138,7 +68412,7 @@ NetworkManager).</doc>
               glib:name="NM_SETTING_WIRELESS_CHANNEL_WIDTH_20MHZ">
         <doc xml:space="preserve"
              filename="src/libnm-core-public/nm-setting-wireless.h"
-             line="152">use a 20MHz channel width</doc>
+             line="156">use a 20MHz channel width</doc>
       </member>
       <member name="40mhz"
               value="40"
@@ -68147,7 +68421,7 @@ NetworkManager).</doc>
               glib:name="NM_SETTING_WIRELESS_CHANNEL_WIDTH_40MHZ">
         <doc xml:space="preserve"
              filename="src/libnm-core-public/nm-setting-wireless.h"
-             line="153">use a 40MHz channel width</doc>
+             line="157">use a 40MHz channel width</doc>
       </member>
       <member name="80mhz"
               value="80"
@@ -68156,7 +68430,7 @@ NetworkManager).</doc>
               glib:name="NM_SETTING_WIRELESS_CHANNEL_WIDTH_80MHZ">
         <doc xml:space="preserve"
              filename="src/libnm-core-public/nm-setting-wireless.h"
-             line="154">use a 80MHz channel width</doc>
+             line="158">use a 80MHz channel width</doc>
       </member>
     </enumeration>
     <record name="SettingWirelessClass"
@@ -68165,7 +68439,7 @@ NetworkManager).</doc>
             opaque="1"
             glib:is-gtype-struct-for="SettingWireless">
       <source-position filename="src/libnm-core-public/nm-setting-wireless.h"
-                       line="167"/>
+                       line="171"/>
     </record>
     <enumeration name="SettingWirelessPowersave"
                  version="1.2"
@@ -68174,7 +68448,7 @@ NetworkManager).</doc>
                  c:type="NMSettingWirelessPowersave">
       <doc xml:space="preserve"
            filename="src/libnm-core-public/nm-setting-wireless.h"
-           line="129">These flags indicate whether wireless powersave must be enabled.</doc>
+           line="133">These flags indicate whether wireless powersave must be enabled.</doc>
       <member name="default"
               value="0"
               c:identifier="NM_SETTING_WIRELESS_POWERSAVE_DEFAULT"
@@ -68182,7 +68456,7 @@ NetworkManager).</doc>
               glib:name="NM_SETTING_WIRELESS_POWERSAVE_DEFAULT">
         <doc xml:space="preserve"
              filename="src/libnm-core-public/nm-setting-wireless.h"
-             line="131">use the default value</doc>
+             line="135">use the default value</doc>
       </member>
       <member name="ignore"
               value="1"
@@ -68191,7 +68465,7 @@ NetworkManager).</doc>
               glib:name="NM_SETTING_WIRELESS_POWERSAVE_IGNORE">
         <doc xml:space="preserve"
              filename="src/libnm-core-public/nm-setting-wireless.h"
-             line="132">don't touch existing setting</doc>
+             line="136">don't touch existing setting</doc>
       </member>
       <member name="disable"
               value="2"
@@ -68200,7 +68474,7 @@ NetworkManager).</doc>
               glib:name="NM_SETTING_WIRELESS_POWERSAVE_DISABLE">
         <doc xml:space="preserve"
              filename="src/libnm-core-public/nm-setting-wireless.h"
-             line="133">disable powersave</doc>
+             line="137">disable powersave</doc>
       </member>
       <member name="enable"
               value="3"
@@ -68209,7 +68483,7 @@ NetworkManager).</doc>
               glib:name="NM_SETTING_WIRELESS_POWERSAVE_ENABLE">
         <doc xml:space="preserve"
              filename="src/libnm-core-public/nm-setting-wireless.h"
-             line="134">enable powersave</doc>
+             line="138">enable powersave</doc>
       </member>
     </enumeration>
     <class name="SettingWirelessSecurity"
@@ -68223,17 +68497,17 @@ NetworkManager).</doc>
            filename="src/libnm-core-impl/nm-setting-wireless-security.c"
            line="87">Wi-Fi Security Settings</doc>
       <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                       line="157"/>
+                       line="162"/>
       <constructor name="new" c:identifier="nm_setting_wireless_security_new">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless-security.c"
-             line="1355">Creates a new #NMSettingWirelessSecurity object with default values.</doc>
+             line="1356">Creates a new #NMSettingWirelessSecurity object with default values.</doc>
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="161"/>
+                         line="166"/>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless-security.c"
-               line="1360">the new empty #NMSettingWirelessSecurity object</doc>
+               line="1361">the new empty #NMSettingWirelessSecurity object</doc>
           <type name="Setting" c:type="NMSetting*"/>
         </return-value>
       </constructor>
@@ -68246,7 +68520,7 @@ algorithms.  If the list is not empty, then only access points that support
 one or more of the encryption algorithms in the list will be considered
 compatible with this connection.</doc>
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="186"/>
+                         line="191"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless-security.c"
@@ -68280,7 +68554,7 @@ algorithms.  If the list is not empty, then only access points that support
 one or more of the encryption algorithms in the list will be considered
 compatible with this connection.</doc>
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="177"/>
+                         line="182"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless-security.c"
@@ -68315,7 +68589,7 @@ protocol list contains only "wpa" but the access point for the SSID specified
 by this connection only supports WPA2/RSN, the connection cannot be used
 with the access point.</doc>
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="167"/>
+                         line="172"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless-security.c"
@@ -68346,7 +68620,7 @@ protocol list, or %FALSE if it was already in the list</doc>
              line="540">Removes all algorithms from the allowed list.  If there are no algorithms
 specified then all groupwise encryption algorithms are allowed.</doc>
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="191"/>
+                         line="196"/>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -68367,7 +68641,7 @@ specified then all groupwise encryption algorithms are allowed.</doc>
              line="392">Removes all algorithms from the allowed list.  If there are no algorithms
 specified then all pairwise encryption algorithms are allowed.</doc>
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="182"/>
+                         line="187"/>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -68388,7 +68662,7 @@ specified then all pairwise encryption algorithms are allowed.</doc>
              line="246">Removes all protocols from the allowed list.  If there are no protocols
 specified then all protocols are allowed.</doc>
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="172"/>
+                         line="177"/>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -68406,7 +68680,7 @@ specified then all protocols are allowed.</doc>
               c:identifier="nm_setting_wireless_security_get_auth_alg"
               glib:get-property="auth-alg">
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="211"/>
+                         line="216"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless-security.c"
@@ -68428,7 +68702,7 @@ specified then all protocols are allowed.</doc>
               glib:get-property="fils"
               version="1.12">
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="223"/>
+                         line="228"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless-security.c"
@@ -68454,7 +68728,7 @@ specified then all protocols are allowed.</doc>
              line="426">Returns the allowed groupwise encryption algorithm from allowed algorithm
 list.</doc>
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="185"/>
+                         line="190"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless-security.c"
@@ -68481,7 +68755,7 @@ list.</doc>
               c:identifier="nm_setting_wireless_security_get_key_mgmt"
               glib:get-property="key-mgmt">
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="163"/>
+                         line="168"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless-security.c"
@@ -68502,7 +68776,7 @@ list.</doc>
               c:identifier="nm_setting_wireless_security_get_leap_password"
               glib:get-property="leap-password">
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="201"/>
+                         line="206"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless-security.c"
@@ -68523,7 +68797,7 @@ list.</doc>
               c:identifier="nm_setting_wireless_security_get_leap_password_flags"
               glib:get-property="leap-password-flags">
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="203"/>
+                         line="208"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless-security.c"
@@ -68545,7 +68819,7 @@ list.</doc>
               c:identifier="nm_setting_wireless_security_get_leap_username"
               glib:get-property="leap-username">
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="200"/>
+                         line="205"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless-security.c"
@@ -68565,7 +68839,7 @@ list.</doc>
       <method name="get_num_groups"
               c:identifier="nm_setting_wireless_security_get_num_groups">
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="184"/>
+                         line="189"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless-security.c"
@@ -68585,7 +68859,7 @@ list.</doc>
       <method name="get_num_pairwise"
               c:identifier="nm_setting_wireless_security_get_num_pairwise">
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="174"/>
+                         line="179"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless-security.c"
@@ -68605,7 +68879,7 @@ list.</doc>
       <method name="get_num_protos"
               c:identifier="nm_setting_wireless_security_get_num_protos">
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="165"/>
+                         line="170"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless-security.c"
@@ -68631,7 +68905,7 @@ connecting to secure Wi-Fi networks</doc>
              line="280">Returns the allowed pairwise encryption algorithm from allowed algorithm
 list.</doc>
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="175"/>
+                         line="180"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless-security.c"
@@ -68659,7 +68933,7 @@ list.</doc>
               glib:get-property="pmf"
               version="1.10">
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="195"/>
+                         line="200"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless-security.c"
@@ -68681,7 +68955,7 @@ list.</doc>
               c:identifier="nm_setting_wireless_security_get_proto"
               glib:get-property="proto">
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="166"/>
+                         line="171"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless-security.c"
@@ -68708,7 +68982,7 @@ list.</doc>
               c:identifier="nm_setting_wireless_security_get_psk"
               glib:get-property="psk">
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="197"/>
+                         line="202"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless-security.c"
@@ -68729,7 +69003,7 @@ list.</doc>
               c:identifier="nm_setting_wireless_security_get_psk_flags"
               glib:get-property="psk-flags">
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="198"/>
+                         line="203"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless-security.c"
@@ -68750,7 +69024,7 @@ list.</doc>
       <method name="get_wep_key"
               c:identifier="nm_setting_wireless_security_get_wep_key">
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="205"/>
+                         line="210"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless-security.c"
@@ -68777,7 +69051,7 @@ list.</doc>
               c:identifier="nm_setting_wireless_security_get_wep_key_flags"
               glib:get-property="wep-key-flags">
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="214"/>
+                         line="219"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless-security.c"
@@ -68798,7 +69072,7 @@ list.</doc>
               c:identifier="nm_setting_wireless_security_get_wep_key_type"
               glib:get-property="wep-key-type">
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="215"/>
+                         line="220"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless-security.c"
@@ -68819,7 +69093,7 @@ list.</doc>
               c:identifier="nm_setting_wireless_security_get_wep_tx_keyidx"
               glib:get-property="wep-tx-keyidx">
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="210"/>
+                         line="215"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless-security.c"
@@ -68841,7 +69115,7 @@ list.</doc>
               glib:get-property="wps-method"
               version="1.10">
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="219"/>
+                         line="224"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless-security.c"
@@ -68866,7 +69140,7 @@ list.</doc>
              line="483">Removes an encryption algorithm from the allowed groupwise encryption
 algorithm list.</doc>
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="188"/>
+                         line="193"/>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -68893,7 +69167,7 @@ algorithm list.</doc>
              line="508">Removes an encryption algorithm from the allowed groupwise encryption
 algorithm list.</doc>
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="189"/>
+                         line="194"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless-security.c"
@@ -68924,7 +69198,7 @@ algorithm list.</doc>
              line="336">Removes an encryption algorithm from the allowed pairwise encryption
 algorithm list.</doc>
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="179"/>
+                         line="184"/>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -68951,7 +69225,7 @@ algorithm list.</doc>
              line="361">Removes an encryption algorithm from the allowed pairwise encryption
 algorithm list.</doc>
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="180"/>
+                         line="185"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless-security.c"
@@ -68980,7 +69254,7 @@ algorithm list.</doc>
              filename="src/libnm-core-impl/nm-setting-wireless-security.c"
              line="192">Removes a protocol from the allowed protocol list.</doc>
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="169"/>
+                         line="174"/>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -69006,7 +69280,7 @@ algorithm list.</doc>
              filename="src/libnm-core-impl/nm-setting-wireless-security.c"
              line="216">Removes a protocol from the allowed protocol list.</doc>
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="170"/>
+                         line="175"/>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-setting-wireless-security.c"
@@ -69035,7 +69309,7 @@ algorithm list.</doc>
              filename="src/libnm-core-impl/nm-setting-wireless-security.c"
              line="677">Sets a WEP key in the given index.</doc>
         <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                         line="207"/>
+                         line="212"/>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -69070,7 +69344,7 @@ property.</doc>
                 default-value="NULL">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless-security.c"
-             line="1454">When WEP is used (ie, key-mgmt = "none" or "ieee8021x") indicate the
+             line="1455">When WEP is used (ie, key-mgmt = "none" or "ieee8021x") indicate the
 802.11 authentication algorithm required by the AP here.  One of "open"
 for Open System, "shared" for Shared Key, or "leap" for Cisco LEAP.  When
 using Cisco LEAP (ie, key-mgmt = "ieee8021x" and auth-alg = "leap") the
@@ -69085,7 +69359,7 @@ using Cisco LEAP (ie, key-mgmt = "ieee8021x" and auth-alg = "leap") the
                 default-value="0">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless-security.c"
-             line="1861">Indicates whether Fast Initial Link Setup (802.11ai) must be enabled for
+             line="1862">Indicates whether Fast Initial Link Setup (802.11ai) must be enabled for
 the connection.  One of %NM_SETTING_WIRELESS_SECURITY_FILS_DEFAULT (use
 global default value), %NM_SETTING_WIRELESS_SECURITY_FILS_DISABLE
 (disable FILS), %NM_SETTING_WIRELESS_SECURITY_FILS_OPTIONAL (enable FILS
@@ -69101,7 +69375,7 @@ no global default is set, FILS will be optionally enabled.</doc>
                 getter="get_group">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless-security.c"
-             line="1523">A list of group/broadcast encryption algorithms which prevents
+             line="1524">A list of group/broadcast encryption algorithms which prevents
 connections to Wi-Fi networks that do not utilize one of the algorithms
 in the list.  For maximum compatibility leave this property empty.  Each
 list element may be one of "wep40", "wep104", "tkip", or "ccmp".</doc>
@@ -69116,7 +69390,7 @@ list element may be one of "wep40", "wep104", "tkip", or "ccmp".</doc>
                 default-value="NULL">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless-security.c"
-             line="1398">Key management used for the connection. One of "none" (WEP or no
+             line="1399">Key management used for the connection. One of "none" (WEP or no
 password protection), "ieee8021x" (Dynamic WEP), "owe" (Opportunistic
 Wireless Encryption), "wpa-psk" (WPA2 + WPA3 personal), "sae" (WPA3
 personal only), "wpa-eap" (WPA2 + WPA3 enterprise) or
@@ -69132,7 +69406,7 @@ This property must be set for any Wi-Fi connection that uses security.</doc>
                 default-value="NULL">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless-security.c"
-             line="1749">The login password for legacy LEAP connections (ie, key-mgmt =
+             line="1750">The login password for legacy LEAP connections (ie, key-mgmt =
 "ieee8021x" and auth-alg = "leap").</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
@@ -69143,7 +69417,7 @@ This property must be set for any Wi-Fi connection that uses security.</doc>
                 default-value="NM_SETTING_SECRET_FLAG_NONE">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless-security.c"
-             line="1771">Flags indicating how to handle the
+             line="1772">Flags indicating how to handle the
 #NMSettingWirelessSecurity:leap-password property.</doc>
         <type name="SettingSecretFlags"/>
       </property>
@@ -69154,7 +69428,7 @@ This property must be set for any Wi-Fi connection that uses security.</doc>
                 default-value="NULL">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless-security.c"
-             line="1578">The login username for legacy LEAP connections (ie, key-mgmt =
+             line="1579">The login username for legacy LEAP connections (ie, key-mgmt =
 "ieee8021x" and auth-alg = "leap").</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
@@ -69164,7 +69438,7 @@ This property must be set for any Wi-Fi connection that uses security.</doc>
                 getter="get_pairwise">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless-security.c"
-             line="1501">A list of pairwise encryption algorithms which prevents connections to
+             line="1502">A list of pairwise encryption algorithms which prevents connections to
 Wi-Fi networks that do not utilize one of the algorithms in the list.
 For maximum compatibility leave this property empty.  Each list element
 may be one of "tkip" or "ccmp".</doc>
@@ -69180,7 +69454,7 @@ may be one of "tkip" or "ccmp".</doc>
                 default-value="0">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless-security.c"
-             line="1545">Indicates whether Protected Management Frames (802.11w) must be enabled
+             line="1546">Indicates whether Protected Management Frames (802.11w) must be enabled
 for the connection.  One of %NM_SETTING_WIRELESS_SECURITY_PMF_DEFAULT
 (use global default value), %NM_SETTING_WIRELESS_SECURITY_PMF_DISABLE
 (disable PMF), %NM_SETTING_WIRELESS_SECURITY_PMF_OPTIONAL (enable PMF if
@@ -69196,7 +69470,7 @@ global default is set, PMF will be optionally enabled.</doc>
                 getter="get_proto">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless-security.c"
-             line="1480">List of strings specifying the allowed WPA protocol versions to use.
+             line="1481">List of strings specifying the allowed WPA protocol versions to use.
 Each element may be one "wpa" (allow WPA) or "rsn" (allow WPA2/RSN).  If
 not specified, both WPA and RSN connections are allowed.</doc>
         <array>
@@ -69210,7 +69484,7 @@ not specified, both WPA and RSN connections are allowed.</doc>
                 default-value="NULL">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless-security.c"
-             line="1704">Pre-Shared-Key for WPA networks. For WPA-PSK, it's either an ASCII
+             line="1705">Pre-Shared-Key for WPA networks. For WPA-PSK, it's either an ASCII
 passphrase of 8 to 63 characters that is (as specified in the 802.11i
 standard) hashed to derive the actual key, or the key in form of 64
 hexadecimal character. The WPA3-Personal networks use a passphrase
@@ -69224,7 +69498,7 @@ of any length for SAE authentication.</doc>
                 default-value="NM_SETTING_SECRET_FLAG_NONE">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless-security.c"
-             line="1728">Flags indicating how to handle the #NMSettingWirelessSecurity:psk
+             line="1729">Flags indicating how to handle the #NMSettingWirelessSecurity:psk
 property.</doc>
         <type name="SettingSecretFlags"/>
       </property>
@@ -69235,7 +69509,7 @@ property.</doc>
                 default-value="NM_SETTING_SECRET_FLAG_NONE">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless-security.c"
-             line="1683">Flags indicating how to handle the #NMSettingWirelessSecurity:wep-key0,
+             line="1684">Flags indicating how to handle the #NMSettingWirelessSecurity:wep-key0,
 #NMSettingWirelessSecurity:wep-key1, #NMSettingWirelessSecurity:wep-key2,
 and #NMSettingWirelessSecurity:wep-key3 properties.</doc>
         <type name="SettingSecretFlags"/>
@@ -69247,7 +69521,7 @@ and #NMSettingWirelessSecurity:wep-key3 properties.</doc>
                 default-value="NM_WEP_KEY_TYPE_UNKNOWN">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless-security.c"
-             line="1792">Controls the interpretation of WEP keys.  Allowed values are
+             line="1793">Controls the interpretation of WEP keys.  Allowed values are
 %NM_WEP_KEY_TYPE_KEY, in which case the key is either a 10- or
 26-character hexadecimal string, or a 5- or 13-character ASCII password;
 or %NM_WEP_KEY_TYPE_PASSPHRASE, in which case the passphrase is provided
@@ -69261,7 +69535,7 @@ the actual WEP key.</doc>
                 default-value="NULL">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless-security.c"
-             line="1599">Index 0 WEP key.  This is the WEP key used in most networks.  See the
+             line="1600">Index 0 WEP key.  This is the WEP key used in most networks.  See the
 "wep-key-type" property for a description of how this key is interpreted.</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
@@ -69271,7 +69545,7 @@ the actual WEP key.</doc>
                 default-value="NULL">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless-security.c"
-             line="1620">Index 1 WEP key.  This WEP index is not used by most networks.  See the
+             line="1621">Index 1 WEP key.  This WEP index is not used by most networks.  See the
 "wep-key-type" property for a description of how this key is interpreted.</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
@@ -69281,7 +69555,7 @@ the actual WEP key.</doc>
                 default-value="NULL">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless-security.c"
-             line="1641">Index 2 WEP key.  This WEP index is not used by most networks.  See the
+             line="1642">Index 2 WEP key.  This WEP index is not used by most networks.  See the
 "wep-key-type" property for a description of how this key is interpreted.</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
@@ -69291,7 +69565,7 @@ the actual WEP key.</doc>
                 default-value="NULL">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless-security.c"
-             line="1662">Index 3 WEP key.  This WEP index is not used by most networks.  See the
+             line="1663">Index 3 WEP key.  This WEP index is not used by most networks.  See the
 "wep-key-type" property for a description of how this key is interpreted.</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
@@ -69302,7 +69576,7 @@ the actual WEP key.</doc>
                 default-value="0">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless-security.c"
-             line="1426">When static WEP is used (ie, key-mgmt = "none") and a non-default WEP key
+             line="1427">When static WEP is used (ie, key-mgmt = "none") and a non-default WEP key
 index is used by the AP, put that WEP key index here.  Valid values are 0
 (default key) through 3.  Note that some consumer access points (like the
 Linksys WRT54G) number the keys 1 - 4.</doc>
@@ -69316,7 +69590,7 @@ Linksys WRT54G) number the keys 1 - 4.</doc>
                 default-value="0">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-setting-wireless-security.c"
-             line="1828">Flags indicating which mode of WPS is to be used if any.
+             line="1829">Flags indicating which mode of WPS is to be used if any.
 
 There's little point in changing the default setting as NetworkManager will
 automatically determine whether it's feasible to start WPS enrollment from
@@ -69332,7 +69606,7 @@ WPS can be disabled by setting this property to a value of 1.</doc>
             opaque="1"
             glib:is-gtype-struct-for="SettingWirelessSecurity">
       <source-position filename="src/libnm-core-public/nm-setting-wireless-security.h"
-                       line="157"/>
+                       line="162"/>
     </record>
     <enumeration name="SettingWirelessSecurityFils"
                  version="1.12"
@@ -69341,7 +69615,7 @@ WPS can be disabled by setting this property to a value of 1.</doc>
                  c:type="NMSettingWirelessSecurityFils">
       <doc xml:space="preserve"
            filename="src/libnm-core-public/nm-setting-wireless-security.h"
-           line="112">These flags indicate whether FILS must be enabled.</doc>
+           line="117">These flags indicate whether FILS must be enabled.</doc>
       <member name="default"
               value="0"
               c:identifier="NM_SETTING_WIRELESS_SECURITY_FILS_DEFAULT"
@@ -69349,7 +69623,7 @@ WPS can be disabled by setting this property to a value of 1.</doc>
               glib:name="NM_SETTING_WIRELESS_SECURITY_FILS_DEFAULT">
         <doc xml:space="preserve"
              filename="src/libnm-core-public/nm-setting-wireless-security.h"
-             line="114">use the default value</doc>
+             line="119">use the default value</doc>
       </member>
       <member name="disable"
               value="1"
@@ -69358,7 +69632,7 @@ WPS can be disabled by setting this property to a value of 1.</doc>
               glib:name="NM_SETTING_WIRELESS_SECURITY_FILS_DISABLE">
         <doc xml:space="preserve"
              filename="src/libnm-core-public/nm-setting-wireless-security.h"
-             line="115">disable FILS</doc>
+             line="120">disable FILS</doc>
       </member>
       <member name="optional"
               value="2"
@@ -69367,7 +69641,7 @@ WPS can be disabled by setting this property to a value of 1.</doc>
               glib:name="NM_SETTING_WIRELESS_SECURITY_FILS_OPTIONAL">
         <doc xml:space="preserve"
              filename="src/libnm-core-public/nm-setting-wireless-security.h"
-             line="116">enable FILS if the supplicant and the AP support it</doc>
+             line="121">enable FILS if the supplicant and the AP support it</doc>
       </member>
       <member name="required"
               value="3"
@@ -69376,7 +69650,7 @@ WPS can be disabled by setting this property to a value of 1.</doc>
               glib:name="NM_SETTING_WIRELESS_SECURITY_FILS_REQUIRED">
         <doc xml:space="preserve"
              filename="src/libnm-core-public/nm-setting-wireless-security.h"
-             line="117">require FILS and fail if not available</doc>
+             line="122">require FILS and fail if not available</doc>
       </member>
     </enumeration>
     <enumeration name="SettingWirelessSecurityPmf"
@@ -69478,7 +69752,19 @@ although, with the same numeric values.</doc>
               glib:name="NM_SETTING_WIRELESS_SECURITY_WPS_METHOD_PIN">
         <doc xml:space="preserve"
              filename="src/libnm-core-public/nm-setting-wireless-security.h"
-             line="95">use PIN method</doc>
+             line="95">use PIN method, entering the
+  PIN that the other device displays</doc>
+      </member>
+      <member name="pin_display"
+              value="16"
+              c:identifier="NM_SETTING_WIRELESS_SECURITY_WPS_METHOD_PIN_DISPLAY"
+              glib:nick="pin-display"
+              glib:name="NM_SETTING_WIRELESS_SECURITY_WPS_METHOD_PIN_DISPLAY">
+        <doc xml:space="preserve"
+             filename="src/libnm-core-public/nm-setting-wireless-security.h"
+             line="97">use PIN method,
+  displaying a PIN for the other device to enter. Only supported for Wi-Fi
+  P2P connections. Since: 1.60</doc>
       </member>
     </bitfield>
     <bitfield name="SettingWirelessWakeOnWLan"
@@ -79802,7 +80088,7 @@ e.g. #NMU_SEC_STATIC_WEP</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-utils.c"
-             line="5850">%TRUE if the input key is a valid base64 encoded key
+             line="5855">%TRUE if the input key is a valid base64 encoded key
   with @required_key_len bytes.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
@@ -79810,13 +80096,13 @@ e.g. #NMU_SEC_STATIC_WEP</doc>
         <parameter name="base64_key" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="5843">the (possibly invalid) base64 encode key.</doc>
+               line="5848">the (possibly invalid) base64 encode key.</doc>
           <type name="utf8" c:type="const char*"/>
         </parameter>
         <parameter name="required_key_len" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="5844">the expected (binary) length of the key after
+               line="5849">the expected (binary) length of the key after
   decoding. If the length does not match, the validation fails.</doc>
           <type name="gsize" c:type="gsize"/>
         </parameter>
@@ -79828,7 +80114,7 @@ e.g. #NMU_SEC_STATIC_WEP</doc>
                    allow-none="1">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="5846">an optional output buffer for the binary
+               line="5851">an optional output buffer for the binary
   key. If given, it will be filled with exactly @required_key_len
   bytes.</doc>
           <type name="guint8" c:type="guint8*"/>
@@ -79876,21 +80162,21 @@ greater than -1, the returned string is terminated at that index
               version="1.2">
       <doc xml:space="preserve"
            filename="src/libnm-core-impl/nm-utils.c"
-           line="5048">Convert bonding mode from integer value to descriptive name.
+           line="5053">Convert bonding mode from integer value to descriptive name.
 See https://www.kernel.org/doc/Documentation/networking/bonding.txt for
 available modes.</doc>
       <source-position filename="src/libnm-core-public/nm-utils.h" line="223"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-utils.c"
-             line="5056">bonding mode string, or NULL on error</doc>
+             line="5061">bonding mode string, or NULL on error</doc>
         <type name="utf8" c:type="const char*"/>
       </return-value>
       <parameters>
         <parameter name="mode" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="5050">bonding mode as a numeric value</doc>
+               line="5055">bonding mode as a numeric value</doc>
           <type name="gint" c:type="int"/>
         </parameter>
       </parameters>
@@ -79900,7 +80186,7 @@ available modes.</doc>
               version="1.2">
       <doc xml:space="preserve"
            filename="src/libnm-core-impl/nm-utils.c"
-           line="5066">Convert bonding mode from string representation to numeric value.
+           line="5071">Convert bonding mode from string representation to numeric value.
 See https://www.kernel.org/doc/Documentation/networking/bonding.txt for
 available modes.
 The @mode string can be either a descriptive name or a number (as string).</doc>
@@ -79908,14 +80194,14 @@ The @mode string can be either a descriptive name or a number (as string).</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-utils.c"
-             line="5075">numeric bond mode, or -1 on error</doc>
+             line="5080">numeric bond mode, or -1 on error</doc>
         <type name="gint" c:type="int"/>
       </return-value>
       <parameters>
         <parameter name="mode" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="5068">bonding mode as string</doc>
+               line="5073">bonding mode as string</doc>
           <type name="utf8" c:type="const char*"/>
         </parameter>
       </parameters>
@@ -79924,7 +80210,7 @@ The @mode string can be either a descriptive name or a number (as string).</doc>
               c:identifier="nm_utils_check_virtual_device_compatibility">
       <doc xml:space="preserve"
            filename="src/libnm-core-impl/nm-utils.c"
-           line="4975">Determines if a connection of type @virtual_type can (in the
+           line="4980">Determines if a connection of type @virtual_type can (in the
 general case) work with connections of type @other_type.
 
 If @virtual_type is %NM_TYPE_SETTING_VLAN, then this checks if
@@ -79943,20 +80229,20 @@ underlying device driver.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-utils.c"
-             line="4996">%TRUE or %FALSE</doc>
+             line="5001">%TRUE or %FALSE</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
         <parameter name="virtual_type" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="4977">a virtual connection type</doc>
+               line="4982">a virtual connection type</doc>
           <type name="GType" c:type="GType"/>
         </parameter>
         <parameter name="other_type" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="4978">a connection type to test against @virtual_type</doc>
+               line="4983">a connection type to test against @virtual_type</doc>
           <type name="GType" c:type="GType"/>
         </parameter>
       </parameters>
@@ -79967,7 +80253,7 @@ underlying device driver.</doc>
               throws="1">
       <doc xml:space="preserve"
            filename="src/libnm-core-impl/nm-utils.c"
-           line="6400">Reads @filename on behalf of user @user and writes the
+           line="6405">Reads @filename on behalf of user @user and writes the
 content to a new file in /run/NetworkManager/cert/.
 The new file has permission 600 and is owned by root.
 
@@ -79978,7 +80264,7 @@ connection.permissions property) can access the file.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-utils.c"
-             line="6414">the name of the new temporary file. Or %NULL
+             line="6419">the name of the new temporary file. Or %NULL
   if an error occurred, including when the given user can't access the
   file.</doc>
         <type name="utf8" c:type="char*"/>
@@ -79987,13 +80273,13 @@ connection.permissions property) can access the file.</doc>
         <parameter name="filename" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="6402">the file name of the certificate or key to copy</doc>
+               line="6407">the file name of the certificate or key to copy</doc>
           <type name="utf8" c:type="const char*"/>
         </parameter>
         <parameter name="user" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="6403">the user to impersonate when reading the file</doc>
+               line="6408">the user to impersonate when reading the file</doc>
           <type name="utf8" c:type="const char*"/>
         </parameter>
       </parameters>
@@ -80003,7 +80289,7 @@ connection.permissions property) can access the file.</doc>
               version="1.42">
       <doc xml:space="preserve"
            filename="src/libnm-core-impl/nm-utils.c"
-           line="6260">This ensures that all NMSetting GTypes are created. For example,
+           line="6265">This ensures that all NMSetting GTypes are created. For example,
 after this call, g_type_from_name("NMSettingConnection") will work.
 
 This cannot fail and does nothing if the type already exists.</doc>
@@ -80017,7 +80303,7 @@ This cannot fail and does nothing if the type already exists.</doc>
               version="1.2">
       <doc xml:space="preserve"
            filename="src/libnm-core-impl/nm-utils.c"
-           line="5345">Converts a string to the matching enum value.
+           line="5350">Converts a string to the matching enum value.
 
 If the enum is a %G_TYPE_FLAGS the function returns the logical OR of values
 matching the comma-separated tokens in the string; if an unknown token is found
@@ -80027,20 +80313,20 @@ containing the unrecognized token in @err_token.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-utils.c"
-             line="5360">%TRUE if the conversion was successful, %FALSE otherwise</doc>
+             line="5365">%TRUE if the conversion was successful, %FALSE otherwise</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
         <parameter name="type" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="5347">the %GType of the enum</doc>
+               line="5352">the %GType of the enum</doc>
           <type name="GType" c:type="GType"/>
         </parameter>
         <parameter name="str" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="5348">the input string</doc>
+               line="5353">the input string</doc>
           <type name="utf8" c:type="const char*"/>
         </parameter>
         <parameter name="out_value"
@@ -80051,7 +80337,7 @@ containing the unrecognized token in @err_token.</doc>
                    allow-none="1">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="5349">the output value</doc>
+               line="5354">the output value</doc>
           <type name="gint" c:type="int*"/>
         </parameter>
         <parameter name="err_token"
@@ -80063,7 +80349,7 @@ containing the unrecognized token in @err_token.</doc>
                    allow-none="1">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="5350">location to store
+               line="5355">location to store
   the first unrecognized token</doc>
           <type name="utf8" c:type="char**"/>
         </parameter>
@@ -80074,12 +80360,12 @@ containing the unrecognized token in @err_token.</doc>
               version="1.2">
       <doc xml:space="preserve"
            filename="src/libnm-core-impl/nm-utils.c"
-           line="5370">Returns the list of possible values for a given enum.</doc>
+           line="5375">Returns the list of possible values for a given enum.</doc>
       <source-position filename="src/libnm-core-public/nm-utils.h" line="232"/>
       <return-value transfer-ownership="container">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-utils.c"
-             line="5378">a NULL-terminated dynamically-allocated array of static strings
+             line="5383">a NULL-terminated dynamically-allocated array of static strings
 or %NULL on error</doc>
         <array c:type="const char**">
           <type name="utf8"/>
@@ -80089,19 +80375,19 @@ or %NULL on error</doc>
         <parameter name="type" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="5372">the %GType of the enum</doc>
+               line="5377">the %GType of the enum</doc>
           <type name="GType" c:type="GType"/>
         </parameter>
         <parameter name="from" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="5373">the first element to be returned</doc>
+               line="5378">the first element to be returned</doc>
           <type name="gint" c:type="int"/>
         </parameter>
         <parameter name="to" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="5374">the last element to be returned</doc>
+               line="5379">the last element to be returned</doc>
           <type name="gint" c:type="int"/>
         </parameter>
       </parameters>
@@ -80111,7 +80397,7 @@ or %NULL on error</doc>
               version="1.2">
       <doc xml:space="preserve"
            filename="src/libnm-core-impl/nm-utils.c"
-           line="5324">Converts an enum value to its string representation. If the enum is a
+           line="5329">Converts an enum value to its string representation. If the enum is a
 %G_TYPE_FLAGS the function returns a comma-separated list of matching values.
 If the value has no corresponding string representation, it is converted
 to a number. For enums it is converted to a decimal number, for flags
@@ -80120,20 +80406,20 @@ to an (unsigned) hex number.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-utils.c"
-             line="5335">a newly allocated string or %NULL</doc>
+             line="5340">a newly allocated string or %NULL</doc>
         <type name="utf8" c:type="char*"/>
       </return-value>
       <parameters>
         <parameter name="type" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="5326">the %GType of the enum</doc>
+               line="5331">the %GType of the enum</doc>
           <type name="GType" c:type="GType"/>
         </parameter>
         <parameter name="value" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="5327">the value to be translated</doc>
+               line="5332">the value to be translated</doc>
           <type name="gint" c:type="int"/>
         </parameter>
       </parameters>
@@ -80334,12 +80620,12 @@ recognized by NetworkManager.</doc>
               version="1.8">
       <doc xml:space="preserve"
            filename="src/libnm-core-impl/nm-utils.c"
-           line="5758">Format attributes to a string.</doc>
+           line="5763">Format attributes to a string.</doc>
       <source-position filename="src/libnm-core-public/nm-utils.h" line="246"/>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-utils.c"
-             line="5766">the string representing attributes, or %NULL
+             line="5771">the string representing attributes, or %NULL
    in case there are no attributes</doc>
         <type name="utf8" c:type="char*"/>
       </return-value>
@@ -80347,7 +80633,7 @@ recognized by NetworkManager.</doc>
         <parameter name="attributes" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="5760">a #GHashTable mapping attribute names to #GVariant values</doc>
+               line="5765">a #GHashTable mapping attribute names to #GVariant values</doc>
           <type name="GLib.HashTable" c:type="GHashTable*">
             <type name="utf8"/>
             <type name="GLib.Variant"/>
@@ -80356,13 +80642,13 @@ recognized by NetworkManager.</doc>
         <parameter name="attr_separator" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="5761">the attribute separator character</doc>
+               line="5766">the attribute separator character</doc>
           <type name="gchar" c:type="char"/>
         </parameter>
         <parameter name="key_value_separator" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="5762">character separating key and values</doc>
+               line="5767">character separating key and values</doc>
           <type name="gchar" c:type="char"/>
         </parameter>
       </parameters>
@@ -80372,12 +80658,12 @@ recognized by NetworkManager.</doc>
               version="1.12">
       <doc xml:space="preserve"
            filename="src/libnm-core-impl/nm-utils.c"
-           line="5784">Gets current time in milliseconds of CLOCK_BOOTTIME.</doc>
+           line="5789">Gets current time in milliseconds of CLOCK_BOOTTIME.</doc>
       <source-position filename="src/libnm-core-public/nm-utils.h" line="277"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-utils.c"
-             line="5789">time in milliseconds</doc>
+             line="5794">time in milliseconds</doc>
         <type name="gint64" c:type="gint64"/>
       </return-value>
     </function>
@@ -80657,13 +80943,13 @@ length.</doc>
               deprecated-version="1.6">
       <doc xml:space="preserve"
            filename="src/libnm-core-impl/nm-utils.c"
-           line="4812">Validate the network interface name.</doc>
+           line="4817">Validate the network interface name.</doc>
       <doc-deprecated xml:space="preserve">Use nm_utils_is_valid_iface_name() instead, with better error reporting.</doc-deprecated>
       <source-position filename="src/libnm-core-public/nm-utils.h" line="196"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-utils.c"
-             line="4820">%TRUE if interface name is valid, otherwise %FALSE is returned.
+             line="4825">%TRUE if interface name is valid, otherwise %FALSE is returned.
 
 Before 1.20, this function did not accept %NULL as @name argument. If you
   want to run against older versions of libnm, don't pass %NULL.</doc>
@@ -80676,7 +80962,7 @@ Before 1.20, this function did not accept %NULL as @name argument. If you
                    allow-none="1">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="4814">Name of interface</doc>
+               line="4819">Name of interface</doc>
           <type name="utf8" c:type="const char*"/>
         </parameter>
       </parameters>
@@ -80686,12 +80972,12 @@ Before 1.20, this function did not accept %NULL as @name argument. If you
               introspectable="0">
       <doc xml:space="preserve"
            filename="src/libnm-core-impl/nm-utils.c"
-           line="4854">Wrapper for inet_ntop.</doc>
+           line="4859">Wrapper for inet_ntop.</doc>
       <source-position filename="src/libnm-core-public/nm-utils.h" line="211"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-utils.c"
-             line="4869">the input buffer @dst, or a pointer to an
+             line="4874">the input buffer @dst, or a pointer to an
  internal, static buffer. This function cannot fail.</doc>
         <type name="utf8" c:type="const char*"/>
       </return-value>
@@ -80699,13 +80985,13 @@ Before 1.20, this function did not accept %NULL as @name argument. If you
         <parameter name="inaddr" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="4856">the address that should be converted to string.</doc>
+               line="4861">the address that should be converted to string.</doc>
           <type name="guint32" c:type="guint32"/>
         </parameter>
         <parameter name="dst" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="4857">the destination buffer, it must contain at least
+               line="4862">the destination buffer, it must contain at least
  &lt;literal&gt;INET_ADDRSTRLEN&lt;/literal&gt; or %NM_INET_ADDRSTRLEN
  characters. If set to %NULL, it will return a pointer to an internal, static
  buffer (shared with nm_utils_inet6_ntop()).  Beware, that the internal
@@ -80723,12 +81009,12 @@ Before 1.20, this function did not accept %NULL as @name argument. If you
               introspectable="0">
       <doc xml:space="preserve"
            filename="src/libnm-core-impl/nm-utils.c"
-           line="4883">Wrapper for inet_ntop.</doc>
+           line="4888">Wrapper for inet_ntop.</doc>
       <source-position filename="src/libnm-core-public/nm-utils.h" line="214"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-utils.c"
-             line="4898">the input buffer @dst, or a pointer to an
+             line="4903">the input buffer @dst, or a pointer to an
  internal, static buffer. %NULL is not allowed as @in6addr,
  otherwise, this function cannot fail.</doc>
         <type name="utf8" c:type="const char*"/>
@@ -80740,13 +81026,13 @@ Before 1.20, this function did not accept %NULL as @name argument. If you
                    allow-none="1">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="4885">the address that should be converted to string.</doc>
+               line="4890">the address that should be converted to string.</doc>
           <type name="gpointer" c:type="const in6_addr*"/>
         </parameter>
         <parameter name="dst" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="4886">the destination buffer, it must contain at least
+               line="4891">the destination buffer, it must contain at least
  &lt;literal&gt;INET6_ADDRSTRLEN&lt;/literal&gt; or %NM_INET_ADDRSTRLEN
  characters. If set to %NULL, it will return a pointer to an internal, static
  buffer (shared with nm_utils_inet4_ntop()).  Beware, that the internal
@@ -81334,26 +81620,26 @@ valid routes are still returned.</doc>
     <function name="utils_ipaddr_valid" c:identifier="nm_utils_ipaddr_valid">
       <doc xml:space="preserve"
            filename="src/libnm-core-impl/nm-utils.c"
-           line="4914">Checks if @ip contains a valid IP address of the given family.</doc>
+           line="4919">Checks if @ip contains a valid IP address of the given family.</doc>
       <source-position filename="src/libnm-core-public/nm-utils.h" line="216"/>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-utils.c"
-             line="4922">%TRUE or %FALSE</doc>
+             line="4927">%TRUE or %FALSE</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
         <parameter name="family" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="4916">&lt;literal&gt;AF_INET&lt;/literal&gt; or &lt;literal&gt;AF_INET6&lt;/literal&gt;, or
+               line="4921">&lt;literal&gt;AF_INET&lt;/literal&gt; or &lt;literal&gt;AF_INET6&lt;/literal&gt;, or
   &lt;literal&gt;AF_UNSPEC&lt;/literal&gt; to accept either</doc>
           <type name="gint" c:type="int"/>
         </parameter>
         <parameter name="ip" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="4918">an IP address</doc>
+               line="4923">an IP address</doc>
           <type name="utf8" c:type="const char*"/>
         </parameter>
       </parameters>
@@ -81396,7 +81682,7 @@ number of known SSID-cloaking methods.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-utils.c"
-             line="5431">whether the passed string is valid JSON.
+             line="5436">whether the passed string is valid JSON.
   If libnm is not compiled with libjansson support, this check will
   also return %TRUE for possibly invalid inputs. If that is a problem
   for you, you must validate the JSON yourself.</doc>
@@ -81406,7 +81692,7 @@ number of known SSID-cloaking methods.</doc>
         <parameter name="str" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="5428">the JSON string to test</doc>
+               line="5433">the JSON string to test</doc>
           <type name="utf8" c:type="const char*"/>
         </parameter>
       </parameters>
@@ -81417,7 +81703,7 @@ number of known SSID-cloaking methods.</doc>
               deprecated-version="1.32">
       <doc xml:space="preserve"
            filename="src/libnm-core-impl/nm-utils.c"
-           line="4831">Checks if @str is a UUID</doc>
+           line="4836">Checks if @str is a UUID</doc>
       <doc-deprecated xml:space="preserve">older versions of NetworkManager had a wrong
   understanding of what makes a valid UUID. This function can thus
   accept some inputs as valid, which in fact are not valid UUIDs.</doc-deprecated>
@@ -81425,7 +81711,7 @@ number of known SSID-cloaking methods.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-utils.c"
-             line="4837">%TRUE if @str is a UUID, %FALSE if not
+             line="4842">%TRUE if @str is a UUID, %FALSE if not
 
 In older versions, nm_utils_is_uuid() did not accept %NULL as @str
 argument. Don't pass %NULL if you run against older versions of libnm.</doc>
@@ -81438,7 +81724,7 @@ argument. Don't pass %NULL if you run against older versions of libnm.</doc>
                    allow-none="1">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="4833">a string that might be a UUID</doc>
+               line="4838">a string that might be a UUID</doc>
           <type name="utf8" c:type="const char*"/>
         </parameter>
       </parameters>
@@ -81449,7 +81735,7 @@ argument. Don't pass %NULL if you run against older versions of libnm.</doc>
               throws="1">
       <doc xml:space="preserve"
            filename="src/libnm-core-impl/nm-utils.c"
-           line="4787">Validate the network interface name.
+           line="4792">Validate the network interface name.
 
 This function is a 1:1 copy of the kernel's interface validation
 function in net/core/dev.c.</doc>
@@ -81457,7 +81743,7 @@ function in net/core/dev.c.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-utils.c"
-             line="4797">%TRUE if interface name is valid, otherwise %FALSE is returned.
+             line="4802">%TRUE if interface name is valid, otherwise %FALSE is returned.
 
 Before 1.20, this function did not accept %NULL as @name argument. If you
   want to run against older versions of libnm, don't pass %NULL.</doc>
@@ -81470,7 +81756,7 @@ Before 1.20, this function did not accept %NULL as @name argument. If you
                    allow-none="1">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="4789">Name of interface</doc>
+               line="4794">Name of interface</doc>
           <type name="utf8" c:type="const char*"/>
         </parameter>
       </parameters>
@@ -81481,12 +81767,12 @@ Before 1.20, this function did not accept %NULL as @name argument. If you
               throws="1">
       <doc xml:space="preserve"
            filename="src/libnm-core-impl/nm-utils.c"
-           line="5539">Parse attributes from a string.</doc>
+           line="5544">Parse attributes from a string.</doc>
       <source-position filename="src/libnm-core-public/nm-utils.h" line="238"/>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-utils.c"
-             line="5550">a #GHashTable mapping
+             line="5555">a #GHashTable mapping
 attribute names to #GVariant values. Warning: the variant are still floating
 references, owned by the hash table. If you take a reference, ensure to sink
 the one of the hash table first.</doc>
@@ -81499,31 +81785,31 @@ the one of the hash table first.</doc>
         <parameter name="string" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="5541">the input string</doc>
+               line="5546">the input string</doc>
           <type name="utf8" c:type="const char*"/>
         </parameter>
         <parameter name="attr_separator" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="5542">the attribute separator character</doc>
+               line="5547">the attribute separator character</doc>
           <type name="gchar" c:type="char"/>
         </parameter>
         <parameter name="key_value_separator" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="5543">character separating key and values</doc>
+               line="5548">character separating key and values</doc>
           <type name="gchar" c:type="char"/>
         </parameter>
         <parameter name="ignore_unknown" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="5544">whether unknown attributes should be ignored</doc>
+               line="5549">whether unknown attributes should be ignored</doc>
           <type name="gboolean" c:type="gboolean"/>
         </parameter>
         <parameter name="spec" transfer-ownership="none">
           <doc xml:space="preserve"
                filename="src/libnm-core-impl/nm-utils.c"
-               line="5545">the attribute format specifiers</doc>
+               line="5550">the attribute format specifiers</doc>
           <type name="VariantAttributeSpec"
                 c:type="const NMVariantAttributeSpec* const*"/>
         </parameter>
@@ -81969,7 +82255,7 @@ object's #NMSettingConnection:id: property.  Should be freed with g_free()</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve"
              filename="src/libnm-core-impl/nm-utils.c"
-             line="5820">the version ID of the libnm version. That is, the %NM_VERSION
+             line="5825">the version ID of the libnm version. That is, the %NM_VERSION
   at runtime.</doc>
         <type name="guint" c:type="guint"/>
       </return-value>

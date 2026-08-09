@@ -3434,10 +3434,17 @@ nm_flags! {
         ///
         /// `NM_SETTING_WIRELESS_SECURITY_WPS_METHOD_PBC`
         PBC = 4,
-        /// use PIN method
+        /// use PIN method, entering the
+        ///   PIN that the other device displays
         ///
         /// `NM_SETTING_WIRELESS_SECURITY_WPS_METHOD_PIN`
         PIN = 8,
+        /// use PIN method,
+        ///   displaying a PIN for the other device to enter. Only supported for Wi-Fi
+        ///   P2P connections. Since: 1.60
+        ///
+        /// `NM_SETTING_WIRELESS_SECURITY_WPS_METHOD_PIN_DISPLAY`
+        PIN_DISPLAY = 16,
     }
 }
 
