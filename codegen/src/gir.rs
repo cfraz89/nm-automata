@@ -12,7 +12,11 @@
 //! It also covers the whole namespace in one file, so there is no list of headers to keep in
 //! step with wherever NetworkManager happens to declare a type.
 
+use std::collections::{BTreeMap, HashSet};
+
 use anyhow::{Context, Result, bail};
+
+use crate::annotate::{Docs, TypeRef};
 
 /// Whether a type enumerates alternatives or combines independent bits.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -92,6 +96,7 @@ pub struct Constant {
 
 const CORE_NS: &str = "http://www.gtk.org/introspection/core/1.0";
 const C_NS: &str = "http://www.gtk.org/introspection/c/1.0";
+const GLIB_NS: &str = "http://www.gtk.org/introspection/glib/1.0";
 
 /// Read every enumeration and flag set from the introspection data.
 pub fn parse(source: &str) -> Result<Vec<TypeDef>> {
@@ -201,6 +206,93 @@ pub fn parse_constants(source: &str) -> Result<Vec<Constant>> {
     Ok(out)
 }
 
+/// The return type of each `get_*` method GIR links to a GObject property, keyed by the class's
+/// GIR name and the property's nick, e.g. `("DeviceIPTunnel", "mode") -> "NMIPTunnelMode"`.
+///
+/// A property's own declaration sometimes understates its type — `NMDeviceIPTunnel:mode` is a
+/// plain `guint`, registered that way in its `GParamSpec` — while the getter g-ir-scanner found
+/// for it, `nm_device_ip_tunnel_get_mode()`, returns the real `NMIPTunnelMode` it was compiled
+/// with. The getter is linked unambiguously via `glib:get-property`, so there is no name to
+/// guess at.
+pub fn accessor_types(source: &str) -> Result<BTreeMap<(String, String), String>> {
+    let document = roxmltree::Document::parse(source).context("parsing NM-1.0.gir")?;
+    let namespace = document
+        .descendants()
+        .find(|node| node.has_tag_name((CORE_NS, "namespace")))
+        .context("NM-1.0.gir has no <namespace>")?;
+
+    let mut out = BTreeMap::new();
+    for class in namespace
+        .children()
+        .filter(|c| c.has_tag_name((CORE_NS, "class")))
+    {
+        let Some(class_name) = class.attribute("name") else {
+            continue;
+        };
+        for method in class
+            .children()
+            .filter(|c| c.has_tag_name((CORE_NS, "method")))
+        {
+            let Some(property) = method.attribute((GLIB_NS, "get-property")) else {
+                continue;
+            };
+            let Some(c_type) = method
+                .children()
+                .find(|c| c.has_tag_name((CORE_NS, "return-value")))
+                .and_then(|rv| rv.children().find(|c| c.has_tag_name((CORE_NS, "type"))))
+                .and_then(|ty| ty.attribute((C_NS, "type")))
+            else {
+                continue;
+            };
+            out.insert(
+                (class_name.to_owned(), property.to_owned()),
+                c_type.to_owned(),
+            );
+        }
+    }
+    Ok(out)
+}
+
+/// Prefer each member's real accessor type, where [`accessor_types`] found one, over whatever
+/// prose alone could find.
+///
+/// Gated on `known` for the same reason `annotations.toml` is: a getter's return type is only
+/// trusted where it names one of NetworkManager's own enumerations or flag sets, so a property
+/// libnm also leaves at `guint` — `NetworkManager.Capabilities`, whose elements are typed only
+/// in prose — is left for `annotations.toml` to say what prose alone cannot.
+pub fn apply_accessor_types(
+    docs: &mut Docs,
+    accessor_types: &BTreeMap<(String, String), String>,
+    known: &HashSet<String>,
+) {
+    for (interface, iface_docs) in &mut docs.interfaces {
+        let Some(class) = class_name(interface) else {
+            continue;
+        };
+        for (member, member_docs) in &mut iface_docs.members {
+            let nick = crate::codegen::to_snake(member).replace('_', "-");
+            let Some(c_name) = accessor_types.get(&(class.clone(), nick)) else {
+                continue;
+            };
+            if !known.contains(c_name) {
+                continue;
+            }
+            member_docs.returns = Some(TypeRef {
+                c_name: c_name.clone(),
+            });
+        }
+    }
+}
+
+/// The GIR class a D-Bus interface's members would be declared on, e.g.
+/// `org.freedesktop.NetworkManager.Device.IPTunnel` -> `DeviceIPTunnel`.
+fn class_name(interface: &str) -> Option<String> {
+    let tail = interface
+        .strip_prefix("org.freedesktop.NetworkManager")?
+        .trim_start_matches('.');
+    (!tail.is_empty()).then(|| tail.replace('.', ""))
+}
+
 fn doc_of(node: roxmltree::Node<'_, '_>) -> Option<String> {
     let doc = node.children().find(|c| c.has_tag_name((CORE_NS, "doc")))?;
     let text = doc.text()?.trim();
@@ -210,7 +302,7 @@ fn doc_of(node: roxmltree::Node<'_, '_>) -> Option<String> {
 /// Drop NetworkManager's `NM` namespace prefix, which the crate name already supplies.
 ///
 /// A few types (`NM80211ApFlags`) would start with a digit without it and keep it.
-fn rust_name(c_name: &str) -> String {
+pub(crate) fn rust_name(c_name: &str) -> String {
     match c_name.strip_prefix("NM") {
         Some(stripped) if stripped.starts_with(|c: char| c.is_ascii_alphabetic()) => {
             stripped.to_owned()
@@ -359,5 +451,96 @@ mod tests {
         let defs = parse(GIR).unwrap();
         let prefix = shared_prefix(&defs[1].variants);
         assert_eq!(defs[1].variants[0].flag_name(&prefix), "CARRIER_DETECT");
+    }
+
+    const CLASSES: &str = r#"<?xml version="1.0"?>
+<repository xmlns="http://www.gtk.org/introspection/core/1.0"
+            xmlns:c="http://www.gtk.org/introspection/c/1.0"
+            xmlns:glib="http://www.gtk.org/introspection/glib/1.0">
+  <namespace name="NM">
+    <class name="DeviceIPTunnel" c:type="NMDeviceIPTunnel">
+      <property name="mode" getter="get_mode">
+        <type name="guint" c:type="guint"/>
+      </property>
+      <method name="get_mode" c:identifier="nm_device_ip_tunnel_get_mode"
+              glib:get-property="mode">
+        <return-value transfer-ownership="none">
+          <type name="IPTunnelMode" c:type="NMIPTunnelMode"/>
+        </return-value>
+      </method>
+      <method name="get_parent" c:identifier="nm_device_ip_tunnel_get_parent"
+              glib:get-property="parent">
+        <return-value transfer-ownership="none">
+          <type name="guint" c:type="guint"/>
+        </return-value>
+      </method>
+    </class>
+  </namespace>
+</repository>"#;
+
+    #[test]
+    fn reads_the_getter_a_property_is_linked_to() {
+        let accessors = accessor_types(CLASSES).unwrap();
+        assert_eq!(
+            accessors.get(&("DeviceIPTunnel".to_owned(), "mode".to_owned())),
+            Some(&"NMIPTunnelMode".to_owned())
+        );
+    }
+
+    #[test]
+    fn prefers_the_getters_type_over_the_propertys_own() {
+        let mut docs = Docs::default();
+        docs.interfaces
+            .entry("org.freedesktop.NetworkManager.Device.IPTunnel".to_owned())
+            .or_default()
+            .members
+            .entry("Mode".to_owned())
+            .or_default();
+
+        let accessors = accessor_types(CLASSES).unwrap();
+        let known: HashSet<String> = ["NMIPTunnelMode".to_owned()].into_iter().collect();
+        apply_accessor_types(&mut docs, &accessors, &known);
+
+        let returns =
+            &docs.interfaces["org.freedesktop.NetworkManager.Device.IPTunnel"].members["Mode"]
+                .returns;
+        assert_eq!(
+            returns.as_ref().map(|r| r.c_name.as_str()),
+            Some("NMIPTunnelMode")
+        );
+    }
+
+    /// A getter that returns a plain `guint`, like `NMDeviceIPTunnel:parent`, names nothing
+    /// `known` recognises — so it is left for prose or `annotations.toml`, not asserted as guint.
+    #[test]
+    fn leaves_a_member_alone_when_the_getters_type_is_not_one_of_the_enums() {
+        let mut docs = Docs::default();
+        docs.interfaces
+            .entry("org.freedesktop.NetworkManager.Device.IPTunnel".to_owned())
+            .or_default()
+            .members
+            .entry("Parent".to_owned())
+            .or_default();
+
+        let accessors = accessor_types(CLASSES).unwrap();
+        apply_accessor_types(&mut docs, &accessors, &HashSet::new());
+
+        assert!(
+            docs.interfaces["org.freedesktop.NetworkManager.Device.IPTunnel"].members["Parent"]
+                .returns
+                .is_none()
+        );
+    }
+
+    #[test]
+    fn names_the_class_for_an_interface() {
+        assert_eq!(
+            class_name("org.freedesktop.NetworkManager.Device.IPTunnel").as_deref(),
+            Some("DeviceIPTunnel")
+        );
+        assert_eq!(
+            class_name("org.freedesktop.NetworkManager").as_deref(),
+            None
+        );
     }
 }

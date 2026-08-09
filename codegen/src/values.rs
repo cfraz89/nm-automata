@@ -271,6 +271,7 @@ pub fn newtype_wire(name: &str) -> Option<(PropertyType, &'static str)> {
     Some(match name {
         "Ssid" | "MacAddress" => (PropertyType::ByteArray, "ay"),
         "AssignedMacAddress" => (PropertyType::Str, "s"),
+        "VersionInfo" => (PropertyType::Uint32Array, "au"),
         _ => return None,
     })
 }

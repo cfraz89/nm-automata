@@ -400,7 +400,6 @@ impl Annotations {
                 .or_default()
                 .returns = Some(TypeRef {
                 c_name: property.ty.clone(),
-                from_prose: false,
             });
         }
 
@@ -418,7 +417,6 @@ impl Annotations {
                 .or_default()
                 .ty = Some(TypeRef {
                 c_name: argument.ty.clone(),
-                from_prose: false,
             });
         }
 

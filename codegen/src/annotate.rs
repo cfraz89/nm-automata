@@ -49,25 +49,11 @@ pub struct ArgDocs {
     pub ty: Option<TypeRef>,
 }
 
-/// A type a member's documentation names, and how confidently.
+/// A type a member's documentation names.
 #[derive(Debug, Clone)]
 pub struct TypeRef {
     /// The name as written in the header, e.g. `NMDeviceState`.
     pub c_name: String,
-    /// Whether this came from prose rather than a `Returns:` line.
-    ///
-    /// Prose is weaker evidence: `VersionInfo` is an array whose first element is a packed
-    /// version number and whose *remaining* elements are capability bitfields, yet its text
-    /// mentions only `NMVersionInfoCapability`. Such references are therefore only trusted
-    /// for single values, never for arrays.
-    pub from_prose: bool,
-}
-
-impl TypeRef {
-    /// Whether this reference may be applied to a member with the given D-Bus signature.
-    pub fn applies_to(&self, signature: &str) -> bool {
-        !self.from_prose || !signature.starts_with('a')
-    }
 }
 
 /// Extract the documentation for one introspection file.
@@ -157,10 +143,7 @@ fn parse_member(comment: &str, known_types: &HashSet<String>) -> MemberDocs {
         .filter(|(name, _)| !is_metadata(name))
         .map(|(name, text)| {
             let docs = ArgDocs {
-                ty: sole_type_ref(text, known_types).map(|c_name| TypeRef {
-                    c_name,
-                    from_prose: false,
-                }),
+                ty: sole_type_ref(text, known_types).map(|c_name| TypeRef { c_name }),
                 doc: Some(rustdoc_text(&strip_leading_type_ref(text))).filter(|d| !d.is_empty()),
             };
             (name.clone(), docs)
@@ -169,20 +152,15 @@ fn parse_member(comment: &str, known_types: &HashSet<String>) -> MemberDocs {
 
     // Most members name their type on a `Returns:` line, but some only describe it in
     // passing — "See NMRadioFlags for the list of flags supported".
-    let returns = block.entry("Returns").and_then(|text| {
-        sole_type_ref(&text, known_types).map(|c_name| TypeRef {
-            c_name,
-            from_prose: false,
+    let returns = block
+        .entry("Returns")
+        .and_then(|text| sole_type_ref(&text, known_types))
+        .or_else(|| {
+            block
+                .prose()
+                .and_then(|text| sole_type_ref(&text, known_types))
         })
-    });
-    let returns = returns.or_else(|| {
-        block.prose().and_then(|text| {
-            sole_type_ref(&text, known_types).map(|c_name| TypeRef {
-                c_name,
-                from_prose: true,
-            })
-        })
-    });
+        .map(|c_name| TypeRef { c_name });
 
     MemberDocs {
         doc: block.prose().map(|prose| rustdoc_text(&prose)),

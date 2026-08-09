@@ -1,32 +1,17 @@
 # Type annotations that cannot be read out of the vendored spec.
 #
-# `just generate` types a property or argument as one of NetworkManager's enumerations
-# whenever the upstream documentation says so — through a `Returns:` line, an `@argument`
-# entry, or, for single values, a mention in the prose. What is left over goes here.
+# Generation will type a property or argument as one of NetworkManager's enumerations by
+# parsing the documentation — through a `Returns:` line, an `@argument` entry, or a mention in
+# the prose — or by reading it off the corresponding getter in NM-1.0.gir, where that is typed
+# more precisely than the property itself. A hand-written wrapper below always wins where one is
+# named for the same member, since prose can be wrong about an array in a way it cannot about a
+# single value: `VersionInfo` names `NMVersionInfoCapability` exactly as `Capabilities` names
+# `NMCapability`, yet only the second is uniformly that type across the whole array. What is
+# left over after all of that goes here.
 #
 # Every entry is checked: the named type must exist in the vendored headers, and the annotated
 # member must exist with a matching D-Bus signature. An entry that no longer applies fails
 # generation, so this file cannot rot silently as NetworkManager changes.
-
-# Documented as "See NMCapability for currently defined capability numbers" — prose, and an
-# array, which generation does not infer from on its own after `VersionInfo` showed why
-# (its elements do not all mean the same thing).
-[[property]]
-interface = "org.freedesktop.NetworkManager"
-name = "Capabilities"
-type = "NMCapability"
-
-# Documented only as "The tunneling mode." and "Tunnel flags." — the type is named nowhere,
-# so there is nothing to read out of the spec.
-[[property]]
-interface = "org.freedesktop.NetworkManager.Device.IPTunnel"
-name = "Mode"
-type = "NMIPTunnelMode"
-
-[[property]]
-interface = "org.freedesktop.NetworkManager.Device.IPTunnel"
-name = "Flags"
-type = "NMIPTunnelFlags"
 
 # Two settings are named so that neither the name NetworkManager sends nor the upper-case form
 # it also gives ("802_1X", "6LOWPAN") can open a Rust identifier. These say what to call them;
@@ -516,6 +501,16 @@ type = "AssignedMacAddress"
 interface = "org.freedesktop.NetworkManager.AccessPoint"
 name = "Ssid"
 type = "Ssid"
+
+# `VersionInfo` packs two different things into one array — NetworkManager's own version, then a
+# bitfield of capabilities — even though its prose names only `NMVersionInfoCapability`, exactly
+# as `Capabilities` names `NMCapability` for an array that really is uniformly that type. Naming
+# it here, rather than leaving it to inference, decodes both correctly instead of either failing
+# to apply or misreading the version as more capability bits.
+[[newtype]]
+interface = "org.freedesktop.NetworkManager"
+name = "VersionInfo"
+type = "VersionInfo"
 
 # The options dictionary of `AddAndActivateConnection2`, whose two keys NetworkManager
 # documents in the method's own prose. Unlike the read-only dictionaries above this one is

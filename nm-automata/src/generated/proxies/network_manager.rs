@@ -15,7 +15,7 @@ use crate::generated::settings::ConnectionProfile;
 #[allow(unused_imports)]
 use crate::generated::types::*;
 #[allow(unused_imports)]
-use crate::Ssid;
+use crate::{Ssid, VersionInfo};
 use zbus::proxy;
 
 /// Connection Manager.
@@ -462,7 +462,7 @@ pub trait NetworkManager {
     ///
     /// Since: 1.42
     #[zbus(property, name = "VersionInfo")]
-    fn version_info(&self) -> zbus::Result<Vec<u32>>;
+    fn version_info(&self) -> zbus::Result<VersionInfo>;
 
     /// WimaxEnabled property
     ///

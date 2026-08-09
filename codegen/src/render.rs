@@ -97,7 +97,7 @@ pub fn interface_candidates(interface: &Interface<'_>, docs: &Docs) -> BTreeMap<
             continue;
         };
         let signature = property.ty().to_string();
-        if let Some(reference) = member.returns.as_ref().filter(|r| r.applies_to(&signature)) {
+        if let Some(reference) = member.returns.as_ref() {
             out.insert(
                 Site::Property(property.name().to_string()),
                 Candidate {
@@ -132,7 +132,7 @@ pub fn interface_candidates(interface: &Interface<'_>, docs: &Docs) -> BTreeMap<
                 None => None,
             };
             let signature = arg.ty().to_string();
-            if let Some(reference) = annotated.filter(|r| r.applies_to(&signature)) {
+            if let Some(reference) = annotated {
                 out.insert(
                     Site::Arg(name.clone(), arg_name.to_owned()),
                     Candidate {
@@ -171,10 +171,11 @@ fn reference_for(candidate: &Candidate, types: &BTreeMap<String, Resolved<'_>>) 
 
 /// The Rust type each site of an interface is read as, where its signature undersells it.
 ///
-/// The order of the fallbacks is the precedence: a type named by the headers wins over a
-/// hand-written wrapper, which wins over a typed object path, a dictionary shape, and finally a
-/// connection profile. Each is only applied where the signature agrees with it, so a stale
-/// annotation leaves the member as its structural type instead of one it cannot decode.
+/// The order of the fallbacks is the precedence: a hand-written wrapper — necessarily named
+/// deliberately, in `annotations.toml` — wins over a type the headers merely name, which wins
+/// over a typed object path, a dictionary shape, and finally a connection profile. Each is only
+/// applied where the signature agrees with it, so a stale annotation leaves the member as its
+/// structural type instead of one it cannot decode.
 pub fn resolved_names(
     interface: &Interface<'_>,
     docs: &Docs,
@@ -198,10 +199,8 @@ pub fn resolved_names(
         let member = property.name().to_string();
         let signature = property.ty().to_string();
         let site = Site::Property(member.clone());
-        let named = references
-            .get(&site)
-            .cloned()
-            .or_else(|| named_newtype(newtypes, &name, &member, &signature))
+        let named = named_newtype(newtypes, &name, &member, &signature)
+            .or_else(|| references.get(&site).cloned())
             .or_else(|| named_object(object_sites, &site, &signature))
             .or_else(|| named_vardict(vardicts, &name, &member, &signature))
             .or_else(|| named_profile(&signature));

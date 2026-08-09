@@ -88,6 +88,7 @@ mod path;
 mod repr;
 pub mod settings;
 mod ssid;
+mod version_info;
 
 pub use empty::NonEmpty;
 pub use ext::{ObjectPathExt, ObjectPathSliceExt, ProxyExt};
@@ -102,6 +103,7 @@ pub use generated::{NM_VERSION, devices, paths, proxies, types, vardict};
 pub use mac::{AssignedMacAddress, InvalidMacAddress, MacAddress};
 pub use path::{NULL_OBJECT_PATH, NULL_PATH, NmPath, NmPathSliceExt};
 pub use ssid::Ssid;
+pub use version_info::VersionInfo;
 
 /// zbus, re-exported: its [`Connection`](zbus::Connection) is the entry point to every proxy,
 /// and its error type is what they return.

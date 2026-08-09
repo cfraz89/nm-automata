@@ -15,7 +15,7 @@ use crate::generated::settings::ConnectionProfile;
 #[allow(unused_imports)]
 use crate::generated::types::*;
 #[allow(unused_imports)]
-use crate::Ssid;
+use crate::{Ssid, VersionInfo};
 use zbus::proxy;
 
 /// VXLAN Device.

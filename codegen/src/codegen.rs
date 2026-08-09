@@ -42,6 +42,7 @@ pub fn generate(root: &Path) -> Result<BTreeMap<PathBuf, String>> {
     })?;
     let defs = gir::parse(&gir_source)?;
     let known: HashSet<String> = defs.iter().map(|d| d.c_name.clone()).collect();
+    let accessor_types = gir::accessor_types(&gir_source)?;
 
     let annotations = overrides::load(root)?;
 
@@ -73,6 +74,7 @@ pub fn generate(root: &Path) -> Result<BTreeMap<PathBuf, String>> {
             let node = Node::try_from(xml.as_str())
                 .with_context(|| format!("parsing spec/introspection/{name}"))?;
             let mut docs = annotate::extract(xml, &known)?;
+            gir::apply_accessor_types(&mut docs, &accessor_types, &known);
             annotations.apply(&mut docs, &known)?;
             Ok((name.clone(), node, docs))
         })
@@ -642,7 +644,7 @@ fn check_name_clashes(
     Ok(())
 }
 
-fn to_snake(name: &str) -> String {
+pub(crate) fn to_snake(name: &str) -> String {
     let chars: Vec<char> = name.chars().collect();
     let mut out = String::with_capacity(name.len() + 4);
 
