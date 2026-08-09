@@ -24,26 +24,29 @@ fetch version="":
 # only exists once libnm has been compiled — there is nothing machine-readable in the git tree
 # to read them from. This runs NetworkManager's own generator against a release tag.
 #
+# `origin` clones somewhere other than upstream — a fork, a mirror, a local checkout served over
+# `file://` — for a branch that need not be a release tag at all.
+#
 # Slow, and needs podman. It is only ever run when the vendored release changes: the result is
 # committed, so building nm-automata as a dependency needs no container and no C toolchain.
-build-spec version="":
+build-spec version="" origin="":
     #!/usr/bin/env bash
     set -euo pipefail
     version="{{ version }}"
     [ -n "$version" ] || version="$(cat spec/nm-version.txt)"
     echo "building NetworkManager $version to generate its settings documentation"
     podman build -t nm-automata-spec -f spec/build/Containerfile spec/build/
-    podman run --rm -v "$PWD/spec:/out:Z" nm-automata-spec "$version"
+    podman run --rm -v "$PWD/spec:/out:Z" nm-automata-spec "$version" "{{ origin }}"
 
 # Regenerate `nm-automata/src/generated/` from the vendored spec.
 generate:
     {{ codegen }} generate
 
 # Vendor a spec and regenerate, in one step. Includes the container build, so it is slow.
-update version="": (fetch version)
+update version="" origin="": (fetch version)
     #!/usr/bin/env bash
     set -euo pipefail
-    just build-spec "$(cat spec/nm-version.txt)"
+    just build-spec "$(cat spec/nm-version.txt)" "{{ origin }}"
     just generate
 
 # Print the newest upstream NetworkManager stable release tag.

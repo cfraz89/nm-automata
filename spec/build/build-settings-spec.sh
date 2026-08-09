@@ -10,11 +10,12 @@
 # array on the wire). Taking NetworkManager's merged answer avoids having to reconcile that.
 set -euo pipefail
 
-version="${1:?usage: build-settings-spec <nm-version-tag>}"
+version="${1:?usage: build-settings-spec <branch-or-tag> [repo-url]}"
+origin="${2:-https://gitlab.freedesktop.org/NetworkManager/NetworkManager.git}"
 target="man/nm-settings-docs-dbus.xml"
 
 git -c advice.detachedHead=false clone --quiet --depth 1 --branch "$version" \
-    https://gitlab.freedesktop.org/NetworkManager/NetworkManager.git /src
+    "$origin" /src
 cd /src
 
 # Only the generator's own dependency chain gets built: the introspection data, and the libnm
